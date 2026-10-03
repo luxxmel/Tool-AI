@@ -12,9 +12,14 @@ interface CharacterCardProps {
 
 export default function CharacterCard({ character, onClick }: CharacterCardProps) {
   const { language } = useLanguage();
-  const name = language === "en" && (character as any).nameEn ? (character as any).nameEn : character.name;
+  const rawName = language === "en" && (character as any).nameEn ? (character as any).nameEn : character.name;
   const tag = language === "en" && (character as any).tagEn ? (character as any).tagEn : character.tag;
   const description = language === "en" && (character as any).descriptionEn ? (character as any).descriptionEn : character.description;
+
+  // Phân tách tên chính và biệt danh/danh xưng (Ví dụ: "Lục Cận Phong · Bá Đạo Tổng Tài" => Name: "Lục Cận Phong", Title: "Bá Đạo Tổng Tài")
+  const parts = rawName.split(/[\·\•\-]/);
+  const mainName = parts[0]?.trim() || rawName;
+  const titleAlias = parts.length > 1 ? parts.slice(1).join(" · ").trim() : "";
 
   return (
     <Link
@@ -25,25 +30,29 @@ export default function CharacterCard({ character, onClick }: CharacterCardProps
       <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 rounded-full blur-2xl group-hover:from-cyan-500/20 group-hover:to-violet-500/20 transition-all pointer-events-none" />
 
       <div>
-        <div className="flex items-center gap-3 mb-2.5">
+        <div className="flex items-center gap-3 mb-2">
           <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/80 group-hover:border-cyan-400/80 transition-all shadow-xs shrink-0 bg-slate-100 dark:bg-slate-800">
             <img
               src={character.avatar}
-              alt={name}
+              alt={mainName}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               loading="lazy"
             />
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors truncate">
-                {name}
-              </h3>
-            </div>
-            <span className="inline-block mt-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 dark:border-cyan-500/30">
-              {tag}
-            </span>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors truncate">
+              {mainName}
+            </h3>
+            {titleAlias ? (
+              <p className="text-[11px] font-medium text-cyan-600 dark:text-cyan-400 truncate mt-0.5">
+                ✦ {titleAlias}
+              </p>
+            ) : (
+              <span className="inline-block mt-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 dark:border-cyan-500/30">
+                {tag}
+              </span>
+            )}
           </div>
         </div>
 

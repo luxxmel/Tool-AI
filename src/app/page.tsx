@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AppSidebar from "@/components/sidebar/AppSidebar";
@@ -19,6 +20,9 @@ import CreateProjectView from "@/components/projects/CreateProjectView";
 import AiToolsStudio from "@/components/tools/AiToolsStudio";
 import HealingCorner from "@/components/healing/HealingCorner";
 import UserProfileView from "@/components/profile/UserProfileView";
+import TarotView from "@/components/tarot/TarotView";
+import HomeQuickStatsBar from "@/components/home/HomeQuickStatsBar";
+import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import {
   FEATURED_ASSISTANTS,
   TRENDING_CHARACTERS,
@@ -64,6 +68,37 @@ function HomeContent() {
       }
     }
   }, [tabQuery]);
+
+  // Tự động cuộn Trợ lý nổi bật & Nhân vật xu hướng cực kỳ mượt mà (Pause khi rê chuột)
+  useEffect(() => {
+    if (currentTab !== "home" || isChatOpen) return;
+
+    const interval = setInterval(() => {
+      // Auto-scroll Trợ lý nổi bật
+      const featuredContainer = document.getElementById("featured-assistants-scroll");
+      if (featuredContainer && !featuredContainer.matches(":hover")) {
+        const step = 316; // 300px card + 16px gap
+        if (featuredContainer.scrollLeft + featuredContainer.clientWidth >= featuredContainer.scrollWidth - 30) {
+          featuredContainer.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          featuredContainer.scrollBy({ left: step, behavior: "smooth" });
+        }
+      }
+
+      // Auto-scroll Nhân vật xu hướng
+      const trendingContainer = document.getElementById("trending-characters-scroll");
+      if (trendingContainer && !trendingContainer.matches(":hover")) {
+        const step = 316;
+        if (trendingContainer.scrollLeft + trendingContainer.clientWidth >= trendingContainer.scrollWidth - 30) {
+          trendingContainer.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          trendingContainer.scrollBy({ left: step, behavior: "smooth" });
+        }
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [currentTab, isChatOpen]);
 
   // Mở đoạn chat mới từ thanh tìm kiếm với bộ não đã chọn và hình ảnh kèm theo (nếu có)
   const handlePromptSubmit = (
@@ -129,6 +164,11 @@ function HomeContent() {
 
   // Handle clicking an assistant -> chuyển hướng sang trang chat /chat/[botId]
   const handleSelectAssistant = (assistant: AssistantItem) => {
+    if (assistant.id === "tarot-reader") {
+      router.push("/?tab=tarot");
+      setCurrentTab("tarot");
+      return;
+    }
     router.push(`/chat/${assistant.id}`);
   };
 
@@ -150,7 +190,7 @@ function HomeContent() {
   return (
     <div
       className={`${
-        isChatOpen ? "h-screen max-h-[100dvh] overflow-hidden" : "min-h-screen"
+        isChatOpen ? "h-screen max-h-[100dvh] overflow-hidden" : "h-screen overflow-y-auto"
       } ${
         bgType === "default" ? "bg-[#f8fafc] dark:bg-[#07080d]" : "bg-[#07080d]"
       } text-slate-900 dark:text-slate-100 flex flex-col lg:flex-row transition-colors duration-300 relative`}
@@ -206,14 +246,14 @@ function HomeContent() {
         className={`flex-1 ${
           isChatOpen
             ? "h-screen max-h-[100dvh] overflow-hidden px-2 sm:px-4 pt-14 lg:pt-3 pb-2"
-            : "min-h-screen px-4 sm:px-6 pt-16 lg:pt-8 pb-28 sm:pb-36 lg:pb-40"
+            : "min-h-full px-4 sm:px-6 pt-16 lg:pt-8 pb-32 sm:pb-44"
         } flex flex-col ${isChatOpen ? "items-stretch" : "items-center"} justify-start w-full relative z-10 transition-all duration-300 ${
           isSidebarCollapsed ? "lg:ml-0" : "lg:ml-64"
         }`}
       >
 
         {/* Centered Unified Content Container */}
-        <div className={`w-full ${isChatOpen ? "h-full min-h-0 max-w-full" : "max-w-[980px]"} flex flex-col`}>
+        <div className={`w-full ${isChatOpen || currentTab === "characters" ? "h-full min-h-0 max-w-full" : "max-w-[980px]"} flex flex-col`}>
           {isCreatingProject ? (
             /* Inline Project Creation View in center of chat area */
             <CreateProjectView
@@ -251,6 +291,8 @@ function HomeContent() {
             <AiToolsStudio />
           ) : currentTab === "profile" ? (
             <UserProfileView onOpenLoginModal={() => setShowLoginModal(true)} />
+          ) : currentTab === "tarot" ? (
+            <TarotView />
           ) : isChatOpen ? (
             /* Direct In-Page Chat (ChatGPT Style) */
             <HomeChatView
@@ -271,85 +313,184 @@ function HomeContent() {
           ) : (
             <>
               {/* Center Search / Prompt Area */}
-              <div className="pt-2 sm:pt-6 pb-12 w-full">
+              <div className="pt-2 sm:pt-6 pb-4 w-full">
                 <AiSearchBox onSubmitPrompt={handlePromptSubmit} />
               </div>
 
+              {/* Quick Platform Stats Bar */}
+              <HomeQuickStatsBar onSelectTab={handleSelectTab} />
+
+              {/* Ecosystem Features Showcase Grid */}
+              <HomeFeaturesShowcase onSelectTab={handleSelectTab} />
+
               {/* Section 1: Trợ lý nổi bật */}
-              <section className="mb-12 w-full">
-                 <div className="flex items-center justify-between mb-5">
-                   <div className="flex items-center gap-2.5">
-                     <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                       {t("home.featured_assistants")}
-                     </h2>
-                     <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-xs shadow-cyan-400/60 animate-pulse" />
-                   </div>
+              <section className="mb-12 w-full relative group">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2.5">
+                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                      {t("home.featured_assistants")}
+                    </h2>
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-xs shadow-cyan-400/60 animate-pulse" />
+                  </div>
 
-                   <button
-                     onClick={() => {
-                       const btn = document.querySelector('[data-nav-id="assistants"]') as HTMLElement;
-                       if (btn) btn.click();
-                       else handleSelectTab("tools");
-                     }}
-                     className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer"
-                   >
-                     <span>{t("home.view_all")}</span>
-                     <span>→</span>
-                   </button>
-                 </div>
+                  <button
+                    onClick={() => {
+                      const btn = document.querySelector('[data-nav-id="assistants"]') as HTMLElement;
+                      if (btn) {
+                        btn.setAttribute("data-open-catalog", "true");
+                        btn.click();
+                        setTimeout(() => btn.removeAttribute("data-open-catalog"), 500);
+                      } else {
+                        handleSelectTab("tools");
+                      }
+                    }}
+                    className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <span>{t("home.view_all")}</span>
+                    <span>→</span>
+                  </button>
+                </div>
 
-                 {/* Grid of Featured Assistants */}
-                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                   {FEATURED_ASSISTANTS.slice(0, 4).map((assistant) => (
-                     <AssistantCard
-                       key={assistant.id}
-                       assistant={assistant}
-                       onClick={handleSelectAssistant}
-                     />
-                   ))}
-                 </div>
-               </section>
+                {/* Left Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const container = document.getElementById("featured-assistants-scroll");
+                    if (container) {
+                      if (container.scrollLeft <= 10) {
+                        container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
+                      } else {
+                        container.scrollBy({ left: -316, behavior: "smooth" });
+                      }
+                    }
+                  }}
+                  className="absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  title="Lướt sang trái"
+                >
+                  ◀
+                </button>
 
-               {/* Section 2: Nhân vật xu hướng */}
-               <section className="mb-12 w-full">
-                 <div className="flex items-center justify-between mb-5">
-                   <div className="flex items-center gap-2.5">
-                     <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                       {t("home.trending_characters")}
-                     </h2>
-                     <span className="text-xs px-2.5 py-0.5 rounded-full bg-gradient-to-r from-violet-500/15 to-cyan-500/15 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-500/20 dark:border-cyan-500/30">
-                       {t("home.trending")}
-                     </span>
-                   </div>
+                {/* Right Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const container = document.getElementById("featured-assistants-scroll");
+                    if (container) {
+                      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 30) {
+                        container.scrollTo({ left: 0, behavior: "smooth" });
+                      } else {
+                        container.scrollBy({ left: 316, behavior: "smooth" });
+                      }
+                    }
+                  }}
+                  className="absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  title="Lướt sang phải"
+                >
+                  ▶
+                </button>
 
-                   <button
-                     onClick={() => handleSelectTab("characters")}
-                     className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer"
-                   >
-                     <span>{t("home.view_all")}</span>
-                     <span>→</span>
-                   </button>
-                 </div>
+                {/* Horizontal Scrollable Carousel of Featured Assistants Only */}
+                <div
+                  id="featured-assistants-scroll"
+                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-2"
+                >
+                  {FEATURED_ASSISTANTS.map((assistant) => (
+                    <div key={assistant.id} className="w-[280px] sm:w-[300px] shrink-0 snap-start">
+                      <AssistantCard
+                        assistant={assistant}
+                        onClick={handleSelectAssistant}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-                 {/* Grid of Trending Characters */}
-                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                   {TRENDING_CHARACTERS.map((char) => (
-                     <CharacterCard
-                       key={char.id}
-                       character={char}
-                       onClick={handleSelectCharacter}
-                     />
-                   ))}
-                 </div>
-               </section>
+              {/* Section 2: Nhân vật xu hướng */}
+              <section className="mb-12 w-full relative group">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2.5">
+                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                      {t("home.trending_characters")}
+                    </h2>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-gradient-to-r from-violet-500/15 to-cyan-500/15 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-500/20 dark:border-cyan-500/30">
+                      {t("home.trending")}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleSelectTab("characters")}
+                    className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <span>{t("home.view_all")}</span>
+                    <span>→</span>
+                  </button>
+                </div>
+
+                {/* Left Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const container = document.getElementById("trending-characters-scroll");
+                    if (container) {
+                      if (container.scrollLeft <= 10) {
+                        container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
+                      } else {
+                        container.scrollBy({ left: -316, behavior: "smooth" });
+                      }
+                    }
+                  }}
+                  className="absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  title="Lướt sang trái"
+                >
+                  ◀
+                </button>
+
+                {/* Right Arrow Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const container = document.getElementById("trending-characters-scroll");
+                    if (container) {
+                      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 30) {
+                        container.scrollTo({ left: 0, behavior: "smooth" });
+                      } else {
+                        container.scrollBy({ left: 316, behavior: "smooth" });
+                      }
+                    }
+                  }}
+                  className="absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  title="Lướt sang phải"
+                >
+                  ▶
+                </button>
+
+                {/* Horizontal Scrollable Carousel of Trending Characters */}
+                <div
+                  id="trending-characters-scroll"
+                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-2"
+                >
+                  {TRENDING_CHARACTERS.map((char) => (
+                    <div key={char.id} className="w-[280px] sm:w-[300px] shrink-0 snap-start">
+                      <CharacterCard
+                        character={char}
+                        onClick={handleSelectCharacter}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
 
                {/* Footer */}
                <footer className="mt-auto pt-8 border-t border-slate-200 dark:border-slate-800/60 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
                  <p>{t("home.footer_desc")}</p>
                  <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
-                   <span className="hover:text-slate-900 dark:hover:text-white cursor-pointer">{t("home.terms")}</span>
+                   <Link href="/terms" className="hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">
+                     {t("home.terms")}
+                   </Link>
                    <span>•</span>
-                   <span className="hover:text-slate-900 dark:hover:text-white cursor-pointer">{t("home.privacy")}</span>
+                   <Link href="/privacy" className="hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">
+                     {t("home.privacy")}
+                   </Link>
                  </div>
                </footer>
             </>

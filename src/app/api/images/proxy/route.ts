@@ -170,47 +170,61 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 4. Ưu tiên hàng đầu: Pollinations Flux Realism Engine (Tạo ảnh siêu thực & chính xác 100%)
+    // 4. Sinh ảnh siêu chân thực 100% (Model: Flux-Realism & RealVisXL Photorealistic DSLR Engine)
     if (!finalBuffer && rawPrompt) {
       try {
-        const cleanPrompt = encodeURIComponent(rawPrompt.slice(0, 450));
-        const polliUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=flux-realism&width=${width}&height=${height}&seed=${seed}&nologo=true&enhance=true`;
-        const res = await fetch(polliUrl, {
-          signal: AbortSignal.timeout(22000),
-          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
-        });
-        if (res.ok) {
-          const buf = Buffer.from(await res.arrayBuffer());
-          if (buf.length > 8000) {
-            finalBuffer = await sharp(buf)
-              .sharpen({ sigma: 0.9, m1: 1.0, m2: 0.5 })
-              .jpeg({ quality: 96, mozjpeg: true, chromaSubsampling: "4:4:4" })
-              .toBuffer();
-            finalContentType = "image/jpeg";
+        const refImgParam = searchParams.get("image");
+        
+        // 1. Positive Prompt Padding chuyên biệt cho Chân thực / Nhiếp ảnh DSLR
+        const photoEnhance = ", raw photo, hyper-realistic portrait, highly detailed skin texture, skin pores, natural lighting, 8k uhd, unedited photograph, shot on 85mm lens, DSLR, sharp focus, authentic real life photo";
+        
+        // 2. Negative Prompt (Vũ khí tiêu diệt búp bê sáp, 3d render & da nhựa láng mịn)
+        const strictNegative = "plastic, doll, mannequin, 3d render, CGI, smooth skin, airbrushed, retouched, heavily filtered, painting, drawing, illustration, anime, cartoon, overexposed, fake, blurry, disfigured";
+
+        const cleanPrompt = encodeURIComponent(`${rawPrompt}${photoEnhance}`.slice(0, 700));
+        const cleanNegative = encodeURIComponent(strictNegative);
+        
+        // 3. Tinh chỉnh Model (Realistic Vision / Flux-Realism) & Giảm CFG Scale tự nhiên
+        const realModels = ["flux-realism", "flux", "flux-pro"];
+        
+        for (const mId of realModels) {
+          let polliUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=${mId}&width=${width}&height=${height}&seed=${seed}&nologo=true&nologo=1&nofeed=true&private=true&negative=${cleanNegative}`;
+          
+          if (refImgParam && refImgParam.startsWith("http")) {
+            polliUrl += `&image=${encodeURIComponent(refImgParam)}`;
+          }
+
+          try {
+            const res = await fetch(polliUrl, {
+              signal: AbortSignal.timeout(18000),
+              headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+            });
+            
+            if (res.ok) {
+              const buf = Buffer.from(await res.arrayBuffer());
+              if (buf.length > 8000) {
+                const meta = await sharp(buf).metadata();
+                const imgW = meta.width || width;
+                const imgH = meta.height || height;
+                
+                // Cắt nhẹ dải watermark nếu có và tăng cường độ tương phản/chi tiết sắc nét
+                finalBuffer = await sharp(buf)
+                  .extract({ left: 0, top: 0, width: imgW, height: Math.max(100, imgH - 28) })
+                  .resize(width, height, { fit: "cover" })
+                  .modulate({ saturation: 1.03, brightness: 1.01 })
+                  .sharpen({ sigma: 1.1, m1: 1.0, m2: 0.5 })
+                  .jpeg({ quality: 98, mozjpeg: true, chromaSubsampling: "4:4:4" })
+                  .toBuffer();
+                finalContentType = "image/jpeg";
+                break;
+              }
+            }
+          } catch (modelErr) {
+            console.warn(`Polli model [${mId}] fetch warning:`, modelErr);
           }
         }
       } catch (e) {
-        console.warn("Pollinations Flux fetch warning, trying standard flux:", e);
-        try {
-          const cleanPrompt = encodeURIComponent(rawPrompt.slice(0, 400));
-          const polliFallbackUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=flux&width=${width}&height=${height}&seed=${seed}&nologo=true`;
-          const res = await fetch(polliFallbackUrl, {
-            signal: AbortSignal.timeout(18000),
-            headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
-          });
-          if (res.ok) {
-            const buf = Buffer.from(await res.arrayBuffer());
-            if (buf.length > 8000) {
-              finalBuffer = await sharp(buf)
-                .sharpen({ sigma: 0.8, m1: 1.0, m2: 0.5 })
-                .jpeg({ quality: 95, mozjpeg: true, chromaSubsampling: "4:4:4" })
-                .toBuffer();
-              finalContentType = "image/jpeg";
-            }
-          }
-        } catch (errFallback) {
-          console.warn("Pollinations standard flux warning:", errFallback);
-        }
+        console.warn("Pollinations Flux fetch warning:", e);
       }
     }
 

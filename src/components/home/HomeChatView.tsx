@@ -100,7 +100,7 @@ export default function HomeChatView({
 
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
-  const [hideActionNotes, setHideActionNotes] = useState<boolean>(true);
+  const [hideActionNotes, setHideActionNotes] = useState<boolean>(false);
   const [messageFeedback, setMessageFeedback] = useState<Record<string, "up" | "down">>({});
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -773,28 +773,28 @@ export default function HomeChatView({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {/* Nút bật/tắt ẩn ghi chú cử chỉ (Chỉ hiện lời thoại) */}
+          {/* Nút lọc lời thoại / Xem đầy đủ miêu tả cử chỉ */}
           <button
             type="button"
             onClick={() => setHideActionNotes((prev) => !prev)}
             className={`px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
-              hideActionNotes
+              !hideActionNotes
                 ? "bg-indigo-500/15 border-indigo-500/40 text-indigo-600 dark:text-cyan-300 ring-1 ring-indigo-500/20"
                 : "bg-slate-100 dark:bg-[#131522] border-slate-200 dark:border-indigo-950/70 text-slate-600 dark:text-slate-400"
             }`}
             title={
               hideActionNotes
-                ? "Đang ẩn ghi chú cử chỉ (Chỉ hiện lời thoại). Bấm để xem đầy đủ."
-                : "Đang hiện đầy đủ cả miêu tả. Bấm để chỉ xem lời thoại."
+                ? "Đang lọc chỉ hiện lời thoại. Bấm để hiển thị đầy đủ toàn bộ nội dung & miêu tả."
+                : "Đang hiển thị đầy đủ toàn bộ câu trả lời. Bấm nếu chỉ muốn rút gọn câu thoại."
             }
           >
-            <span>{hideActionNotes ? "💬" : "🎭"}</span>
+            <span>{!hideActionNotes ? "📜" : "💬"}</span>
             <span className="hidden sm:inline">
-              {hideActionNotes ? "Chỉ lời thoại" : "Hiện cả ghi chú"}
+              {!hideActionNotes ? "Đầy đủ nội dung" : "Chỉ lời thoại"}
             </span>
             <span
               className={`w-2 h-2 rounded-full ${
-                hideActionNotes ? "bg-emerald-400 animate-pulse" : "bg-slate-400"
+                !hideActionNotes ? "bg-emerald-400 animate-pulse" : "bg-slate-400"
               }`}
             />
           </button>

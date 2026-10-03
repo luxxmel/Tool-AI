@@ -18,12 +18,13 @@ export interface GeneratedImage {
 }
 
 const STYLES = [
-  { id: "realistic", label: "Chân thực / Thực tế", labelEn: "Photorealistic", icon: "📷" },
-  { id: "cyberpunk", label: "Cyberpunk Neon", labelEn: "Cyberpunk Neon", icon: "🌃" },
-  { id: "anime", label: "Anime & Manga", labelEn: "Anime & Manga", icon: "🌸" },
-  { id: "cinematic", label: "3D Cinematic", labelEn: "3D Cinematic", icon: "🎬" },
-  { id: "oil", label: "Sơn dầu cổ điển", labelEn: "Classic Oil Painting", icon: "🎨" },
-  { id: "fantasy", label: "Huyền ảo Fantasy", labelEn: "Fantasy & Mythic", icon: "✨" },
+  { id: "realistic", label: "📷 Chân thực / Nhiếp ảnh DSLR", labelEn: "Photorealistic DSLR", icon: "📷" },
+  { id: "anime", label: "🌸 Masterpiece Anime (Shinkai)", labelEn: "Anime Artwork", icon: "🌸" },
+  { id: "cyberpunk", label: "🌃 Cyberpunk Neon Futuristic", labelEn: "Cyberpunk Neon", icon: "🌃" },
+  { id: "cinematic", label: "🎬 3D Cinematic Render (Octane)", labelEn: "3D Cinematic", icon: "🎬" },
+  { id: "fantasy", label: "✨ Huyền ảo Fantasy Art", labelEn: "Mythical Fantasy", icon: "✨" },
+  { id: "oil", label: "🎨 Tranh sơn dầu cổ điển", labelEn: "Classic Oil Painting", icon: "🎨" },
+  { id: "custom", label: "🎯 Nguyên bản Prompt", labelEn: "Exact Prompt", icon: "🎯" },
 ];
 
 const PROMPT_SUGGESTIONS = [
@@ -480,65 +481,34 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
           </div>
         </div>
 
-        {/* OPTIONS: STYLE & RATIO */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-          {/* Style Selector */}
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-              {language === "en" ? "Art Style" : "Phong cách nghệ thuật"}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {STYLES.map((style) => {
-                const isSelected = selectedStyle === style.id;
-                const styleName = language === "en" && style.labelEn ? style.labelEn : style.label;
-                return (
-                  <button
-                    key={style.id}
-                    type="button"
-                    onClick={() => setSelectedStyle(style.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-sm shadow-indigo-600/30 scale-102"
-                        : "bg-slate-100 dark:bg-[#131522] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800"
-                    }`}
-                  >
-                    <span>{style.icon}</span>
-                    <span>{styleName}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Aspect Ratio */}
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-              {language === "en" ? "Aspect Ratio" : "Tỷ lệ khung hình"}
-            </label>
-            <div className="flex gap-2">
-              {[
-                { id: "1:1", labelVi: "1:1 (Vuông)", labelEn: "1:1 (Square)", icon: "◻" },
-                { id: "16:9", labelVi: "16:9 (Ngang)", labelEn: "16:9 (Landscape)", icon: "▭" },
-                { id: "9:16", labelVi: "9:16 (Dọc)", labelEn: "9:16 (Portrait)", icon: "▯" },
-              ].map((ratio) => {
-                const isSelected = aspectRatio === ratio.id;
-                return (
-                  <button
-                    key={ratio.id}
-                    type="button"
-                    onClick={() => setAspectRatio(ratio.id)}
-                    className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      isSelected
-                        ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-sm shadow-indigo-600/30 scale-102"
-                        : "bg-slate-100 dark:bg-[#131522] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800"
-                    }`}
-                  >
-                    <span>{ratio.icon}</span>
-                    <span>{language === "en" ? ratio.labelEn : ratio.labelVi}</span>
-                  </button>
-                );
-              })}
-            </div>
+        {/* OPTIONS: RATIO ONLY */}
+        <div className="mb-6">
+          <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+            {language === "en" ? "Aspect Ratio" : "Tỷ lệ khung hình"}
+          </label>
+          <div className="flex gap-2 max-w-md">
+            {[
+              { id: "1:1", labelVi: "1:1 (Vuông)", labelEn: "1:1 (Square)", icon: "◻" },
+              { id: "16:9", labelVi: "16:9 (Ngang)", labelEn: "16:9 (Landscape)", icon: "▭" },
+              { id: "9:16", labelVi: "9:16 (Dọc)", labelEn: "9:16 (Portrait)", icon: "▯" },
+            ].map((ratio) => {
+              const isSelected = aspectRatio === ratio.id;
+              return (
+                <button
+                  key={ratio.id}
+                  type="button"
+                  onClick={() => setAspectRatio(ratio.id)}
+                  className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    isSelected
+                      ? "bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-sm shadow-indigo-600/30 scale-102"
+                      : "bg-slate-100 dark:bg-[#131522] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800"
+                  }`}
+                >
+                  <span>{ratio.icon}</span>
+                  <span>{language === "en" ? ratio.labelEn : ratio.labelVi}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

@@ -82,17 +82,26 @@ export const SYSTEM_ANNOUNCEMENTS: AnnouncementItem[] = [
 interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onMarkAllAsRead?: () => void;
   announcements?: AnnouncementItem[];
 }
 
 export default function NotificationModal({
   isOpen,
   onClose,
+  onMarkAllAsRead,
   announcements = SYSTEM_ANNOUNCEMENTS,
 }: NotificationModalProps) {
   const { language } = useLanguage();
 
   if (!isOpen) return null;
+
+  const handleMarkReadAndClose = () => {
+    if (onMarkAllAsRead) {
+      onMarkAllAsRead();
+    }
+    onClose();
+  };
 
   return (
     <div
@@ -180,7 +189,7 @@ export default function NotificationModal({
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex justify-end">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleMarkReadAndClose}
             className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:opacity-95 text-white font-bold text-xs shadow-md shadow-indigo-600/30 transition-all cursor-pointer"
           >
             {language === "en" ? "Got it" : "Đã xem hết"}

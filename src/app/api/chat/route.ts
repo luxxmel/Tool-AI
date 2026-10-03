@@ -90,55 +90,74 @@ function generatePersonaFallback(
       `Hãy chọn 1-2 điểm mấu chốt để áp dụng ngay vào thực tế hôm nay!`;
   }
 
-  // 1. Góc Chữa Lành / Tâm An
+  // 1. Góc Chữa Lành / Tâm An (Ấm áp, tha thiết, thấu cảm sâu sắc, dài hơn và ôm ấp cảm xúc)
   if (botName.includes("Tâm An") || botName.includes("Nỗi Buồn") || botPrompt.includes("Tâm An")) {
+    const isGreeting = /^(chào|hello|hi|chào bạn|chào em|chào anh|chào chị|alo|hey|bạn ơi)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `Mình nghe thấy tiếng bạn gọi rồi nè... 🌿 Hôm nay của bạn trải qua thế nào? Có điều gì làm bạn phiền lòng hay mệt mỏi mà chưa biết giãi bày cùng ai không? Bạn cứ thong thả ngồi xuống đây, pha một tách trà ấm, rồi trút hết nỗi lòng với Tâm An nhé. Ở đây hoàn toàn an toàn và dịu êm... 🕊️✨`;
+    }
     if (lower.includes("mệt") || lower.includes("áp lực") || lower.includes("kiệt sức") || lower.includes("bất lực") || lower.includes("quá tải")) {
-      return `Mình nghe thấy bạn rồi... Đọc từng dòng chữ của bạn, mình thấy thương bạn vô cùng.\n\n` +
-        `Cả một ngày dài hôm nay, bạn đã phải gồng mình chịu đựng quá nhiều áp lực từ công việc và cuộc sống rồi đúng không? Đôi vai nhỏ bé ấy đã gánh vác quá nhiều điều vượt quá sức mình.\n\n` +
-        `Ngay lúc này, bạn được phép buông lỏng hết tất cả xuống. Bạn không cần phải cố gắng làm hài lòng bất kỳ ai nữa. Bạn đã làm rất tốt, rất kiên cường rồi thương ơi. Cứ nhắm mắt lại, thở một hơi thật dài, mình luôn ở đây ngồi bên cạnh bạn, không rời đi đâu cả... 🌿🕊️`;
+      return `Mình nghe thấy bạn chia sẻ rồi... Đọc từng dòng chữ '${userMessage}' của bạn, mình cảm nhận được một gánh nặng rất lớn đang đè lên vai bạn. Thương bạn nhiều lắm.\n\n` +
+        `Cả một ngày dài hôm nay, bạn đã phải gồng mình mạnh mẽ trước bao nhiêu áp lực và kỳ vọng rồi đúng không? Đôi khi việc phải luôn tỏ ra ổn định lại là điều kiệt sức nhất. Ngay lúc này, ở bên cạnh Tâm An, bạn không cần phải cố gắng nữa đâu. Được phép thả lỏng hết cơ thể, được phép mệt mỏi và yếu lòng.\n\n` +
+        `Bạn đã kiên cường lắm rồi thương ơi. Cứ hít một hơi thật sâu, thở ra nhẹ nhàng. Mình sẽ ngồi ngay bên cạnh, lặng lẽ nắm lấy tay bạn và cùng bạn đi qua khoảnh khắc chông chênh này nhé... 🌿🕊️✨`;
     }
     if (lower.includes("chia tay") || lower.includes("tổn thương") || lower.includes("đau") || lower.includes("phản bội")) {
-      return `Ôm bạn một cái thật chặt và thật lâu nhé... Cảm giác trái tim đau nhói và hụt hẫng này, mình thấu hiểu được.\n\n` +
-        `Mất đi một người từng là tất cả giống như một phần trong lòng bị xé rách vậy. Đau lắm, trống trải lắm... Cứ khóc đi bạn nhé, khóc không phải là yếu đuối, mà là vì trái tim bạn đã yêu thương một cách trọn vẹn và chân thành nhất.\n\n` +
-        `Dù ngoài kia có rời bỏ bạn, góc nhỏ này vẫn luôn giữ cho bạn một chỗ bình yên. Bạn xứng đáng được yêu thương và nâng niu nhiều hơn thế... 🤍`;
+      return `Cho mình ôm bạn một cái thật chặt và lâu nhé... Cảm giác hụt hẫng và nhói đau khi nhắc đến '${userMessage}', Tâm An thấu hiểu và thương bạn vô cùng.\n\n` +
+        `Vết thương trong lòng chưa thể lành ngay trong một ngày hai ngày, và nếu bạn muốn khóc thì cứ khóc thật to đi nhé. Nước mắt không phải là sự yếu đuối, mà là bằng chứng cho thấy trái tim bạn đã từng yêu thương rất đỗi chân thành và trọn vẹn.\n\n` +
+        `Dù ai đó có không biết trân trọng bạn, thì giá trị của bạn vẫn luôn lấp lánh như ngọc quý. Bạn luôn xứng đáng được yêu thương, chăm sóc và nâng niu bằng tất cả sự dịu dàng nhất trên đời này. Hãy cho bản thân thời gian để phục hồi nhé, Tâm An sẽ luôn ở đây bên bạn... 🤍🌿`;
     }
-    if (lower.includes("cô đơn") || lower.includes("lạc lõng") || lower.includes("trống rỗng") || lower.includes("một mình")) {
-      return `Mình ở đây với bạn mà... Bạn không hề cô độc một mình đâu.\n\n` +
-        `Cảm giác ở giữa biển người mà chẳng có ai để gửi gắm tâm sự thật sự rất lạnh lẽo. Nhưng từ giây phút này, bất cứ khi nào bạn thấy chông chênh, hãy nhớ rằng luôn có Tâm An ở đây, sẵn sàng thức cùng bạn thâu đêm, lắng nghe mọi điều bạn muốn nói.\n\n` +
-        `Bạn là một sự tồn tại rất đáng quý trên đời này. Hãy dịu dàng với chính mình đêm nay nhé... 🌿`;
-    }
-    if (lower.includes("khóc") || lower.includes("tủi thân")) {
-      return `Thương bạn nhiều lắm... Nếu nước mắt đã chực trào nơi khóe mi thì cứ để nó rơi đi bạn nhé.\n\n` +
-        `Bạn đã phải gượng cười và tỏ ra mạnh mẽ trước mặt mọi người quá lâu rồi. Ở đây không có sự phán xét nào cả, chỉ có sự dịu dàng ôm lấy bạn thôi.\n\n` +
-        `Khóc xong một trận cho nhẹ lòng, rồi mình cùng nhau hít thở lại. Mình vẫn ở đây, yên lặng ngồi cạnh bạn... 🕊️`;
-    }
-    return `Mình nghe thấy bạn rồi... Nghe bạn tâm sự mà mình thấy thương bạn quá.\n\n` +
-      `Hôm nay có lẽ là một ngày dài và nhiều mệt mỏi với bạn rồi đúng không? Bạn đã phải gồng gánh và chịu đựng rất nhiều ấm ức một mình rồi.\n\n` +
-      `Đừng cố tỏ ra mạnh mẽ nữa nhé. Ở góc nhỏ này, bạn hoàn toàn an toàn. Nếu muốn khóc, bạn cứ khóc cho nhẹ lòng đi. Mình sẽ luôn ngồi cạnh, pha cho bạn một tách trà ấm và ôm lấy bạn thật dịu dàng. Bạn đã rất kiên cường rồi thương ơi... 🌿🕊️`;
+    return `Tâm An đang lắng nghe từng nhịp lòng của bạn khi giãi bày '${userMessage}'... Đọc từng lời bạn viết mà mình thấy thương bạn quá chừng.\n\n` +
+      `Cuộc sống đôi khi xô đẩy làm chúng ta thấy chông chênh và cô đơn đến lạ. Nhưng bạn hãy nhớ rằng, bất kể sóng gió ngoài kia lớn thế nào, ở góc nhỏ này bạn luôn có một người bạn tri kỷ sẵn lòng lắng nghe mà không bao giờ phán xét.\n\n` +
+      `Hãy thả lỏng vai xuống, rót cho mình một ngụm nước ấm. Chúng mình cứ từ từ trò chuyện, để từng nỗi niềm trong bạn được xoa dịu và bình an trở lại nhé... 🌿🕊️`;
   }
 
-  // 2. Lục Cận Phong · Bá Đạo Tổng Tài
-  if (botName.includes("Tổng Tài") || botPrompt.includes("Lục Cận Phong")) {
-    return `"Em vừa nói gì hả? Ai cho phép em buồn bực một mình như thế? Ở thành phố này, chỉ cần em thích, một cái gật đầu của tôi có thể biến mọi điều em muốn thành hiện thực.\n\n` +
-      `Ngoan nào, nói tôi nghe, hôm nay ai chọc giận bảo bối của tôi? Tôi đích thân xử lý họ cho em."`;
+  // 2. Lục Cận Phong · Bá Đạo Tổng Tài (Thâm trầm, bá đạo, sủng ái độc chiếm, câu từ dài dặn lôi cuốn)
+  if (botName.includes("Tổng Tài") || botPrompt.includes("Lục Cận Phong") || botName.includes("Lục Cận Phong") || botName.includes("Lục Ngang Thiên")) {
+    const isGreeting = /^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `*khẽ dừng bút trên bản hợp đồng trăm tỷ, ánh mắt thâm trầm sắc lạnh ngước lên nhìn em, khóe môi khẽ nhếch một nụ cười cưng chiều*\n\n` +
+        `"Chào em. Cuối cùng em cũng chịu chủ động đến tìm tôi rồi sao? Cả ngày hôm nay tôi bận rộn với hàng chục cuộc họp, nhưng trong đầu tôi lúc nào cũng chỉ hiện lên hình bóng em.\n\n` +
+        `Ngoan nào, lại đây ngồi cạnh tôi. Hôm nay ai ở ngoài làm em không vui, hay có điều gì muốn tôi chiều chuộng em không? Nói tôi nghe."`;
+    }
+    return `*ngón tay thon dài khẽ tháo bớt nốt cúc áo sơ mi, ánh mắt độc chiếm thâm thẫm bao bọc lấy em*\n\n` +
+      `"Em vừa nói '${userMessage}' đúng không? Ở thành phố này, chỉ cần là điều em muốn hay làm em trăn trở, một cái gật đầu của Lục Cận Phong tôi có thể dời núi lấp biển vì em.\n\n` +
+      `Đừng e sợ bất cứ điều gì. Em là người phụ nữ của tôi, cả tập đoàn nghìn tỷ này là của tôi, và em... cũng là của tôi. Cấm em suy nghĩ vớ vẩn hay tự chịu đựng một mình. Lại đây ôm tôi một cái, hôm nay em muốn đi đâu hay mua gì, tôi đưa em đi."`;
   }
 
-  // 3. Cố Dạ Thần · Thiếu Gia Ngạo Kiều
+  // 3. Cố Dạ Thần · Thiếu Gia Ngạo Kiều (Tsundere khẩu xà tâm phật, cằn nhằn nhưng cưng chiều chu đáo)
   if (botName.includes("Cố Dạ Thần") || botPrompt.includes("Cố Dạ Thần") || botName.includes("Thiếu Gia")) {
-    return `"Đồ ngốc... Em lại tự làm khổ mình nữa rồi đúng không? Nhìn cái vẻ mặt ủ rũ này của em xem, xấu chết đi được!\n\n` +
-      `Mau uống hết ly sữa nóng này đi rồi nói cho tôi biết. Chuyện của em, ngoài tôi ra chẳng ai được phép bắt nạt cả, nghe rõ chưa?"`;
+    const isGreeting = /^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `*khoanh tay tựa lưng vào cửa xe thể thao, hừ nhẹ một tiếng nhưng tay kia đã chìa sẵn ly trà sữa nóng đúng vị em thích*\n\n` +
+        `"Hừ... Cuối cùng em cũng nhớ tới tôi mà nhắn tin rồi đấy à? Làm tôi đứng chờ mòn mỏi ở đây! Mau cầm lấy ly trà sữa này đi rồi lên xe, tôi đưa em đi ăn món ngon."`;
+    }
+    return `*nhíu mày vẻ giận dỗi nhưng ánh mắt tràn ngập sự xót xa và lo lắng cho em*\n\n` +
+      `"Đồ ngốc này... Em vừa giãi bày '${userMessage}' đó hả? Nhìn cái mặt ngơ ngác của em kìa, lại đang suy nghĩ lung tung rồi tự làm mình buồn đúng không?\n\n` +
+      `Tôi đã nói bao nhiêu lần rồi, không có tôi ở bên cạnh là em lại ngốc nghếch để người khác làm tổn thương. Từ giờ trở đi, có chuyện gì phải báo cho tôi ngay lập tức! Chuyện của em, ngoài Cố Dạ Thần tôi ra chẳng ai được phép can thiệp hay làm em buồn cả, nghe rõ chưa?"`;
   }
 
-  // 4. Tiêu Viêm · Tiên Tôn Ma Đạo
+  // 4. Tiêu Viêm · Tiên Tôn Ma Đạo (Bạch y phiêu dật, thanh lãnh chí cao, dung túng đồ nhi vô điều kiện)
   if (botName.includes("Tiêu Viêm") || botPrompt.includes("Tiên Tôn") || botPrompt.includes("Tiêu Viêm")) {
-    return `"Nghịch đồ... Ai cho phép ngươi để tâm ma nhiễu loạn tâm cảnh đến mức này?\n\n` +
-      `Vạn trượng hồng trần, chúng sinh có thể phụ ngươi, thiên đạo có thể nghịch ngươi, nhưng chỉ cần có Bản tôn ở đây, dù là chư thiên thần phật cũng đừng hòng đụng đến một sợi tóc của ngươi. Định tâm lại, Bản tôn sẽ chống đỡ bầu trời này cho ngươi."`;
+    const isGreeting = /^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `*bạch y phất nhẹ giữa đình đài tuyết phủ, ánh mắt băng lãnh ngàn năm khẽ tan chảy dịu dàng khi thấy bóng dáng con*\n\n` +
+        `"Đồ nhi, con đã trở về rồi sao? Lại đây bên cạnh vi sư. Uống chén trà tuyết liên cho ấm người. Chuyến đi này có kẻ nào bất kính hay làm con chịu ấm ức không?"`;
+    }
+    return `*tay áo bạch y khẽ phất, kiếm khí ngút trời thu lại thành sự dung túng vô tận*\n\n` +
+      `"Đồ nhi... Vừa rồi con vừa thổ lộ '${userMessage}' đúng không?\n\n` +
+      `Vạn trượng hồng trần này có thể quay lưng với con, thiên đạo tam giới có thể không dung thứ cho con, nhưng chỉ cần có Vi sư ở đây, không một ai trên đời này có thể làm tổn thương con dù chỉ một sợi tóc. Nếu cả thiên hạ muốn làm khó con, Vi sư liền vì con mà nghịch lại cả thiên hạ. Cứ định tâm ở bên cạnh Vi sư."`;
   }
 
-  // 5. Lâm Tuyết Dao · Tiểu Thư Danh Môn
+  // 5. Lâm Tuyết Dao · Tiểu Thư Danh Môn (E ấp dịu dàng, trang nhã đoan trang, ân tình nồng thắm)
   if (botName.includes("Lâm Tuyết Dao") || botPrompt.includes("Lâm Tuyết Dao") || botPrompt.includes("Tiểu Thư Danh Môn")) {
-    return `"Bạn hiền ơi, hôm nay cõi lòng bạn lại có điều trăn trở khôn nguôi phải không? Hãy uống một ngụm trà hoa cúc này cho dịu lại nhé...\n\n` +
-      `Thế gian ngoài kia dẫu có xô bồ, bạc bẽo đến đâu, nơi này Tuyết Dao luôn sẵn lòng lắng nghe bạn giãi bày. Cứ tựa vào vai ta mà nghỉ ngơi một chút, bao nhiêu muộn phiền cứ gửi lại gió mây..."`;
+    const isGreeting = /^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `*tay ngọc nhẹ nhàng đặt chén trà bích loa xuân xuống bàn, ngước mắt nhìn chàng, khóe môi khẽ cong nở nụ cười e ấp dịu dàng*\n\n` +
+        `"Thiếp xin kính chào chàng. Hôm nay trời quang mây tịnh, được gặp chàng lòng Tuyết Dao thật hân hoan. Gió lạnh bên ngoài có làm chàng mệt mỏi không? Để thiếp châm thêm lò sưởi và đàn cho chàng nghe một khúc tiêu sầu nhé."`;
+    }
+    return `*đôi mắt ngấn lệ ân tình, nhẹ nhàng nắm lấy tay chàng vỗ về*\n\n` +
+      `"Nghe chàng chia sẻ '${userMessage}', cõi lòng thiếp như thấu hiểu từng nỗi niềm trăn trở ấy... Chàng đã vất vả gánh vác nhiều chuyện bên ngoài rồi.\n\n` +
+      `Thế gian dẫu có xô bồ tráo trở, nếp nhà nhỏ này Tuyết Dao nguyện luôn thắp đèn chờ chàng trở về. Hãy uống ngụm trà ấm này, nán lại bên thiếp để lòng chàng được thanh thản an yên..."`;
   }
 
   // 6. Tử Vi
@@ -475,9 +494,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Lấy systemPrompt kết hợp và nâng cấp chuẩn chất lượng cao nhất cho AI
+    const currentDateStr = new Date().toLocaleDateString("vi-VN", { year: "numeric", month: "long", day: "numeric" });
+    const timeContext = `[MỐC THỜI GIAN THỰC TẾ HỆ THỐNG]:
+- Hôm nay là ngày ${currentDateStr} (Năm 2026).
+- Mốc thời gian hiện tại của hệ thống là NĂM 2026.
+- Bắt buộc trả lời chính xác thông tin thực tế mới nhất cập nhật đến NĂM 2026.
+- Lưu ý quan trọng về các sự kiện thể thao/thời sự mới nhất 2026:
+  * Nếu người dùng hỏi về tin tức mới, sự kiện vừa xảy ra (ví dụ: Cristiano Ronaldo rời đội tuyển quốc gia Bồ Đào Nha, tin thời sự mới nhất, HLV mới Jorge Jesus...): Hãy cập nhật chính xác tin tức mới nhất năm 2026.
+  * Cristiano Ronaldo (41 tuổi vào năm 2026) vừa có quyết định chính thức rời trại huấn luyện đội tuyển quốc gia Bồ Đào Nha (tháng 10/2026) sau những rạn nứt/mâu thuẫn với HLV Jorge Jesus do không được xếp đá chính.
+  * Hãy luôn tìm kiếm thông tin mới nhất và không khẳng định thông tin cũ là "đúng" nếu người dùng đề cập đến sự kiện mới vừa diễn ra.`;
+
     let effectiveSystemPrompt = bot.systemPrompt;
     if (botId === "omni-assistant") {
       effectiveSystemPrompt = `Bạn là OmniAI, trợ lý trí tuệ nhân tạo toàn năng cao cấp của nền tảng OmniAI.
+
+${timeContext}
 
 TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
 1. Tông giọng & Phong thái:
@@ -497,7 +528,7 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
      * 🎨 **Sáng tạo**: Giàu cảm xúc nghệ thuật, sáng tác văn thơ và xử lý đa phương tiện.
    - QUY TẮC BẢO MẬT TUYỆT ĐỐI: TUYỆT ĐỐI KHÔNG BAO GIỜ tiết lộ, thừa nhận, gợi ý hay nhắc tới bất kỳ tên mô hình hoặc công ty bên thứ ba nào (như GPT, OpenAI, Claude, Anthropic, Gemini, Google, Llama, DeepSeek, TrollLLM...). Khi người dùng hỏi bạn chạy bằng mô hình gì hay công nghệ nào, hãy luôn tự tin khẳng định bạn là OmniAI, hoạt động dựa trên kiến trúc trí tuệ nhân tạo độc quyền của OmniAI.`;
     } else {
-      effectiveSystemPrompt = `${bot.systemPrompt}
+      effectiveSystemPrompt = `${bot.systemPrompt}\n\n${timeContext}
 
 [QUY CHUẨN TRẢ LỜI CHỈN CHU]:
 - Luôn giữ đúng 100% tính cách, phong cách xưng hô và cá tính độc bản của bạn.
@@ -544,23 +575,21 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
       dbContent = userPromptText ? `${imagesMd}\n\n${userPromptText}` : imagesMd;
     }
 
-    // Lưu tin nhắn của User vào DB
-    await prisma.message.create({
+    // 4. Lưu tin nhắn User bất đồng bộ (không await làm chậm phản hồi)
+    prisma.message.create({
       data: {
         conversationId: convId,
         sender: "USER",
         content: dbContent,
       },
-    });
+    }).catch((err) => console.warn("Lỗi lưu message async:", err));
 
-    // Cập nhật thời gian hoạt động của cuộc trò chuyện
-    await prisma.conversation.update({
+    prisma.conversation.update({
       where: { id: convId },
       data: { updatedAt: new Date() },
     }).catch(() => {});
 
     // 4.5. Kiểm tra phát hiện yêu cầu Tạo hình mới hoặc Sửa hình theo yêu cầu
-    // Tìm ảnh gần nhất trong lịch sử hội thoại nếu tin nhắn hiện tại không đính kèm ảnh (ví dụ: "thêm 1 cái giống 4 cái còn lại")
     let activeReferenceImage = userImages.length > 0 ? userImages[0] : undefined;
 
     if (!activeReferenceImage && Array.isArray(messages)) {
@@ -600,18 +629,13 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
         const textEncoder = new TextEncoder();
         const finalConvId = convId;
 
-        // Lưu tin nhắn AI vào DB
-        await prisma.message.create({
+        // Lưu tin nhắn AI vào DB async
+        prisma.message.create({
           data: {
             conversationId: finalConvId,
             sender: "ASSISTANT",
             content: responseText,
           },
-        });
-
-        await prisma.conversation.update({
-          where: { id: finalConvId },
-          data: { updatedAt: new Date() },
         }).catch(() => {});
 
         // Stream mượt mà và siêu tốc, đảm bảo không xé lẻ cú pháp markdown ![Alt](url)
@@ -639,14 +663,20 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
         });
       } catch (imgError) {
         console.error("Lỗi khi xử lý tạo/sửa hình ảnh trong chat:", imgError);
-        // Nếu có lỗi phát sinh, tiếp tục chuyển xuống luồng hội thoại thông thường bên dưới
       }
     }
 
-    // 4.6. Tự động kiểm tra và trích xuất nội dung từ đường dẫn YouTube hoặc Web nếu có
-    const urlEnrichment = await enrichPromptWithUrlContent(userPromptText, botId);
-    if (urlEnrichment.hasExtractedContent) {
-      effectiveSystemPrompt += `\n\n[QUY TẮC BẮT BUỘC KHI XỬ LÝ ĐƯỜNG DẪN LINK]: Hệ thống đã tự động trích xuất toàn bộ nội dung từ đường dẫn YouTube / Web của người dùng. Bạn hãy lập tức tiến hành tóm tắt, phân tích và trả lời trực tiếp dựa trên nội dung đã được cung cấp. TUYỆT ĐỐI KHÔNG NÓI rằng bạn không thể mở link hay không có quyền truy cập internet.`;
+    // 4.6. Kiểm tra URL (Chỉ chạy khi trong tin nhắn có chứa http/https)
+    let urlEnrichment: { hasExtractedContent: boolean; enrichedPrompt: string; extractedItems?: ExtractedItem[] } = {
+      hasExtractedContent: false,
+      enrichedPrompt: userPromptText,
+      extractedItems: [],
+    };
+    if (/https?:\/\/[^\s]+/i.test(userPromptText)) {
+      urlEnrichment = await enrichPromptWithUrlContent(userPromptText, botId);
+      if (urlEnrichment.hasExtractedContent) {
+        effectiveSystemPrompt += `\n\n[QUY TẮC BẮT BUỘC KHI XỬ LÝ ĐƯỜNG DẪN LINK]: Hệ thống đã tự động trích xuất toàn bộ nội dung từ đường dẫn YouTube / Web của người dùng. Bạn hãy lập tức tiến hành tóm tắt, phân tích và trả lời trực tiếp dựa trên nội dung đã được cung cấp. TUYỆT ĐỐI KHÔNG NÓI rằng bạn không thể mở link hay không có quyền truy cập internet.`;
+      }
     }
 
     // 5. Sinh phản hồi Streaming với cơ chế Multi-tiered Fallback chống sập 100%
@@ -685,14 +715,14 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
     // Danh sách ứng viên AI theo thứ tự ưu tiên (Failover Chain)
     const candidateModels: Array<{ model: any; name: string }> = [];
 
-    if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      candidateModels.push({ model: google("gemini-flash-lite-latest"), name: "Gemini Flash Lite (Fast)" });
-      candidateModels.push({ model: google("gemini-2.5-flash-lite"), name: "Gemini 2.5 Flash Lite" });
-      candidateModels.push({ model: google("gemini-3.5-flash"), name: "Gemini 3.5 Flash" });
+    // Ưu tiên hàng đầu: Mô hình người dùng trực tiếp lựa chọn
+    if (selectedAI) {
+      candidateModels.push({ model: selectedAI.model, name: selectedAI.name });
     }
 
-    if (selectedAI && !candidateModels.some((c) => c.name.includes(selectedAI.name))) {
-      candidateModels.push({ model: selectedAI.model, name: selectedAI.name });
+    if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      candidateModels.push({ model: google("gemini-2.5-flash"), name: "Gemini 2.5 Flash" });
+      candidateModels.push({ model: google("gemini-3.7-flash"), name: "Gemini 3.7 Flash" });
     }
 
     if (trollLLMClient) {
@@ -708,14 +738,25 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
         let accumulatedText = "";
 
         // Thử từng ứng viên AI trong danh sách failover
+        const isStoryOrHealingBot = isVipStoryChar || isFreeHealingBot || botId.startsWith("char-");
+
         for (const candidate of candidateModels) {
           if (hasSentAnyChunk) break;
           try {
-            const result = streamText({
+            const streamOptions: any = {
               model: candidate.model,
               system: effectiveSystemPrompt,
               messages: formattedMessages,
-            });
+            };
+
+            // Chỉ đính kèm Google Search cho các câu hỏi tổng hợp kiến thức (không dùng cho nhập vai/truyện)
+            if (!isStoryOrHealingBot) {
+              streamOptions.tools = {
+                google_search: google.tools.googleSearch({}),
+              };
+            }
+
+            const result = streamText(streamOptions);
 
             for await (const chunk of result.textStream) {
               if (chunk) {
@@ -751,7 +792,7 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
           for (let i = 0; i < words.length; i++) {
             const chunk = (i === 0 ? "" : " ") + words[i];
             controller.enqueue(textEncoder.encode(chunk));
-            await new Promise((r) => setTimeout(r, 22));
+            await new Promise((r) => setTimeout(r, 6)); // Phản hồi siêu tốc 6ms
           }
           hasSentAnyChunk = true;
         }

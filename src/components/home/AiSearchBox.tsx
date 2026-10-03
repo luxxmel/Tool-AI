@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import {
   AI_MODELS,
   TRENDING_QUESTIONS,
@@ -143,34 +144,142 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
 
   return (
     <div ref={containerRef} className="w-full mx-auto flex flex-col items-center relative z-20">
-      {/* Big Center Headline */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/25 text-indigo-600 dark:text-cyan-300 text-xs font-semibold mb-3 shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-          <span>{language === "en" ? "OmniAI Core Intelligence" : "Trí tuệ Nhân tạo Đa nhiệm Toàn diện"}</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">
+      {/* Big Center Hero Section */}
+      <div className="text-center mb-8 relative">
+        {/* Glow Aura Background Effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-48 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-cyan-500/20 blur-3xl pointer-events-none rounded-full animate-pulse"></div>
+
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight transition-all leading-tight">
           {language === "en" ? (
             <>
-              Explore Knowledge &{" "}
-              <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent italic font-black">
-                Unlimited Creativity
+              Ask anything you don't know,{" "}
+              <span className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent font-black drop-shadow-sm">
+                because I know everything
               </span>
             </>
           ) : (
             <>
-              Khai phóng tri thức &{" "}
-              <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent italic font-black">
-                Sáng tạo vượt trội
+              Hãy hỏi những điều bạn không biết{" "}
+              <span className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent font-black drop-shadow-sm block sm:inline mt-1 sm:mt-0">
+                vì tôi cái gì cũng biết
               </span>
             </>
           )}
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-2.5 max-w-xl mx-auto transition-colors leading-relaxed">
+        <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base mt-3 max-w-2xl mx-auto transition-colors leading-relaxed font-medium">
           {language === "en"
-            ? "Your high-performance AI workspace for conversational intellect, multimodal generation, and deep problem-solving."
-            : "Không gian làm việc AI chuyên sâu giúp bạn giải quyết bài toán khó, tạo ý tưởng, viết code và phân tích dữ liệu đa chiều."}
+            ? "Your ultimate AI assistant ready to answer all questions, solve code, generate images, and assist your daily tasks."
+            : "Trợ lý AI đa nhiệm luôn sẵn sàng giải đáp mọi thắc mắc, viết code, tạo hình ảnh và hỗ trợ bạn trong mọi công việc."}
         </p>
+      </div>
+
+      {/* OmniAI Custom Cyber-Bento Feature Suite (Đưa lên trên SearchBox - Không bao giờ bị chèn đè) */}
+      <div className="w-full mb-4">
+        <div className="flex items-center justify-between px-1 mb-2">
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+            {language === "en" ? "Omni Special Engines" : "Bộ Công Cụ Độc Quyền OmniAI"}
+          </span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+            v3.5 Supermind
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {[
+            {
+              name: "🔮 Tarot & Bói Bài",
+              desc: "Luận giải số mệnh",
+              tab: "tarot",
+              tag: "HOT",
+              style: "from-purple-950/80 via-indigo-950/60 to-slate-900/90 border-purple-500/30 hover:border-purple-400/80 shadow-purple-500/10 text-purple-300",
+              tagColor: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+              prompt: "",
+            },
+            {
+              name: "🌙 Tử Vi & Chiêm Tinh",
+              desc: "Lá số hoàng đạo",
+              tab: "tarot",
+              tag: "BÓI",
+              style: "from-blue-950/80 via-cyan-950/60 to-slate-900/90 border-cyan-500/30 hover:border-cyan-400/80 shadow-cyan-500/10 text-cyan-300",
+              tagColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+              prompt: "Lập lá số Tử Vi và Chiêm Tinh hoàng đạo cho tôi: ",
+            },
+            {
+              name: "🌿 Góc Chữa Lành",
+              desc: "Tâm sự giải tỏa",
+              tab: "healing",
+              tag: "ASMR",
+              style: "from-emerald-950/80 via-teal-950/60 to-slate-900/90 border-emerald-500/30 hover:border-emerald-400/80 shadow-emerald-500/10 text-emerald-300",
+              tagColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+              prompt: "",
+            },
+            {
+              name: "🎨 Studio AI 8K",
+              desc: "Tạo ảnh DSLR",
+              tab: "images",
+              tag: "PRO",
+              style: "from-rose-950/80 via-pink-950/60 to-slate-900/90 border-pink-500/30 hover:border-pink-400/80 shadow-pink-500/10 text-pink-300",
+              tagColor: "bg-pink-500/20 text-pink-300 border-pink-500/40",
+              prompt: "",
+            },
+            {
+              name: "💬 Trợ Lý Nhân Vật",
+              desc: "Roleplay & Tâm sự",
+              tab: "explore",
+              tag: "BOT",
+              style: "from-amber-950/80 via-orange-950/60 to-slate-900/90 border-amber-500/30 hover:border-amber-400/80 shadow-amber-500/10 text-amber-300",
+              tagColor: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+              prompt: "",
+            },
+            {
+              name: "🔊 Giọng Nói Neural",
+              desc: "Chuyển Văn bản - Giọng",
+              tab: "audio",
+              tag: "TTS",
+              style: "from-violet-950/80 via-fuchsia-950/60 to-slate-900/90 border-violet-500/30 hover:border-violet-400/80 shadow-violet-500/10 text-violet-300",
+              tagColor: "bg-violet-500/20 text-violet-300 border-violet-500/40",
+              prompt: "",
+            },
+          ].map((item, idx) => {
+            const isDirectTab = item.tab !== "home" && !item.prompt;
+            const Component = isDirectTab ? Link : "button";
+            const extraProps = isDirectTab
+              ? { href: `/?tab=${item.tab}` }
+              : {
+                  type: "button" as const,
+                  onClick: () => {
+                    if (item.prompt) {
+                      setPrompt(item.prompt);
+                      textareaRef.current?.focus();
+                    }
+                  },
+                };
+
+            return (
+              <Component
+                key={idx}
+                {...(extraProps as any)}
+                className={`p-2.5 rounded-xl bg-gradient-to-br ${item.style} border backdrop-blur-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-lg group flex flex-col justify-between cursor-pointer text-left relative overflow-hidden`}
+              >
+                {/* Background Micro Glow */}
+                <div className="absolute -top-8 -right-8 w-16 h-16 bg-white/5 blur-xl pointer-events-none rounded-full group-hover:bg-white/15 transition-all" />
+
+                <div className="flex items-center justify-between gap-1 mb-1 relative z-10">
+                  <span className="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors truncate">
+                    {item.name}
+                  </span>
+                  <span className={`text-[8px] font-black px-1.5 py-0.2 rounded border ${item.tagColor} shrink-0`}>
+                    {item.tag}
+                  </span>
+                </div>
+                <span className="text-[10px] text-slate-400 group-hover:text-slate-200 transition-colors relative z-10 truncate">
+                  {item.desc}
+                </span>
+              </Component>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Search/Prompt Box Container */}
@@ -179,8 +288,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
         onDrop={handleDrop}
         className={`w-full bg-white/90 dark:bg-[#0c0e17]/90 backdrop-blur-2xl rounded-2xl border transition-all duration-300 shadow-xl relative ${
           isFocused
-            ? "border-indigo-500/70 shadow-2xl shadow-indigo-500/20 ring-2 ring-indigo-500/30"
-            : "border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/50 dark:hover:border-slate-700/90"
+            ? "border-indigo-500/70 shadow-2xl shadow-indigo-500/20 ring-2 ring-indigo-500/30 z-30"
+            : "border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/50 dark:hover:border-slate-700/90 z-20"
         }`}
       >
         {/* Quick Mode/Task Chips (Gợi ý tác vụ nhanh) */}

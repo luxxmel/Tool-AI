@@ -48,12 +48,19 @@ export default function AppSidebar({
   const { theme, toggleTheme } = useTheme();
   const { t, language } = useLanguage();
   const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
+  const [showCatalogInFlyout, setShowCatalogInFlyout] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("account");
   const [isRechargeOpen, setIsRechargeOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("omni_notifications_read") !== "true";
+    }
+    return true;
+  });
 
   // Chỉ hiển thị các tính năng/tab Quản trị cho tài khoản Admin
   const isAdmin = Boolean(isAuthenticated && user && (user.role?.toLowerCase() === "admin"));
@@ -93,7 +100,6 @@ export default function AppSidebar({
       id: "characters",
       label: t("nav.characters"),
       href: "/?tab=characters",
-      badge: "VIP",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -135,7 +141,6 @@ export default function AppSidebar({
       id: "tools",
       label: t("nav.tools"),
       href: "/?tab=tools",
-      badge: "PRO",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -173,8 +178,12 @@ export default function AppSidebar({
             title="Thông báo hệ thống"
           >
             <span className="text-sm">🔔</span>
-            <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+            {hasUnreadNotifications && (
+              <>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+              </>
+            )}
           </button>
 
           <button
@@ -210,19 +219,19 @@ export default function AppSidebar({
       >
         <div>
           {/* Brand Logo & Theme Toggle */}
-          <div className="flex items-center justify-between px-2.5 py-3 mb-3">
-            <Link href="/" className="flex items-center gap-2.5 group cursor-pointer">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+          <div className="flex items-center justify-between px-2 py-3 mb-3 gap-2">
+            <Link href="/" className="flex items-center gap-2 group cursor-pointer shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
                 </svg>
               </div>
-              <span className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+              <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight shrink-0">
                 omni<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.ai</span>
               </span>
             </Link>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               {/* Collapse button for desktop */}
               {onToggleCollapse && (
                 <button
@@ -245,8 +254,12 @@ export default function AppSidebar({
                 title="Xem thông báo hệ thống"
               >
                 <span>🔔</span>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+                {hasUnreadNotifications && (
+                  <>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+                  </>
+                )}
               </button>
 
               {/* Quick Theme Toggle Button */}
@@ -272,8 +285,14 @@ export default function AppSidebar({
                     key={item.id}
                     type="button"
                     data-nav-id="assistants"
-                    onClick={() => {
-                      setIsFlyoutOpen(!isFlyoutOpen);
+                    onClick={(e: any) => {
+                      if (e?.detail === "catalog" || e?.target?.getAttribute?.("data-open-catalog") === "true") {
+                        setShowCatalogInFlyout(true);
+                        setIsFlyoutOpen(true);
+                      } else {
+                        setShowCatalogInFlyout(false);
+                        setIsFlyoutOpen(!isFlyoutOpen);
+                      }
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                       isActive || isFlyoutOpen
@@ -522,7 +541,11 @@ export default function AppSidebar({
       {/* Flyout Submenu for Trợ lý */}
       <AssistantsFlyout
         isOpen={isFlyoutOpen}
-        onClose={() => setIsFlyoutOpen(false)}
+        initialShowCatalog={showCatalogInFlyout}
+        onClose={() => {
+          setIsFlyoutOpen(false);
+          setShowCatalogInFlyout(false);
+        }}
         onSelectAssistant={onSelectAssistant}
       />
 
@@ -543,6 +566,12 @@ export default function AppSidebar({
       <NotificationModal
         isOpen={isNotificationOpen}
         onClose={() => setIsNotificationOpen(false)}
+        onMarkAllAsRead={() => {
+          setHasUnreadNotifications(false);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("omni_notifications_read", "true");
+          }
+        }}
       />
     </>
   );

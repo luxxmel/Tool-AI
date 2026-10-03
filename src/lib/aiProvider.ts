@@ -67,7 +67,7 @@ export type AvailableModel = typeof AVAILABLE_MODELS[number];
 export function getAIModel(modelOrBrainId?: string) {
   const normalizedId = (modelOrBrainId || "fast").toLowerCase().trim();
 
-  // 1. BỘ NÃO SUY NGHĨ NHANH: Gemini Flash Lite cực nhanh (~1s), ổn định, quota dồi dào
+  // 1. BỘ NÃO SUY NGHĨ NHANH: Gemini 2.5 Flash - Phản hồi siêu tốc (~1s), thông minh và chính xác tuyệt đối
   if (
     normalizedId === "fast" ||
     normalizedId === "gpt-5.5" ||
@@ -76,8 +76,8 @@ export function getAIModel(modelOrBrainId?: string) {
   ) {
     if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       return {
-        model: google("gemini-flash-lite-latest"),
-        modelId: "gemini-flash-lite-latest",
+        model: google("gemini-2.5-flash"),
+        modelId: "gemini-2.5-flash",
         modeId: "fast",
         name: "Suy nghĩ nhanh",
       };
@@ -92,7 +92,7 @@ export function getAIModel(modelOrBrainId?: string) {
     }
   }
 
-  // 2. BỘ NÃO SUY LUẬN SÂU: Gemini 3.5 Flash hoặc Claude Sonnet 4.5 VIP chất lượng đỉnh cao
+  // 2. BỘ NÃO SUY LUẬN SÂU: Gemini 3.7 Flash / 3.5 Flash - Tư duy đỉnh cao & độ chính xác tri thức tuyệt đối
   if (
     normalizedId === "deep" ||
     normalizedId === "claude-sonnet-4.5" ||
@@ -104,23 +104,24 @@ export function getAIModel(modelOrBrainId?: string) {
   ) {
     if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       return {
-        model: google("gemini-3.5-flash"),
-        modelId: "gemini-3.5-flash",
+        model: google("gemini-3.7-flash"),
+        modelId: "gemini-3.7-flash",
         modeId: "deep",
         name: "Suy luận sâu",
       };
     }
     if (trollLLMClient) {
       return {
-        model: trollLLMClient("claude-sonnet-4.5"),
-        modelId: "claude-sonnet-4.5",
+        model: trollLLMClient("gemini-3-7-flash"),
+        modelId: "gemini-3-7-flash",
         modeId: "deep",
+        modeName: "Suy luận sâu",
         name: "Suy luận sâu",
       };
     }
   }
 
-  // 3. BỘ NÃO SÁNG TẠO: Gemini văn phong nghệ thuật, sáng tạo
+  // 3. BỘ NÃO SÁNG TẠO: Gemini 2.5 Flash văn phong nghệ thuật, phong phú
   if (
     normalizedId === "creative" ||
     normalizedId === "gemini-2.5-flash" ||
@@ -130,8 +131,8 @@ export function getAIModel(modelOrBrainId?: string) {
   ) {
     if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       return {
-        model: google("gemini-flash-lite-latest"),
-        modelId: "gemini-flash-lite-latest",
+        model: google("gemini-2.5-flash"),
+        modelId: "gemini-2.5-flash",
         modeId: "creative",
         name: "Sáng tạo",
       };
@@ -141,8 +142,8 @@ export function getAIModel(modelOrBrainId?: string) {
   // 4. Default Fallbacks
   if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return {
-      model: google("gemini-flash-lite-latest"),
-      modelId: "gemini-flash-lite-latest",
+      model: google("gemini-2.5-flash"),
+      modelId: "gemini-2.5-flash",
       modeId: "fast",
       name: "Suy nghĩ nhanh",
     };

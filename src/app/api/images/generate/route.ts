@@ -68,18 +68,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Tinh chỉnh và Nâng cấp Prompt bằng AI
-    // Mục tiêu tối thượng: Trung thành 100% với chủ thể người dùng yêu cầu, không tự ý biến tấu thành nghệ thuật kỳ lạ!
+    // 2. Tinh chỉnh và Nâng cấp Prompt bằng AI (Ưu tiên Gemini 3.7 Flash)
     let enhancedPrompt = prompt.trim();
-    const styleModifier = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
+    
+    // Nếu chọn phong cách "realistic" (Chân thực / Nhiếp ảnh DSLR), tự động "độn" các từ khóa ép buộc nhiếp ảnh cực mạnh
+    if (style === "realistic") {
+      enhancedPrompt += ", raw photo, hyper-realistic portrait, authentic photograph, highly detailed skin texture, visible skin pores, fine details, natural soft lighting, shot on 85mm lens, DSLR, sharp focus, 8k uhd, unedited photograph";
+    } else {
+      const styleModifier = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
+      enhancedPrompt += `, ${styleModifier}`;
+    }
 
     const hasGoogleKey = Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
-    const GEMINI_IMAGE_BRAINS = ["gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-3.7-flash"];
+    const GEMINI_IMAGE_BRAINS = ["gemini-3.7-flash", "gemini-2.5-flash", "gemini-flash-lite-latest"];
 
     if (hasGoogleKey) {
       try {
         if (referenceImage && typeof referenceImage === "string") {
-          // Xử lý Image-to-Image qua Gemini Vision
+          // Xử lý Image-to-Image qua Gemini 3.7 Flash Vision
           let visionText = "";
           for (const modelId of GEMINI_IMAGE_BRAINS) {
             try {
@@ -91,16 +97,16 @@ export async function POST(request: NextRequest) {
                     content: [
                       {
                         type: "text",
-                        text: `You are an expert AI prompt engineer.
-Analyze this reference image and the user's instruction: "${prompt}".
-Artistic style requirements: "${styleModifier}".
+                        text: `You are an elite photorealistic image prompt engineer specializing in human identity preservation and raw portrait photography.
+Analyze this person's reference photo and the user's instruction: "${prompt}".
 
-Create a precise visual prompt in English that:
-1. Translates the user's exact instruction accurately.
-2. Preserves the main subject, structure, or content from the reference image.
-3. Applies only the requested style parameters (${styleModifier}).
-4. Keep it concise (under 50 words). Do NOT add random sci-fi, fantasy, or artistic elements unless requested.
-Return ONLY the final prompt without quotes or intro text.`,
+Create a highly detailed visual prompt in English that:
+1. PRESERVES THE EXACT FACIAL IDENTITY: Describe the person's precise face shape, eye shape, eyebrows, nose bridge, lips, skin undertone, hairstyle, and hair color from the reference photo in vivid detail.
+2. Fulfills the user's request (e.g. if user asks to transform, adapt style, or place in a scene).
+3. Strictly specifies a REAL LIFE DSLR PHOTO: "authentic raw photograph of a real person, realistic skin texture with visible skin pores, natural ambient window lighting, shot on 35mm lens at f/1.8, 8k resolution, crisp focus, unedited authentic photo".
+4. STRICTLY PROHIBITS 3D render, cartoon, anime, drawing, painting, smooth plastic skin filter, or digital illustration.
+
+Return ONLY the final detailed English prompt without quotes or intro text.`,
                       },
                       {
                         type: "image",
@@ -123,21 +129,20 @@ Return ONLY the final prompt without quotes or intro text.`,
             enhancedPrompt = visionText;
           }
         } else {
-          // Text-to-Image: Phân tích chủ thể chính xác
+          // Text-to-Image: Phân tích chủ thể chính xác qua Gemini 3.7 Flash
           let textPrompt = "";
           for (const modelId of GEMINI_IMAGE_BRAINS) {
             try {
               const aiPromptRes = await generateText({
                 model: google(modelId),
-                system: `You are an accurate English translator and image prompt generator.
+                system: `You are an expert English translator and photorealistic image prompt engineer equivalent to Google Gemini Imagen 3.
 CRITICAL INSTRUCTIONS:
-1. Translate the user's Vietnamese request into clear, accurate English describing EXACTLY what they asked for.
-2. Example: If the user says "tạo cho t 1 tấm hình về loading bay nhà xưởng", the prompt MUST describe a "factory loading bay, industrial warehouse loading dock, trucks and cargo bay".
-3. Do NOT add cyberpunk, neon, anime, or fantasy themes UNLESS the user explicitly selected or asked for it.
-4. Append style details: ${styleModifier}.
-5. Keep prompt concise and under 40 words.
-6. Return ONLY the final English prompt without any extra quotes or commentary.`,
-                prompt: `User request: "${prompt}"\nStyle: "${styleModifier}"`,
+1. Understand the user's intent clearly even if phrased as a question (e.g. "tạo 1 ảnh về loading bay nhà xưởng là gì" -> generate an industrial logistics warehouse loading bay with semi-trucks, container trailers, forklifts loading cargo, clear signage, daytime photo).
+2. Create a rich, vivid, photorealistic scene description in English (around 35-50 words). Describe real-world architectural elements, vehicles, equipment, lighting, and environment.
+3. Include high-quality photography terms: "high-resolution DSLR photography, realistic textures, natural daylight, authentic real-life scene, 8k crisp detail".
+4. STRICTLY AVOID cartoon, 3D render, digital painting, or smooth plastic textures.
+5. Return ONLY the final English prompt without any quotes or commentary.`,
+                prompt: `User request: "${prompt}"`,
               });
               if (aiPromptRes?.text?.trim()) {
                 textPrompt = aiPromptRes.text.trim();
@@ -154,20 +159,54 @@ CRITICAL INSTRUCTIONS:
         }
       } catch (geminiError) {
         console.warn("Lỗi AI nâng cấp prompt:", geminiError);
-        enhancedPrompt = `${prompt.trim()}, ${styleModifier}`;
+        enhancedPrompt = prompt.trim();
       }
     } else {
-      enhancedPrompt = `${prompt.trim()}, ${styleModifier}`;
+      enhancedPrompt = prompt.trim();
+    }
+
+    // Đảm bảo LUÔN LUÔN độn từ khóa DSLR nhiếp ảnh cực mạnh sau khi Gemini xử lý xong
+    if (style === "realistic" && !enhancedPrompt.includes("raw photo")) {
+      enhancedPrompt += ", raw photo, hyper-realistic portrait, highly detailed skin texture, skin pores, natural lighting, 8k uhd, unedited photograph, shot on 85mm lens, DSLR, sharp focus, authentic real life photo";
     }
 
     // 3. Tính toán kích thước theo tỷ lệ
     const dims = ASPECT_RATIO_DIMS[aspectRatio] || { width: 1024, height: 1024 };
     const seed = Math.floor(Math.random() * 9999999);
 
-    // 4. Tạo URL thông qua proxy nội bộ
-    const imageUrl = `/api/images/proxy?prompt=${encodeURIComponent(
+    // Nếu có ảnh tham chiếu (base64), lưu thành file ảnh thật để tạo public URL cho Pollinations Image-to-Image
+    let publicRefImageUrl = "";
+    if (referenceImage && typeof referenceImage === "string" && referenceImage.startsWith("data:image")) {
+      try {
+        const fs = await import("fs");
+        const path = await import("path");
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        
+        const base64Data = referenceImage.replace(/^data:image\/\w+;base64,/, "");
+        const fileName = `ref-${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+        const filePath = path.join(uploadsDir, fileName);
+        fs.writeFileSync(filePath, Buffer.from(base64Data, "base64"));
+        
+        // Host protocol & domain
+        const host = request.headers.get("host") || "localhost:3000";
+        const protocol = request.headers.get("x-forwarded-proto") || "http";
+        publicRefImageUrl = `${protocol}://${host}/uploads/${fileName}`;
+      } catch (err) {
+        console.warn("Lỗi lưu ảnh tham chiếu:", err);
+      }
+    }
+
+    // Tạo URL thông qua proxy nội bộ
+    let imageUrl = `/api/images/proxy?prompt=${encodeURIComponent(
       enhancedPrompt
     )}&width=${dims.width}&height=${dims.height}&seed=${seed}`;
+
+    if (publicRefImageUrl) {
+      imageUrl += `&image=${encodeURIComponent(publicRefImageUrl)}`;
+    }
 
     return NextResponse.json({
       id: `img-${Date.now()}`,

@@ -6,6 +6,7 @@ import CreatePostModal from "./CreatePostModal";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
+import Link from "next/link";
 
 interface ExploreFeedProps {
   onOpenLoginModal: () => void;
@@ -643,25 +644,30 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                     {/* Author row */}
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <img
-                            src={post.author.avatar}
-                            alt={post.author.name}
-                            className="w-9 h-9 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
-                          />
-                          {post.author.isVip && (
-                            <span className="absolute -bottom-0.5 -right-0.5 text-[9px] bg-amber-400 rounded-full w-3.5 h-3.5 flex items-center justify-center">⭐</span>
-                          )}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-slate-900 dark:text-white">{post.author.name}</span>
+                        <Link
+                          href={`/?tab=profile&userId=${(post.author as any)?.id || (post as any).authorId || ""}`}
+                          className="flex items-center gap-3 group/author cursor-pointer"
+                        >
+                          <div className="relative">
+                            <img
+                              src={post.author.avatar}
+                              alt={post.author.name}
+                              className="w-9 h-9 rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 group-hover/author:border-cyan-400 transition-colors"
+                            />
                             {post.author.isVip && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40">VIP</span>
+                              <span className="absolute -bottom-0.5 -right-0.5 text-[9px] bg-amber-400 rounded-full w-3.5 h-3.5 flex items-center justify-center">⭐</span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400">@{post.author.username} • {post.createdAt}</div>
-                        </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-bold text-slate-900 dark:text-white group-hover/author:text-cyan-400 transition-colors">{post.author.name}</span>
+                              {post.author.isVip && (
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40">VIP</span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-slate-400">@{post.author.username} • {post.createdAt}</div>
+                          </div>
+                        </Link>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -924,17 +930,25 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                                     key={comment.id}
                                     className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-xs"
                                   >
-                                    <img
-                                      src={comment.user.avatar}
-                                      alt={comment.user.name}
-                                      className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5 border border-slate-200 dark:border-slate-700"
-                                    />
+                                    <Link
+                                      href={`/?tab=profile&userId=${comment.userId || ""}`}
+                                      className="shrink-0 group/commenter"
+                                    >
+                                      <img
+                                        src={comment.user.avatar}
+                                        alt={comment.user.name}
+                                        className="w-7 h-7 rounded-full object-cover mt-0.5 border border-slate-200 dark:border-slate-700 group-hover/commenter:border-cyan-400 transition-colors"
+                                      />
+                                    </Link>
                                     <div className="flex-1 min-w-0">
                                       <div className="flex items-center justify-between gap-1 mb-0.5">
                                         <div className="flex items-center gap-1.5">
-                                          <span className="font-bold text-slate-900 dark:text-white truncate">
+                                          <Link
+                                            href={`/?tab=profile&userId=${comment.userId || ""}`}
+                                            className="font-bold text-slate-900 dark:text-white truncate hover:text-cyan-400 transition-colors"
+                                          >
                                             {comment.user.name}
-                                          </span>
+                                          </Link>
                                           {comment.user.role === "VIP" && (
                                             <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-500 font-bold">
                                               VIP
@@ -1130,11 +1144,11 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
             ) : (
               <div className="flex flex-col gap-3">
                 {topContributors.map((c, i) => (
-                  <div
+                  <Link
                     key={c.id || c.username}
-                    onClick={() => setSearchQuery(c.name)}
+                    href={`/?tab=profile&userId=${c.id || ""}`}
                     className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group"
-                    title={language === "en" ? `Click to view all posts by ${c.name}` : `Bấm để xem tất cả bài viết của ${c.name}`}
+                    title={language === "en" ? `View ${c.name}'s profile` : `Xem trang cá nhân của ${c.name}`}
                   >
                     <span
                       className={`text-xs font-black w-4 text-center ${
@@ -1167,7 +1181,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                         {c.posts} {language === "en" ? "posts" : "bài"} • {c.badge}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

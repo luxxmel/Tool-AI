@@ -281,28 +281,155 @@ export default function AiToolsStudio() {
   const [promptResult, setPromptResult] = useState<string>("");
   const [isCrafting, setIsCrafting] = useState(false);
 
+  // Progress bar loading state for tool generation
+  const [progress, setProgress] = useState(0);
+
+  const isAnyGenerating =
+    isGeneratingTiktok ||
+    isGeneratingAd ||
+    isGeneratingShopee ||
+    isGeneratingSeo ||
+    isGeneratingPod ||
+    isGeneratingDig ||
+    isSummarizing ||
+    isRewriting ||
+    isCrafting;
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isAnyGenerating) {
+      setProgress(5);
+      interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 92) return 92;
+          const diff = Math.random() * 8 + 3;
+          return Math.min(92, prev + diff);
+        });
+      }, 250);
+    } else {
+      if (progress > 0) {
+        setProgress(100);
+        const timer = setTimeout(() => {
+          setProgress(0);
+        }, 600);
+        return () => clearTimeout(timer);
+      }
+    }
+    return () => clearInterval(interval);
+  }, [isAnyGenerating]);
+
+  // Persistent History State for each tool (stored in sessionStorage)
+  interface HistoryItem {
+    id: string;
+    toolId: ToolType;
+    input: string;
+    result: string;
+    timestamp: string;
+  }
+  const [toolHistory, setToolHistory] = useState<Record<string, HistoryItem[]>>({});
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  // Browser TTS voices
+  // Load state from sessionStorage on mount
   useEffect(() => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      const loadVoices = () => {
-        const available = window.speechSynthesis.getVoices();
-        setVoices(available);
-        const vietnameseVoice = available.find((v) => v.lang.includes("vi"));
-        if (vietnameseVoice) {
-          setSelectedVoice(vietnameseVoice.name);
-        } else if (available.length > 0) {
-          setSelectedVoice(available[0].name);
-        }
-      };
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-      return () => {
-        window.speechSynthesis.cancel();
-      };
+    try {
+      const storedHistory = sessionStorage.getItem("omni_tools_history");
+      if (storedHistory) setToolHistory(JSON.parse(storedHistory));
+
+      const storedResults = sessionStorage.getItem("omni_tools_results");
+      if (storedResults) {
+        const parsed = JSON.parse(storedResults);
+        if (parsed.tiktok) setTiktokResult(parsed.tiktok);
+        if (parsed.ad) setAdResult(parsed.ad);
+        if (parsed.shopee) setShopeeResult(parsed.shopee);
+        if (parsed.seo) setSeoResult(parsed.seo);
+        if (parsed.pod) setPodResult(parsed.pod);
+        if (parsed.dig) setDigResult(parsed.dig);
+        if (parsed.summarize) setSummarizeResult(parsed.summarize);
+        if (parsed.rewrite) setRewriteResult(parsed.rewrite);
+        if (parsed.prompt) setPromptResult(parsed.prompt);
+      }
+    } catch (e) {
+      console.error("Lỗi khi đọc lịch sử tool từ sessionStorage:", e);
     }
   }, []);
+
+  // Helper save result & history to sessionStorage
+  const saveToolResult = (toolId: ToolType, input: string, result: string) => {
+    try {
+      // Update sessionStorage results
+      const storedResults = sessionStorage.getItem("omni_tools_results");
+      const currentResults = storedResults ? JSON.parse(storedResults) : {};
+      const keyMap: Record<string, string> = {
+        tiktok_script: "tiktok",
+        ad_copy: "ad",
+        shopee_seo: "shopee",
+        seo_article: "seo",
+        pod_prompt: "pod",
+        digital_product: "dig",
+        summarize: "summarize",
+        rewrite: "rewrite",
+        prompt_craft: "prompt",
+      };
+      const key = keyMap[toolId] || toolId;
+      currentResults[key] = result;
+      sessionStorage.setItem("omni_tools_results", JSON.stringify(currentResults));
+
+      // Update history
+      const newItem: HistoryItem = {
+        id: Date.now().toString(),
+        toolId,
+        input,
+        result,
+        timestamp: new Date().toLocaleTimeString(language === "en" ? "en-US" : "vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }),
+      };
+
+      setToolHistory((prev) => {
+        const prevList = prev[toolId] || [];
+        const updated = { ...prev, [toolId]: [newItem, ...prevList].slice(0, 20) };
+        sessionStorage.setItem("omni_tools_history", JSON.stringify(updated));
+        return updated;
+      });
+    } catch (e) {
+      console.error("Lỗi khi lưu lịch sử tool:", e);
+    }
+  };
+
+  const clearCurrentToolResult = (toolId: ToolType) => {
+    try {
+      const storedResults = sessionStorage.getItem("omni_tools_results");
+      if (storedResults) {
+        const currentResults = JSON.parse(storedResults);
+        const keyMap: Record<string, string> = {
+          tiktok_script: "tiktok",
+          ad_copy: "ad",
+          shopee_seo: "shopee",
+          seo_article: "seo",
+          pod_prompt: "pod",
+          digital_product: "dig",
+          summarize: "summarize",
+          rewrite: "rewrite",
+          prompt_craft: "prompt",
+        };
+        delete currentResults[keyMap[toolId] || toolId];
+        sessionStorage.setItem("omni_tools_results", JSON.stringify(currentResults));
+      }
+    } catch (e) {}
+
+    if (toolId === "tiktok_script") setTiktokResult("");
+    if (toolId === "ad_copy") setAdResult("");
+    if (toolId === "shopee_seo") setShopeeResult("");
+    if (toolId === "seo_article") setSeoResult("");
+    if (toolId === "pod_prompt") setPodResult("");
+    if (toolId === "digital_product") setDigResult("");
+    if (toolId === "summarize") setSummarizeResult("");
+    if (toolId === "rewrite") setRewriteResult("");
+    if (toolId === "prompt_craft") setPromptResult("");
+  };
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -353,10 +480,10 @@ export default function AiToolsStudio() {
   const handleGenerateTiktok = async () => {
     if (!tiktokTopic.trim() || isGeneratingTiktok) return;
     setIsGeneratingTiktok(true);
-    setTiktokResult("");
     try {
       const res = await callToolApi("tiktok_script", tiktokTopic, { niche: tiktokNiche, tone: tiktokTone });
       setTiktokResult(res);
+      saveToolResult("tiktok_script", tiktokTopic, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -368,10 +495,10 @@ export default function AiToolsStudio() {
   const handleGenerateAd = async () => {
     if (!adText.trim() || isGeneratingAd) return;
     setIsGeneratingAd(true);
-    setAdResult("");
     try {
       const res = await callToolApi("ad_copy", adText, { platform: adPlatform, framework: adFramework });
       setAdResult(res);
+      saveToolResult("ad_copy", adText, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -383,10 +510,10 @@ export default function AiToolsStudio() {
   const handleGenerateShopee = async () => {
     if (!shopeeProduct.trim() || isGeneratingShopee) return;
     setIsGeneratingShopee(true);
-    setShopeeResult("");
     try {
       const res = await callToolApi("shopee_seo", shopeeProduct, { platform: shopeePlatform });
       setShopeeResult(res);
+      saveToolResult("shopee_seo", shopeeProduct, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -398,10 +525,10 @@ export default function AiToolsStudio() {
   const handleGenerateSeo = async () => {
     if (!seoKeyword.trim() || isGeneratingSeo) return;
     setIsGeneratingSeo(true);
-    setSeoResult("");
     try {
       const res = await callToolApi("seo_article", seoKeyword, { articleType: seoType });
       setSeoResult(res);
+      saveToolResult("seo_article", seoKeyword, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -413,10 +540,10 @@ export default function AiToolsStudio() {
   const handleGeneratePod = async () => {
     if (!podIdea.trim() || isGeneratingPod) return;
     setIsGeneratingPod(true);
-    setPodResult("");
     try {
       const res = await callToolApi("pod_prompt", podIdea, { style: podStyle });
       setPodResult(res);
+      saveToolResult("pod_prompt", podIdea, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -428,10 +555,10 @@ export default function AiToolsStudio() {
   const handleGenerateDig = async () => {
     if (!digTopic.trim() || isGeneratingDig) return;
     setIsGeneratingDig(true);
-    setDigResult("");
     try {
       const res = await callToolApi("digital_product", digTopic, { productFormat: digFormat });
       setDigResult(res);
+      saveToolResult("digital_product", digTopic, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -492,10 +619,10 @@ export default function AiToolsStudio() {
   const handleSummarize = async () => {
     if (!summarizeText.trim() || isSummarizing) return;
     setIsSummarizing(true);
-    setSummarizeResult("");
     try {
       const res = await callToolApi("summarize", summarizeText, { mode: summarizeMode });
       setSummarizeResult(res);
+      saveToolResult("summarize", summarizeText, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -507,10 +634,10 @@ export default function AiToolsStudio() {
   const handleRewrite = async () => {
     if (!rewriteText.trim() || isRewriting) return;
     setIsRewriting(true);
-    setRewriteResult("");
     try {
       const res = await callToolApi("rewrite", rewriteText, { tone: rewriteTone });
       setRewriteResult(res);
+      saveToolResult("rewrite", rewriteText, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -522,10 +649,10 @@ export default function AiToolsStudio() {
   const handleCraftPrompt = async () => {
     if (!promptIdea.trim() || isCrafting) return;
     setIsCrafting(true);
-    setPromptResult("");
     try {
       const res = await callToolApi("prompt_craft", promptIdea, { targetAI });
       setPromptResult(res);
+      saveToolResult("prompt_craft", promptIdea, res);
     } catch (e: any) {
       showError(e.message);
     } finally {
@@ -541,118 +668,122 @@ export default function AiToolsStudio() {
   const activeToolMeta = TOOLS_LIST.find((t) => t.id === activeTool) || TOOLS_LIST[0];
 
   return (
-    <div className="w-full max-w-[980px] mx-auto flex flex-col pb-16">
-      {/* Studio Banner */}
-      <div className="w-full mb-6 pb-6 border-b border-slate-200 dark:border-indigo-950/70">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-rose-500/25 ring-1 ring-white/20 shrink-0">
+    <div className="w-full max-w-[1100px] mx-auto flex flex-col pb-20 px-2 sm:px-4">
+      {/* Studio Header & Navigation Bar */}
+      <div className="w-full mb-8 pb-6 border-b border-slate-200/80 dark:border-slate-800/80">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+          {/* Title & Branding */}
+          <div className="flex items-center gap-4">
+            <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-600 flex items-center justify-center text-white text-2xl shadow-xl shadow-indigo-600/20 ring-1 ring-white/20 shrink-0">
               ⚡
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   {language === "en" ? "Creative & Business AI Studio" : "Studio Sáng Tạo & Doanh Nghiệp"}
                 </h1>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 text-rose-500 dark:text-rose-400 font-extrabold border border-rose-500/30 uppercase tracking-wider">
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-500/10 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20 tracking-wide uppercase">
                   PRO STUDIO
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
                 {language === "en"
-                  ? "Specialized AI toolset for Content Creators, Online Sellers & Marketers"
-                  : "Bộ công cụ AI chuyên sâu dành cho Content Creator, Nhà bán hàng & Marketer chuyên nghiệp"}
+                  ? "Specialized AI toolset for Content Creators, Sellers & Marketers"
+                  : "Bộ công cụ AI chuyên sâu dành cho Content Creator, Nhà bán hàng & Marketer"}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+          {/* Right Action Controls: Credits & Tabs */}
+          <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
             {/* User Credits Status & Recharge Button */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-100/90 dark:bg-[#131525] border border-slate-200 dark:border-slate-800/90 shadow-xs">
               <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Credits:</span>
-              <span className="text-xs font-black text-amber-500 flex items-center gap-1">
+              <span className="text-xs font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1">
                 ⚡ {user ? (user.role === "ADMIN" ? (language === "en" ? "Unlimited" : "Vô hạn") : (user.credits ?? 0)) : 0}
               </span>
               <button
                 onClick={() => setIsRechargeOpen(true)}
-                className="px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white text-[10px] font-bold shadow-xs transition-all cursor-pointer ml-1"
+                className="px-2.5 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shadow-sm transition-all cursor-pointer ml-1 active:scale-95"
               >
-                {language === "en" ? "+ Recharge" : "+ Nạp Credits"}
+                {language === "en" ? "+ Recharge" : "+ Nạp thêm"}
               </button>
             </div>
 
             {/* Category Tabs */}
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-100/90 dark:bg-[#131525] border border-slate-200 dark:border-slate-800/90">
               <button
                 onClick={() => setActiveCategory("pro")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeCategory === "pro"
-                    ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-xs"
+                    ? "bg-white dark:bg-[#1c1f36] text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-indigo-900/50"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {language === "en" ? "⭐ Professional (6)" : "⭐ Chuyên Nghiệp (6)"}
+                {language === "en" ? "Chuyên Nghiệp (6)" : "Chuyên Nghiệp (6)"}
               </button>
               <button
                 onClick={() => setActiveCategory("utility")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeCategory === "utility"
-                    ? "bg-indigo-600 text-white shadow-xs"
+                    ? "bg-white dark:bg-[#1c1f36] text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-indigo-900/50"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {language === "en" ? "🛠️ Utilities (4)" : "🛠️ Tiện Ích (4)"}
+                {language === "en" ? "Tiện Ích (4)" : "Tiện Ích (4)"}
               </button>
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeCategory === "all"
-                    ? "bg-indigo-600 text-white shadow-xs"
+                    ? "bg-white dark:bg-[#1c1f36] text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-indigo-900/50"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {language === "en" ? "All (10)" : "Tất Cả (10)"}
+                {language === "en" ? "Tất Cả (10)" : "Tất Cả (10)"}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tools Grid Carousel */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-8">
+      {/* Tools Grid Selection */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
         {filteredTools.map((tool) => {
           const isActive = activeTool === tool.id;
           const toolName = language === "en" && tool.nameEn ? tool.nameEn : tool.name;
           const toolDesc = language === "en" && tool.descEn ? tool.descEn : tool.desc;
-          const toolBadge = language === "en" && tool.badgeEn ? tool.badgeEn : tool.badge;
           return (
             <button
               key={tool.id}
               onClick={() => setActiveTool(tool.id)}
-              className={`p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
+              className={`p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
                 isActive
-                  ? "bg-white dark:bg-[#131524] border-rose-500 dark:border-rose-500/80 shadow-lg shadow-rose-500/10 ring-2 ring-rose-500/30"
-                  : "bg-white/80 dark:bg-[#0c0e17]/80 hover:bg-white dark:hover:bg-[#131524] border-slate-200/90 dark:border-indigo-950/60 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-indigo-900"
+                  ? "bg-white dark:bg-[#141728] border-indigo-500 dark:border-indigo-500/80 shadow-lg shadow-indigo-500/10 ring-2 ring-indigo-500/20"
+                  : "bg-white/80 dark:bg-[#0c0e17]/80 hover:bg-white dark:hover:bg-[#131524] border-slate-200/90 dark:border-slate-800/80 text-slate-600 dark:text-slate-400 hover:border-indigo-300 dark:hover:border-indigo-800"
               }`}
             >
-              {toolBadge && (
-                <span
-                  className={`absolute top-2 right-2 text-[8px] font-black px-1.5 py-0.2 rounded-full text-white bg-gradient-to-r ${tool.badgeColor} shadow-2xs`}
-                >
-                  {toolBadge}
-                </span>
-              )}
-
               <div>
-                <span className="text-2xl block mb-2 group-hover:scale-110 transition-transform">
-                  {tool.icon}
-                </span>
-                <span className="block text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-2xl p-2 rounded-xl bg-slate-100 dark:bg-slate-800/70 group-hover:scale-105 transition-transform">
+                    {tool.icon}
+                  </span>
+                  <span
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                      tool.category === "pro"
+                        ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20"
+                        : "bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                    }`}
+                  >
+                    {tool.creditsCost} Credits
+                  </span>
+                </div>
+                <span className="block text-xs font-bold text-slate-900 dark:text-white leading-snug">
                   {toolName}
                 </span>
               </div>
 
-              <span className="block text-[10px] text-slate-400 mt-2 line-clamp-2">
+              <span className="block text-[11px] text-slate-400 dark:text-slate-500 mt-2.5 line-clamp-2 font-normal leading-relaxed">
                 {toolDesc}
               </span>
             </button>
@@ -661,21 +792,29 @@ export default function AiToolsStudio() {
       </div>
 
       {/* TOOL WORKBENCH CONTAINER */}
-      <div className="w-full p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-[#0c0e17]/95 backdrop-blur-xl border border-slate-200 dark:border-indigo-950/80 shadow-2xl shadow-indigo-950/10">
+      <div className="w-full p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#0e101c] backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 shadow-xl shadow-slate-950/5 relative overflow-hidden">
+        {/* Animated Horizontal Loading Progress Bar */}
+        {(isAnyGenerating || progress > 0) && (
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100 dark:bg-slate-800/80 overflow-hidden z-20">
+            <div
+              className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 via-cyan-400 to-emerald-400 transition-all duration-300 ease-out shadow-sm shadow-indigo-500/50"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+
         {/* Active Tool Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-200 dark:border-indigo-950/70">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl p-2.5 rounded-2xl bg-slate-100 dark:bg-[#181b2a] shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-slate-200/80 dark:border-slate-800/80">
+          <div className="flex items-center gap-3.5">
+            <span className="text-3xl p-3 rounded-2xl bg-indigo-50 dark:bg-[#181b2e] border border-indigo-100 dark:border-indigo-950/50 shadow-2xs">
               {activeToolMeta.icon}
             </span>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>{language === "en" && activeToolMeta.nameEn ? activeToolMeta.nameEn : activeToolMeta.name}</span>
-                {activeToolMeta.badge && (
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full text-white bg-gradient-to-r ${activeToolMeta.badgeColor} font-bold`}>
-                    {language === "en" && activeToolMeta.badgeEn ? activeToolMeta.badgeEn : activeToolMeta.badge}
-                  </span>
-                )}
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20">
+                  {activeToolMeta.creditsCost} Credits / lượt
+                </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {language === "en" && activeToolMeta.descEn ? activeToolMeta.descEn : activeToolMeta.desc}
@@ -684,39 +823,44 @@ export default function AiToolsStudio() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-            <div className="px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-indigo-600 dark:text-cyan-400 text-xs font-bold flex items-center gap-1.5">
-              <span>⚡</span>
-              <span>
-                {language === "en"
-                  ? `Costs ${activeToolMeta.creditsCost} Credits / run`
-                  : `Tiêu tốn ${activeToolMeta.creditsCost} Credits / lượt`}
-              </span>
-            </div>
-            {(activeToolMeta.featureHighlight || activeToolMeta.featureHighlightEn) && (
-              <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium hidden md:flex items-center gap-1.5">
-                <span>🎯</span>
-                <span>
-                  {language === "en" && activeToolMeta.featureHighlightEn
-                    ? activeToolMeta.featureHighlightEn
-                    : activeToolMeta.featureHighlight}
+            {/* Lịch sử button */}
+            <button
+              onClick={() => setShowHistoryModal(true)}
+              className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>📜</span>
+              <span>{language === "en" ? "History" : "Lịch sử công cụ"}</span>
+              {toolHistory[activeTool]?.length > 0 && (
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-600 text-white font-bold">
+                  {toolHistory[activeTool].length}
                 </span>
-              </div>
-            )}
+              )}
+            </button>
+
+            {/* Clear / New run button */}
+            <button
+              onClick={() => clearCurrentToolResult(activeTool)}
+              className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+              title={language === "en" ? "Clear result & start new" : "Xóa kết quả hiện tại để tạo mới"}
+            >
+              <span>✨</span>
+              <span>{language === "en" ? "Tạo mới" : "Tạo kết quả mới"}</span>
+            </button>
           </div>
         </div>
 
         {/* 1. TIKTOK / REELS SCRIPT */}
         {activeTool === "tiktok_script" && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   Ngách nội dung (Niche):
                 </label>
                 <select
                   value={tiktokNiche}
                   onChange={(e) => setTiktokNiche(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-indigo-950/80 rounded-xl text-xs text-slate-900 dark:text-white font-medium"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 >
                   <option value="ecommerce">🛒 Bán hàng Shopee / TikTok Shop</option>
                   <option value="review">⭐ Đánh giá & Review sản phẩm thực tế</option>
@@ -727,13 +871,13 @@ export default function AiToolsStudio() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   Phong cách / Giọng điệu:
                 </label>
                 <select
                   value={tiktokTone}
                   onChange={(e) => setTiktokTone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-indigo-950/80 rounded-xl text-xs text-slate-900 dark:text-white font-medium"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 >
                   <option value="relatable">🤝 Gần gũi, chân thật như người bạn</option>
                   <option value="humorous">😂 Hài hước, châm biếm duyên dáng</option>
@@ -745,13 +889,13 @@ export default function AiToolsStudio() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Chủ đề hoặc Sản phẩm cần viết kịch bản:
                 </label>
                 <button
                   type="button"
                   onClick={() => setTiktokTopic(SAMPLE_TEXTS.tiktok_script)}
-                  className="text-[11px] text-indigo-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                  className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium hover:underline cursor-pointer"
                 >
                   {language === "en" ? "Paste Sample" : "Dán mẫu thử"}
                 </button>
@@ -761,35 +905,51 @@ export default function AiToolsStudio() {
                 onChange={(e) => setTiktokTopic(e.target.value)}
                 rows={3}
                 placeholder="Nhập tên sản phẩm, các tính năng nổi bật, giá bán hoặc thông điệp chính..."
-                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-indigo-950/80 text-xs text-slate-900 dark:text-white focus:border-rose-500 resize-none"
+                className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none resize-none transition-all"
               />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              {isGeneratingTiktok ? (
+                <div className="flex-1 w-full bg-slate-100 dark:bg-[#131525] p-2.5 rounded-xl border border-indigo-500/30 flex items-center gap-3">
+                  <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 transition-all duration-300 ease-out"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold text-indigo-500 dark:text-cyan-400 font-mono w-10 text-right">
+                    {Math.round(progress)}%
+                  </span>
+                </div>
+              ) : (
+                <div />
+              )}
+
               <button
                 type="button"
                 onClick={handleGenerateTiktok}
                 disabled={isGeneratingTiktok || !tiktokTopic.trim()}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold text-xs shadow-md shadow-rose-600/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0"
               >
-                <span>{isGeneratingTiktok ? "Đang viết kịch bản..." : "🎬 Sinh Kịch Bản Triệu View"}</span>
+                <span>{isGeneratingTiktok ? "Đang xử lý..." : "🎬 Sinh Kịch Bản Triệu View"}</span>
               </button>
             </div>
 
             {tiktokResult && (
-              <div className="mt-6 pt-5 border-t border-slate-200 dark:border-indigo-950/70">
+              <div className="mt-6 pt-5 border-t border-slate-200/80 dark:border-slate-800/80">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <span>{language === "en" ? "✨ Generated Script:" : "✨ Kịch bản hoàn chỉnh:"}</span>
                   </h3>
                   <button
                     onClick={() => handleCopy(tiktokResult, "tiktok")}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold transition-colors cursor-pointer"
+                    className="text-xs px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition-colors cursor-pointer"
                   >
                     {copyBtnLabel("tiktok", "Sao chép kịch bản", "Copy Script")}
                   </button>
                 </div>
-                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-indigo-950/60 max-h-[500px] overflow-y-auto">
+                <div className="p-5 rounded-2xl bg-slate-50/80 dark:bg-[#131522] border border-slate-200/80 dark:border-slate-800/80 max-h-[500px] overflow-y-auto">
                   <MarkdownRenderer content={tiktokResult} />
                 </div>
               </div>
@@ -1514,6 +1674,82 @@ export default function AiToolsStudio() {
         isOpen={isRechargeOpen}
         onClose={() => setIsRechargeOpen(false)}
       />
+
+      {/* History Modal */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-[#0d0f18] border border-slate-200 dark:border-indigo-950/80 rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">📜</span>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    {language === "en" ? `History: ${activeToolMeta.nameEn || activeToolMeta.name}` : `Lịch sử: ${activeToolMeta.name}`}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    {language === "en" ? "Saved runs from current browser session" : "Tự động lưu lại các kết quả đã tạo trong phiên truy cập"}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowHistoryModal(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center text-sm font-bold cursor-pointer transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+              {(!toolHistory[activeTool] || toolHistory[activeTool].length === 0) ? (
+                <div className="text-center py-12 text-slate-400 text-xs">
+                  <p className="text-2xl mb-2">📭</p>
+                  <p>{language === "en" ? "No history recorded for this tool yet." : "Chưa có lịch sử tạo nào cho công cụ này."}</p>
+                </div>
+              ) : (
+                toolHistory[activeTool].map((item, idx) => (
+                  <div
+                    key={item.id || idx}
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-[#131522] border border-slate-200 dark:border-indigo-950/60 space-y-3"
+                  >
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-200/60 dark:border-slate-800/60 pb-2">
+                      <span className="font-semibold text-indigo-500 dark:text-indigo-400">
+                        #{toolHistory[activeTool].length - idx} · {item.timestamp}
+                      </span>
+                      <button
+                        onClick={() => {
+                          handleCopy(item.result, `hist-${item.id}`);
+                          setShowHistoryModal(false);
+                        }}
+                        className="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] cursor-pointer transition-colors"
+                      >
+                        {copyBtnLabel(`hist-${item.id}`, "Sao chép kết quả", "Copy Result")}
+                      </button>
+                    </div>
+
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                        {language === "en" ? "Input Concept:" : "Nội dung đầu vào:"}
+                      </span>
+                      <p className="text-xs text-slate-700 dark:text-slate-300 bg-white/60 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200/50 dark:border-slate-800/50 italic">
+                        "{item.input}"
+                      </p>
+                    </div>
+
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                        {language === "en" ? "Generated Result:" : "Kết quả AI tạo ra:"}
+                      </span>
+                      <div className="p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs max-h-60 overflow-y-auto">
+                        <MarkdownRenderer content={item.result} />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

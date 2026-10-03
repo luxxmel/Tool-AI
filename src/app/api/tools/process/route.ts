@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateText } from "ai";
-import { getAIModel } from "@/lib/aiProvider";
+import { google } from "@ai-sdk/google";
+import { getAIModel, trollLLMClient } from "@/lib/aiProvider";
 import { prisma } from "@/lib/prisma";
 import { enrichPromptWithUrlContent } from "@/lib/contentExtractor";
+import { ensureUser } from "@/lib/ensureUser";
 
 const PRO_TOOLS = ["tiktok_script", "ad_copy", "shopee_seo", "seo_article", "pod_prompt", "digital_product"];
 
@@ -16,26 +18,20 @@ export async function POST(request: NextRequest) {
     }
 
     const cost = PRO_TOOLS.includes(action) ? 2 : 1;
-    let user = null;
+    const user = await ensureUser(userId);
     let isAdmin = false;
 
-    if (userId) {
-      user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (user) {
-        isAdmin = user.role === "ADMIN";
-        if (!isAdmin && user.credits < cost) {
-          return NextResponse.json(
-            {
-              error: `Tài khoản của bạn còn ${user.credits} Credits, cần ${cost} Credits để dùng công cụ chuyên sâu này. Vui lòng nạp thêm Credits!`,
-              code: "INSUFFICIENT_CREDITS",
-              credits: user.credits,
-            },
-            { status: 403 }
-          );
-        }
+    if (user) {
+      isAdmin = user.role === "ADMIN";
+      if (!isAdmin && user.credits < cost) {
+        return NextResponse.json(
+          {
+            error: `Tài khoản của bạn còn ${user.credits} Credits, cần ${cost} Credits để dùng công cụ chuyên sâu này. Vui lòng nạp thêm Credits!`,
+            code: "INSUFFICIENT_CREDITS",
+            credits: user.credits,
+          },
+          { status: 403 }
+        );
       }
     }
 
@@ -195,11 +191,47 @@ You MUST generate your entire response, headings, tables, examples, scripts, cop
 Do not use Vietnamese in the output.`;
     }
 
-    const result = await generateText({
-      model: selectedAI.model,
-      system: systemPrompt,
-      prompt: userPrompt,
-    });
+    // Danh sách các model dự phòng để tự động chuyển tiếp khi gặp lỗi API Quota Rate-Limit
+    const candidateModels: Array<{ model: any; name: string }> = [
+      { model: selectedAI.model, name: selectedAI.name }
+    ];
+
+    if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      if (selectedAI.modelId !== "gemini-3.7-flash") {
+        candidateModels.push({ model: google("gemini-3.7-flash"), name: "Gemini 3.7 Flash" });
+      }
+      if (selectedAI.modelId !== "gemini-2.5-flash") {
+        candidateModels.push({ model: google("gemini-2.5-flash"), name: "Gemini 2.5 Flash" });
+      }
+    }
+
+    if (trollLLMClient) {
+      candidateModels.push({ model: trollLLMClient("gemini-3-7-flash"), name: "Omni Deep (Backup)" });
+    }
+
+    let resultText = "";
+    let lastError: any = null;
+
+    for (const candidate of candidateModels) {
+      try {
+        const res = await generateText({
+          model: candidate.model,
+          system: systemPrompt,
+          prompt: userPrompt,
+        });
+        if (res.text && res.text.trim()) {
+          resultText = res.text;
+          break;
+        }
+      } catch (err: any) {
+        lastError = err;
+        console.warn(`[Tool API Failover] Model ${candidate.name} gặp sự cố:`, err?.message || err);
+      }
+    }
+
+    if (!resultText) {
+      throw lastError || new Error("Tất cả các dịch vụ AI tạm thời không phản hồi. Vui lòng thử lại sau giây lát.");
+    }
 
     let remainingCredits: number | undefined = undefined;
     if (user) {
@@ -215,9 +247,9 @@ Do not use Vietnamese in the output.`;
     }
 
     return NextResponse.json({
-      result: result.text,
+      result: resultText,
       originalLength: text.length,
-      processedLength: result.text.length,
+      processedLength: resultText.length,
       remainingCredits,
     });
   } catch (error: any) {

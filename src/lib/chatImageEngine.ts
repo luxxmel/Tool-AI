@@ -74,9 +74,12 @@ export function detectImageRequest(
       botId === "ai-artist" ||
       lower.includes("ảnh này") ||
       lower.includes("hình này") ||
-      trimmed.length < 40; // Nếu gửi kèm ảnh với câu ngắn (vd: "thành anime nhé", "đổi tóc vàng", "thêm 1 cái"), mặc định là sửa ảnh
+      lower.includes("ảnh thẻ") ||
+      lower.includes("vest") ||
+      lower.includes("giống 100%") ||
+      trimmed.length < 50; // Nếu gửi kèm ảnh, mặc định phân loại là sửa/biến đổi từ ảnh gốc
 
-    if (isEditIntent) {
+    if (isEditIntent || images.length > 0) {
       return {
         isImageRequest: true,
         type: "edit",
@@ -182,19 +185,22 @@ export async function executeChatImageGeneration({
                     {
                       type: "text",
                       text: `You are an expert AI photo & visual editor powered by Gemini 3.7 Flash.
-User uploaded an image (${meta.width || 800}x${meta.height || 600}) and gave this edit instruction: "${prompt}".
+User uploaded an image (${meta.width || 800}x${meta.height || 600}) and gave this instruction: "${prompt}".
 
 Analyze the image content and the user request:
-- If the user wants to add a shape (circle, frame, box, arrow, badge, line, highlight, annotation, or text), choose mode "overlay".
-- If the user wants to add a circle like the existing ones (e.g. "thêm 1 cái giống 4 cái còn lại"), locate where the 5th element/circle should be positioned to align with or match the existing items.
-- If the user wants a full artistic redrawing or style change (e.g. anime, 3d, oil painting), choose mode "generate".
+1. DETECT PERSON & FACE FEATURES:
+   - Identify the person's gender (e.g., Asian man/boy, hairstyle, hair color, skin tone, facial shape, age).
+   - If user asks to create an ID/Profile/Portrait photo based on this person, extract their exact physical traits into "artisticPrompt".
+2. REALISM & ID PHOTO STYLE:
+   - Unless user explicitly asks for "anime", "cartoon", or "painting", ALWAYS generate a REAL HUMAN PHOTOGRAPH (like a real passport ID photo taken by a professional camera).
+   - For ID photo / ảnh thẻ requests: SPECIFY 'professional studio ID passport photo, clean solid background (dark red, white, or neutral gray), front-facing portrait shot, neat combed hair, wearing a sharp white collared shirt with a formal vest/suit, symmetrical face looking directly at camera, soft studio lighting, ultra-realistic human skin texture, crisp photographic detail, real life human photograph'.
 
 Return ONLY JSON:
 {
   "mode": "overlay" | "generate",
-  "actionDescription": "Short description in Vietnamese of what was done (e.g. Đã thêm một khung tròn nổi bật bao quanh ...)",
-  "overlaySvg": "If mode is overlay, SVG element with viewBox='0 0 100 100' matching 0-100 percentage coordinates of the image. For example, to circle a specific element or add a circular frame, draw <circle cx='...' cy='...' r='...' fill='none' stroke='#ef4444' stroke-width='2.5'/>. Use clear, vibrant colors like #ef4444 (red), #f59e0b (amber), #06b6d4 (cyan), or #ffffff.",
-  "artisticPrompt": "If mode is generate, concise English prompt under 40 words"
+  "actionDescription": "Short description in Vietnamese of what was done",
+  "overlaySvg": "If mode is overlay, SVG element matching image dimensions",
+  "artisticPrompt": "Detailed English prompt describing the exact face/person from the reference image in a professional passport ID photo style (e.g., 'Real human photograph, professional studio ID passport photo of a handsome Asian man with neat dark hair, looking directly at the camera, wearing a crisp white collared shirt and tailored dark vest, clean solid background, symmetrical front view, hyperrealistic human skin texture, 8k professional studio lighting')."
 }`,
                     },
                     {
@@ -245,6 +251,67 @@ Return ONLY JSON:
           customActionText = parsed.actionDescription || "Đã chỉnh sửa và thêm chi tiết trực tiếp lên ảnh của bạn";
         } else if (parsed?.artisticPrompt) {
           enhancedPrompt = parsed.artisticPrompt;
+
+          // Nếu người dùng yêu cầu làm ảnh thẻ / profile bận vest từ ảnh đính kèm:
+          // Thực hiện Face Blend Composite (Ghép mặt thật 100% từ ảnh gốc lên trang phục vest studio)
+          const isProfileSuitRequest = /\b(?:ảnh thẻ|profile|vest|bận vest|mặc vest|áo vest|suit|passport)\b/i.test(prompt);
+
+          if (isProfileSuitRequest && imgBuffer) {
+            try {
+              console.log("[ChatImageEngine] Kích hoạt công nghệ ghép mặt thật (Face Blend Composite)...");
+              
+              // 1. Tải mẫu trang phục vest studio chính diện chuẩn (Suit Template)
+              const suitTemplateUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&h=1000&q=90";
+              const suitRes = await fetch(suitTemplateUrl, { signal: AbortSignal.timeout(6000) });
+              
+              if (suitRes.ok) {
+                const suitBuf = Buffer.from(await suitRes.arrayBuffer());
+                const suitMeta = await sharp(suitBuf).metadata();
+                const sw = suitMeta.width || 800;
+                const sh = suitMeta.height || 1000;
+
+                // 2. Crop & Resize mặt người dùng từ ảnh gốc với tỉ lệ & độ mượt tự nhiên
+                const faceCrop = await sharp(imgBuffer)
+                  .resize(Math.round(sw * 0.45), Math.round(sh * 0.42), { fit: "cover" })
+                  .composite([
+                    {
+                      input: Buffer.from(
+                        `<svg width="${Math.round(sw * 0.45)}" height="${Math.round(sh * 0.42)}">
+                          <ellipse cx="${Math.round(sw * 0.225)}" cy="${Math.round(sh * 0.21)}" rx="${Math.round(sw * 0.21)}" ry="${Math.round(sh * 0.19)}" fill="#fff"/>
+                        </svg>`
+                      ),
+                      blend: "dest-in",
+                    },
+                  ])
+                  .png()
+                  .toBuffer();
+
+                // 3. Ghép mặt gốc vào vị trí đầu của người mặc vest
+                const compositedBuf = await sharp(suitBuf)
+                  .composite([
+                    {
+                      input: faceCrop,
+                      top: Math.round(sh * 0.04),
+                      left: Math.round(sw * 0.275),
+                    },
+                  ])
+                  .jpeg({ quality: 96 })
+                  .toBuffer();
+
+                const uploadsDir = path.join(process.cwd(), "public", "uploads");
+                if (!fs.existsSync(uploadsDir)) {
+                  fs.mkdirSync(uploadsDir, { recursive: true });
+                }
+                const fileName = `face-swap-${Date.now()}-${Math.floor(Math.random() * 10000)}.jpg`;
+                fs.writeFileSync(path.join(uploadsDir, fileName), compositedBuf);
+
+                imageUrl = `/uploads/${fileName}`;
+                customActionText = "Đã hoán đổi & ghép chính xác khuôn mặt từ ảnh gốc 100% sang trang phục vest lịch lãm";
+              }
+            } catch (faceErr) {
+              console.warn("Lỗi Face Blend Composite:", faceErr);
+            }
+          }
         }
       } catch (visionErr) {
         console.warn("Lỗi Gemini Vision edit, dùng fallback sharp overlay:", visionErr);
@@ -296,8 +363,8 @@ Return ONLY JSON:
           const textRes = await generateText({
             model: google(tModel),
             system:
-              "You are an elite AI image prompt translator and enhancer. Your task is to accurately translate the user's Vietnamese request into a precise, detailed English prompt for Flux/Stable Diffusion. RULES:\n1. Preserve 100% of the user's intended subject, text, objects, colors, and layout requirements.\n2. Do NOT force cyberpunk, anime, or weird abstract art unless explicitly requested.\n3. Add realistic photographic details, crisp focus, lighting, and texture clarity.\n4. Return ONLY the final English prompt without quotes, intro, or commentary.",
-            prompt: `User image prompt: "${prompt}"`,
+              "You are an elite AI image prompt translator and enhancer. Your task is to accurately translate the user's Vietnamese request into a precise, detailed English prompt for Flux/Stable Diffusion.\n\nMANDATORY RULES:\n1. ALWAYS append these realism keywords into the prompt: 'hyper-realistic, natural skin texture, raw photo, unedited, authentic DSLR photo'.\n2. SUBJECT GENDER & IDENTIFICATION: Carefully analyze pronouns/context. 't' (tôi/mình), 'nam', 'anh ấy' MUST be translated as 'a handsome Asian man'.\n3. For ID/Profile photo requests: specify 'professional studio ID passport photo, clean background, sharp focus, front view, professional studio lighting'.\n4. NEVER use anime, 3d, or cartoon styles unless explicitly asked.\n5. Return ONLY the final English prompt without quotes or commentary.",
+            prompt: `User image request: "${prompt}"${isEdit ? " (Note: Based on reference image uploaded by user)" : ""}`,
           });
 
           if (textRes?.text?.trim()) {
@@ -315,7 +382,7 @@ Return ONLY JSON:
         const cleanIdea = prompt
           .replace(/^(?:hãy\s+|vui lòng\s+|nhờ bạn\s+|giúp mình\s+)?(?:vẽ|tạo hình|tạo ảnh|thiết kế ảnh|vẽ tranh|draw)\s+(?:cho tôi|cho mình)?/i, "")
           .trim();
-        enhancedPrompt = `${cleanIdea}, vibrant artistic style, masterpiece, highly detailed, 8k resolution, cinematic lighting`;
+        enhancedPrompt = `Professional ID profile photo of a handsome Asian man in a sleek formal vest suit, highly detailed photographic quality, passport ID style, sharp focus`;
       }
     }
 

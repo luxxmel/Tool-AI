@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
+import { saveAs } from "file-saver";
 
 // ─── ANALYSIS MODES ───────────────────────────────────────────────────────────
 const ANALYSIS_MODES = [
@@ -18,38 +20,38 @@ const ANALYSIS_MODES = [
   },
   {
     id: "plot",
-    label: "Mạch truyện",
-    labelEn: "Plot Arc",
+    label: "Mạch kịch bản",
+    labelEn: "Plot & Pacing",
     emoji: "📈",
-    desc: "Cấu trúc 3 hồi, xung đột, nhịp độ, twist",
-    descEn: "3-act structure, pacing, conflict, and twists",
+    desc: "Cấu trúc Hook, xung đột, nhịp độ và chốt đơn/twist",
+    descEn: "Hook structure, pacing, conflict, and CTA/twists",
     color: "from-violet-600 to-purple-600",
   },
   {
     id: "character",
-    label: "Nhân vật",
-    labelEn: "Characters",
+    label: "Nhân vật / Diễn viên",
+    labelEn: "Characters / Acting",
     emoji: "🎭",
-    desc: "Tính cách, động lực, lời thoại của từng nhân vật",
-    descEn: "Personalities, motivations, and dialogues of characters",
+    desc: "Tính cách, động lực, thoại và B-roll hình ảnh",
+    descEn: "Personalities, motivations, dialogue and visual B-roll",
     color: "from-rose-600 to-pink-600",
   },
   {
     id: "language",
-    label: "Văn phong",
+    label: "Văn phong / Lời thoại",
     labelEn: "Writing Style",
     emoji: "✍️",
-    desc: "Câu văn, hình ảnh, từ ngữ, giọng kể",
+    desc: "Câu văn, hình ảnh, từ nhịp nhấn, giọng đọc Voiceover",
     descEn: "Sentence variety, imagery, vocabulary, and narration tone",
     color: "from-cyan-600 to-teal-600",
   },
   {
     id: "dialogue",
-    label: "Lời thoại",
-    labelEn: "Dialogue",
+    label: "Lời thoại kịch bản",
+    labelEn: "Script Dialogue",
     emoji: "💬",
-    desc: "Chất lượng hội thoại, giọng nhân vật riêng biệt",
-    descEn: "Dialogue naturalness and distinct character voices",
+    desc: "Chất lượng hội thoại, giọng đọc ngắn gọn triệu view",
+    descEn: "Dialogue naturalness and viral punchy narration",
     color: "from-amber-600 to-orange-600",
   },
   {
@@ -57,23 +59,107 @@ const ANALYSIS_MODES = [
     label: "Viết lại",
     labelEn: "Rewrite",
     emoji: "✨",
-    desc: "AI viết lại đoạn đã chọn với văn phong phong phú hơn",
-    descEn: "AI rewrites selected excerpt with enriched prose",
+    desc: "AI viết lại đoạn đã chọn sắc bén & hấp dẫn hơn",
+    descEn: "AI rewrites selected excerpt with enriched style",
     color: "from-emerald-600 to-green-600",
   },
   {
     id: "continue",
-    label: "Tiếp tục",
-    labelEn: "Continue",
+    label: "Tiếp tục kịch bản",
+    labelEn: "Continue Script",
     emoji: "➡️",
-    desc: "AI viết tiếp 2-3 đoạn theo mạch truyện hiện tại",
-    descEn: "AI continues next 2-3 paragraphs following story arc",
+    desc: "AI viết tiếp phân cảnh / đoạn tiếp theo",
+    descEn: "AI continues next 2-3 paragraphs or scenes",
     color: "from-sky-600 to-blue-600",
   },
 ];
 
-// ─── STORY TEMPLATES ──────────────────────────────────────────────────────────
+// ─── STORY & SCRIPT TEMPLATES ──────────────────────────────────────────────────
 const STORY_TEMPLATES = [
+  {
+    id: "tiktok_script",
+    label: "Kịch bản TikTok / Reels",
+    labelEn: "TikTok / Reels Script",
+    emoji: "🎬",
+    placeholder: `TIÊU ĐỀ VIDEO: [Tên kịch bản giật tít triệu view]
+THỜI LƯỢNG: 30 - 45 Giây
+ĐỐI TƯỢNG: [Nhóm người xem mục tiêu]
+
+⚡ HOOK 3 GIÂY ĐẦU (Gây sốc / Chạm nỗi đau):
+"Đừng bao giờ mua [Sản phẩm/Thói quen] nếu bạn chưa biết bí mật này..."
+
+🎬 PHÂN CẢNH CHI TIẾT:
+- 00s-03s (Visual + Text Screen): [Góc quay cận mặt, chữ to nhấp nháy]
+  Voiceover: "Bạn có biết 90% mọi người đang mắc sai lầm này mỗi ngày?"
+
+- 03s-15s (Thực trạng & Nỗi đau):
+  Visual: [B-roll quay cảnh rắc rối thường gặp]
+  Voiceover: "Mỗi sáng thức dậy..."
+
+- 15s-30s (Giải pháp & Trải nghiệm):
+  Visual: [Trải nghiệm trực tiếp sản phẩm / giải pháp]
+  Voiceover: "Cho đến khi mình thử phương pháp này..."
+
+🛒 CTA CHỐT ĐƠN / TƯƠNG TÁC (30s-40s):
+"Bấm ngay vào giỏ hàng bên trái góc màn hình để nhận ưu đãi hôm nay nhé!"`,
+    placeholderEn: `VIDEO TITLE: [Viral High-CTR Title]
+DURATION: 30 - 45 Seconds
+TARGET AUDIENCE: [Ideal Audience]
+
+⚡ 3-SECOND HOOK (Pattern Interrupt):
+"Stop doing [Habit/Product] until you watch this..."
+
+🎬 STORYBOARD & SCENES:
+- 00s-03s (Visual + On-Screen Text): [Close-up shot with flashing bold text]
+  Voiceover: "Did you know 90% of people make this mistake daily?"
+
+- 03s-15s (Problem & Pain Point):
+  Visual: [B-roll showing the common frustration]
+  Voiceover: "Every single morning..."
+
+- 15s-30s (Solution & Demo):
+  Visual: [Live hands-on demo of the solution]
+  Voiceover: "Until I discovered this simple trick..."
+
+🛒 CALL TO ACTION (30s-40s):
+"Comment below or click the link in bio to get full access today!"`,
+  },
+  {
+    id: "youtube_video",
+    label: "Kịch bản Video YouTube / VLOG",
+    labelEn: "YouTube / VLOG Script",
+    emoji: "📹",
+    placeholder: `TÊN VIDEO: [Tiêu đề chuẩn SEO & CTR cao]
+THỜI LƯỢNG MỤC TIÊU: 8 - 12 Phút
+
+📌 I. MỞ BÀI (INTRO - 0:00 - 0:45)
+- Teaser cảnh kịch tính nhất: [B-roll 5 giây]
+- Lời chào & Tóm tắt 3 lợi ích người xem nhận được:
+
+📌 II. THÂN BÀI (MAIN CONTENT)
+- Phần 1: [Vấn đề cốt lõi]
+- Phần 2: [Hướng dẫn chi tiết từng bước]
+- Phân đoạn minh họa (B-roll / Sơ đồ):
+
+📌 III. KẾT BÀI & KÊU GỌI (OUTRO - 10:00)
+- Tóm tắt lời khuyên quan trọng nhất
+- Kêu gọi Subscribe / Đăng ký kênh & Bấm chuông thông báo`,
+    placeholderEn: `VIDEO TITLE: [SEO & High CTR Title]
+TARGET DURATION: 8 - 12 Minutes
+
+📌 I. INTRO (0:00 - 0:45)
+- Highlight teaser (5-second climax snippet)
+- Greeting & 3 core takeaways overview
+
+📌 II. MAIN BODY
+- Section 1: [Core Challenge]
+- Section 2: [Step-by-Step Practical Guide]
+- Visual B-Roll / Screen Share cues:
+
+📌 III. OUTRO & CTA (10:00)
+- Final Golden Advice summary
+- Subscribe, Like & Notification Bell CTA`,
+  },
   {
     id: "romance",
     label: "Tiểu thuyết ngôn tình",
@@ -100,73 +186,51 @@ The golden twilight painted the narrow street. She walked swiftly, clutching a t
   },
   {
     id: "action",
-    label: "Kịch bản hành động",
-    labelEn: "Action Screenplay",
+    label: "Kịch bản Điện Ảnh / Phim Ngắn",
+    labelEn: "Movie & Short Film Screenplay",
     emoji: "⚔️",
-    placeholder: `KỊCH BẢN: [Tên phim/truyện]
-Thể loại: Hành động / Phiêu lưu
+    placeholder: `KỊCH BẢN: [Tên phim]
+Thể loại: Hành động / Kịch tính / Tâm lý
 
 CẢNH 1 - EXT. ĐƯỜNG PHỐ SAIGON - ĐÊM
-[Mô tả bối cảnh]
+[Mô tả không khí & ánh sáng]
 
-NHÂN VẬT: Tên - Đặc điểm ngắn gọn
+NHÂN VẬT: 
+- NAM (30 tuổi): Gương mặt góc cạnh, ánh mắt sắc sảo.
 
 CẢNH 2 - INT. VĂN PHÒNG - NGÀY
 ...`,
     placeholderEn: `SCREENPLAY: [Title]
-Genre: Action / Thriller
+Genre: Action / Thriller / Drama
 
 SCENE 1 - EXT. CITY STREET - NIGHT
 [Atmosphere description]
 
-CHARACTERS: Name - brief traits
+CHARACTERS:
+- ALEX (30s): Sharp gaze, weathered jacket.
 
 SCENE 2 - INT. OFFICE - DAY
 ...`,
   },
   {
     id: "mystery",
-    label: "Truyện trinh thám",
+    label: "Truyện trinh thám / Kỳ bí",
     labelEn: "Mystery & Detective",
     emoji: "🔍",
     placeholder: `TÊN TRUYỆN: [Tên truyện]
 
-VỤ ÁN: [Mô tả vụ án ngắn gọn]
-THÁM TỬ: [Tên & đặc điểm]
-THỜI GIAN: [Thời điểm xảy ra]
+VỤ ÁN: [Mô tả bí ẩn vụ án]
+THÁM TỬ: [Tên & tính cách]
 
-CHƯƠNG 1
-
-[Mở đầu bằng cảnh phát hiện sự việc...]`,
+CHƯƠNG 1: VẾT DẤU TRONG ĐÊM
+[Mở đầu bằng cảnh hiện trường phát hiện sự việc...]`,
     placeholderEn: `STORY: [Title]
 
 CASE: [Brief case overview]
 DETECTIVE: [Name & key traits]
-TIME: [Timeline]
 
-CHAPTER 1
-
-[Opening with discovery scene...]`,
-  },
-  {
-    id: "fantasy",
-    label: "Dị thế giới / Fantasy",
-    labelEn: "Fantasy & Isekai",
-    emoji: "🐉",
-    placeholder: `THẾ GIỚI: [Tên thế giới]
-HỆ THỐNG NĂNG LỰC: [Hệ thống tu luyện/ma thuật]
-NHÂN VẬT CHÍNH: [Tên - xuất thân - mục tiêu]
-
-CHƯƠNG 1: ĐẦU THAI
-
-[Cảnh mở đầu...]`,
-    placeholderEn: `WORLD: [Realm Name]
-MAGIC SYSTEM: [Core elemental/cultivation tiers]
-PROTAGONIST: [Name - origin - goal]
-
-CHAPTER 1: REBIRTH
-
-[Opening scene...]`,
+CHAPTER 1: MARKS IN THE DARK
+[Opening with crime scene discovery...]`,
   },
   {
     id: "blank",
@@ -396,6 +460,77 @@ export default function StoryWriterView({ onBack }: StoryWriterViewProps) {
     }
   };
 
+  // Export DOCX Word document
+  const exportDocx = async () => {
+    if (!content.trim()) {
+      showAlert(
+        language === "en" ? "No content to export!" : "Chưa có nội dung để xuất file!",
+        "Lưu ý",
+        "warning"
+      );
+      return;
+    }
+
+    try {
+      const paragraphs = content.split("\n").map((line) => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("CHƯƠNG") || trimmed.startsWith("CHAPTER") || trimmed.startsWith("CẢNH") || trimmed.startsWith("SCENE") || trimmed.startsWith("TIÊU ĐỀ") || trimmed.startsWith("VIDEO TITLE")) {
+          return new Paragraph({
+            text: trimmed,
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 240, after: 120 },
+          });
+        }
+        return new Paragraph({
+          children: [new TextRun({ text: line, size: 24 })],
+          spacing: { after: 120, line: 360 },
+        });
+      });
+
+      const doc = new Document({
+        sections: [
+          {
+            properties: {},
+            children: [
+              new Paragraph({
+                text: storyTitle || (language === "en" ? "Untitled Script" : "Kịch bản tác phẩm"),
+                heading: HeadingLevel.TITLE,
+                spacing: { after: 300 },
+              }),
+              ...paragraphs,
+            ],
+          },
+        ],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const safeTitle = (storyTitle || "kich-ban-tac-pham").replace(/[^a-zA-Z0-9-ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầnẩẫậắằẳẵặẹẻẽềềểỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỈịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]/g, "").trim();
+      saveAs(blob, `${safeTitle || "script"}.docx`);
+    } catch (err) {
+      console.error("Lỗi xuất file DOCX:", err);
+      showAlert(
+        language === "en" ? "Failed to export Word document." : "Không thể xuất file Word. Vui lòng thử lại.",
+        "Lỗi",
+        "error"
+      );
+    }
+  };
+
+  // Export TXT plain text
+  const exportTxt = () => {
+    if (!content.trim()) {
+      showAlert(
+        language === "en" ? "No content to export!" : "Chưa có nội dung để xuất file!",
+        "Lưu ý",
+        "warning"
+      );
+      return;
+    }
+    const blob = new Blob([`${storyTitle}\n\n${content}`], { type: "text/plain;charset=utf-8" });
+    const safeTitle = (storyTitle || "kich-ban-tac-pham").replace(/[^a-zA-Z0-9-ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầnẩẫậắằẳẵặẹẻẽềềểỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỈịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]/g, "").trim();
+    saveAs(blob, `${safeTitle || "script"}.txt`);
+  };
+
   const wordCount = countWords(content);
   const charCount = countChars(content);
   const currentMode = ANALYSIS_MODES.find((m) => m.id === selectedMode);
@@ -446,15 +581,26 @@ export default function StoryWriterView({ onBack }: StoryWriterViewProps) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {/* Stats */}
-          <div className="hidden sm:flex items-center gap-3 text-[11px] text-slate-400 mr-2">
-            <span>
-              {wordCount.toLocaleString()} {t("writer.words")}
-            </span>
-            <span>
-              {charCount.toLocaleString()} {t("writer.chars")}
-            </span>
-          </div>
+          {/* Export Word (.docx) */}
+          <button
+            onClick={exportDocx}
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 flex items-center gap-1.5 cursor-pointer active:scale-95"
+            title={language === "en" ? "Export Word Document (.docx)" : "Tải file Word (.docx)"}
+          >
+            <span>📄</span>
+            <span className="hidden sm:inline">Tải Word (.docx)</span>
+          </button>
+
+          {/* Export TXT (.txt) */}
+          <button
+            onClick={exportTxt}
+            className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+            title={language === "en" ? "Export Text File (.txt)" : "Tải file TXT (.txt)"}
+          >
+            <span>💾</span>
+            <span className="hidden md:inline">.TXT</span>
+          </button>
+
           {/* Toggle AI Panel */}
           <button
             onClick={() => setAiPanelOpen((v) => !v)}

@@ -525,7 +525,7 @@ export default function BotChatPage() {
 
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
-  const [hideActionNotes, setHideActionNotes] = useState<boolean>(true);
+  const [hideActionNotes, setHideActionNotes] = useState<boolean>(false);
   const [messageFeedback, setMessageFeedback] = useState<Record<string, "up" | "down">>({});
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -733,6 +733,11 @@ export default function BotChatPage() {
   // 1. Tải thông tin Bot và Credit của User
   useEffect(() => {
     if (!botId) return;
+
+    if (botId === "tarot-reader") {
+      router.replace("/?tab=tarot");
+      return;
+    }
 
     let isMounted = true;
 
