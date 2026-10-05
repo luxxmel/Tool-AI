@@ -1,0 +1,14 @@
+# Antigravity Rules - Rules for Auto Context Loading & Background Sync
+
+## 📜 Quy tắc Quản lý Ký ức (Memory Bank & Git Rules)
+
+> [!IMPORTANT]
+> **1. Quy tắc Tự động Đồng bộ Memory Bank & Git (Auto Sync):**
+> - Mọi thay đổi về tính năng (stack), kiến trúc, bugfix hoặc cập nhật code đều phải được đồng bộ và cập nhật vào thư mục `memory-bank/` (bao gồm `activeContext.md`, `progress.md`, `systemPatterns.md`, v.v.) hoặc file `memorybank.md`.
+> - Sau khi cập nhật ký ức, lập tức chạy script `.\scripts\auto_git_sync.bat` (hoặc `npm run push`) để tự động commit và push toàn bộ thay đổi lên GitHub (`origin/main`).
+> - Luôn đảm bảo dự án đạt trạng thái Zero TypeScript Errors (`npx tsc --noEmit`) trước khi push.
+
+> [!NOTE]
+> **2. Quy tắc An toàn & Phân quyền Codebase:**
+> - Bảo vệ chặt chẽ các Admin Route (`user.role === 'ADMIN'`).
+> - Đảm bảo kiểm tra Credit hợp lệ đối với tất cả tác vụ tiêu tốn AI.
