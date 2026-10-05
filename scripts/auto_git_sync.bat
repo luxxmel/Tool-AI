@@ -1,24 +1,19 @@
 @echo off
-echo ========================================================
-echo   Auto Git Sync - Tu dong cap nhat Code len GitHub
-echo ========================================================
-echo.
+set GIT_EXE="C:\Users\PC\MinGit\cmd\git.exe"
 
-set GIT_PATH=C:\Users\PC\MinGit\cmd\git.exe
-
-cd /d "c:\Tool-AI"
-
-echo [%date% %time%] Dang kiem tra thay doi code...
-"%GIT_PATH%" status --porcelain > %TEMP%\git_changes.txt
-
-for %%I in (%TEMP%\git_changes.txt) do if %%~zI GTR 0 (
-    echo [%date% %time%] Phat hien thay doi! Dang commit va push len GitHub...
-    "%GIT_PATH%" add .
-    "%GIT_PATH%" commit -m "auto-sync: cap nhat code tu dong [%date% %time%]"
-    "%GIT_PATH%" push origin main
-    echo [%date% %time%] -> Da dong bo len GitHub thanh cong!
-) else (
-    echo [%date% %time%] Khong co thay doi moi.
+%GIT_EXE% status --porcelain | findstr /R "." >nul
+if %errorlevel% neq 0 (
+    echo [INFO] khong co thay doi nao de push.
+    exit /b 0
 )
 
-del %TEMP%\git_changes.txt
+echo [AUTO-SYNC] Dang day code len GitHub...
+%GIT_EXE% add .
+%GIT_EXE% commit -m "Auto sync code: %date% %time%"
+%GIT_EXE% push origin main
+
+if %errorlevel% eq 0 (
+    echo [SUCCESS] Da day code len GitHub thanh cong!
+) else (
+    echo [ERROR] Loi khi push code len GitHub.
+)

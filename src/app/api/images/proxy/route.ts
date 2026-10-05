@@ -170,25 +170,22 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 4. Sinh ảnh siêu chân thực 100% (Model: Flux-Realism & RealVisXL Photorealistic DSLR Engine)
+    // 4. Sinh ảnh chất lượng cao đỉnh cao (Model: FLUX.1 Pro / Flux / Imagen 3)
     if (!finalBuffer && rawPrompt) {
       try {
         const refImgParam = searchParams.get("image");
-        
-        // 1. Positive Prompt Padding chuyên biệt cho Chân thực / Nhiếp ảnh DSLR
-        const photoEnhance = ", raw photo, hyper-realistic portrait, highly detailed skin texture, skin pores, natural lighting, 8k uhd, unedited photograph, shot on 85mm lens, DSLR, sharp focus, authentic real life photo";
-        
-        // 2. Negative Prompt (Vũ khí tiêu diệt búp bê sáp, 3d render & da nhựa láng mịn)
-        const strictNegative = "plastic, doll, mannequin, 3d render, CGI, smooth skin, airbrushed, retouched, heavily filtered, painting, drawing, illustration, anime, cartoon, overexposed, fake, blurry, disfigured";
+        // Ép từ khóa nhiếp ảnh chụp thật raw photo và loại bỏ hoàn toàn làm mịn da kiểu anime/3D
+        const photoKeywords = ", raw photo, authentic photography, highly detailed skin texture, natural skin pores, 8k DSLR photo, unedited photograph";
+        const strictNegative = "anime, cartoon, 3D render, CGI, digital painting, smooth plastic skin, airbrushed, doll, illustration, video game";
 
-        const cleanPrompt = encodeURIComponent(`${rawPrompt}${photoEnhance}`.slice(0, 700));
+        const cleanPrompt = encodeURIComponent(`${rawPrompt}${photoKeywords}`.slice(0, 800));
         const cleanNegative = encodeURIComponent(strictNegative);
         
-        // 3. Tinh chỉnh Model (Realistic Vision / Flux-Realism) & Giảm CFG Scale tự nhiên
-        const realModels = ["flux-realism", "flux", "flux-pro"];
+        // Ưu tiên các mô hình chân thực 100% người thật
+        const topModels = ["realistic", "flux-realism", "flux"];
         
-        for (const mId of realModels) {
-          let polliUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=${mId}&width=${width}&height=${height}&seed=${seed}&nologo=true&nologo=1&nofeed=true&private=true&negative=${cleanNegative}`;
+        for (const mId of topModels) {
+          let polliUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=${mId}&width=${width}&height=${height}&seed=${seed}&nologo=true&nologo=1&nofeed=true&private=true&enhance=false&negative=${cleanNegative}`;
           
           if (refImgParam && refImgParam.startsWith("http")) {
             polliUrl += `&image=${encodeURIComponent(refImgParam)}`;
@@ -196,7 +193,7 @@ export async function GET(request: NextRequest) {
 
           try {
             const res = await fetch(polliUrl, {
-              signal: AbortSignal.timeout(18000),
+              signal: AbortSignal.timeout(22000),
               headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
             });
             
@@ -207,12 +204,10 @@ export async function GET(request: NextRequest) {
                 const imgW = meta.width || width;
                 const imgH = meta.height || height;
                 
-                // Cắt nhẹ dải watermark nếu có và tăng cường độ tương phản/chi tiết sắc nét
                 finalBuffer = await sharp(buf)
                   .extract({ left: 0, top: 0, width: imgW, height: Math.max(100, imgH - 28) })
                   .resize(width, height, { fit: "cover" })
-                  .modulate({ saturation: 1.03, brightness: 1.01 })
-                  .sharpen({ sigma: 1.1, m1: 1.0, m2: 0.5 })
+                  .sharpen({ sigma: 1.4, m1: 1.0, m2: 0.5 })
                   .jpeg({ quality: 98, mozjpeg: true, chromaSubsampling: "4:4:4" })
                   .toBuffer();
                 finalContentType = "image/jpeg";

@@ -196,15 +196,13 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
         updateUserCredits(data.remainingCredits);
       }
 
-      const styleObj = STYLES.find((s) => s.id === selectedStyle);
-
       const newImage: GeneratedImage = {
         id: data.id || `img-${Date.now()}`,
         url: data.url,
         prompt: data.prompt,
         enhancedPrompt: data.enhancedPrompt,
-        style: selectedStyle,
-        styleLabel: styleObj?.label || "Nghệ thuật AI",
+        style: "ai-natural",
+        styleLabel: "Tạo bởi OmniAI",
         aspectRatio: data.aspectRatio,
         referenceImage: data.referenceImage || referenceImage || null,
         createdAt: "Vừa xong",
