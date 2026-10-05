@@ -23,11 +23,11 @@
 
 ## 🛠️ Key Components & Architecture
 
-### 1. AI Image Engine (`src/app/api/images/` & `src/lib/trollllmImagePrompt.ts`)
+### 1. AI Image Engine (`src/app/api/images/`, `src/lib/trollllmImagePrompt.ts` & `src/lib/yescaleImageEngine.ts`)
 - **TrollLLM Prompt Pipeline**:
   + **Claude Fable 5.1** (`claude-fable-5-1`): Phân tích ảnh gốc (Vision) và yêu cầu người dùng, tôn trọng tuyệt đối bối cảnh thực tế và tỉ lệ khung hình (Aspect Ratio 1:1, 16:9, 9:16).
   + **Gemini 3.8 Flash** (`gemini-3-8-flash`): Đóng vai trò Visual Director, hoàn thiện ánh sáng điện ảnh, kết cấu da thật (micro-pores) và bám sát prompt đã tạo.
-- **Rendering & Proxy Endpoint (`/api/images/proxy`)**: Sinh ảnh qua động cơ `FLUX.1-Realism`, cache memory 24h, loại bỏ watermark chân ảnh và sharpening bằng Sharp.
+- **Image Generation Engine**: Sử dụng **Yescale API** (`https://api.yescale.io/task/submit`) với model **`gemini-2.5-flash-image[nano-banana]`**, hỗ trợ nạp ảnh tham chiếu trực tiếp qua `config.images` và cấu hình `aspect_ratio`. Đã loại bỏ hoàn toàn Pollinations & Flux.
 
 ### 2. Full-Featured Admin Panel (`src/app/admin/page.tsx`)
 Bao gồm 5 Tab Quản trị chuyên sâu:

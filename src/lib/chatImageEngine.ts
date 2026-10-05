@@ -382,7 +382,7 @@ Return ONLY JSON:
         const cleanIdea = prompt
           .replace(/^(?:hãy\s+|vui lòng\s+|nhờ bạn\s+|giúp mình\s+)?(?:vẽ|tạo hình|tạo ảnh|thiết kế ảnh|vẽ tranh|draw)\s+(?:cho tôi|cho mình)?/i, "")
           .trim();
-        enhancedPrompt = `Professional ID profile photo of a handsome Asian man in a sleek formal vest suit, highly detailed photographic quality, passport ID style, sharp focus`;
+        enhancedPrompt = `Photorealistic photograph of ${cleanIdea || "a beautiful cinematic scene"}, natural lighting, highly detailed authentic photo`;
       }
     }
 

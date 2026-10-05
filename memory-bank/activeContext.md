@@ -13,12 +13,13 @@
 3. **Nâng cấp Hệ thống Nhập vai Chat (`src/app/api/chat/route.ts`)**:
    - Tối ưu quy tắc System Prompt giúp các Bot AI tương tác hoàn toàn tự nhiên như người thật, triệt tiêu phản hồi kiểu máy móc.
 
-4. **Nâng cấp AI Image Studio với TrollLLM (Claude Fable 5.1 & Gemini 3.8 Flash)**:
+4. **Nâng cấp AI Image Studio với TrollLLM & Yescale Gemini Image Engine**:
    - Thay thế hoàn toàn đoạn prompt hardcode ảnh thẻ vest cũ.
-   - Tích hợp pipeline 2 giai đoạn:
-     + **Claude Fable 5.1** (`claude-fable-5-1`): Phân tích ảnh tham chiếu (Vision), bám sát 100% yêu cầu người dùng và kích thước/tỉ lệ khung hình (Aspect Ratio).
-     + **Gemini 3.8 Flash** (`gemini-3-8-flash`): Đóng vai trò Visual Director, tối ưu hóa độ chân thực, chi tiết da thật (micro-pores) và ánh sáng điện ảnh, triệt tiêu hoàn toàn bóng sáp/anime.
-   - Render hình ảnh qua engine FLUX Realism chất lượng cao.
+   - Loại bỏ hoàn toàn Pollinations và Flux.
+   - Tích hợp pipeline chuyên nghiệp:
+     + **Tạo Prompt**: **Claude Fable 5.1** (`claude-fable-5-1`) phân tích ảnh gốc (Vision), bám sát 100% yêu cầu người dùng và kích thước/tỉ lệ khung hình (Aspect Ratio `1:1`, `16:9`, `9:16`).
+     + **Tối ưu Prompt**: **Gemini 3.8 Flash** (`gemini-3-8-flash`) đóng vai trò Visual Director, hoàn thiện ánh sáng điện ảnh, kết cấu da thật (micro-pores).
+     + **Render Ảnh**: **Yescale API** (`https://api.yescale.io/task/submit`) với model **`gemini-2.5-flash-image[nano-banana]`**, hỗ trợ nạp ảnh tham chiếu trực tiếp qua `config.images` và `config.aspect_ratio`.
 
 ---
 

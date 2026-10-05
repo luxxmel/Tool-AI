@@ -4,6 +4,7 @@ import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { ensureUser } from "@/lib/ensureUser";
 import { generateOptimizedPromptWithFableAndGemini } from "@/lib/trollllmImagePrompt";
+import { generateImageViaYescale } from "@/lib/yescaleImageEngine";
 import sharp from "sharp";
 
 const ASPECT_RATIO_DIMS: Record<string, { width: number; height: number }> = {
@@ -74,42 +75,20 @@ export async function POST(request: NextRequest) {
       enhancedPrompt = prompt.trim();
     }
 
-    // 3. Tính toán kích thước
-    const dims = ASPECT_RATIO_DIMS[aspectRatio] || { width: 1024, height: 1024 };
-    const seed = Math.floor(Math.random() * 9999999);
-
-
-
-    // 4. Nếu không phải ghép vest trực tiếp, chạy qua Image Proxy thế hệ mới
-    let publicRefImageUrl = "";
-    if (referenceImage && typeof referenceImage === "string" && referenceImage.startsWith("data:image")) {
-      try {
-        const fs = await import("fs");
-        const path = await import("path");
-        const uploadsDir = path.join(process.cwd(), "public", "uploads");
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-        
-        const base64Data = referenceImage.replace(/^data:image\/\w+;base64,/, "");
-        const fileName = `ref-${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-        const filePath = path.join(uploadsDir, fileName);
-        fs.writeFileSync(filePath, Buffer.from(base64Data, "base64"));
-        
-        const host = request.headers.get("host") || "localhost:3000";
-        const protocol = request.headers.get("x-forwarded-proto") || "http";
-        publicRefImageUrl = `${protocol}://${host}/uploads/${fileName}`;
-      } catch (err) {
-        console.warn("Lỗi lưu ảnh tham chiếu:", err);
-      }
-    }
-
-    let imageUrl = `/api/images/proxy?prompt=${encodeURIComponent(
-      enhancedPrompt
-    )}&width=${dims.width}&height=${dims.height}&seed=${seed}`;
-
-    if (publicRefImageUrl) {
-      imageUrl += `&image=${encodeURIComponent(publicRefImageUrl)}`;
+    // 3. Sinh ảnh trực tiếp qua Yescale Gemini 2.5 Flash Image Engine (gemini-2.5-flash-image[nano-banana])
+    let imageUrl = "";
+    try {
+      imageUrl = await generateImageViaYescale({
+        prompt: enhancedPrompt,
+        aspectRatio,
+        referenceImage: referenceImage || null,
+      });
+    } catch (yescaleErr: any) {
+      console.error("Lỗi khi sinh ảnh từ Yescale Gemini:", yescaleErr);
+      return NextResponse.json(
+        { error: yescaleErr?.message || "Không thể sinh ảnh từ Gemini Yescale, vui lòng thử lại!" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
