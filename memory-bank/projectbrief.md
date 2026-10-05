@@ -1,10 +1,35 @@
 # Project Brief - Tool-AI (OmniAI Platform)
 
-## 📌 Tổng quan Dự án
-**Tool-AI** (OmniAI) là một nền tảng Web AI đa chức năng cao cấp tích hợp Next.js 15 (App Router), React 19, Tailwind CSS, Prisma ORM (SQLite/PostgreSQL) và hệ thống đa mô hình AI trí tuệ nhân tạo (Google Gemini 3.7 Flash, Vision, FLUX.1 Pro, AI Horde).
+## 📌 1. Tổng quan Dự án
+**Tool-AI** (thương hiệu **OmniAI Platform**) là giải pháp nền tảng Web AI đa chức năng toàn diện (All-in-One AI Suite) dành cho người dùng cá nhân, sáng tạo nội dung và doanh nghiệp. Hệ thống được phát triển trên nền tảng Next.js 15 App Router, React 19, Tailwind CSS, Prisma ORM và kết nối trực tiếp với các API AI hàng đầu hiện nay như Google Gemini 3.7 Flash, Gemini Vision, FLUX.1 Pro, cùng hạ tầng sinh ảnh tự do AI Horde.
 
-## 🎯 Mục tiêu Cốt lõi
-1. **AI Chat & Roleplay đa nhân vật**: Trải nghiệm trò chuyện siêu chân thực với dàn nhân vật AI phong phú, có tính cách riêng, tự nhiên như người thật.
-2. **AI Image Generation Studio**: Tạo và chỉnh sửa ảnh chuyên nghiệp với mô hình FLUX.1-Realism, Gemini 2.5/3.7 Vision, proxy cache không watermark.
-3. **Quản trị viên & Phân quyền (Admin System)**: Bảng điều khiển Admin 5 tab toàn diện kiểm soát người dùng, bài viết, cấp credit, gửi thông báo và quản lý Bot AI.
-4. **AI Tools & Utility Suite**: Bộ công cụ viết nội dung (TikTok, SEO, Ad Copy), bói bài 3D Tarot với Three.js, Cyberpunk Profile.
+---
+
+## 🎯 2. Chân dung Người dùng & Đối tượng Mục tiêu (Target Audience)
+1. **Sáng tạo nội dung (Content Creators, Marketers)**: Cần công cụ tạo kịch bản TikTok, Ad Copy Facebook, Shopee SEO, và tạo ảnh truyền thông nhanh chóng chất lượng cao.
+2. **Người dùng giải trí & Roleplay**: Yêu thích trò chuyện, nhập vai tương tác với các nhân vật AI có cá tính, cảm xúc sống động như người thật.
+3. **Quản trị viên (Admins)**: Cần hệ thống quản trị trực quan để quản lý phân quyền (USER/VIP/ADMIN), theo dõi bài viết cộng đồng, điều phối thông báo và cấp phát Credits.
+
+---
+
+## 🚀 3. Phạm vi Dự án (Project Scope & Core Features)
+
+### A. AI Chat & Multi-Character Roleplay
+- **Hệ thống nhân vật đa dạng**: Hơn 20+ Bot AI trợ lý và nhân vật trending (CEO Mạc Từ Khiêm, Kiếm khách Triệu Vô Thần, Luật sư Bạch Nhụy Băng, Hacker Đinh Khắc Nam, v.v.).
+- **Immersive Dialogue Engine**: Xử lý prompt nhập vai chân thực 100%, hội thoại nói chuyện 90% trực tiếp, phản hồi có chiều sâu cảm xúc, không trả lời máy móc.
+
+### B. AI Image Generation & Editing Studio
+- **Công nghệ FLUX.1 Pro & Realism**: Sinh ảnh siêu nét, chân thực không bị bóng sáp doll/anime.
+- **Proxy Image Engine (`/api/images/proxy`)**: Xử lý cache memory 24h, tăng độ nét nhiếp ảnh (`sharpening`) và tự động xóa bỏ watermark thương hiệu.
+
+### C. Admin Operations (Bảng Quản trị 5 Tab)
+- 👥 **Người dùng**: Tìm kiếm, phân quyền (USER, VIP, ADMIN), cấp/đặt Credit.
+- 📝 **Bài viết**: Quản lý bài viết cộng đồng, ẩn/hiện, xóa bài.
+- 💰 **Cấp Credits**: Thao tác điều chỉnh số dư Credit siêu tốc cho Admin.
+- 🔔 **Thông báo**: Xem trước và soạn thông báo sự kiện/tính năng mới.
+- 🤖 **Nhân vật / Bot**: Danh sách tổng hợp toàn bộ các Bot và Assistant trong hệ thống.
+
+### D. AI Utility Suite & Entertainment
+- **3D Tarot Reader**: Trải nghiệm bói bài Tarot 3D tương tác sống động với Three.js & React Three Fiber.
+- **AI Tools Studio**: Công cụ hỗ trợ viết kịch bản TikTok, Ad Copy, SEO Shopee, Text-to-Speech (TTS Neural).
+- **Cyberpunk Profile**: Trang cá nhân tùy chỉnh giao diện futuristic, ẩn/hiện thông tin cá nhân.
