@@ -1,5 +1,6 @@
 @echo off
 set GIT_EXE="C:\Users\PC\MinGit\cmd\git.exe"
+if not exist %GIT_EXE% set GIT_EXE=git
 
 %GIT_EXE% status --porcelain | findstr /R "." >nul
 if %errorlevel% neq 0 (

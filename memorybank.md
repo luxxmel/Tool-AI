@@ -23,10 +23,11 @@
 
 ## 🛠️ Key Components & Architecture
 
-### 1. AI Image Engine (`src/app/api/images/` & `src/lib/chatImageEngine.ts`)
-- **Text-to-Image / Image-to-Image**: Sử dụng mô hình `FLUX.1-Realism`, `FLUX-Pro`, và `Gemini 2.5/3.7 Vision` xử lý ảnh.
-- **Proxy Endpoint (`/api/images/proxy`)**: Xử lý cache memory 24h, loại bỏ watermark, tăng độ tương phản nhiếp ảnh (`sharpening`) và trả về định dạng JPEG/PNG chất lượng cao.
-- **Style Customization**: Tự động chuyển đổi và làm sạch prompt tiếng Anh nguyên bản không bị gượng ép bối cảnh.
+### 1. AI Image Engine (`src/app/api/images/` & `src/lib/trollllmImagePrompt.ts`)
+- **TrollLLM Prompt Pipeline**:
+  + **Claude Fable 5.1** (`claude-fable-5-1`): Phân tích ảnh gốc (Vision) và yêu cầu người dùng, tôn trọng tuyệt đối bối cảnh thực tế và tỉ lệ khung hình (Aspect Ratio 1:1, 16:9, 9:16).
+  + **Gemini 3.8 Flash** (`gemini-3-8-flash`): Đóng vai trò Visual Director, hoàn thiện ánh sáng điện ảnh, kết cấu da thật (micro-pores) và bám sát prompt đã tạo.
+- **Rendering & Proxy Endpoint (`/api/images/proxy`)**: Sinh ảnh qua động cơ `FLUX.1-Realism`, cache memory 24h, loại bỏ watermark chân ảnh và sharpening bằng Sharp.
 
 ### 2. Full-Featured Admin Panel (`src/app/admin/page.tsx`)
 Bao gồm 5 Tab Quản trị chuyên sâu:

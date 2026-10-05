@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { ensureUser } from "@/lib/ensureUser";
+import { generateOptimizedPromptWithFableAndGemini } from "@/lib/trollllmImagePrompt";
 import sharp from "sharp";
 
 const ASPECT_RATIO_DIMS: Record<string, { width: number; height: number }> = {
@@ -57,61 +58,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Dịch prompt sang tiếng Anh đơn giản (chỉ dịch nghĩa, không tự ý bịa thêm bối cảnh)
+    // 2. Tạo & Tối ưu hóa prompt với Claude Fable 5.1 và Gemini 3.8 Flash (TrollLLM)
     let enhancedPrompt = prompt.trim();
-    const hasGoogleKey = Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
-
-    if (hasGoogleKey) {
-      try {
-        if (referenceImage && typeof referenceImage === "string") {
-          // Xử lý Image-to-Image qua Gemini 3.7 Vision
-          const visionRes = await generateText({
-            model: google("gemini-2.5-flash"),
-            messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: `Analyze the man in this photo carefully and the user request: "${prompt}".
-Describe a photorealistic 8k studio passport photo based on this person:
-- Subject: A young Asian man with short black hair, wearing a sharp black suit vest over a crisp white collared shirt.
-- Face & Identity: Keep his exact facial features, short neat hair, nose, eyes, and skin tone from the reference image.
-- Style: Professional studio photograph, clean background, sharp focus, authentic human skin detail.
-- STRICTLY NO cartoon, NO anime, NO female features, NO 3D render.
-
-Return ONLY the concise English prompt (under 60 words).`,
-                  },
-                  {
-                    type: "image",
-                    image: referenceImage,
-                  },
-                ],
-              },
-            ],
-          });
-          if (visionRes?.text?.trim()) {
-            enhancedPrompt = visionRes.text.trim();
-          }
-        } else {
-          // Text-to-Image thông thường
-          const transRes = await generateText({
-            model: google("gemini-2.5-flash"),
-            system: `You are a direct, exact English translator for AI image generation.
-CRITICAL RULE:
-1. Translate the user prompt directly to English.
-2. DO NOT add any imagined elements, extra objects, or background scenes that the user did not ask for.
-3. Keep it concise, exact, and faithful to the original input.
-4. Return ONLY the English translation without quotes or intro text.`,
-            prompt: prompt.trim(),
-          });
-          if (transRes?.text?.trim()) {
-            enhancedPrompt = transRes.text.trim();
-          }
-        }
-      } catch (e) {
-        enhancedPrompt = prompt.trim();
+    try {
+      const promptResult = await generateOptimizedPromptWithFableAndGemini({
+        prompt: prompt.trim(),
+        aspectRatio,
+        referenceImage: referenceImage || null,
+      });
+      if (promptResult?.finalPrompt?.trim()) {
+        enhancedPrompt = promptResult.finalPrompt.trim();
       }
+    } catch (promptErr) {
+      console.warn("Lỗi khi tối ưu prompt:", promptErr);
+      enhancedPrompt = prompt.trim();
     }
 
     // 3. Tính toán kích thước

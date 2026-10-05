@@ -8,6 +8,7 @@
 | **Bảng Điều khiển Admin (5 Tabs)** | ✅ Complete | Phân quyền ADMIN, Quản lý Users, Posts, Cấp Credits, Soạn Thông báo, Quản lý Bots |
 | **Route Protection & Security** | ✅ Complete | Khóa trang Admin với `AccessDenied` component khi không phải ADMIN |
 | **Image Generation Studio** | ✅ Complete | Tích hợp FLUX.1 Pro, proxy cache ảnh 24h xóa watermark |
+| **TrollLLM Prompt & Vision Pipeline** | ✅ Complete | Tích hợp Claude Fable 5.1 & Gemini 3.8 Flash bám sát yêu cầu người dùng & kích thước |
 | **3D Tarot Reader & Tools** | ✅ Complete | Bói bài 3D tương tác Three.js, AI Tools Studio (TikTok, Ad Copy, SEO) |
 | **10 Nhân vật AI mới** | ✅ Complete | Khởi tạo `newCharacters.ts` với 10 nhân vật cá tính độc đáo + ảnh Unsplash chất lượng cao |
 | **Immersive Chat Prompting** | ✅ Complete | Nâng cấp `effectiveSystemPrompt` trong `/api/chat/route.ts` giúp bot chat tự nhiên 100% |

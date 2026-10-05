@@ -13,6 +13,13 @@
 3. **Nâng cấp Hệ thống Nhập vai Chat (`src/app/api/chat/route.ts`)**:
    - Tối ưu quy tắc System Prompt giúp các Bot AI tương tác hoàn toàn tự nhiên như người thật, triệt tiêu phản hồi kiểu máy móc.
 
+4. **Nâng cấp AI Image Studio với TrollLLM (Claude Fable 5.1 & Gemini 3.8 Flash)**:
+   - Thay thế hoàn toàn đoạn prompt hardcode ảnh thẻ vest cũ.
+   - Tích hợp pipeline 2 giai đoạn:
+     + **Claude Fable 5.1** (`claude-fable-5-1`): Phân tích ảnh tham chiếu (Vision), bám sát 100% yêu cầu người dùng và kích thước/tỉ lệ khung hình (Aspect Ratio).
+     + **Gemini 3.8 Flash** (`gemini-3-8-flash`): Đóng vai trò Visual Director, tối ưu hóa độ chân thực, chi tiết da thật (micro-pores) và ánh sáng điện ảnh, triệt tiêu hoàn toàn bóng sáp/anime.
+   - Render hình ảnh qua engine FLUX Realism chất lượng cao.
+
 ---
 
 ## 💡 2. Quyết định Kỹ thuật Mới nhất (Recent Technical Decisions)
