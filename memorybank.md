@@ -1,5 +1,21 @@
 # Memory Bank - Tool-AI Project (OmniAI Platform)
 
+## 📜 CORE RULES & WORKFLOW CONVENTIONS (BỘ QUY TẮC BẮT BUỘC)
+
+> [!IMPORTANT]
+> **Quy tắc Tự động Đồng bộ Git (Auto Git Push):**
+> 1. Mỗi khi hoàn thành một tính năng, tính năng mới (stack), sửa lỗi (bugfix) hoặc cập nhật giao diện/API, AI hoặc Developer **phải lập tức cập nhật lại file `memorybank.md` này**.
+> 2. Sau khi cập nhật `memorybank.md`, lập tức chạy script `.\scripts\auto_git_sync.bat` (hoặc lệnh `npm run push`) để tự động commit & push code mới nhất + memorybank lên repo GitHub `origin/main`.
+> 3. Tuyệt đối duy trì trạng thái Zero TypeScript Errors (`npx tsc --noEmit`) trước khi thực hiện push.
+
+> [!NOTE]
+> **Quy tắc Phát triển & Bảo mật Code:**
+> 1. **Bảo vệ Route Quản trị**: Chỉ cho phép tài khoản có `user.role === 'ADMIN'` truy cập các trang/tính năng quản trị.
+> 2. **Hệ thống Credit**: Mọi tính năng sinh AI (tạo ảnh, trợ lý bot, công cụ SEO) đều kiểm tra và trừ Credit hợp lệ (Tài khoản ADMIN được unlimited `∞`).
+> 3. **Mô hình AI Chân thực**: Không gượng ép bối cảnh hay từ khóa làm mịn da bóng sáp búp bê/anime trừ khi người dùng yêu cầu rõ ràng.
+
+---
+
 ## 📌 Project Overview
 **Tool-AI** (OmniAI) là nền tảng Web AI đa chức năng tích hợp Next.js (App Router), React 19, Tailwind CSS, Prisma ORM, và các mô hình trí tuệ nhân tạo hàng đầu (Google Gemini 3.7 Flash, Vision, FLUX.1 Pro, AI Horde).
 
@@ -34,9 +50,3 @@ Bao gồm 5 Tab Quản trị chuyên sâu:
 
 ### Development Server
 - **Khởi chạy Dev**: `npm run dev` (chạy Next.js tại `http://localhost:3000`).
-
----
-
-## 🔒 Security & Role Rules
-- **Admin Access Protection**: Độc quyền dành cho tài khoản có `user.role === 'ADMIN'`.
-- **Credits System**: Trừ 1 Credit per AI Generation (Tài khoản ADMIN được Vô hạn `∞`).
