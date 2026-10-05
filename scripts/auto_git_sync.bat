@@ -12,7 +12,7 @@ echo [AUTO-SYNC] Dang day code len GitHub...
 %GIT_EXE% commit -m "Auto sync code: %date% %time%"
 %GIT_EXE% push origin main
 
-if %errorlevel% eq 0 (
+if not errorlevel 1 (
     echo [SUCCESS] Da day code len GitHub thanh cong!
 ) else (
     echo [ERROR] Loi khi push code len GitHub.
