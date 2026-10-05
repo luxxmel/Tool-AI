@@ -36,7 +36,11 @@ Bao gồm 5 Tab Quản trị chuyên sâu:
 4. 🔔 **Thông báo**: Xem và soạn thông báo hệ thống trực quan.
 5. 🤖 **Nhân vật / Bot**: Danh sách bot AI trợ lý và nhân vật trending.
 
-### 3. Cyber Profile & Customizations
+### 3. AI Characters & Chat System (`src/data/aiData.ts`, `src/data/newCharacters.ts`, `src/app/api/chat/route.ts`)
+- **10 Nhân vật AI mới**: Bổ sung 10 nhân vật đa dạng (Mạc Từ Khiêm, Triệu Vô Thần, Hạ Lạn Tuyết, Tiểu Duyệt Nhi, Lâm Phong Châu, Bạch Nhụy Băng, Đường Tâm Tiếu, Vương Tuệ Tuyết, Trần Vĩnh Quân, Đinh Khắc Nam) với ảnh đại diện Unsplash chân thực, cá tính độc đáo.
+- **Nâng cấp Chất lượng Đoạn chat (Immersive Chat System)**: Cập nhật quy tắc `effectiveSystemPrompt` trong `/api/chat/route.ts`, ép AI đóng vai nhập vai tự nhiên 100%, trò chuyện chân thực như người thật (90% lời thoại trực tiếp), giữ nguyên tính cách và cảm xúc theo ngữ cảnh.
+
+### 4. Cyber Profile & Customizations
 - **Cyberpunk User Profile (`src/app/profile/[username]/page.tsx`)**: Trang cá nhân tùy biến banner, avatar, quyền riêng tư ẩn/hiện thông tin.
 - **3D Tarot Reader (`src/components/tarot/TarotView.tsx`)**: Trải nghiệm bói bài Tarot 3D sống động với hiệu ứng Three.js.
 - **AI Tools Studio (`src/components/tools/AiToolsStudio.tsx`)**: Bộ công cụ viết kịch bản TikTok, Ad Copy, Shopee SEO, và TTS.
