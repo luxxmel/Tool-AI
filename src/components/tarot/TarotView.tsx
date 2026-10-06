@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { TAROT_CARDS, TAROT_TOPICS, TarotCard, TarotTopic, SpreadOption } from '@/data/tarotData';
 import { useAuth } from '@/context/AuthContext';
 import RechargeModal from '@/components/payment/RechargeModal';
@@ -922,8 +924,10 @@ Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần 
                 </p>
               </div>
             ) : (
-              <div className="text-slate-200 text-sm md:text-base leading-relaxed whitespace-pre-line space-y-4 font-sans">
-                {readingText}
+              <div className="text-slate-200 text-sm md:text-base leading-relaxed space-y-4 font-sans prose prose-invert max-w-none prose-p:my-2 prose-headings:text-amber-300 prose-headings:font-bold prose-strong:text-amber-200 prose-strong:font-bold">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {readingText}
+                </ReactMarkdown>
               </div>
             )}
           </div>
