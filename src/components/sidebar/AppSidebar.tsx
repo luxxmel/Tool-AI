@@ -167,7 +167,7 @@ export default function AppSidebar({
             ▲
           </div>
           <span className="font-black text-slate-900 dark:text-white text-base tracking-tight">
-            omni<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.ai</span>
+            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.ai</span>
           </span>
         </div>
 
@@ -227,7 +227,7 @@ export default function AppSidebar({
                 </svg>
               </div>
               <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight shrink-0">
-                omni<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.ai</span>
+                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.ai</span>
               </span>
             </Link>
 

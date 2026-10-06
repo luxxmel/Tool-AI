@@ -26,8 +26,8 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "OmniAI - Hỏi tất cả mọi thứ trên đời",
-  description: "Nền tảng trí tuệ nhân tạo, trợ lý thông minh và tìm kiếm tri thức",
+  title: "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh",
+  description: "Biết Tuốt AI — Nền tảng trí tuệ nhân tạo, trợ lý đa năng và giải đáp mọi thắc mắc",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

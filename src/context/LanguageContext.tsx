@@ -170,7 +170,7 @@ const translationsVi: Translations = {
 
   // Home Page
   "home.title": "Xin chào! Tôi có thể giúp gì cho bạn?",
-  "home.subtitle": "Hỏi bất cứ điều gì — học tập, sáng tạo, lập trình, hay chỉ trò chuyện",
+  "home.subtitle": "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh",
   "home.placeholder": "Hỏi tôi bất cứ điều gì...",
   "home.send": "Gửi",
   "home.suggestions_title": "Gợi ý cho bạn",
@@ -178,7 +178,7 @@ const translationsVi: Translations = {
   "home.trending_characters": "Nhân vật xu hướng",
   "home.view_all": "Xem tất cả",
   "home.trending": "Xu hướng",
-  "home.footer_desc": "© 2026 OmniAI Inc. Nền tảng trợ lý & tìm kiếm thông minh.",
+  "home.footer_desc": "© 2026 biettuot.ai — Biết Tuốt AI: Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh.",
   "home.terms": "Điều khoản",
   "home.privacy": "Chính sách bảo mật",
 
@@ -505,7 +505,7 @@ const translationsEn: Translations = {
 
   // Home Page
   "home.title": "Hello! How can I help you?",
-  "home.subtitle": "Ask anything — study, create, code, or just chat",
+  "home.subtitle": "Biettuot AI — Ask Anything, Master Everything",
   "home.placeholder": "Ask me anything...",
   "home.send": "Send",
   "home.suggestions_title": "Suggestions for you",
@@ -513,7 +513,7 @@ const translationsEn: Translations = {
   "home.trending_characters": "Trending Characters",
   "home.view_all": "View all",
   "home.trending": "Trending",
-  "home.footer_desc": "© 2026 OmniAI Inc. Smart assistant & AI platform.",
+  "home.footer_desc": "© 2026 biettuot.ai — Biettuot AI: Ask Anything, Master Everything.",
   "home.terms": "Terms of Service",
   "home.privacy": "Privacy Policy",
 
