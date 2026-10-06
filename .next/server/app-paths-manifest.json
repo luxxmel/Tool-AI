@@ -35,11 +35,11 @@
   "/api/users/route": "app/api/users/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/api/contributors/route": "app/api/contributors/route.js",
+  "/api/images/proxy/route": "app/api/images/proxy/route.js",
   "/admin/page": "app/admin/page.js",
   "/chat/[botId]/page": "app/chat/[botId]/page.js",
   "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/terms/page": "app/terms/page.js",
-  "/typing/page": "app/typing/page.js",
-  "/api/images/proxy/route": "app/api/images/proxy/route.js"
+  "/typing/page": "app/typing/page.js"
 }

@@ -35,11 +35,11 @@
   "/api/users/route": "/api/users",
   "/favicon.ico/route": "/favicon.ico",
   "/api/contributors/route": "/api/contributors",
+  "/api/images/proxy/route": "/api/images/proxy",
   "/admin/page": "/admin",
   "/chat/[botId]/page": "/chat/[botId]",
   "/page": "/",
   "/privacy/page": "/privacy",
   "/terms/page": "/terms",
-  "/typing/page": "/typing",
-  "/api/images/proxy/route": "/api/images/proxy"
+  "/typing/page": "/typing"
 }
