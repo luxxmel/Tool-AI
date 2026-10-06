@@ -550,7 +550,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   const bannerCta = language === "en" ? announcement.ctaEn : announcement.cta;
 
   return (
-    <div className="w-full max-w-[98%] mx-auto flex flex-col gap-6 px-1 sm:px-3">
+    <div className="w-full mx-auto flex flex-col gap-6 px-0 sm:px-1">
 
       {/* ── MAIN CONTENT: Feed + Sidebar ── */}
       <div className="w-full flex flex-col lg:flex-row gap-6 items-start">
