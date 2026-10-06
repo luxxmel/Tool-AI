@@ -170,7 +170,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Khởi đầu mới', 'Tự do', 'Mạo hiểm', 'Tự nhiên'],
     element: 'Khí',
-    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m00.jpg',
     uprightMeaning: 'Hành trình mới tràn đầy hy vọng và tinh thần dám nghĩ dám làm. Hãy tin tưởng vào bản thân và bước đi không sợ hãi.',
     reversedMeaning: 'Hành động liều lĩnh, thiếu cân nhắc hoặc nỗi sợ thất bại đang giữ chân bạn.',
     advice: 'Hãy cởi mở với những khởi đầu mới, nhưng giữ một chút tỉnh táo trước khi nhảy.'
@@ -182,7 +182,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Sức mạnh trí tuệ', 'Tập trung', 'Hiện thực hóa', 'Kỹ năng'],
     element: 'Khí',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m01.jpg',
     uprightMeaning: 'Bạn sở hữu đầy đủ tiềm năng và nguồn lực để biến mục tiêu thành hiện thực. Sự tập trung và quyết tâm sẽ tạo nên kỳ tích.',
     reversedMeaning: 'Lãng phí tài năng, thiếu định hướng hoặc có sự thaotúng, gian dối xung quanh.',
     advice: 'Hãy tin vào năng lực của bạn và tận dụng mọi công cụ mình đang có.'
@@ -194,7 +194,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Trực giác', 'Bí ẩn', 'Tri thức nội tâm', 'Sự tĩnh lặng'],
     element: 'Nước',
-    image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m02.jpg',
     uprightMeaning: 'Trực giác mách bảo những điều lý trí chưa kịp nhận ra. Hãy lắng nghe tiếng nói bên trong và kiên nhẫn quan sát.',
     reversedMeaning: 'Phớt lờ trực giác, cảm xúc bị kìm nén hoặc thiếu sự thấu hiểu bản thân.',
     advice: 'Hãy dành thời gian tĩnh lặng để quay vào bên trong kết nối với tâm hồn.'
@@ -206,7 +206,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Trù phú', 'Tình mẫu tử', 'Phát triển', 'Sự chăm sóc'],
     element: 'Đất',
-    image: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m03.jpg',
     uprightMeaning: 'Thời kỳ gặt hái thành quả, sự trù phú và yêu thương tràn ngập. Các ý tưởng của bạn đang sinh sôi nảy nở.',
     reversedMeaning: 'Thiếu sự chăm sóc bản thân, bế tắc trong sáng tạo hoặc quá phụ thuộc vào người khác.',
     advice: 'Nuôi dưỡng tâm hồn và bao bọc những ý tưởng mới bằng tình yêu thương.'
@@ -218,7 +218,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Kỷ luật', 'Quyền lực', 'Cấu trúc', 'Bảo hộ'],
     element: 'Lửa',
-    image: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m04.jpg',
     uprightMeaning: 'Lãnh đạo, thiết lập trật tự và xây dựng nền móng vững chắc. Sự kiên định giúp bạn làm chủ tình hình.',
     reversedMeaning: 'Sự kiểm soát quá đà, độc đoán hoặc thiếu kỷ luật cá nhân.',
     advice: 'Lập kế hoạch rõ ràng và hành động với thái độ có trách nhiệm.'
@@ -230,7 +230,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Truyền thống', 'Học hỏi', 'Đạo đức', 'Tín ngưỡng'],
     element: 'Đất',
-    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m05.jpg',
     uprightMeaning: 'Tìm kiếm lời khuyên từ người đi trước, tuân theo giá trị truyền thống và mở rộng tri thức.',
     reversedMeaning: 'Cố chấp, gạt bỏ lời khuyên chân thành hoặc mù quáng tuân theo quy tắc cũ.',
     advice: 'Hãy học hỏi kinh nghiệm nhưng vẫn giữ nhân sinh quan riêng của bản thân.'
@@ -242,7 +242,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Tình yêu', 'Lựa chọn', 'Hòa hợp', 'Đồng điệu'],
     element: 'Khí',
-    image: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m06.jpg',
     uprightMeaning: 'Sự thấu hiểu sâu sắc, kết nối tâm hồn và đưa ra lựa chọn quan trọng dựa trên trái tim.',
     reversedMeaning: 'Mất cân bằng trong mối quan hệ, xung đột giá trị hoặc ngần ngại trước quyết định lớn.',
     advice: 'Lựa chọn bằng trái tim và sống thành thật với cảm xúc của mình.'
@@ -254,7 +254,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Bản lĩnh', 'Chiến thắng', 'Tập trung', 'Vượt thử thách'],
     element: 'Nước',
-    image: 'https://images.unsplash.com/photo-1500462828032-f15a1957fe3d?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m07.jpg',
     uprightMeaning: 'Bằng sự quyết tâm và chí hướng rõ ràng, bạn sẽ vượt qua mọi chướng ngại để tiến tới thành công.',
     reversedMeaning: 'Mất phương hướng, thiếu kiểm soát cảm xúc hoặc gặp cản trở từ ngoại cảnh.',
     advice: 'Giữ vững tay lái và tiến về phía trước với niềm tin bất diệt.'
@@ -266,7 +266,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Nội lực', 'Sự kiên nhẫn', 'Lòng dịu dàng', 'Làm chủ'],
     element: 'Lửa',
-    image: 'https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m08.jpg',
     uprightMeaning: 'Sức mạnh thực sự đến từ sự dịu dàng và lòng dũng cảm nội tại. Bạn có thể thuần phục mọi sóng gió.',
     reversedMeaning: 'Nghi ngờ bản thân, tự nản lòng hoặc để sự tức giận lấn át lý trí.',
     advice: 'Hãy kiên nhẫn và dùng sự dịu dàng để giải quyết khó khăn.'
@@ -278,7 +278,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Chiêm nghiệm', 'Tự suy ngẫm', 'Tìm kiếm sự thật', 'Tĩnh tâm'],
     element: 'Đất',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m09.jpg',
     uprightMeaning: 'Thời điểm để rút lui khỏi sự ồn ào bên ngoài, suy ngẫm và tìm ra hướng đi đúng đắn cho bản thân.',
     reversedMeaning: 'Cô lập bản thân quá mức, cảm giác cô đơn hoặc lẩn tránh thực tại.',
     advice: 'Lắng nghe trí tuệ nội tâm nhưng đừng tách rời thế giới quá lâu.'
@@ -290,7 +290,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Biến chuyển', 'Cơ hội', 'Vòng quay cuộc sống', 'Định mệnh'],
     element: 'Lửa',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m10.jpg',
     uprightMeaning: 'Một bước ngoặt tích cực đang đến. Hãy nắm bắt cơ hội và thích nghi với sự thay đổi của số phận.',
     reversedMeaning: 'Vận xui tạm thời, kháng cự lại sự thay đổi hoặc thiếu chuẩn bị trước biến cố.',
     advice: 'Học cách chấp nhận sự thay đổi và vững vàng bước qua thời khắc chuyển giao.'
@@ -302,7 +302,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Hy vọng', 'Chữa lành', 'Cảm hứng', 'Sự thanh thản'],
     element: 'Khí',
-    image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m17.jpg',
     uprightMeaning: 'Ánh sáng hy vọng và chữa lành sau những giông bão. Vũ trụ đang truyền cảm hứng và tiếp sức cho bạn.',
     reversedMeaning: 'Thất vọng, mất niềm tin hoặc nhìn nhận mọi thứ quá tiêu cực.',
     advice: 'Giữ vững niềm tin, tương lai tươi sáng đang chờ đợi bạn phía trước.'
@@ -314,7 +314,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Rạng rỡ', 'Thành công', 'Hạnh phúc', 'Năng lượng'],
     element: 'Lửa',
-    image: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m19.jpg',
     uprightMeaning: 'Trạng thái ngập tràn niềm vui, sức sống và may mắn. Mọi nghi ngờ được xua tan dưới ánh nắng rực rỡ.',
     reversedMeaning: 'Thành công bị chậm trễ một chút, hoặc bạn đang quá lo lắng không cần thiết.',
     advice: 'Hãy đón nhận niềm vui và lan tỏa năng lượng tích cực đến mọi người.'
@@ -326,7 +326,7 @@ export const TAROT_CARDS: TarotCard[] = [
     arcana: 'major',
     keywords: ['Hoàn thành', 'Trọn vẹn', 'Thành tựu', 'Hành trình mới'],
     element: 'Đất',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/m21.jpg',
     uprightMeaning: 'Mục tiêu đã được hoàn thành trọn vẹn. Bạn đã sẵn sàng khép lại chương cũ để bước sang trang mới rực rỡ hơn.',
     reversedMeaning: 'Thiếu bước cuối cùng để về đích, hoặc lưu giam mình trong những tiếc nuối cũ.',
     advice: 'Tự hào về những gì đã trải qua và sẵn sàng cho những mục tiêu cao xa hơn.'
@@ -339,7 +339,7 @@ export const TAROT_CARDS: TarotCard[] = [
     suit: 'cups',
     keywords: ['Cảm xúc sâu sắc', 'Trực giác', 'Lòng trắc ẩn', 'Nhạy cảm'],
     element: 'Nước',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/c13.jpg',
     uprightMeaning: 'Trái tim tràn ngập tình yêu thương và sự thấu hiểu sâu sắc.',
     reversedMeaning: 'Tâm thế bất ổn, thiếu an toàn hoặc phụ thuộc cảm xúc quá mức.',
     advice: 'Hãy yêu thương bản thân và làm chủ cảm xúc nội tại.'
@@ -352,7 +352,7 @@ export const TAROT_CARDS: TarotCard[] = [
     suit: 'pentacles',
     keywords: ['Nỗ lực', 'Đầu tư tâm sức', 'Chăm chỉ', 'Rèn luyện'],
     element: 'Đất',
-    image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/p08.jpg',
     uprightMeaning: 'Sự kiên trì rèn luyện và xây dựng nền móng vững chắc.',
     reversedMeaning: 'Thiếu cam kết, thiếu nỗ lực hoặc chưa thực sự đầu tư tâm sức.',
     advice: 'Hãy nghiêm túc và có trách nhiệm với lựa chọn của mình.'
@@ -365,7 +365,7 @@ export const TAROT_CARDS: TarotCard[] = [
     suit: 'wands',
     keywords: ['Cọ xát', 'Xung đột nhẹ', 'Cạnh tranh', 'Thử thách'],
     element: 'Lửa',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/w05.jpg',
     uprightMeaning: 'Sự cọ xát và quan điểm trái chiều tạo nên động lực phát triển.',
     reversedMeaning: 'Né tránh xung đột, kìm nén bất đồng khiến mâu thuẫn âm ỉ.',
     advice: 'Hãy thẳng thắn đối thoại để giải quyết triệt để nút thắt.'
@@ -378,7 +378,7 @@ export const TAROT_CARDS: TarotCard[] = [
     suit: 'swords',
     keywords: ['Chuyển giao', 'Rời xa giông bão', 'Chữa lành', 'Hướng đi mới'],
     element: 'Khí',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop',
+    image: 'https://raw.githubusercontent.com/gkjohn/tarot-api/master/static/cards/s06.jpg',
     uprightMeaning: 'Vượt qua sóng gió để tìm về bình yên.',
     reversedMeaning: 'Bắc kẹt trong quá khứ, chưa thể buông bỏ những tổn thương cũ.',
     advice: 'Hãy sẵn sàng bước đi để đón nhận hành trình êm đềm phía trước.'
