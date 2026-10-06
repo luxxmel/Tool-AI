@@ -550,13 +550,13 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   const bannerCta = language === "en" ? announcement.ctaEn : announcement.cta;
 
   return (
-    <div className="w-full mx-auto flex flex-col gap-6 px-0 sm:px-1">
+    <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6 px-3 sm:px-6 py-2">
 
       {/* ── MAIN CONTENT: Feed + Sidebar ── */}
-      <div className="w-full flex flex-col lg:flex-row gap-6 items-start">
+      <div className="w-full flex flex-col lg:flex-row gap-6 items-start justify-between">
 
-        {/* ── LEFT: FEED ── */}
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
+        {/* ── LEFT/CENTER: FEED (Khám phá cộng đồng) ── */}
+        <div className="flex-1 min-w-0 max-w-4xl mx-auto w-full flex flex-col gap-5">
 
           {/* Feed header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -1074,8 +1074,8 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
           )}
         </div>
 
-        {/* ── RIGHT: SIDEBAR ── */}
-        <div className="w-full lg:w-64 xl:w-64 shrink-0 flex flex-col gap-4">
+        {/* ── RIGHT: SIDEBAR (Chia sẻ với cộng đồng) ── */}
+        <div className="w-full lg:w-72 xl:w-80 shrink-0 ml-auto flex flex-col gap-4">
 
           {/* Write Post CTA card */}
           <div className="bg-gradient-to-br from-indigo-600/10 to-violet-600/10 border border-indigo-200 dark:border-indigo-900/60 rounded-2xl p-4">

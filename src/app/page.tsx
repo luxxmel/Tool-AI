@@ -253,7 +253,7 @@ function HomeContent() {
       >
 
         {/* Centered Unified Content Container */}
-        <div className={`w-full ${isChatOpen || currentTab === "characters" ? "h-full min-h-0 max-w-full" : "max-w-[980px]"} flex flex-col`}>
+        <div className={`w-full ${isChatOpen || currentTab === "characters" || currentTab === "explore" ? "h-full min-h-0 max-w-full" : "max-w-[980px]"} flex flex-col`}>
           {isCreatingProject ? (
             /* Inline Project Creation View in center of chat area */
             <CreateProjectView
