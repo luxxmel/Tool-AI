@@ -550,7 +550,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   const bannerCta = language === "en" ? announcement.ctaEn : announcement.cta;
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-6 px-2 sm:px-4">
+    <div className="w-full max-w-[98%] mx-auto flex flex-col gap-6 px-1 sm:px-3">
 
       {/* ── MAIN CONTENT: Feed + Sidebar ── */}
       <div className="w-full flex flex-col lg:flex-row gap-6 items-start">
@@ -1074,7 +1074,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
         </div>
 
         {/* ── RIGHT: SIDEBAR ── */}
-        <div className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
+        <div className="w-full lg:w-84 xl:w-96 shrink-0 flex flex-col gap-4">
 
           {/* Write Post CTA card */}
           <div className="bg-gradient-to-br from-indigo-600/10 to-violet-600/10 border border-indigo-200 dark:border-indigo-900/60 rounded-2xl p-4">
