@@ -389,10 +389,10 @@ export async function POST(request: NextRequest) {
     const isAdmin = user.role === "ADMIN";
 
     // Phân loại chi phí credit theo loại bot:
-    // - Góc Chữa Lành / Gửi Gắm Nỗi Buồn: HOÀN TOÀN MIỄN PHÍ (0 Credit)
+    // - Góc Chữa Lành / Tarot Reader / Gửi Gắm Nỗi Buồn: HOÀN TOÀN MIỄN PHÍ (0 Credit)
     // - Nhân vật truyện ngôn tình / tổng tài / tiên hiệp VIP: 2 Credits / tin nhắn
     // - Trợ lý thông thường: 1 Credit / tin nhắn
-    const isFreeHealingBot = botId === "goc-chua-lanh" || botId === "healing-companion";
+    const isFreeHealingBot = botId === "goc-chua-lanh" || botId === "healing-companion" || botId === "tarot-reader";
     const isVipStoryChar = [
       "char-tong-tai",
       "char-co-da-than",

@@ -267,11 +267,15 @@ QUY TẮC LUẬN GIẢI CHUẨN XÁC VÀ TÂM LÝ CHUYÊN SÂU (Viết dài, ít
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           botId: 'tarot-reader',
+          userId: user?.id || 'tarot_user_anonymous',
           messages: [{ role: 'user', content: prompt }]
         })
       });
 
-      if (!response.ok) throw new Error('API Error');
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error || 'API Error');
+      }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -300,15 +304,44 @@ QUY TẮC LUẬN GIẢI CHUẨN XÁC VÀ TÂM LÝ CHUYÊN SÂU (Viết dài, ít
       }
     } catch (err) {
       console.error('Tarot error:', err);
-      const fallback = `🔮 **Thông điệp từ Reader Luna**:
+      
+      // Bản luận giải dự phòng chuyên sâu, đầy đủ 4 tầng phân tích chuẩn Tatca.AI
+      const partnerStr = partnerName ? `dành riêng cho kết nối giữa bạn và **${partnerName}**` : '';
+      const richFallbackText = `🔮 **BẢN LUẬN GIẢI CHUYÊN SÂU TỪ READER LUNA** ${partnerStr}
 
-Dường như bạn đang mang theo rất nhiều cảm xúc chông chênh vào trải bài lần này.
+---
 
-${currentPicked.map(p => `**${p.positionLabel} — ${p.card.vietnameseName}**: ${p.isReversed ? p.card.reversedMeaning : p.card.uprightMeaning}`).join('\n\n')}
+### 🌿 1. TẤN SỐ NĂNG LƯỢNG & MỞ ĐẦU CHỮA LÀNH
+Chào bạn, khi trải bài "${selectedTopic.title}" - kiệt tác "${selectedSpread.title}" hiện ra, Vũ Trụ phản ánh một dòng năng lượng đang cuộn chảy rất đặc biệt trong tâm trí bạn. Đôi khi những băn khoăn hay sự chông chênh hiện tại không phải là tín hiệu bế tắc, mà là thời điểm trực giác của bạn thức tỉnh để tháo gỡ những khúc mắc bấy lâu.
 
-✨ **Lời khuyên**: Hãy lắng nghe tiếng nói nội tâm và vững tin vào bản thân.`;
+---
 
-      setReadingText(fallback);
+### 🎴 2. LUẬN GIẢI CHI TIẾT THEO TỪNG VỊ TRÍ KHÍA CẠNH
+
+${currentPicked
+  .map(
+    (p, idx) => `#### **Khía Cạnh ${idx + 1}: ${p.positionLabel.toUpperCase()} — ${p.card.vietnameseName} (${p.isReversed ? 'Lá Ngược 🔄' : 'Lá Xuôi ✨'})**
+- **Ý Nghĩa Biểu Tượng & Nguyên Tố**: Lá bài mang thông điệp cốt lõi về *${p.card.keywords.join(', ')}*. ${p.isReversed ? 'Khi ở trạng thái ngược, năng lượng bị nghẽn hoặc báo hiệu sự kháng cự lại diễn biến tự nhiên.' : 'Lá bài xuôi mang năng lượng khởi sắc, biểu hiện cho sự phát triển đúng hướng.'}
+- **Phân Tích Diễn Biến Tâm Lý**: ${p.isReversed ? p.card.reversedMeaning : p.card.uprightMeaning}
+- **Tác Động Thực Tế**: Đừng quá lo lắng trước những áp lực vô hình. Hãy dành cho bản thân một khoảng lặng để định hình lại mong muốn thực sự.`
+  )
+  .join('\n\n')}
+
+---
+
+### 🧩 3. BỨC TRANH TỔNG HỢP & NÚT THẮT CẦN THÁO GỠ
+Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần đến mốc thời gian chuyển dịch quan trọng. Nút thắt lớn nhất lúc này chính là việc buông bỏ những kỳ vọng quá mức hoặc nỗi lo sợ mơ hồ về tương lai. Khi bạn nhìn nhận sự việc bằng tâm thế lý trí và bao dung, bức tranh toàn cảnh sẽ tự khắc trở nên minh bạch và gãy gọn.
+
+---
+
+### 🌟 4. HƯỚNG ĐI THỰC CHUYÊN & LỜI NHẮN NHỦ TỪ VŨ TRỤ
+- **Hành động 1**: Dành thời gian lắng nghe cảm xúc nội tâm, ngừng so sánh hành trình của mình với người khác.
+- **Hành động 2**: Chủ động giao tiếp chân thành và rõ ràng để giải tỏa mọi hiểu lầm nếu có.
+- **Hành động 3**: Tin tưởng vào tiềm năng và sự lựa chọn của chính bạn ở khoảnh khắc hiện tại.
+
+✨ *"Khi bạn vững tâm bước đi trên con đường của chính mình, cả vũ trụ sẽ hợp lực để soi sáng từng bước tiến của bạn."*`;
+
+      setReadingText(richFallbackText);
     } finally {
       setIsReadingLoading(false);
     }
