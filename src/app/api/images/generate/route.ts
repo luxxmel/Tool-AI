@@ -59,14 +59,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Tạo & Tối ưu hóa prompt với Claude Fable 5.1 và Gemini 3.8 Flash (TrollLLM)
+    // 2. Tạo & Tối ưu hóa prompt với Claude Fable 5.1 và Gemini 3.8 Flash (TrollLLM) với giới hạn 3.5s
     let enhancedPrompt = prompt.trim();
     try {
-      const promptResult = await generateOptimizedPromptWithFableAndGemini({
+      const promptPromise = generateOptimizedPromptWithFableAndGemini({
         prompt: prompt.trim(),
         aspectRatio,
         referenceImage: referenceImage || null,
       });
+      const timeoutPromise = new Promise<{ finalPrompt: string }>((resolve) =>
+        setTimeout(() => resolve({ finalPrompt: prompt.trim() }), 3500)
+      );
+      const promptResult = await Promise.race([promptPromise, timeoutPromise]);
       if (promptResult?.finalPrompt?.trim()) {
         enhancedPrompt = promptResult.finalPrompt.trim();
       }
