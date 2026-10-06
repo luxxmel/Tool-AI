@@ -255,19 +255,6 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
         </p>
       </div>
 
-      {/* Nút Đăng Nhập Nhanh Admin (Dành cho chủ máy) */}
-      <div className="mb-4">
-        <button
-          type="button"
-          onClick={handleAdminQuickLogin}
-          className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-xs"
-          title="Đăng nhập tài khoản Admin với vô hạn Credits"
-        >
-          <span>👑</span>
-          <span>Đăng nhập Admin (Lịnh Hoàng - Vô hạn Credits)</span>
-        </button>
-      </div>
-
       {error && (
         <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
           <span>⚠️</span>
@@ -279,14 +266,14 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
       <form onSubmit={handleEmailLogin} className="space-y-3.5">
         <div>
           <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-            Email hoặc Tên đăng nhập
+            Email
           </label>
           <div className="relative">
             <input
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="VD: hoanglinh, admin, ban@gmail.com..."
+              placeholder="Nhập email..."
               required
               className="w-full px-4 py-2.5 bg-[#131520] border border-slate-800 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
             />
@@ -298,16 +285,13 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
             <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Mật khẩu
             </label>
-            <span className="text-[10px] text-slate-500 italic">
-              (Tùy chọn - không bắt buộc)
-            </span>
           </div>
           <div className="relative">
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="•••••••• (để trống nếu đăng nhập nhanh)"
+              placeholder="••••••••"
               className="w-full px-4 py-2.5 bg-[#131520] border border-slate-800 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
             />
           </div>
