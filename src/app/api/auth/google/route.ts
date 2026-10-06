@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getAppOrigin } from "@/lib/serverUrl";
 
 export async function GET(request: NextRequest) {
@@ -130,6 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Đăng ký thật hoặc Đăng nhập User vào Database SQLite
+    const { prisma } = await import("@/lib/prisma");
     const user = await prisma.user.upsert({
       where: { email: email.toLowerCase().trim() },
       update: {

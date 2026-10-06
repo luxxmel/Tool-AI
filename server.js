@@ -17,7 +17,7 @@ app.prepare().then(() => {
     } catch (err) {
       console.error("Lỗi server:", err);
       res.statusCode = 500;
-      res.end("Internal Server Error");
+      res.end("Internal Server Error: " + (err?.message || String(err)));
     }
   }).listen(port, (err) => {
     if (err) throw err;
