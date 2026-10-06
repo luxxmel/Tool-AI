@@ -1230,12 +1230,17 @@ export const TRENDING_CHARACTERS_AS_BOTS: AssistantItem[] = TRENDING_CHARACTERS.
   ],
 }));
 
-// Tổng hợp danh sách và Map truy xuất nhanh tất cả trợ lý & nhân vật
-export const ALL_ASSISTANTS_LIST: AssistantItem[] = [
+// Danh sách 20 Trợ Lý AI Chuyên Nghiệp Độc Bản (Không chứa nhân vật truyện/nhập vai)
+export const ONLY_ASSISTANTS_LIST: AssistantItem[] = [
   ...CATEGORIZED_ASSISTANTS.study.items,
   ...CATEGORIZED_ASSISTANTS.work.items,
   ...CATEGORIZED_ASSISTANTS.entertainment.items,
   ...CATEGORIZED_ASSISTANTS.other.items,
+];
+
+// Tổng hợp danh sách và Map truy xuất nhanh tất cả trợ lý & nhân vật
+export const ALL_ASSISTANTS_LIST: AssistantItem[] = [
+  ...ONLY_ASSISTANTS_LIST,
   ...NOVEL_AND_SPECIAL_BOTS,
   ...TRENDING_CHARACTERS_AS_BOTS,
 ];
