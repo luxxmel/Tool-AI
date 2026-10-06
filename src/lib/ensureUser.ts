@@ -38,9 +38,25 @@ export async function ensureUser(userId?: string | null) {
       return user;
     }
 
-    return null;
+    // Tự động tạo User trong Database mới trên Vercel nếu có targetId từ LocalStorage
+    const isEmail = targetId.includes("@");
+    const newEmail = isEmail ? targetId.toLowerCase() : `${targetId}@omniai.internal`;
+    const newName = targetId.includes("@") ? targetId.split("@")[0] : `Thành viên OmniAI`;
+
+    user = await prisma.user.create({
+      data: {
+        id: targetId.length > 5 ? targetId : undefined,
+        email: newEmail,
+        name: newName,
+        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(targetId)}`,
+        role: "USER",
+        credits: 50,
+      },
+    });
+
+    return user;
   } catch (err) {
-    console.error(`Lỗi khi tìm user ${targetId} trong DB:`, err);
+    console.error(`Lỗi khi tìm/tạo user ${targetId} trong DB:`, err);
     return null;
   }
 }
