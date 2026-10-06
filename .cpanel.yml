@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/cuacongn/biettuot.io.vn/
+    - /bin/cp -R * $DEPLOYPATH
