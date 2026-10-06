@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const rawInput = email.trim();
     const cleanEmail = rawInput.includes("@")
       ? rawInput.toLowerCase()
-      : `${rawInput.toLowerCase()}@omni.ai`;
+      : `${rawInput.toLowerCase()}@biettuot.ai`;
     const cleanName = name?.trim() || rawInput.split("@")[0];
 
     const isAdmin =
