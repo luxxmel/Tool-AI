@@ -1,5 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAppOrigin } from "@/lib/serverUrl";
+
+export async function GET(request: NextRequest) {
+  const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const origin = getAppOrigin(request);
+  const redirectUri = `${origin}/api/auth/google/callback`;
+
+  if (!clientId) {
+    return new NextResponse(
+      `<!DOCTYPE html>
+      <html lang="vi">
+        <head>
+          <meta charset="utf-8">
+          <title>Cấu hình Google OAuth</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0e1017; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+            .card { max-width: 500px; background: #151722; border: 1px solid #2a2e3f; padding: 32px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+            h2 { color: #4285f4; margin-top: 0; }
+            p { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+            code { background: #0e1017; color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-size: 13px; word-break: break-all; }
+            button { margin-top: 20px; background: #4285f4; color: white; border: none; padding: 10px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h2>⚠️ Chưa cấu hình Google OAuth</h2>
+            <p>Để kích hoạt đăng nhập thật bằng Google, bạn hãy thêm <code>GOOGLE_CLIENT_ID</code> và <code>GOOGLE_CLIENT_SECRET</code> vào file <code>.env</code>.</p>
+            <p style="text-align: left; font-size: 13px;">
+              1. Vào <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color: #38bdf8;">Google Cloud Console</a> &rarr; Credentials &rarr; Create OAuth client ID (Web application).<br><br>
+              2. <strong>Authorized redirect URIs</strong>:<br>
+              <code>${redirectUri}</code>
+            </p>
+            <button onclick="window.close()">Đóng cửa sổ này</button>
+          </div>
+        </body>
+      </html>`,
+      { headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+    clientId
+  )}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&prompt=select_account&access_type=offline`;
+
+  return NextResponse.redirect(googleAuthUrl);
+}
 
 export async function POST(request: NextRequest) {
   try {

@@ -86,68 +86,26 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
   };
 
   // 5. Xử lý bấm nút Google
+  // 5. Xử lý bấm nút Google qua OAuth Popup
   const handleGoogleClick = async () => {
     setError("");
-
-    const isLocalhost =
-      typeof window !== "undefined" &&
-      (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-
-    // Nếu đang truy cập qua Cloudflare Tunnel hoặc IP LAN:
-    // Google Cloud chặn popup OAuth trên các domain tạm (do chính sách cấm wildcard *.trycloudflare.com và IP riêng 192.168.x.x)
-    // -> Mở ngay khung nhập Gmail trực tiếp để người dùng vào thẳng tài khoản của mình
-    if (!isLocalhost || !clientId || !window.google?.accounts?.oauth2) {
-      setGoogleEmailInput(email || "");
-      setShowGoogleEmailDialog((prev) => !prev);
-      return;
-    }
+    setIsLoading(true);
+    const width = 560;
+    const height = 700;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
 
     try {
-      setIsLoading(true);
-      const tokenClient = window.google.accounts.oauth2.initTokenClient({
-        client_id: clientId,
-        scope: "email profile openid",
-        callback: async (tokenResponse) => {
-          if (tokenResponse.error) {
-            console.error("Lỗi xác thực Google:", tokenResponse);
-            setGoogleEmailInput(email || "");
-            setShowGoogleEmailDialog(true);
-            setIsLoading(false);
-            return;
-          }
-
-          if (tokenResponse.access_token) {
-            try {
-              const result = await loginWithGoogle({
-                accessToken: tokenResponse.access_token,
-              });
-
-              if (result.success) {
-                onSuccess?.();
-              } else {
-                setError(result.error || "Không thể đồng bộ tài khoản Google");
-              }
-            } catch {
-              setError("Đã xảy ra lỗi khi hoàn tất đăng nhập Google");
-            } finally {
-              setIsLoading(false);
-            }
-          } else {
-            setIsLoading(false);
-          }
-        },
-        error_callback: async () => {
-          setGoogleEmailInput(email || "");
-          setShowGoogleEmailDialog(true);
-          setIsLoading(false);
-        },
-      });
-
-      tokenClient.requestAccessToken({ prompt: "select_account" });
+      const popup = window.open(
+        "/api/auth/google",
+        "google_oauth",
+        `width=${width},height=${height},top=${top},left=${left}`
+      );
+      if (!popup) {
+        window.location.href = "/api/auth/google";
+      }
     } catch {
-      setGoogleEmailInput(email || "");
-      setShowGoogleEmailDialog(true);
-      setIsLoading(false);
+      window.location.href = "/api/auth/google";
     }
   };
 
@@ -383,7 +341,18 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
         </button>
       </div>
 
-      {/* Khung nhập Gmail trực tiếp khi chạy trên link LAN / Cloudflare Tunnel */}
+      {/* Tùy chọn nhập nhanh Gmail trực tiếp */}
+      <div className="text-center mt-2.5">
+        <button
+          type="button"
+          onClick={() => setShowGoogleEmailDialog((prev) => !prev)}
+          className="text-[11px] text-slate-400 hover:text-indigo-400 transition-colors cursor-pointer underline decoration-dotted"
+        >
+          {showGoogleEmailDialog ? "✕ Đóng khung nhập Gmail" : "⚡ Nhập nhanh Gmail trực tiếp (không cần OAuth)"}
+        </button>
+      </div>
+
+      {/* Khung nhập Gmail trực tiếp */}
       {showGoogleEmailDialog && (
         <form
           onSubmit={handleGoogleQuickSubmit}
@@ -397,7 +366,7 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
               </svg>
-              <span>Đăng nhập Gmail (Bỏ qua lỗi chặn Google)</span>
+              <span>Đăng nhập nhanh bằng Gmail</span>
             </span>
             <button
               type="button"
@@ -408,7 +377,7 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
             </button>
           </div>
           <p className="text-[11px] text-slate-300 mb-2 leading-relaxed">
-            Google chặn popup OAuth trên domain chia sẻ mạng LAN / Cloudflare. Bạn chỉ cần nhập địa chỉ Gmail để vào thẳng:
+            Nhập địa chỉ Gmail của bạn để đăng nhập hoặc tạo tài khoản mới:
           </p>
           <div className="flex gap-2">
             <input
