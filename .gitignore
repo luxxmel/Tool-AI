@@ -30,9 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-env
+# Hidden secret environment files (NEVER committed to Git)
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+!.env.example
 
 # database
 *.db
