@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/auth/facebook/callback/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"C:\\Tool-AI\\src\\app\\api\\auth\\facebook\\callback\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

@@ -1,0 +1,73 @@
+(()=>{var a={};a.id=922,a.ids=[922],a.modules={261:a=>{"use strict";a.exports=require("next/dist/shared/lib/router/utils/app-paths")},2676:(a,b,c)=>{"use strict";c.r(b),c.d(b,{POST:()=>g});var d=c(23211),e=c(31305),f=c(6558);async function g(a){try{let{text:b,mode:c,context:g,language:h="vi"}=await a.json();if(!b||!b.trim())return d.NextResponse.json({error:"Cần c\xf3 nội dung để ph\xe2n t\xedch"},{status:400});let i={overall:`Bạn l\xe0 một bi\xean tập vi\xean truyện v\xe0 kịch bản chuy\xean nghiệp người Việt Nam.
+H\xe3y ph\xe2n t\xedch to\xe0n bộ đoạn văn sau theo c\xe1c ti\xeau ch\xed:
+1. **Cốt truyện & Mạch chuyện**: Logic, nhịp điệu, sự ph\xe1t triển
+2. **Nh\xe2n vật**: Độ s\xe2u, t\xednh nhất qu\xe1n, cảm x\xfac
+3. **Ng\xf4n ngữ & Văn phong**: Sự phong ph\xfa, h\xecnh ảnh, c\xe2u văn
+4. **Điểm mạnh** cần ph\xe1t huy
+5. **Điểm cần cải thiện** với gợi \xfd cụ thể
+6. **Đ\xe1nh gi\xe1 tổng thể** (điểm /10)
+
+Viết bằng tiếng Việt, th\xe2n thiện, x\xe2y dựng.`,plot:`Bạn l\xe0 chuy\xean gia ph\xe2n t\xedch cốt truyện v\xe0 kịch bản người Việt Nam.
+H\xe3y ph\xe2n t\xedch MẠCH TRUYỆN của đoạn văn n\xe0y:
+- Cấu tr\xfac 3 hồi (setup/confrontation/resolution) c\xf3 r\xf5 r\xe0ng kh\xf4ng?
+- Xung đột ch\xednh l\xe0 g\xec? C\xf3 đủ kịch t\xednh?
+- Bước ngoặt v\xe0 twist c\xf3 tự nhi\xean kh\xf4ng?
+- Nhịp độ c\xe2u chuyện (qu\xe1 nhanh/chậm/ổn)?
+- Gợi \xfd cụ thể để cải thiện mạch truyện
+
+Viết ngắn gọn, s\xfac t\xedch bằng tiếng Việt.`,character:`Bạn l\xe0 chuy\xean gia x\xe2y dựng nh\xe2n vật văn học người Việt Nam.
+H\xe3y ph\xe2n t\xedch NH\xc2N VẬT trong đoạn văn n\xe0y:
+- T\xednh c\xe1ch nh\xe2n vật c\xf3 nhất qu\xe1n v\xe0 đa chiều kh\xf4ng?
+- Động lực h\xe0nh động c\xf3 hợp l\xfd kh\xf4ng?
+- Lời thoại c\xf3 đặc trưng từng nh\xe2n vật kh\xf4ng?
+- Cung bậc cảm x\xfac c\xf3 phong ph\xfa kh\xf4ng?
+- Gợi \xfd để nh\xe2n vật trở n\xean sống động hơn
+
+Viết bằng tiếng Việt, cụ thể v\xe0 c\xf3 v\xed dụ từ đoạn văn.`,language:`Bạn l\xe0 bi\xean tập vi\xean ng\xf4n ngữ văn học người Việt Nam.
+H\xe3y ph\xe2n t\xedch NG\xd4N NGỮ & VĂN PHONG của đoạn văn n\xe0y:
+- C\xe2u văn c\xf3 đa dạng về cấu tr\xfac kh\xf4ng?
+- H\xecnh ảnh, ẩn dụ, so s\xe1nh c\xf3 sinh động kh\xf4ng?
+- Từ ngữ c\xf3 phong ph\xfa v\xe0 ph\xf9 hợp thể loại kh\xf4ng?
+- Giọng kể c\xf3 nhất qu\xe1n kh\xf4ng?
+- Chỉ ra 3-5 c\xe2u/đoạn cụ thể cần chỉnh sửa v\xe0 đề xuất c\xe1ch viết lại
+
+Viết bằng tiếng Việt, c\xf3 tr\xedch dẫn cụ thể từ đoạn văn.`,rewrite:`Bạn l\xe0 nh\xe0 văn s\xe1ng tạo người Việt Nam.
+Dựa v\xe0o đoạn văn gốc n\xe0y, h\xe3y:
+1. Giữ nguy\xean cốt l\xf5i nội dung v\xe0 nh\xe2n vật
+2. Viết lại với văn phong phong ph\xfa hơn, h\xecnh ảnh sinh động hơn
+3. Tăng cường cảm x\xfac v\xe0 chiều s\xe2u t\xe2m l\xfd nh\xe2n vật
+4. Giải th\xedch ngắn gọn những g\xec bạn đ\xe3 cải thiện
+
+Trả về đoạn văn viết lại đầu ti\xean, sau đ\xf3 giải th\xedch.`,dialogue:`Bạn l\xe0 chuy\xean gia viết lời thoại kịch bản người Việt Nam.
+H\xe3y ph\xe2n t\xedch LỜI THOẠI trong đoạn văn n\xe0y:
+- Lời thoại c\xf3 tự nhi\xean, sống động kh\xf4ng?
+- Mỗi nh\xe2n vật c\xf3 giọng n\xf3i ri\xeang biệt kh\xf4ng?
+- Lời thoại c\xf3 đẩy cốt truyện tiến l\xean kh\xf4ng?
+- Chỉ ra lời thoại n\xe0o nghe "viết" qu\xe1, thiếu tự nhi\xean
+- Viết lại 2-3 d\xf2ng thoại mẫu để cải thiện
+
+Viết bằng tiếng Việt, c\xf3 v\xed dụ cụ thể.`,continue:`Bạn l\xe0 nh\xe0 văn s\xe1ng tạo người Việt Nam.
+Dựa v\xe0o đoạn văn n\xe0y, h\xe3y:
+1. Tiếp tục viết th\xeam 2-3 đoạn tiếp theo một c\xe1ch tự nhi\xean
+2. Giữ nguy\xean giọng văn, nh\xe2n vật v\xe0 mạch truyện
+3. Tạo ra một bước ngoặt hoặc t\xecnh huống th\xfa vị mới
+4. Kết đoạn ở chỗ hồi hộp/g\xe2y t\xf2 m\xf2 để người đọc muốn đọc tiếp
+
+Viết trực tiếp phần tiếp theo, KH\xd4NG cần giải th\xedch.`},j=i[c]||i.overall;"en"===h&&(j+=`
+
+[STRICT LANGUAGE REQUIREMENT - ENGLISH ONLY]:
+The user's application language is set to ENGLISH.
+You MUST write all your analysis, critique, suggestions, scores, rewrites, and continuations ENTIRELY in ENGLISH.
+Do not use Vietnamese.`);let k=g?.trim()?"en"===h?`
+
+[Author's context note]: ${g}`:`
+
+[Bối cảnh th\xeam từ t\xe1c giả]: ${g}`:"",l="en"===h?`Here is the story excerpt to analyze:
+
+---
+${b}
+---${k}`:`Đ\xe2y l\xe0 đoạn văn cần ph\xe2n t\xedch:
+
+---
+${b}
+---${k}`,m=(0,f.i3)("deep");if(!m)return d.NextResponse.json({error:"AI model chưa được cấu h\xecnh"},{status:503});let n=(0,e.gM)({model:m.model,system:j,messages:[{role:"user",content:l}]}),o=new TextEncoder,p=new ReadableStream({async start(a){for await(let b of n.textStream)b&&a.enqueue(o.encode(b));a.close()}});return new Response(p,{headers:{"Content-Type":"text/plain; charset=utf-8"}})}catch(a){return console.error("Story analyze error:",a),d.NextResponse.json({error:"Lỗi khi ph\xe2n t\xedch. Vui l\xf2ng thử lại."},{status:500})}}},3295:a=>{"use strict";a.exports=require("next/dist/server/app-render/after-task-async-storage.external.js")},6558:(a,b,c)=>{"use strict";c.d(b,{i3:()=>g,wf:()=>f});var d=c(39080),e=c(81256);let f=process.env.TROLLLLM_API_KEY?(0,e.ry)({baseURL:process.env.TROLLLLM_BASE_URL||"https://chat.trollllm.xyz/v1",apiKey:process.env.TROLLLLM_API_KEY}):null;function g(a){let b=(a||"fast").toLowerCase().trim();if("fast"===b||"gpt-5.5"===b||"gpt"===b||b.includes("nhanh")){if(process.env.GOOGLE_GENERATIVE_AI_API_KEY)return{model:(0,d.q7)("gemini-2.5-flash"),modelId:"gemini-2.5-flash",modeId:"fast",name:"Suy nghĩ nhanh"};if(f)return{model:f("gpt-5.5"),modelId:"gpt-5.5",modeId:"fast",name:"Suy nghĩ nhanh"}}if("deep"===b||"claude-sonnet-4.5"===b||"claude-sonnet-4-5"===b||"claude-fable-5.1"===b||b.includes("fable")||b.includes("claude")||b.includes("sau")){if(process.env.GOOGLE_GENERATIVE_AI_API_KEY)return{model:(0,d.q7)("gemini-3.7-flash"),modelId:"gemini-3.7-flash",modeId:"deep",name:"Suy luận s\xe2u"};if(f)return{model:f("gemini-3-7-flash"),modelId:"gemini-3-7-flash",modeId:"deep",modeName:"Suy luận s\xe2u",name:"Suy luận s\xe2u"}}return("creative"===b||"gemini-2.5-flash"===b||b.includes("sangtao")||b.includes("creative")||b.includes("gemini"))&&process.env.GOOGLE_GENERATIVE_AI_API_KEY?{model:(0,d.q7)("gemini-2.5-flash"),modelId:"gemini-2.5-flash",modeId:"creative",name:"S\xe1ng tạo"}:process.env.GOOGLE_GENERATIVE_AI_API_KEY?{model:(0,d.q7)("gemini-2.5-flash"),modelId:"gemini-2.5-flash",modeId:"fast",name:"Suy nghĩ nhanh"}:f?{model:f("gpt-5.5"),modelId:"gpt-5.5",modeId:"fast",name:"Suy nghĩ nhanh"}:null}[{id:"fast",label:"Suy nghĩ nhanh",icon:"⚡",modelCode:"Omni-Fast",badge:"Si\xeau tốc",description:"Phản hồi chớp nho\xe1ng, tối ưu token, bền bỉ v\xe0 cực kỳ ổn định cho c\xe2u hỏi h\xe0ng ng\xe0y.",provider:"OmniAI"},{id:"deep",label:"Suy luận s\xe2u",icon:"\uD83E\uDDE0",modelCode:"Omni-Deep",badge:"VIP",description:"Tư duy logic đa tầng, giải quyết b\xe0i to\xe1n phức tạp, lập tr\xecnh v\xe0 ph\xe2n t\xedch chuy\xean s\xe2u.",provider:"OmniAI"},{id:"creative",label:"S\xe1ng tạo",icon:"\uD83C\uDFA8",modelCode:"Omni-Creative",badge:"Nghệ thuật",description:"Văn phong gi\xe0u cảm x\xfac, s\xe1ng t\xe1c thơ văn, truyện v\xe0 kịch bản nghệ thuật.",provider:"OmniAI"}].map(a=>({id:a.id,name:a.label,provider:a.provider,icon:a.icon,description:a.description,badge:a.badge}))},8128:a=>{"use strict";a.exports=require("next/dist/server/runtime-reacts.external.js")},10846:a=>{"use strict";a.exports=require("next/dist/compiled/next-server/app-page.runtime.prod.js")},19121:a=>{"use strict";a.exports=require("next/dist/server/app-render/action-async-storage.external.js")},21820:a=>{"use strict";a.exports=require("os")},29021:a=>{"use strict";a.exports=require("fs")},29294:a=>{"use strict";a.exports=require("next/dist/server/app-render/work-async-storage.external.js")},33873:a=>{"use strict";a.exports=require("path")},44870:a=>{"use strict";a.exports=require("next/dist/compiled/next-server/app-route.runtime.prod.js")},63033:a=>{"use strict";a.exports=require("next/dist/server/app-render/work-unit-async-storage.external.js")},74532:(a,b,c)=>{"use strict";c.r(b),c.d(b,{handler:()=>z,patchFetch:()=>y,routeModule:()=>u,serverHooks:()=>x,workAsyncStorage:()=>v,workUnitAsyncStorage:()=>w});var d=c(19225),e=c(84006),f=c(8317),g=c(99373),h=c(34775),i=c(24235),j=c(261),k=c(54365),l=c(90771),m=c(73461),n=c(67798),o=c(92280),p=c(62018),q=c(45696),r=c(47929),s=c(86439),t=c(37527);let u=new d.AppRouteRouteModule({definition:{kind:e.RouteKind.APP_ROUTE,page:"/api/story-analyze/route",pathname:"/api/story-analyze",filename:"route",bundlePath:"app/api/story-analyze/route"},distDir:".next",relativeProjectDir:"",resolvedPagePath:"C:\\Tool-AI\\src\\app\\api\\story-analyze\\route.ts",nextConfigOutput:"",userland:()=>c(2676),...{}}),{workAsyncStorage:v,workUnitAsyncStorage:w,serverHooks:x}=u;function y(){return(0,f.patchFetch)({workAsyncStorage:v,workUnitAsyncStorage:w})}async function z(a,b,c){c.requestMeta&&(0,g.setRequestMeta)(a,c.requestMeta),u.isDev&&(0,g.addRequestMeta)(a,"devRequestTimingInternalsEnd",process.hrtime.bigint());let d="/api/story-analyze/route";"/index"===d&&(d="/");let f=await u.prepare(a,b,{srcPage:d,multiZoneDraftMode:!1});if(!f)return b.statusCode=400,b.end("Bad Request"),null==c.waitUntil||c.waitUntil.call(c,Promise.resolve()),null;let{buildId:v,deploymentId:w,params:x,nextConfig:y,parsedUrl:z,isDraftMode:A,prerenderManifest:B,routerServerContext:C,isOnDemandRevalidate:D,revalidateOnlyGenerated:E,resolvedPathname:F,clientReferenceManifest:G,serverActionsManifest:H}=f,I=(0,j.normalizeAppPath)(d),J=!!(B.dynamicRoutes[I]||B.routes[F]),K=async()=>((null==C?void 0:C.render404)?await C.render404(a,b,z,!1):b.end("This page could not be found"),null);if(J&&!A){let a=!!B.routes[F],b=B.dynamicRoutes[I];if(b&&!1===b.fallback&&!a){if(y.adapterPath)return await K();throw new s.NoFallbackError}}let L=null;!J||u.isDev||A||(L="/index"===(L=F)?"/":L);let M=!0===u.isDev||!J,N=J&&!M;H&&G&&(0,i.setManifestsSingleton)({page:d,clientReferenceManifest:G,serverActionsManifest:H});let O=a.method||"GET",P=(0,h.getTracer)(),Q=P.getActiveScopeSpan(),R=!!(null==C?void 0:C.isWrappedByNextServer),S=!!(0,g.getRequestMeta)(a,"minimalMode"),T=(0,g.getRequestMeta)(a,"incrementalCache")||await u.getIncrementalCache(a,y,B,S);null==T||T.resetRequestCache(),globalThis.__incrementalCache=T;let U={params:x,previewProps:B.preview,renderOpts:{experimental:{authInterrupts:!!y.experimental.authInterrupts,useCacheTimeout:y.experimental.useCacheTimeout},cacheComponents:!!y.cacheComponents,validationLevel:y.experimental.instantInsights.validationLevel,supportsDynamicResponse:M,incrementalCache:T,hmrRefreshHash:(0,g.getRequestMeta)(a,"hmrRefreshHash"),cacheLifeProfiles:y.cacheLife,staticPageGenerationTimeout:y.staticPageGenerationTimeout,waitUntil:c.waitUntil,onClose:a=>{b.on("close",a)},onAfterTaskError:void 0,onInstrumentationRequestError:(b,c,d,e)=>u.onRequestError(a,b,d,e,C)},sharedContext:{buildId:v,deploymentId:w}},V=new k.NodeNextRequest(a),W=new k.NodeNextResponse(b),X=l.NextRequestAdapter.fromNodeNextRequest(V,(0,l.signalFromNodeResponse)(b)),Y=async({previousCacheEntry:e})=>{try{if(!S&&D&&E&&!e)return b.statusCode=404,b.setHeader("x-nextjs-cache","REVALIDATED"),b.end("This page could not be found"),null;let d=await u.handle(X,U);a.fetchMetrics=U.renderOpts.fetchMetrics;let f=U.renderOpts.pendingWaitUntil;f&&c.waitUntil&&(c.waitUntil(f),f=void 0);let g=U.renderOpts.collectedTags;if(!J)return await (0,o.I)(V,W,d,f),null;{let a=await d.blob(),b=(0,p.toNodeOutgoingHttpHeaders)(d.headers);g&&(b[r.NEXT_CACHE_TAGS_HEADER]=g),!b["content-type"]&&a.type&&(b["content-type"]=a.type);let c=void 0!==U.renderOpts.collectedRevalidate&&!(U.renderOpts.collectedRevalidate>=r.INFINITE_CACHE)&&U.renderOpts.collectedRevalidate,e=void 0===U.renderOpts.collectedExpire||U.renderOpts.collectedExpire>=r.INFINITE_CACHE?!1!==c&&c>0?y.expireTime:void 0:U.renderOpts.collectedExpire;return{value:{kind:t.CachedRouteKind.APP_ROUTE,status:d.status,body:Buffer.from(await a.arrayBuffer()),headers:b},cacheControl:{revalidate:c,expire:e}}}}catch(b){throw(null==e?void 0:e.isStale)&&await u.onRequestError(a,b,{routerKind:"App Router",routePath:d,routeType:"route",revalidateReason:(0,n.getRevalidateReason)({isStaticGeneration:N,isOnDemandRevalidate:D})},!1,C),b}},Z=async(d,f)=>{try{var g,i;let d=await u.handleResponse({req:a,nextConfig:y,cacheKey:L,routeKind:e.RouteKind.APP_ROUTE,isFallback:!1,prerenderManifest:B,isRoutePPREnabled:!1,isOnDemandRevalidate:D,revalidateOnlyGenerated:E,responseGenerator:Y,waitUntil:c.waitUntil,isMinimalMode:S});if(!J)return;if((null==d||null==(g=d.value)?void 0:g.kind)!==t.CachedRouteKind.APP_ROUTE)throw Object.defineProperty(Error(`Invariant: app-route received invalid cache entry ${null==d||null==(i=d.value)?void 0:i.kind}`),"__NEXT_ERROR_CODE",{value:"E701",enumerable:!1,configurable:!0});S||b.setHeader("x-nextjs-cache",D?"REVALIDATED":d.isMiss?"MISS":d.isStale?"STALE":"HIT"),A&&b.setHeader("Cache-Control","private, no-cache, no-store, max-age=0, must-revalidate");let f=(0,p.fromNodeOutgoingHttpHeaders)(d.value.headers);S&&J||f.delete(r.NEXT_CACHE_TAGS_HEADER),!d.cacheControl||b.getHeader("Cache-Control")||f.get("Cache-Control")||f.set("Cache-Control",(0,q.getCacheControlHeader)(d.cacheControl)),await (0,o.I)(V,W,new Response(d.value.body,{headers:f,status:d.value.status||200}));return}catch(b){if(b instanceof s.NoFallbackError||await u.onRequestError(a,b,{routerKind:"App Router",routePath:I,routeType:"route",revalidateReason:(0,n.getRevalidateReason)({isStaticGeneration:N,isOnDemandRevalidate:D})},!1,C),J)throw b;await (0,o.I)(V,W,new Response(null,{status:500}));return}finally{(()=>{if(!d)return;let a=b.statusCode;d.setAttributes({"http.status_code":a,"next.rsc":!1}),a&&a>=500&&(d.setStatus({code:h.SpanStatusCode.ERROR}),d.setAttribute("error.type",a.toString()));let c=P.getRootSpanAttributes();if(!c)return;if(c.get("next.span_type")!==m.BaseServerSpan.handleRequest)return console.warn(`Unexpected root span type '${c.get("next.span_type")}'. Please report this Next.js issue https://github.com/vercel/next.js`);let e=c.get("next.route")||I,g=`${O} ${e}`;d.setAttributes({"next.route":e,"http.route":e,"next.span_name":g}),d.updateName(g),f&&f!==d&&(f.setAttribute("http.route",e),f.updateName(g))})()}};if(R&&Q)await Z(Q,void 0);else{let b=P.getActiveScopeSpan();await P.withPropagatedContext(a.headers,()=>P.trace(m.BaseServerSpan.handleRequest,{spanName:`${O} ${d}`,kind:h.SpanKind.SERVER,attributes:{"http.method":O,"http.target":a.url}},a=>Z(a,b)),void 0,!R)}}},78335:()=>{},86439:a=>{"use strict";a.exports=require("next/dist/shared/lib/no-fallback-error.external")},96487:()=>{}};var b=require("../../../webpack-runtime.js");b.C(a);var c=b.X(0,[3445,1813,2163],()=>b(b.s=74532));module.exports=c})();
