@@ -132,6 +132,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   // Banner carousel state
   const [bannerIdx, setBannerIdx] = useState(0);
   const bannerTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const categoryNavRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-advance banner
   useEffect(() => {
@@ -578,21 +579,55 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
 
           {/* Filter bar */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none flex-1">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1 ${
-                    activeCategory === cat.id
-                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-600/25"
-                      : "bg-white dark:bg-[#11131c] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-indigo-950/60"
-                  }`}
-                >
-                  <span>{cat.emoji}</span>
-                  <span>{cat.label}</span>
-                </button>
-              ))}
+            <div className="relative flex items-center flex-1 min-w-0 group">
+              {/* Nút cuộn Trái */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (categoryNavRef.current) {
+                    categoryNavRef.current.scrollBy({ left: -180, behavior: "smooth" });
+                  }
+                }}
+                className="shrink-0 mr-1.5 w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10"
+                title="Cuộn sang trái"
+              >
+                ◀
+              </button>
+
+              {/* Danh sách các danh mục */}
+              <div
+                ref={categoryNavRef}
+                className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-1 scroll-smooth"
+              >
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                      activeCategory === cat.id
+                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30 scale-102"
+                        : "bg-white dark:bg-[#11131c] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-indigo-950/60 hover:border-indigo-500/50"
+                    }`}
+                  >
+                    <span>{cat.emoji}</span>
+                    <span>{cat.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Nút cuộn Phải */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (categoryNavRef.current) {
+                    categoryNavRef.current.scrollBy({ left: 180, behavior: "smooth" });
+                  }
+                }}
+                className="shrink-0 ml-1.5 w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10"
+                title="Cuộn sang phải"
+              >
+                ▶
+              </button>
             </div>
             <div className="relative shrink-0">
               <input
