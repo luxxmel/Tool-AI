@@ -1075,7 +1075,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
         </div>
 
         {/* ── RIGHT: SIDEBAR ── */}
-        <div className="w-full lg:w-84 xl:w-96 shrink-0 flex flex-col gap-4">
+        <div className="w-full lg:w-64 xl:w-64 shrink-0 flex flex-col gap-4">
 
           {/* Write Post CTA card */}
           <div className="bg-gradient-to-br from-indigo-600/10 to-violet-600/10 border border-indigo-200 dark:border-indigo-900/60 rounded-2xl p-4">
