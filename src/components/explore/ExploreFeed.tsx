@@ -559,20 +559,20 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
         <div className="flex-1 min-w-0 flex flex-col gap-5">
 
           {/* Feed header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2.5 tracking-tight">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
                 🌍 {t("explore.title", "Cộng Đồng Khám Phá")}
               </h2>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {visiblePosts.length} {t("explore.posts_count", "bài viết từ cộng đồng")}
               </p>
             </div>
             <button
               onClick={handleOpenCreateModal}
-              className="shrink-0 px-6 py-3.5 bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:opacity-95 text-white font-extrabold text-sm rounded-2xl shadow-xl shadow-indigo-600/30 transition-all flex items-center gap-2.5 cursor-pointer active:scale-95"
+              className="shrink-0 px-4 py-2.5 bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
             >
-              <span className="text-base">✍️</span>
+              <span>✍️</span>
               <span>{t("explore.new_post", "Đăng bài mới")}</span>
             </button>
           </div>
@@ -585,10 +585,10 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 type="button"
                 onClick={() => {
                   if (categoryNavRef.current) {
-                    categoryNavRef.current.scrollBy({ left: -220, behavior: "smooth" });
+                    categoryNavRef.current.scrollBy({ left: -180, behavior: "smooth" });
                   }
                 }}
-                className="shrink-0 mr-2 w-9 h-9 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10 text-xs"
+                className="shrink-0 mr-1.5 w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10 text-xs"
                 title="Cuộn sang trái"
               >
                 ◀
@@ -597,19 +597,19 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
               {/* Danh sách các danh mục */}
               <div
                 ref={categoryNavRef}
-                className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none flex-1 scroll-smooth"
+                className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-1 scroll-smooth"
               >
                 {categories.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
                       activeCategory === cat.id
-                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/35 scale-102"
+                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30 scale-102"
                         : "bg-white dark:bg-[#11131c] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-indigo-950/60 hover:border-indigo-500/50"
                     }`}
                   >
-                    <span className="text-base">{cat.emoji}</span>
+                    <span>{cat.emoji}</span>
                     <span>{cat.label}</span>
                   </button>
                 ))}
@@ -620,10 +620,10 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 type="button"
                 onClick={() => {
                   if (categoryNavRef.current) {
-                    categoryNavRef.current.scrollBy({ left: 220, behavior: "smooth" });
+                    categoryNavRef.current.scrollBy({ left: 180, behavior: "smooth" });
                   }
                 }}
-                className="shrink-0 ml-2 w-9 h-9 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10 text-xs"
+                className="shrink-0 ml-1.5 w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10 text-xs"
                 title="Cuộn sang phải"
               >
                 ▶
@@ -635,9 +635,9 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("explore.search_placeholder", "Tìm bài viết, prompt...")}
-                className="w-full sm:w-64 pl-9 pr-4 py-2 bg-white dark:bg-[#11131c] border border-slate-200 dark:border-indigo-950/60 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                className="w-full sm:w-52 pl-8 pr-3 py-1.5 bg-white dark:bg-[#11131c] border border-slate-200 dark:border-indigo-950/60 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
               />
-              <svg className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
