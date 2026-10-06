@@ -33,7 +33,7 @@ c:\Tool-AI\
 │   │   └── tools/            # AI Tools Studio forms
 │   ├── context/              # Context Providers (AuthContext, ThemeContext)
 │   ├── data/                 # Dữ liệu nhân vật & Bot (aiData.ts, newCharacters.ts)
-│   └── lib/                  # Services & Helpers (chatImageEngine.ts, prisma.ts)
+│   └── lib/                  # Services & Helpers (chatImageEngine.ts, trollllmImagePrompt.ts, yescaleImageEngine.ts, prisma.ts)
 ```
 
 ---

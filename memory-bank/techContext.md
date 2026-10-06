@@ -10,8 +10,8 @@
 | **Database ORM** | Prisma ORM | SQLite (Dev) / PostgreSQL (Prod) |
 | **3D Rendering** | Three.js & React Three Fiber | Render bài Tarot 3D tương tác |
 | **AI Models (Text)** | Google Gemini 3.7 Flash | Mô hình xử lý ngôn ngữ siêu tốc |
-| **AI Models (Vision)** | Gemini 2.5 / 3.7 Vision | Phân tích và sinh mô tả hình ảnh |
-| **AI Models (Image)** | FLUX.1-Realism / FLUX.1 Pro | Engine sinh ảnh nhiếp ảnh chân thực |
+| **AI Models (Vision/Prompt)** | Claude Fable 5.1 & Gemini 3.8 Flash | Phân tích ảnh gốc & Visual Director tối ưu prompt sinh ảnh |
+| **AI Models (Image)** | Yescale API (`gemini-2.5-flash-image[nano-banana]`) | Engine sinh ảnh cao cấp qua Yescale API (hỗ trợ aspect ratio & reference images) |
 
 ---
 
