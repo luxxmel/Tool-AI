@@ -33,7 +33,7 @@ interface BotData {
   category?: string;
 }
 
-export interface QuickToolItem {
+interface QuickToolItem {
   id: string;
   label: string;
   promptPrefix: string;
@@ -43,7 +43,7 @@ export interface QuickToolItem {
   isHighlight?: boolean;
 }
 
-export function getBotQuickTools(botId: string, category?: string): QuickToolItem[] {
+function getBotQuickTools(botId: string, category?: string): QuickToolItem[] {
   // 1. Họa sĩ AI · Tạo & Sửa ảnh
   if (botId === "ai-artist") {
     return [
