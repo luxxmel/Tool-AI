@@ -1,0 +1,15 @@
+# Apache / cPanel Node.js Reverse Proxy & Passenger Configuration
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Forward requests to Node.js Server
+<IfModule mod_passenger.c>
+  PassengerAppRoot "."
+  PassengerBaseURI "/"
+  PassengerAppType node
+  PassengerStartupFile server.js
+</IfModule>
