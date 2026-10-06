@@ -160,9 +160,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Đảm bảo author tồn tại trong cơ sở dữ liệu máy chủ
-    const authorUser = await ensureUser(authorId);
+    let authorUser = await ensureUser(authorId);
     if (!authorUser) {
-      return NextResponse.json({ error: "Author not found" }, { status: 404 });
+      // Nếu không tìm thấy hoặc người dùng chưa đăng nhập, tự động lấy/tạo User cộng đồng mặc định
+      authorUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+      if (!authorUser) {
+        authorUser = await prisma.user.create({
+          data: {
+            name: "Thành viên OmniAI",
+            email: `user_${Date.now()}@omniai.internal`,
+            avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=community",
+            role: "USER",
+            credits: 100,
+          },
+        });
+      }
     }
     const validAuthorId = authorUser.id;
 
