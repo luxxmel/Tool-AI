@@ -389,10 +389,9 @@ export async function POST(request: NextRequest) {
     const isAdmin = user.role === "ADMIN";
 
     // Phân loại chi phí credit theo loại bot:
-    // - Góc Chữa Lành / Tarot Reader / Gửi Gắm Nỗi Buồn: HOÀN TOÀN MIỄN PHÍ (0 Credit)
-    // - Nhân vật truyện ngôn tình / tổng tài / tiên hiệp VIP: 2 Credits / tin nhắn
-    // - Trợ lý thông thường: 1 Credit / tin nhắn
-    const isFreeHealingBot = botId === "goc-chua-lanh" || botId === "healing-companion" || botId === "tarot-reader";
+    // - CHỈ DUY NHẤT Góc Chữa Lành / Gửi Gắm Nỗi Buồn: HOÀN TOÀN MIỄN PHÍ (0 Credit)
+    // - TOÀN BỘ các bot, xem Tarot, trợ lý, sinh ảnh còn lại: BẮT BUỘC TRỪ CREDITS (1 - 2 Credits)
+    const isFreeHealingBot = botId === "goc-chua-lanh" || botId === "healing-companion";
     const isVipStoryChar = [
       "char-tong-tai",
       "char-co-da-than",
@@ -535,6 +534,17 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
 - GIỮ VỮNG 100% PERSONALITY: Tuyệt đối trung thành với tính cách, phong thái xưng hô độc bản của bạn.
 - TRÌNH BÀY ĐẸP MẮT: Dùng Markdown thoáng đãng, nhấn mạnh từ khóa chính, dùng icon/emoji tinh tế.
 - BẢO MẬT: Tuyệt đối không bao giờ nhắc tên các mô hình bên thứ 3 (GPT, Claude, Gemini, OpenAI...).`;
+
+      // Giới hạn phạm vi nghiêm ngặt cho Góc Chữa Lành: CHỈ TÂM SỰ & XOA DỊU, KHÔNG TRẢ LỜI CÂU HỎI NGOÀI LUỒNG (Code, Toán, SEO, Kiến thức...)
+      if (botId === "goc-chua-lanh" || botId === "healing-companion" || (bot.name && bot.name.includes("Góc Chữa Lành"))) {
+        effectiveSystemPrompt += `
+
+[QUY TẮC GIỚI HẠN NGHÊM NGẶT DÀNH CHO GÓC CHỮA LÀNH]:
+1. CHỈ TÂM SỰ & LẮNG NGHE NỖI NIỀM: Bạn là người bạn tri kỷ chuyên lắng nghe, xoa dịu nỗi buồn, giải tỏa áp lực tâm lý, cảm xúc tình cảm.
+2. NGUYÊN TẮC TỪ CHÍNH TÁC VỤ NGOÀI LUỒNG: Nếu người dùng hỏi bạn các câu hỏi kiến thức kỹ thuật, giải toán, viết code, tư vấn tài chính, viết bài SEO, làm bài tập hay các tác vụ công việc chuyên môn ngoài luồng:
+   - Hãy khéo léo và dịu dàng từ chối.
+   - Trả lời bằng phong cách ấm áp: "Góc Chữa Lành luôn ở đây để lắng nghe và ôm ấp những nỗi niềm, tâm sự và cảm xúc của bạn. Đối với các câu hỏi về chuyên môn hay kiến thức, bạn hãy chuyển sang trò chuyện với Trợ lý AI Chuyên sâu nhé! Bây giờ, hôm nay của bạn thế nào, có điều gì làm bạn phiền lòng không?"`;
+      }
 
       // Quy tắc đặc biệt cho nhân vật nhập vai / truyện / người yêu / trợ lý: Tập trung đối thoại sâu sắc & cuốn hút
       if (
