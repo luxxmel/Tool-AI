@@ -66,6 +66,47 @@ export default function TarotView() {
     }
   ]);
 
+  // Sound Effects Generator for Tarot Interactions
+  const playMagicSound = (type: 'shuffle' | 'pick' | 'reveal') => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const audioCtx = new AudioContextClass();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'shuffle') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(650, audioCtx.currentTime + 0.35);
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } else if (type === 'pick') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+      } else if (type === 'reveal') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      }
+    } catch {
+      // Ignore audio context autoplay policy warnings
+    }
+  };
+
   // Step 1 -> Step 2: Pick Topic -> Open Spreads Menu
   const handleSelectTopic = (topic: TarotTopic) => {
     setSelectedTopic(topic);
@@ -86,16 +127,18 @@ export default function TarotView() {
   // Start shuffle and move to draw
   const startShuffle = () => {
     setStep('shuffle');
+    playMagicSound('shuffle');
     setTimeout(() => {
       const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
       setDeck(shuffled);
       setPickedCards([]);
       setLastPickedId(null);
       setStep('draw');
-    }, 1000);
+    }, 1200);
   };
 
   const handleFlipDailyCard = () => {
+    playMagicSound('reveal');
     if (!dailyCard) {
       const randomCard = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
       setDailyCard({ card: randomCard, isReversed: Math.random() < 0.2 });
@@ -108,6 +151,7 @@ export default function TarotView() {
     if (pickedCards.length >= targetCount) return;
     if (pickedCards.some((p) => p.card.id === card.id)) return;
 
+    playMagicSound('pick');
     setLastPickedId(card.id);
     const isReversed = Math.random() < 0.3;
     const nextSlotLabel = selectedSpread.positions[pickedCards.length] || `Lá ${pickedCards.length + 1}`;
@@ -190,28 +234,33 @@ export default function TarotView() {
         ? `\nThông tin đối phương / Bối cảnh: Tên: "${partnerName || 'Đối phương'}", Mối quan hệ: "${relationshipType}", Diễn biến: "${storyContext || 'Chưa rõ'}"`
         : '';
 
-      const prompt = `Bạn là Luna - Nhà Tiên Đán & Trải Bài Tarot Huyền Bí đỉnh cao, giàu lòng trắc ẩn, thấu cảm sâu sắc.
+      const prompt = `Bạn là Luna - Master Tarot Reader & Chuyên Gia Phân Tích Tâm Lý Thấu Cảm Đỉnh Cao (chuẩn phong cách bói toán chính xác Tatca.AI).
 
-Chủ đề: "${selectedTopic.title}" - Kiểu trải: "${selectedSpread.title}" (${selectedSpread.subtitle})${partnerContextStr}
+Chủ đề trải bài: "${selectedTopic.title}"
+Kiểu trải: "${selectedSpread.title}" (${selectedSpread.subtitle})${partnerContextStr}
 
-Trải bài chuyên sâu gồm ${currentPicked.length} lá bài người dùng vừa linh ứng tự tay rút được:
+Danh sách ${currentPicked.length} lá bài vừa linh ứng rút được:
 ${cardDetails}
 
-YÊU CẦU BẮT BUỘC: HÃY VIẾT BÀI LUẬN GIẢI CHI TIẾT, DÀI, RẤT SÂU SẮC VÀ ĐẦY CẢM HỨNG (Ít nhất 800 - 1000 từ):
+QUY TẮC LUẬN GIẢI CHUẨN XÁC VÀ TÂM LÝ CHUYÊN SÂU (Viết dài, ít nhất 1000 từ):
 
-1. **MỞ ĐẦU THẤU CẢM (1 Đoạn văn êm dịu)**:
-   Mở đầu bằng lời dẫn thấu hiểu tâm trạng người hỏi nhẹ nhàng. Gọi tên đối phương "${partnerName || 'người ấy'}" nếu có.
+1. **MỞ ĐẦU CHỮA LÀNH & KẾT NỐI NĂNG LƯỢNG**:
+   - Nhìn thẳng vào năng lượng chủ đạo hiện tại của người hỏi.
+   - Nếu có thông tin đối phương (${partnerName || 'đối phương'}), phân tích tần số kết nối giữa 2 người (đang nồng thắm, giữ khoảng cách, tổn thương ẩn ngầm hay áp lực từ bên ngoài).
 
-2. **LUẬN GIẢI CHI TIẾT TỪNG VỊ TRÍ BÀI (${currentPicked.length} KHÍA CẠNH)**:
-   Viết từng mục rõ ràng cho mỗi lá bài theo định dạng chuẩn:
-   **[Tên khía cạnh] — [Tên lá bài], [xuôi/ngược]**: Phân tích sâu sắc tâm lý, bản chất sự việc, tác động thực tế.
+2. **LUẬN GIẢI CHI TIẾT THEO TỪNG VỊ TRÍ KHÍA CẠNH (${currentPicked.length} LÁ BÀI)**:
+   Với mỗi lá bài, giải mã theo 3 tầng nghĩa:
+   - **Tầng 1 (Hình ảnh & Biểu tượng lá bài)**: Ý nghĩa lá xuôi/ngược, sự tương tác nguyên tố (Thủy/Hỏa/Khí/Thổ).
+   - **Tầng 2 (Diễn biến Tâm lý thực tế)**: Nỗi sợ hãi giấu kín, rào cản hành vi, mong muốn chưa nói ra.
+   - **Tầng 3 (Tác động thực tế)**: Chuyện gì sẽ diễn ra trong thời gian tới.
 
-3. **BỨC TRANH TỔNG HỢP & NÚT THẮT CẦN THÁO GỠ**:
-   Tổng hợp sự kết nối giữa các lá bài, chỉ ra mâu thuẫn ẩn ngầm và điểm tựa năng lượng.
+3. **BỨC TRANH TỔNG THỂ & THÁO GỠ NÚT THẮT**:
+   - Phân tích sợi dây liên kết giữa các lá bài (Lá bài nào là chìa khóa chính để tháo gỡ vấn đề).
+   - Đưa ra góc nhìn sự thật không tô hồng nhưng cực kỳ đồng cảm và khai sáng.
 
-4. **LỜI KHUYÊN HÀNH ĐỘNG & ĐỊNH HƯỚNG TƯƠNG LAI**:
-   - 3 Lời khuyên hành động cụ thể.
-   - 1 Lời chúc / Châm ngôn chữa lành.`;
+4. **ĐỊNH HƯỚNG THỰC CHUYÊN & CHÂM NGÔN VŨ TRỤ**:
+   - 3 Hành động cụ thể người hỏi cần làm ngay hôm nay.
+   - Lời nhắn nhủ chữa lành sâu sắc nhất từ Vũ Trụ.`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
