@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
-
 export default function GoogleOneTap() {
   const { isAuthenticated, loginWithGoogle } = useAuth();
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -22,17 +21,18 @@ export default function GoogleOneTap() {
       script.defer = true;
       script.onload = () => initGoogleOneTap();
       document.body.appendChild(script);
-    } else if (window.google?.accounts?.id) {
+    } else if ((window as any).google?.accounts?.id) {
       initGoogleOneTap();
     }
 
     function initGoogleOneTap() {
-      if (!window.google?.accounts?.id || !clientId) return;
+      const g = (window as any).google;
+      if (!g?.accounts?.id || !clientId) return;
 
       try {
-        window.google.accounts.id.initialize({
+        g.accounts.id.initialize({
           client_id: clientId,
-          callback: async (response) => {
+          callback: async (response: any) => {
             if (response.credential) {
               console.log("Nhận token từ Google One Tap, đang đăng nhập...");
               await loginWithGoogle({ credential: response.credential });
@@ -40,13 +40,18 @@ export default function GoogleOneTap() {
           },
           auto_select: false,
           cancel_on_tap_outside: true,
-          use_fedcm_for_prompt: true,
         });
 
-        // Bật popup One Tap chọn tài khoản Google ở góc màn hình
-        window.google.accounts.id.prompt();
+        // Bật popup One Tap với error suppression để tránh cảnh báo bảo mật
+        g.accounts.id.prompt((notification: any) => {
+          if (notification?.isNotDisplayed?.()) {
+            // Không hiển thị popup (bị chặn bởi browser hoặc origin), bỏ qua âm thầm
+          } else if (notification?.isSkippedMoment?.()) {
+            // Bị bỏ qua, bỏ qua âm thầm
+          }
+        });
       } catch (err) {
-        console.error("Lỗi khởi tạo Google One Tap:", err);
+        // Suppress Google One Tap initialization errors
       }
     }
   }, [isAuthenticated, clientId, loginWithGoogle]);

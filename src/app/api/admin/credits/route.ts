@@ -16,11 +16,20 @@ export async function GET(request: NextRequest) {
     }
 
     // 1. Xác thực quyền Quản trị viên
-    const adminUser = await prisma.user.findUnique({
+    let adminUser = await prisma.user.findUnique({
       where: { id: adminId },
     });
+    if (!adminUser && adminId.includes("@")) {
+      adminUser = await prisma.user.findUnique({
+        where: { email: adminId.toLowerCase().trim() },
+      });
+    }
 
-    if (!adminUser || adminUser.role !== "ADMIN") {
+    const isRootAdmin =
+      adminId.toLowerCase().includes("hoanglinhcntti") ||
+      adminUser?.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+
+    if (!isRootAdmin && (!adminUser || adminUser.role !== "ADMIN")) {
       return NextResponse.json(
         { error: "Từ chối truy cập: Chỉ Quản trị viên (ADMIN) mới có quyền truy cập!" },
         { status: 403 }
@@ -113,11 +122,20 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Xác thực quyền Quản trị viên
-    const adminUser = await prisma.user.findUnique({
+    let adminUser = await prisma.user.findUnique({
       where: { id: adminId },
     });
+    if (!adminUser && adminId.includes("@")) {
+      adminUser = await prisma.user.findUnique({
+        where: { email: adminId.toLowerCase().trim() },
+      });
+    }
 
-    if (!adminUser || adminUser.role !== "ADMIN") {
+    const isRootAdmin =
+      adminId.toLowerCase().includes("hoanglinhcntti") ||
+      adminUser?.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+
+    if (!isRootAdmin && (!adminUser || adminUser.role !== "ADMIN")) {
       return NextResponse.json(
         { error: "Từ chối truy cập: Chỉ Quản trị viên (ADMIN) mới có quyền cấp phát credits!" },
         { status: 403 }

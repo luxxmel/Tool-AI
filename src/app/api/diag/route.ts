@@ -1,35 +1,52 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const diag: Record<string, any> = {
     time: new Date().toISOString(),
+    node_version: process.version,
     node_env: process.env.NODE_ENV,
     cwd: process.cwd(),
     db_url: process.env.DATABASE_URL || "not_set",
   };
 
+  const fs = await import("fs");
+  const path = await import("path");
+
+  // Check dev.db existence
   try {
-    const fs = await import("fs");
-    const path = await import("path");
     const dbPath = path.resolve(process.cwd(), "prisma", "dev.db");
     diag.dbFileExists = fs.existsSync(dbPath);
     if (diag.dbFileExists) {
-      diag.dbStat = fs.statSync(dbPath);
+      const stat = fs.statSync(dbPath);
+      diag.dbStat = { size: stat.size, mode: (stat.mode & 0o777).toString(8) };
     }
   } catch (e: any) {
-    diag.fsError = e.message;
+    diag.dbError = e.message;
   }
 
+  // Test Database operations via prisma (sqliteClient)
   try {
-    const { PrismaClient } = await import("@/lib/generated-prisma");
-    const p = new PrismaClient();
-    const count = await p.user.count();
-    diag.prismaStatus = "OK";
+    const count = await prisma.user.count();
+    const adminUser = await prisma.user.findUnique({ where: { email: "hoanglinhcntti@gmail.com" } });
+    const allUsers = await prisma.user.findMany({
+      take: 5,
+      include: { _count: { select: { conversations: true, posts: true } } },
+    });
+
+    diag.dbStatus = "OK";
     diag.userCount = count;
+    diag.adminFound = !!adminUser;
+    diag.sampleUsers = allUsers.map((u: any) => ({
+      email: u.email,
+      name: u.name,
+      role: u.role,
+      credits: u.credits,
+    }));
   } catch (e: any) {
-    diag.prismaStatus = "ERROR";
-    diag.prismaError = e.message;
-    diag.prismaStack = e.stack;
+    diag.dbStatus = "ERROR";
+    diag.dbError = e.message;
+    diag.dbStack = e.stack;
   }
 
   return NextResponse.json(diag);
