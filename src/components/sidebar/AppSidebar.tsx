@@ -219,14 +219,14 @@ export default function AppSidebar({
       >
         <div>
           {/* Brand Logo & Theme Toggle */}
-          <div className="flex items-center justify-between px-2 py-3 mb-3 gap-2">
-            <Link href="/" className="flex items-center gap-2 group cursor-pointer shrink-0">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <div className="flex items-center justify-between px-1.5 py-2.5 mb-2 gap-1.5 min-w-0">
+            <Link href="/" className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink">
+              <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
                 </svg>
               </div>
-              <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight shrink-0">
+              <span className="text-base font-black text-slate-900 dark:text-white tracking-tight truncate">
                 biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.ai</span>
               </span>
             </Link>
@@ -237,10 +237,10 @@ export default function AppSidebar({
                 <button
                   type="button"
                   onClick={onToggleCollapse}
-                  className="hidden lg:flex p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
+                  className="hidden lg:flex p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
                   title={t("sidebar.collapse")}
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                   </svg>
                 </button>
@@ -250,14 +250,14 @@ export default function AppSidebar({
               <button
                 type="button"
                 onClick={() => setIsNotificationOpen(true)}
-                className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-xs transition-all cursor-pointer relative"
+                className="p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-xs transition-all cursor-pointer relative"
                 title="Xem thông báo hệ thống"
               >
-                <span>🔔</span>
+                <span className="text-xs">🔔</span>
                 {hasUnreadNotifications && (
                   <>
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+                    <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
+                    <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-rose-500 rounded-full" />
                   </>
                 )}
               </button>
@@ -266,10 +266,10 @@ export default function AppSidebar({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-xs transition-all cursor-pointer"
+                className="p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-xs transition-all cursor-pointer"
                 title={theme === "dark" ? t("sidebar.light_mode") : t("sidebar.dark_mode")}
               >
-                {theme === "dark" ? "☀️" : "🌙"}
+                <span className="text-xs">{theme === "dark" ? "☀️" : "🌙"}</span>
               </button>
             </div>
           </div>
