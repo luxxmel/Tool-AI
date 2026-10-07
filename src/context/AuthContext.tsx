@@ -55,21 +55,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (stored) {
         const parsed: User = JSON.parse(stored);
-        // Nếu là phiên khách tự động cũ, xóa bỏ để người dùng tự đăng nhập / tạo tài khoản
         if (parsed?.id?.startsWith("guest_")) {
+          // Xóa bỏ guest cũ nếu có
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem("omni_guest_id");
           setUser(null);
+        } else if (parsed) {
           if (parsed?.role === "ADMIN" || parsed?.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
             parsed.role = "ADMIN";
             parsed.credits = 999999;
           }
           setUser(parsed);
           if (typeof document !== "undefined") {
-            document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(parsed))}; path=/; max-age=2592000; SameSite=Lax`;
+            document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(parsed))}; path=/; max-age=31536000; SameSite=Lax`;
           }
 
-          // Đồng bộ credits từ Database máy chủ
+          // Đồng bộ credits mới nhất từ Database máy chủ
           fetch(`/api/user/credits?userId=${parsed.id}`)
             .then((res) => res.json())
             .then((data) => {
