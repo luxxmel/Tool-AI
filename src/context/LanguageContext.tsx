@@ -178,7 +178,7 @@ const translationsVi: Translations = {
   "home.trending_characters": "Nhân vật xu hướng",
   "home.view_all": "Xem tất cả",
   "home.trending": "Xu hướng",
-  "home.footer_desc": "© 2026 biettuot.ai — Biết Tuốt AI: Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh.",
+  "home.footer_desc": "© 2026 biettuot.io — Biết Tuốt AI: Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh.",
   "home.terms": "Điều khoản",
   "home.privacy": "Chính sách bảo mật",
 
@@ -513,7 +513,7 @@ const translationsEn: Translations = {
   "home.trending_characters": "Trending Characters",
   "home.view_all": "View all",
   "home.trending": "Trending",
-  "home.footer_desc": "© 2026 biettuot.ai — Biettuot AI: Ask Anything, Master Everything.",
+  "home.footer_desc": "© 2026 biettuot.io — Biettuot AI: Ask Anything, Master Everything.",
   "home.terms": "Terms of Service",
   "home.privacy": "Privacy Policy",
 
