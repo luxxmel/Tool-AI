@@ -570,8 +570,8 @@ export default function AdminCmsPage() {
       )}
 
       {/* Admin Top Navigation */}
-      <header className="sticky top-0 z-40 bg-white dark:bg-[#0c0d12] border-b border-slate-200 dark:border-slate-800/80 px-4 sm:px-6 h-16 flex items-center justify-between shadow-xs gap-3">
-        <div className="flex items-center gap-2 min-w-0">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0c0d12]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 px-4 sm:px-6 h-16 flex items-center justify-between shadow-xs gap-4">
+        <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/"
             className="flex items-center gap-2 group shrink-0"
@@ -590,7 +590,7 @@ export default function AdminCmsPage() {
           <span className="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
 
           {/* Admin Tab Switcher — scrollable row */}
-          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-[calc(100vw-220px)] sm:max-w-none scrollbar-none">
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/90 p-1 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-[calc(100vw-230px)] sm:max-w-none scrollbar-none">
             {(
               [
                 { key: "users", label: "👥 Người dùng", count: totalMembers, color: "indigo" },
@@ -604,21 +604,22 @@ export default function AdminCmsPage() {
             ).map(({ key, label, count, color }) => {
               const active = adminTab === key;
               const colorMap: Record<string, string> = {
-                indigo: "text-indigo-600 dark:text-indigo-400",
-                purple: "text-purple-600 dark:text-purple-400",
-                rose: "text-rose-600 dark:text-rose-400",
-                emerald: "text-emerald-600 dark:text-emerald-400",
-                amber: "text-amber-600 dark:text-amber-400",
-                violet: "text-violet-600 dark:text-violet-400",
+                indigo: "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm",
+                purple: "text-purple-600 dark:text-purple-400 bg-white dark:bg-slate-800 shadow-sm",
+                rose: "text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-800 shadow-sm",
+                emerald: "text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm",
+                amber: "text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm",
+                cyan: "text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-800 shadow-sm",
+                violet: "text-violet-600 dark:text-violet-400 bg-white dark:bg-slate-800 shadow-sm",
               };
               return (
                 <button
                   key={key}
                   onClick={() => setAdminTab(key)}
-                  className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer shrink-0 ${
+                  className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
                     active
-                      ? `bg-white dark:bg-slate-800 ${colorMap[color]} shadow-xs`
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                      ? colorMap[color]
+                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
                   }`}
                 >
                   {label}
@@ -876,15 +877,15 @@ export default function AdminCmsPage() {
                                   handleChangeRole(u.id, newRole);
                                 }
                               }}
-                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border focus:outline-none cursor-pointer ${
+                              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border focus:outline-none cursor-pointer shadow-xs transition-colors ${
                                 u.role === "vip"
-                                  ? "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/40"
-                                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
+                                  ? "bg-amber-500/10 text-amber-500 border-amber-500/30"
+                                  : "bg-white dark:bg-[#1a1c24] text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-700 hover:border-indigo-500"
                               }`}
                             >
-                              <option value="member">Thành viên thường</option>
-                              <option value="vip">Thành viên VIP ⭐</option>
-                              <option value="admin">Thăng cấp Admin 🛡️</option>
+                              <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Thành viên thường</option>
+                              <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ Thành viên VIP</option>
+                              <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Thăng cấp Admin</option>
                             </select>
                           </td>
 
@@ -1166,30 +1167,37 @@ export default function AdminCmsPage() {
                             </div>
                           </td>
 
-                          <td className="py-3 px-4 text-purple-600 dark:text-purple-300 font-mono font-medium">
+                          <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">
                             {u.email}
                           </td>
 
                           <td className="py-3 px-4">
-                            <select
-                              value={u.role}
-                              onChange={async (e) => {
-                                const newRole = e.target.value as "admin" | "vip" | "member";
-                                if (newRole !== "admin") {
-                                  const ok = await showConfirm(`Bạn có chắc chắn muốn hạ quyền Quản trị viên của "${u.name}" xuống "${newRole === "vip" ? "VIP" : "Thành viên thường"}"?`, "Hạ quyền Admin");
-                                  if (ok) {
+                            {u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com" ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-500 border border-amber-500/30">
+                                <span>👑</span>
+                                <span>Root Admin</span>
+                              </span>
+                            ) : (
+                              <select
+                                value={u.role}
+                                onChange={async (e) => {
+                                  const newRole = e.target.value as "admin" | "vip" | "member";
+                                  if (newRole !== "admin") {
+                                    const ok = await showConfirm(`Bạn có chắc chắn muốn hạ quyền Quản trị viên của "${u.name}" xuống "${newRole === "vip" ? "VIP" : "Thành viên thường"}"?`, "Hạ quyền Admin");
+                                    if (ok) {
+                                      handleChangeRole(u.id, newRole);
+                                    }
+                                  } else {
                                     handleChangeRole(u.id, newRole);
                                   }
-                                } else {
-                                  handleChangeRole(u.id, newRole);
-                                }
-                              }}
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold border focus:outline-none cursor-pointer bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/40"
-                            >
-                              <option value="admin">Quản trị viên (Admin) 🛡️</option>
-                              <option value="vip">Hạ xuống VIP ⭐</option>
-                              <option value="member">Hạ xuống Thành viên</option>
-                            </select>
+                                }}
+                                className="px-3 py-1.5 rounded-xl text-xs font-semibold border focus:outline-none cursor-pointer bg-white dark:bg-[#1a1c24] text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-700 hover:border-purple-500 shadow-xs transition-colors"
+                              >
+                                <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Quản trị viên (Admin)</option>
+                                <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ Hạ xuống VIP</option>
+                                <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Hạ xuống Thành viên</option>
+                              </select>
+                            )}
                           </td>
 
                           <td className="py-3 px-4">
@@ -1221,14 +1229,16 @@ export default function AdminCmsPage() {
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => handleToggleStatus(u.id)}
-                                disabled={user?.id === u.id}
-                                className={`p-1.5 rounded-lg border text-xs font-semibold transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                                disabled={user?.id === u.id || u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"}
+                                className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed ${
                                   u.status === "active"
-                                    ? "bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-rose-600"
-                                    : "bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400"
+                                    ? "bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                                    : "bg-emerald-50 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white"
                                 }`}
                                 title={
-                                  user?.id === u.id
+                                  u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
+                                    ? "Không thể khóa tài khoản Root Admin"
+                                    : user?.id === u.id
                                     ? "Không thể tự khóa tài khoản của chính mình"
                                     : u.status === "active"
                                     ? "Khóa tài khoản admin này"
@@ -1240,9 +1250,15 @@ export default function AdminCmsPage() {
 
                               <button
                                 onClick={() => handleDeleteUser(u.id, u.name)}
-                                disabled={user?.id === u.id}
-                                className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/50 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                title={user?.id === u.id ? "Không thể tự xóa chính mình" : "Xóa tài khoản admin này"}
+                                disabled={user?.id === u.id || u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"}
+                                className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                                title={
+                                  u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
+                                    ? "Không thể xóa tài khoản Root Admin"
+                                    : user?.id === u.id
+                                    ? "Không thể tự xóa chính mình"
+                                    : "Xóa tài khoản admin này"
+                                }
                               >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
