@@ -434,8 +434,16 @@ export default function AdminCmsPage() {
   };
 
   // ── Phân loại Admin và Người dùng thường ──────────────────────────────────────
-  const adminUsers = users.filter((u) => u.role.toLowerCase() === "admin");
-  const nonAdminUsers = users.filter((u) => u.role.toLowerCase() !== "admin");
+  const adminUsers = users.filter(
+    (u) =>
+      u.role.toLowerCase() === "admin" ||
+      u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
+  );
+  const nonAdminUsers = users.filter(
+    (u) =>
+      u.role.toLowerCase() !== "admin" &&
+      u.email.toLowerCase().trim() !== "hoanglinhcntti@gmail.com"
+  );
 
   // ── Filtered data ────────────────────────────────────────────────────────────
   // 1. Dành cho Tab Người dùng (Thành viên & VIP - không hiển thị Admin)

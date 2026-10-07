@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   ) => {
     const userJson = user ? JSON.stringify(user) : "null";
     const userJsonEscaped = user ? encodeURIComponent(JSON.stringify(user)) : "";
-    return new NextResponse(
+    const response = new NextResponse(
       `<!DOCTYPE html>
       <html lang="vi">
         <head>
@@ -85,6 +85,16 @@ export async function GET(request: NextRequest) {
       </html>`,
       { headers: { "Content-Type": "text/html; charset=utf-8" } }
     );
+
+    if (success && user) {
+      response.cookies.set("tool_ai_auth_user", JSON.stringify(user), {
+        path: "/",
+        maxAge: 30 * 24 * 60 * 60,
+        sameSite: "lax",
+      });
+    }
+
+    return response;
   };
 
   if (errorParam) {

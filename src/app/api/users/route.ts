@@ -41,21 +41,44 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const formattedUsers = users.map((u) => ({
-      id: u.id,
-      name: u.name || "Chưa đặt tên",
-      username: u.email.split("@")[0],
-      email: u.email,
-      role: u.role.toLowerCase() as "admin" | "vip" | "member",
-      status: (u.status || "active") as "active" | "banned",
-      avatar:
-        u.avatar ||
-        `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(u.email)}`,
-      credits: u.credits,
-      joinedDate: new Date(u.createdAt).toLocaleDateString("vi-VN"),
-      promptsCount: u._count.conversations,
-      postsCount: u._count.posts,
-    }));
+    let formattedUsers = users.map((u) => {
+      const isHLAdmin = u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+      return {
+        id: u.id,
+        name: u.name || (isHLAdmin ? "Lịnh Hoàng" : "Chưa đặt tên"),
+        username: u.email.split("@")[0],
+        email: u.email,
+        role: (isHLAdmin ? "admin" : u.role.toLowerCase()) as "admin" | "vip" | "member",
+        status: (u.status || "active") as "active" | "banned",
+        avatar:
+          u.avatar ||
+          `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(u.email)}`,
+        credits: isHLAdmin ? 999999 : u.credits,
+        joinedDate: new Date(u.createdAt).toLocaleDateString("vi-VN"),
+        promptsCount: u._count.conversations,
+        postsCount: u._count.posts,
+      };
+    });
+
+    // Nếu cơ sở dữ liệu trên server vì lý do nào chưa có dòng hoanglinhcntti@gmail.com, bổ sung vào đầu danh sách
+    const hasAdmin = formattedUsers.some(
+      (u) => u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
+    );
+    if (!hasAdmin) {
+      formattedUsers.unshift({
+        id: "hoanglinhcntti@gmail.com",
+        name: "Lịnh Hoàng",
+        username: "hoanglinhcntti",
+        email: "hoanglinhcntti@gmail.com",
+        role: "admin",
+        status: "active",
+        avatar: "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
+        credits: 999999,
+        joinedDate: new Date().toLocaleDateString("vi-VN"),
+        promptsCount: 0,
+        postsCount: 0,
+      });
+    }
 
     return NextResponse.json(formattedUsers);
   } catch (error) {

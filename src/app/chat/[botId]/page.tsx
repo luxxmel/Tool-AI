@@ -518,10 +518,13 @@ export default function BotChatPage() {
   const { bgType } = useWorkspaceBackground();
 
   useEffect(() => {
+    if (user) {
+      setShowLoginModal(false);
+    }
     if (user?.credits !== undefined && user?.credits !== null) {
       setCredits(user.credits);
     }
-  }, [user?.credits]);
+  }, [user]);
 
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);

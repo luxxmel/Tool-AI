@@ -91,28 +91,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
 
-    // Lắng nghe BroadcastChannel để đồng bộ tức thì khi đăng nhập từ tab khác hoặc popup
+    // Lắng nghe BroadcastChannel & postMessage & storage event để đồng bộ tức thì khi đăng nhập từ popup hoặc tab khác
     let bc: BroadcastChannel | null = null;
-    try {
-      if (typeof window !== "undefined" && window.BroadcastChannel) {
-        bc = new BroadcastChannel("oauth_channel");
-        bc.onmessage = (event) => {
-          if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
-            const newUser = event.data.user;
-            if (newUser.role === "ADMIN" || newUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
-              newUser.role = "ADMIN";
-              newUser.credits = 999999;
-            }
-            setUser(newUser);
-            try {
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
-            } catch {}
-          }
-        };
+    const handleOAuthMsg = (event: MessageEvent) => {
+      if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
+        const newUser = event.data.user;
+        if (newUser.role === "ADMIN" || newUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+          newUser.role = "ADMIN";
+          newUser.credits = 999999;
+        }
+        setUser(newUser);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+        } catch {}
       }
-    } catch {}
+    };
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed) {
+            if (parsed.role === "ADMIN" || parsed.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+              parsed.role = "ADMIN";
+              parsed.credits = 999999;
+            }
+            setUser(parsed);
+          }
+        } catch {}
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("message", handleOAuthMsg);
+      window.addEventListener("storage", handleStorageChange);
+      try {
+        if (window.BroadcastChannel) {
+          bc = new BroadcastChannel("oauth_channel");
+          bc.onmessage = (event) => {
+            if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
+              const newUser = event.data.user;
+              if (newUser.role === "ADMIN" || newUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+                newUser.role = "ADMIN";
+                newUser.credits = 999999;
+              }
+              setUser(newUser);
+              try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+              } catch {}
+            }
+          };
+        }
+      } catch {}
+    }
 
     return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("message", handleOAuthMsg);
+        window.removeEventListener("storage", handleStorageChange);
+      }
       if (bc) bc.close();
     };
   }, []);
