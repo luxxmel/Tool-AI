@@ -232,6 +232,12 @@
       "namedRegex": "^/api/conversations(?:/)?$"
     },
     {
+      "page": "/api/diag",
+      "regex": "^/api/diag(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/diag(?:/)?$"
+    },
+    {
       "page": "/api/images/generate",
       "regex": "^/api/images/generate(?:/)?$",
       "routeKeys": {},
