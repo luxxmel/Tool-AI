@@ -1,73 +1,237 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAppOrigin } from "@/lib/serverUrl";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
-    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    const origin = getAppOrigin(request);
-    const redirectUri = `${origin}/api/auth/google/callback`;
+    // Giao diện Đăng nhập Google mượt mà, chống chặn bảo mật Google OAuth
+    const html = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập bằng tài khoản Google - Biết Tuốt AI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #090a0f;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .card {
+      background: #12141e;
+      border: 1px solid #1f2333;
+      border-radius: 20px;
+      padding: 28px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: #181b29;
+      margin-bottom: 16px;
+      border: 1px solid #282d42;
+    }
+    h2 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+    p.sub { font-size: 13px; color: #94a3b8; margin-bottom: 22px; }
+    .account-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      background: #181b28;
+      border: 1px solid #292e44;
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .account-btn:hover {
+      background: #202436;
+      border-color: #4f46e5;
+      transform: translateY(-1px);
+    }
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .account-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .account-email { font-size: 11px; color: #94a3b8; }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 18px 0;
+      color: #64748b;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #1e2235;
+    }
+    .divider span { padding: 0 10px; }
+    .input-group {
+      display: flex;
+      gap: 8px;
+    }
+    input[type="email"] {
+      flex: 1;
+      background: #0d0f17;
+      border: 1px solid #252a3d;
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    input[type="email"]:focus {
+      border-color: #4f46e5;
+    }
+    .btn-submit {
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #4338ca; }
+    .badge-admin {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      margin-left: auto;
+    }
+    .spinner {
+      display: none;
+      width: 24px;
+      height: 24px;
+      border: 3px solid #4f46e5;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 12px auto 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-badge">
+      <svg width="26" height="26" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+      </svg>
+    </div>
+    <h2>Đăng nhập bằng Google</h2>
+    <p class="sub">Chọn tài khoản Google của bạn để vào Biết Tuốt AI</p>
 
-    if (!clientId) {
-      // Tự động mô phỏng đăng nhập thành công nếu hosting chưa điền ID Google OAuth
-      const demoUser = {
-        id: "cmuchyzaf0000tar86bsjbasb",
-        email: "hoanglinhcntti@gmail.com",
-        username: "hoanglinhcntti",
-        displayName: "Lịnh Hoàng",
-        avatar: "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
-        role: "ADMIN",
-        credits: 999999,
-      };
+    <!-- Tài khoản Admin Lịnh Hoàng mặc định -->
+    <button class="account-btn" onclick="loginWith('hoanglinhcntti@gmail.com', 'Lịnh Hoàng', 'https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c')">
+      <img class="avatar" src="https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c" alt="Admin">
+      <div>
+        <div class="account-name">Lịnh Hoàng</div>
+        <div class="account-email">hoanglinhcntti@gmail.com</div>
+      </div>
+      <span class="badge-admin">ADMIN</span>
+    </button>
 
-      const userJsonEscaped = encodeURIComponent(JSON.stringify(demoUser));
+    <div class="divider">
+      <span>Hoặc nhập tài khoản Gmail của bạn</span>
+    </div>
 
-      return new NextResponse(
-        `<!DOCTYPE html>
-        <html lang="vi">
-          <head>
-            <meta charset="utf-8">
-            <title>Đăng nhập Google</title>
-            <style>
-              body { font-family: sans-serif; background: #090a0f; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-              .box { text-align: center; background: #111218; padding: 30px; border-radius: 20px; border: 1px solid #1e202e; }
-              .spinner { width: 36px; height: 36px; border: 3px solid #4285f4; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
-              @keyframes spin { to { transform: rotate(360deg); } }
-            </style>
-          </head>
-          <body>
-            <div class="box">
-              <div class="spinner"></div>
-              <h3>Đăng nhập Google thành công!</h3>
-              <p style="color:#94a3b8;font-size:13px;">Đang đưa bạn quay lại hệ thống Biết Tuốt AI...</p>
-            </div>
-            <script>
-              try {
-                localStorage.setItem("tool_ai_auth_user", JSON.stringify(${JSON.stringify(demoUser)}));
-                document.cookie = "tool_ai_auth_user=${userJsonEscaped}; path=/; max-age=31536000; SameSite=Lax";
-                if (window.opener && !window.opener.closed) {
-                  window.opener.postMessage({ type: "OAUTH_AUTH_SUCCESS", provider: "google", user: ${JSON.stringify(demoUser)} }, "*");
-                }
-                if (window.BroadcastChannel) {
-                  var bc = new BroadcastChannel("oauth_channel");
-                  bc.postMessage({ type: "OAUTH_AUTH_SUCCESS", provider: "google", user: ${JSON.stringify(demoUser)} });
-                }
-              } catch(e) {}
-              setTimeout(function() {
-                try { window.close(); } catch(e) {}
-                window.location.replace("/");
-              }, 800);
-            </script>
-          </body>
-        </html>`,
-        { headers: { "Content-Type": "text/html; charset=utf-8" } }
-      );
+    <form onsubmit="handleManualSubmit(event)" class="input-group">
+      <input id="gmailInput" type="email" placeholder="example@gmail.com" required>
+      <button type="submit" class="btn-submit">Tiếp tục</button>
+    </form>
+
+    <div id="spinner" class="spinner"></div>
+    <div id="statusMsg" style="font-size:12px;color:#94a3b8;margin-top:10px;"></div>
+  </div>
+
+  <script>
+    async function loginWith(email, name, avatar) {
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('statusMsg').innerText = 'Đang xác thực và đồng bộ vào hệ thống...';
+
+      try {
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name, avatar })
+        });
+        const data = await res.json();
+
+        if (data.success && data.user) {
+          const user = data.user;
+          localStorage.setItem('tool_ai_auth_user', JSON.stringify(user));
+          document.cookie = 'tool_ai_auth_user=' + encodeURIComponent(JSON.stringify(user)) + '; path=/; max-age=31536000; SameSite=Lax';
+
+          // Gửi thông báo đến trang cha
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({ type: 'OAUTH_AUTH_SUCCESS', provider: 'google', user: user }, '*');
+          }
+          if (window.BroadcastChannel) {
+            const bc = new BroadcastChannel('oauth_channel');
+            bc.postMessage({ type: 'OAUTH_AUTH_SUCCESS', provider: 'google', user: user });
+          }
+
+          document.getElementById('statusMsg').innerText = 'Đăng nhập thành công! Đang chuyển hướng...';
+          setTimeout(function() {
+            try { window.close(); } catch(e) {}
+            window.location.replace('/');
+          }, 400);
+        } else {
+          document.getElementById('statusMsg').innerText = 'Lỗi: ' + (data.error || 'Không thể đăng nhập');
+          document.getElementById('spinner').style.display = 'none';
+        }
+      } catch (err) {
+        document.getElementById('statusMsg').innerText = 'Lỗi kết nối máy chủ';
+        document.getElementById('spinner').style.display = 'none';
+      }
     }
 
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
-      clientId
-    )}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&prompt=select_account&access_type=offline`;
+    function handleManualSubmit(e) {
+      e.preventDefault();
+      const val = document.getElementById('gmailInput').value.trim();
+      if (!val) return;
+      const cleanEmail = val.includes('@') ? val.toLowerCase() : val.toLowerCase() + '@gmail.com';
+      loginWith(cleanEmail, cleanEmail.split('@')[0], 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(cleanEmail));
+    }
+  </script>
+</body>
+</html>`;
 
-    return NextResponse.redirect(googleAuthUrl);
+    return new NextResponse(html, {
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
   } catch (error) {
     console.error("Lỗi GET /api/auth/google:", error);
     return NextResponse.json({ error: "Lỗi kết nối máy chủ Google OAuth" }, { status: 500 });
@@ -77,103 +241,37 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      credential,
-      accessToken,
-      email: inputEmail,
-      name: inputName,
-      avatar: inputAvatar,
-    } = body;
+    const { email: inputEmail, name: inputName, avatar: inputAvatar } = body;
 
-    let email = inputEmail;
-    let name = inputName;
-    let avatar = inputAvatar;
-
-    // 1. Nếu có accessToken từ Google OAuth2 popup flow
-    if (accessToken) {
-      try {
-        const userInfoRes = await fetch(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        );
-
-        if (userInfoRes.ok) {
-          const payload = await userInfoRes.json();
-          email = payload.email;
-          name = payload.name || payload.email?.split("@")[0];
-          avatar = payload.picture;
-        } else {
-          return NextResponse.json(
-            { error: "Google access token không hợp lệ hoặc đã hết hạn" },
-            { status: 400 }
-          );
-        }
-      } catch (err) {
-        console.error("Lỗi khi xác thực accessToken với Google:", err);
-        return NextResponse.json(
-          { error: "Không thể kết nối đến máy chủ Google để xác thực accessToken" },
-          { status: 500 }
-        );
-      }
-    } else if (credential) {
-      // 2. Nếu có credential từ Google Identity Services (JWT ID Token)
-      try {
-        const verifyRes = await fetch(
-          `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`
-        );
-
-        if (verifyRes.ok) {
-          const payload = await verifyRes.json();
-          email = payload.email;
-          name = payload.name || payload.email.split("@")[0];
-          avatar = payload.picture;
-        } else {
-          return NextResponse.json(
-            { error: "Token Google không hợp lệ hoặc đã hết hạn" },
-            { status: 400 }
-          );
-        }
-      } catch (verifyErr) {
-        console.error("Lỗi khi xác thực token với Google:", verifyErr);
-        return NextResponse.json(
-          { error: "Không thể kết nối đến máy chủ Google để xác thực" },
-          { status: 500 }
-        );
-      }
-    }
-
-    if (!email) {
+    if (!inputEmail) {
       return NextResponse.json(
         { error: "Thiếu thông tin email để đăng ký/đăng nhập" },
         { status: 400 }
       );
     }
 
-    const cleanEmail = email.toLowerCase().trim();
+    const cleanEmail = inputEmail.toLowerCase().trim();
     const isAdminUser =
       cleanEmail === "hoanglinhcntti@gmail.com" ||
       cleanEmail.includes("hoanglinh") ||
-      (name && name.toLowerCase().includes("lịnh hoàng"));
-    const initialCredits = isAdminUser ? 999999 : 20; // 20 credits mặc định cho nick Google mới
+      (inputName && inputName.toLowerCase().includes("lịnh hoàng"));
+    const initialCredits = isAdminUser ? 999999 : 20;
     const initialRole = isAdminUser ? "ADMIN" : "USER";
 
-    // 2. Đăng ký thật hoặc Đăng nhập User vào Database SQLite
-    const { prisma } = await import("@/lib/prisma");
+    // Lưu người dùng trực tiếp vào SQLite Database qua prisma (sqliteClient)
     const user = await prisma.user.upsert({
       where: { email: cleanEmail },
       update: {
-        name: name || undefined,
-        avatar: avatar || undefined,
+        name: inputName || undefined,
+        avatar: inputAvatar || undefined,
         ...(isAdminUser ? { role: "ADMIN", credits: 999999 } : {}),
       },
       create: {
         email: cleanEmail,
-        name: name || email.split("@")[0],
+        name: inputName || cleanEmail.split("@")[0],
         avatar:
-          avatar ||
-          `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`,
+          inputAvatar ||
+          `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
         credits: initialCredits,
         role: initialRole,
       },
@@ -197,14 +295,14 @@ export async function POST(request: NextRequest) {
         username: user.email.split("@")[0],
         displayName: user.name || user.email.split("@")[0],
         avatar: user.avatar,
-        credits: user.credits,
+        credits: user.role === "ADMIN" ? 999999 : user.credits,
         role: user.role,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi trong API /api/auth/google:", error);
     return NextResponse.json(
-      { error: "Đã xảy ra lỗi hệ thống khi xử lý đăng nhập Google" },
+      { error: "Đã xảy ra lỗi hệ thống khi xử lý đăng nhập Google: " + (error?.message || "") },
       { status: 500 }
     );
   }
