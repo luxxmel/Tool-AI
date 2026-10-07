@@ -57,7 +57,17 @@ export async function ensureUser(
     } catch (e) {
       console.warn("Prisma admin upsert warn:", e);
     }
-    // Fallback đảm bảo ADMIN luôn luôn có tài khoản hợp lệ
+
+    // Fallback đảm bảo ADMIN luôn luôn có tài khoản hợp lệ trong DB
+    try {
+      const existingDbAdmin = await prisma.user.findFirst({
+        where: { email: "hoanglinhcntti@gmail.com" },
+      });
+      if (existingDbAdmin) return { ...existingDbAdmin, role: "ADMIN", credits: 999999 };
+    } catch {
+      // Ignored
+    }
+
     return {
       id: "hoanglinhcntti@gmail.com",
       email: "hoanglinhcntti@gmail.com",
@@ -129,7 +139,14 @@ export async function ensureUser(
     console.warn(`Lỗi khi tìm/tạo user trong DB:`, err);
   }
 
-  // 5. Fallback vững chắc: Trả về tài khoản hợp lệ nếu Prisma không hoạt động
+  // 5. Fallback vững chắc: Đảm bảo user có record trong SQLite DB trước khi trả về
+  try {
+    const existing = await prisma.user.findFirst({ where: { email: effectiveEmail } });
+    if (existing) return existing;
+  } catch {
+    // Ignored
+  }
+
   return {
     id: targetId || effectiveEmail,
     email: effectiveEmail,

@@ -164,7 +164,31 @@ export async function POST(request: NextRequest) {
     if (!authorUser) {
       return NextResponse.json({ error: "Author not found" }, { status: 404 });
     }
-    const validAuthorId = authorUser.id;
+    let validAuthorId = authorUser.id;
+
+    // Đảm bảo authorUser chắc chắn có record trong SQLite trước khi create post
+    try {
+      const dbUserCheck = await prisma.user.findUnique({ where: { id: validAuthorId } });
+      if (!dbUserCheck) {
+        const syncedUser = await prisma.user.create({
+          data: {
+            id: validAuthorId.length > 5 && !validAuthorId.includes("@") ? validAuthorId : undefined,
+            email: authorUser.email,
+            name: authorUser.name,
+            avatar: authorUser.avatar,
+            role: authorUser.role,
+            credits: authorUser.credits,
+          },
+        });
+        validAuthorId = syncedUser.id;
+      }
+    } catch {
+      // Tìm lại theo email nếu id custom không hợp lệ
+      const byEmail = await prisma.user.findFirst({ where: { email: authorUser.email } });
+      if (byEmail) {
+        validAuthorId = byEmail.id;
+      }
+    }
 
     const categoryLabels: Record<string, string> = {
       prompt: "Prompt AI",
@@ -227,7 +251,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Lỗi khi đăng bài viết:", error);
     return NextResponse.json(
-      { error: "Lỗi hệ thống khi tạo bài viết" },
+      { error: "Lỗi hệ thống khi tạo bài viết: " + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }
     );
   }
