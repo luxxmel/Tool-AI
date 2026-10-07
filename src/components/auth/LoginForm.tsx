@@ -125,6 +125,8 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
       }
     } catch {
       window.location.href = "/api/auth/google";
+    } finally {
+      setIsLoading(false);
     }
   };
 
