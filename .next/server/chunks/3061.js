@@ -1,1 +1,1 @@
-"use strict";exports.id=3061,exports.ids=[3061],exports.modules={93061:(a,b,c)=>{c.d(b,{prisma:()=>f});var d=c(96330);let e=globalThis,f=(e.prisma||(e.prisma=new d.PrismaClient({log:["error"]})),e.prisma)}};
+"use strict";exports.id=3061,exports.ids=[3061],exports.modules={93061:(a,b,c)=>{c.d(b,{prisma:()=>f});var d=c(55756);let e=globalThis,f=(e.prisma||(e.prisma=new d.PrismaClient({log:["error"]})),e.prisma)}};
