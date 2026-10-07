@@ -583,7 +583,7 @@ export default function AdminCmsPage() {
               </svg>
             </div>
             <span className="font-extrabold text-slate-900 dark:text-white text-lg tracking-tight hidden sm:inline">
-              omni<span className="text-rose-500">.ai</span>
+              biettuot<span className="text-rose-500">.io</span>
             </span>
           </Link>
 

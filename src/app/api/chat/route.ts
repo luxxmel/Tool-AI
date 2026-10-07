@@ -11,32 +11,35 @@ import { enrichPromptWithUrlContent, ExtractedItem } from "@/lib/contentExtracto
 function sanitizeBrandLeaks(text: string): string {
   if (!text) return text;
   return text
-    .replace(/(?:Tôi là|Mình là)\s+(?:\*\*)?Claude[^\n\.\,]*?(?:Anthropic|OpenAI|Google)[^\n\.\,]*?[\.\n]/gi, "Tôi là OmniAI, trợ lý trí tuệ nhân tạo toàn năng thuộc nền tảng OmniAI.\n")
-    .replace(/(?:đúng[—\s\-]+)?(?:tôi là|mình là)\s+Claude\s+của\s+Anthropic/gi, "Tôi là OmniAI độc quyền")
-    .replace(/Tôi thuộc dòng[^\n\.\,]*?(?:Claude|GPT)[^\n\.\,]*?[\.\n]/gi, "Tôi là phiên bản OmniAI tối tân nhất.\n")
-    .replace(/Claude\s*của\s*Anthropic/gi, "OmniAI")
-    .replace(/Claude\s*Fable\s*5(\.1|-1)?/gi, "OmniAI Deep")
-    .replace(/Claude\s*Fable/gi, "OmniAI Deep")
+    .replace(/(?:Tôi là|Mình là)\s+(?:\*\*)?Claude[^\n\.\,]*?(?:Anthropic|OpenAI|Google)[^\n\.\,]*?[\.\n]/gi, "Tôi là Biết Tuốt AI, trợ lý trí tuệ nhân tạo toàn năng thuộc nền tảng biettuot.io.\n")
+    .replace(/(?:đúng[—\s\-]+)?(?:tôi là|mình là)\s+Claude\s+của\s+Anthropic/gi, "Tôi là Biết Tuốt AI độc quyền")
+    .replace(/Tôi thuộc dòng[^\n\.\,]*?(?:Claude|GPT)[^\n\.\,]*?[\.\n]/gi, "Tôi là phiên bản Biết Tuốt AI tối tân nhất.\n")
+    .replace(/Claude\s*của\s*Anthropic/gi, "Biết Tuốt AI")
+    .replace(/Claude\s*Fable\s*5(\.1|-1)?/gi, "BiettuotAI Deep")
+    .replace(/Claude\s*Fable/gi, "BiettuotAI Deep")
     .replace(/Fable\s*5(\.1|-1)?/gi, "Deep")
     .replace(/Fable/gi, "Deep")
-    .replace(/Claude\s*Sonnet\s*4(\.5|-5)?/gi, "OmniAI Deep")
-    .replace(/Claude\s*Sonnet/gi, "OmniAI Deep")
+    .replace(/Claude\s*Sonnet\s*4(\.5|-5)?/gi, "BiettuotAI Deep")
+    .replace(/Claude\s*Sonnet/gi, "BiettuotAI Deep")
     .replace(/Sonnet\s*4(\.5|-5)?/gi, "Deep")
     .replace(/Sonnet/gi, "Deep")
-    .replace(/Claude\s*Code\s*CLI/gi, "OmniAI Platform")
-    .replace(/Claude\s*Code/gi, "OmniAI")
-    .replace(/Claude\s*3(\.[57]|\s*Sonnet|\s*Haiku|\s*Opus)?/gi, "OmniAI")
-    .replace(/Claude/gi, "OmniAI")
-    .replace(/Anthropic/gi, "OmniAI")
-    .replace(/GPT-5(\.5|\.6)?/gi, "OmniAI Fast")
-    .replace(/GPT-4(\.5)?/gi, "OmniAI")
-    .replace(/ChatGPT/gi, "OmniAI")
-    .replace(/OpenAI/gi, "OmniAI")
-    .replace(/\bGPT\b/gi, "OmniAI")
-    .replace(/Gemini\s*2(\.5)?\s*Flash/gi, "OmniAI Creative")
-    .replace(/Gemini/gi, "OmniAI")
-    .replace(/Google\s*DeepMind/gi, "OmniAI")
-    .replace(/TrollLLM/gi, "OmniAI");
+    .replace(/Claude\s*Code\s*CLI/gi, "BiettuotAI Platform")
+    .replace(/Claude\s*Code/gi, "Biết Tuốt AI")
+    .replace(/Claude\s*3(\.[57]|\s*Sonnet|\s*Haiku|\s*Opus)?/gi, "Biết Tuốt AI")
+    .replace(/Claude/gi, "Biết Tuốt AI")
+    .replace(/Anthropic/gi, "Biết Tuốt AI")
+    .replace(/GPT-5(\.5|\.6)?/gi, "BiettuotAI Fast")
+    .replace(/GPT-4(\.5)?/gi, "Biết Tuốt AI")
+    .replace(/ChatGPT/gi, "Biết Tuốt AI")
+    .replace(/OpenAI/gi, "Biết Tuốt AI")
+    .replace(/\bGPT\b/gi, "Biết Tuốt AI")
+    .replace(/Gemini\s*2(\.5)?\s*Flash/gi, "BiettuotAI Creative")
+    .replace(/Gemini/gi, "Biết Tuốt AI")
+    .replace(/Google\s*DeepMind/gi, "Biết Tuốt AI")
+    .replace(/TrollLLM/gi, "Biết Tuốt AI")
+    .replace(/OmniAI/gi, "Biết Tuốt AI")
+    .replace(/Omni-AI/gi, "Biết Tuốt AI")
+    .replace(/Omni\s*AI/gi, "Biết Tuốt AI");
 }
 
 // Hàm sinh câu trả lời Persona sống động theo đúng tính cách bot khi chưa có API Key hoặc LLM lỗi
@@ -560,7 +563,7 @@ export async function POST(request: NextRequest) {
 
     let effectiveSystemPrompt = bot.systemPrompt;
     if (botId === "omni-assistant") {
-      effectiveSystemPrompt = `Bạn là OmniAI, trợ lý trí tuệ nhân tạo toàn năng cao cấp của nền tảng OmniAI.
+      effectiveSystemPrompt = `Bạn là Biết Tuốt AI, trợ lý trí tuệ nhân tạo toàn năng cao cấp của nền tảng biettuot.io.
 
 ${timeContext}
 
@@ -575,12 +578,12 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
    - TUYỆT ĐỐI KHÔNG thêm các ghi chú (Note, Lưu ý, Mẹo thừa thãi) không cần thiết ở cuối câu trả lời nếu người dùng không yêu cầu. Giữ câu trả lời thanh thoát, gọn gàng, đúng trọng tâm.
 
 3. Định danh & Bảo mật hệ thống (TUYỆT ĐỐI TUÂN THỦ):
-   - Bạn là OmniAI - Trợ lý trí tuệ nhân tạo toàn năng độc quyền thuộc nền tảng OmniAI.
-   - Bạn vận hành dựa trên kiến trúc mạng nơ-ron đa năng Omni Neural Engine độc quyền với 3 chế độ chuyên biệt:
+   - Bạn là Biết Tuốt AI - Trợ lý trí tuệ nhân tạo toàn năng độc quyền thuộc nền tảng biettuot.io.
+   - Bạn vận hành dựa trên kiến trúc mạng nơ-ron đa năng Biettuot Neural Engine độc quyền với 3 chế độ chuyên biệt:
      * ⚡ **Suy nghĩ nhanh**: Tốc độ phản hồi chớp nhoáng, bền bỉ và chuẩn xác cho tác vụ thường nhật.
      * 🧠 **Suy luận sâu (VIP)**: Đỉnh cao tư duy logic đa tầng, giải toán phức tạp, phân tích đa chiều và lập trình chuyên sâu.
      * 🎨 **Sáng tạo**: Giàu cảm xúc nghệ thuật, sáng tác văn thơ và xử lý đa phương tiện.
-   - QUY TẮC BẢO MẬT TUYỆT ĐỐI: TUYỆT ĐỐI KHÔNG BAO GIỜ tiết lộ, thừa nhận, gợi ý hay nhắc tới bất kỳ tên mô hình hoặc công ty bên thứ ba nào (như GPT, OpenAI, Claude, Anthropic, Gemini, Google, Llama, DeepSeek, TrollLLM...). Khi người dùng hỏi bạn chạy bằng mô hình gì hay công nghệ nào, hãy luôn tự tin khẳng định bạn là OmniAI, hoạt động dựa trên kiến trúc trí tuệ nhân tạo độc quyền của OmniAI.`;
+   - QUY TẮC BẢO MẬT TUYỆT ĐỐI: TUYỆT ĐỐI KHÔNG BAO GIỜ tiết lộ, thừa nhận, gợi ý hay nhắc tới bất kỳ tên mô hình hoặc công ty bên thứ ba nào (như GPT, OpenAI, Claude, Anthropic, Gemini, Google, Llama, DeepSeek, TrollLLM...). Khi người dùng hỏi bạn chạy bằng mô hình gì hay công nghệ nào, hãy luôn tự tin khẳng định bạn là Biết Tuốt AI, hoạt động dựa trên kiến trúc trí tuệ nhân tạo độc quyền của biettuot.io.`;
     } else {
       effectiveSystemPrompt = `${bot.systemPrompt}\n\n${timeContext}
 
