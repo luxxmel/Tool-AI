@@ -27,11 +27,8 @@ export async function ensureUser(
 
   // 2. Tài khoản Admin cố định: Lịnh Hoàng (hoanglinhcntti@gmail.com hoặc id demo)
   const isHoangLinhAdmin =
-    targetId.toLowerCase().includes("hoanglinhcntti") ||
-    targetId.toLowerCase() === "hoanglinhcntti@gmail.com" ||
-    targetId === "cmuchyzaf0000tar86bsjbasb" ||
     targetEmail === "hoanglinhcntti@gmail.com" ||
-    targetEmail.includes("hoanglinhcntti");
+    targetId === "cmuchyzaf0000tar86bsjbasb";
 
   if (isHoangLinhAdmin) {
     try {

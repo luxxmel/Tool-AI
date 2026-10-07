@@ -165,14 +165,11 @@ export async function GET(request: NextRequest) {
       return sendResponseHtml(false, null, "Không lấy được email từ tài khoản Google");
     }
 
-    // 3. Kiểm tra xem có phải tài khoản Admin
+    // 3. Kiểm tra xem có phải tài khoản Root Admin
     const cleanEmail = email.toLowerCase().trim();
-    const isAdminUser =
-      cleanEmail === "hoanglinhcntti@gmail.com" ||
-      cleanEmail.includes("hoanglinh") ||
-      (name && name.toLowerCase().includes("lịnh hoàng"));
-    const initialCredits = isAdminUser ? 999999 : 20; // 20 token cho nick mới tạo, admin vô hạn
-    const initialRole = isAdminUser ? "ADMIN" : "USER";
+    const isRootAdmin = cleanEmail === "hoanglinhcntti@gmail.com";
+    const initialCredits = isRootAdmin ? 999999 : 20; // 20 token cho nick mới tạo, admin vô hạn
+    const initialRole = isRootAdmin ? "ADMIN" : "USER";
 
     let dbUser: any = null;
     try {
@@ -181,7 +178,7 @@ export async function GET(request: NextRequest) {
         update: {
           name: name || undefined,
           avatar: avatar || undefined,
-          ...(isAdminUser ? { role: "ADMIN", credits: 999999 } : {}),
+          ...(isRootAdmin ? { role: "ADMIN", credits: 999999 } : {}),
         },
         create: {
           email: email.toLowerCase().trim(),

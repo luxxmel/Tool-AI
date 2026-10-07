@@ -18,13 +18,7 @@ export async function POST(request: NextRequest) {
       ? rawInput.toLowerCase()
       : `${rawInput.toLowerCase()}@biettuot.io`;
     const cleanName = name?.trim() || rawInput.split("@")[0];
-
-    const isAdmin =
-      cleanEmail === "hoanglinhcntti@gmail.com" ||
-      rawInput.toLowerCase().includes("hoanglinh") ||
-      rawInput.toLowerCase().includes("linh hoang") ||
-      rawInput.toLowerCase() === "admin" ||
-      cleanEmail.startsWith("admin@");
+    const isRootAdmin = cleanEmail === "hoanglinhcntti@gmail.com";
 
     let user: any = null;
     try {
@@ -32,15 +26,14 @@ export async function POST(request: NextRequest) {
         where: { email: cleanEmail },
         update: {
           name: cleanName,
-          role: isAdmin ? "ADMIN" : undefined,
-          credits: isAdmin ? 999999 : undefined,
+          ...(isRootAdmin ? { role: "ADMIN", credits: 999999 } : {}),
         },
         create: {
           email: cleanEmail,
           name: cleanName,
           avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-          credits: isAdmin ? 999999 : 20,
-          role: isAdmin ? "ADMIN" : "USER",
+          credits: isRootAdmin ? 999999 : 20,
+          role: isRootAdmin ? "ADMIN" : "USER",
           status: "active",
         },
         select: {

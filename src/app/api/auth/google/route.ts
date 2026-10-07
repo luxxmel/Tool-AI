@@ -251,12 +251,9 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanEmail = inputEmail.toLowerCase().trim();
-    const isAdminUser =
-      cleanEmail === "hoanglinhcntti@gmail.com" ||
-      cleanEmail.includes("hoanglinh") ||
-      (inputName && inputName.toLowerCase().includes("lịnh hoàng"));
-    const initialCredits = isAdminUser ? 999999 : 20;
-    const initialRole = isAdminUser ? "ADMIN" : "USER";
+    const isRootAdmin = cleanEmail === "hoanglinhcntti@gmail.com";
+    const initialCredits = isRootAdmin ? 999999 : 20;
+    const initialRole = isRootAdmin ? "ADMIN" : "USER";
 
     // Lưu người dùng trực tiếp vào SQLite Database qua prisma (sqliteClient)
     const user = await prisma.user.upsert({
@@ -264,7 +261,7 @@ export async function POST(request: NextRequest) {
       update: {
         name: inputName || undefined,
         avatar: inputAvatar || undefined,
-        ...(isAdminUser ? { role: "ADMIN", credits: 999999 } : {}),
+        ...(isRootAdmin ? { role: "ADMIN", credits: 999999 } : {}),
       },
       create: {
         email: cleanEmail,

@@ -61,12 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem("omni_guest_id");
           setUser(null);
         } else if (parsed) {
-          if (
-            parsed?.role === "ADMIN" ||
-            parsed?.email?.toLowerCase() === "hoanglinhcntti@gmail.com" ||
-            parsed?.displayName === "Lịnh Hoàng" ||
-            parsed?.email?.toLowerCase()?.includes("hoanglinh")
-          ) {
+          if (parsed?.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com") {
             parsed.role = "ADMIN";
             parsed.credits = 999999;
           }
@@ -104,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const handleOAuthMsg = (event: MessageEvent) => {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
         const newUser = event.data.user;
-        if (newUser.role === "ADMIN" || newUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+        if (newUser.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com") {
           newUser.role = "ADMIN";
           newUser.credits = 999999;
         }
@@ -120,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const parsed = JSON.parse(e.newValue);
           if (parsed) {
-            if (parsed.role === "ADMIN" || parsed.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+            if (parsed.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com") {
               parsed.role = "ADMIN";
               parsed.credits = 999999;
             }
@@ -139,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           bc.onmessage = (event) => {
             if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
               const newUser = event.data.user;
-              if (newUser.role === "ADMIN" || newUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+              if (newUser.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com") {
                 newUser.role = "ADMIN";
                 newUser.credits = 999999;
               }
@@ -304,7 +299,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithOAuthUser = (loggedInUser: User) => {
-    if (loggedInUser.role === "ADMIN" || loggedInUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+    if (loggedInUser.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com") {
       loggedInUser.role = "ADMIN";
       loggedInUser.credits = 999999;
     }
