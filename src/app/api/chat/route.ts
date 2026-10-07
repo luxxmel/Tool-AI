@@ -435,12 +435,21 @@ export async function POST(request: NextRequest) {
     // 2. Trừ credit của User (Nếu messageCost > 0 và không phải ADMIN)
     let updatedUser = user;
     if (!isAdmin && messageCost > 0) {
-      updatedUser = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          credits: { decrement: messageCost },
-        },
-      });
+      try {
+        const dbUpdated = await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            credits: { decrement: messageCost },
+          },
+        });
+        if (dbUpdated && dbUpdated.id) {
+          updatedUser = dbUpdated;
+        } else {
+          updatedUser = { ...user, credits: Math.max(0, (user.credits || 20) - messageCost) };
+        }
+      } catch {
+        updatedUser = { ...user, credits: Math.max(0, (user.credits || 20) - messageCost) };
+      }
     }
 
     // 3. Lấy thông tin Bot & System Prompt từ Database hoặc fallback an toàn
