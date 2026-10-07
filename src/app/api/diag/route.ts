@@ -21,7 +21,7 @@ export async function GET() {
   }
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
+    const { PrismaClient } = await import("@/lib/generated-prisma");
     const p = new PrismaClient();
     const count = await p.user.count();
     diag.prismaStatus = "OK";
