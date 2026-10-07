@@ -151,7 +151,11 @@ export async function GET(request: NextRequest) {
       fbUser.picture?.data?.url ||
       `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`;
 
-    // 3. Lưu hoặc cập nhật người dùng vào SQLite dev.db nếu có thể
+    // 3. Kiểm tra Admin (hoanglinhcntti@gmail.com) và cấp credit ban đầu
+    const isAdminUser = email.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+    const initialCredits = isAdminUser ? 999999 : 20;
+    const initialRole = isAdminUser ? "ADMIN" : "USER";
+
     let dbUser: any = null;
     try {
       dbUser = await prisma.user.upsert({
@@ -159,13 +163,14 @@ export async function GET(request: NextRequest) {
         update: {
           name: name,
           avatar: avatar,
+          ...(isAdminUser ? { role: "ADMIN", credits: 999999 } : {}),
         },
         create: {
           email: email.toLowerCase().trim(),
           name: name,
           avatar: avatar,
-          credits: 10,
-          role: "USER",
+          credits: initialCredits,
+          role: initialRole,
         },
         select: {
           id: true,
@@ -181,12 +186,12 @@ export async function GET(request: NextRequest) {
     }
 
     const finalUser = dbUser || {
-      id: `fb_${fbUser.id || Date.now()}`,
+      id: email.toLowerCase().trim(),
       email: email.toLowerCase().trim(),
       name: name,
       avatar: avatar,
-      credits: 10,
-      role: "USER",
+      credits: initialCredits,
+      role: initialRole,
     };
 
     return sendResponseHtml(true, {

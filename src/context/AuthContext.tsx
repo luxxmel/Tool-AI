@@ -61,7 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem("omni_guest_id");
           setUser(null);
         } else {
-          if (parsed?.role === "ADMIN") {
+          if (parsed?.role === "ADMIN" || parsed?.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+            parsed.role = "ADMIN";
             parsed.credits = 999999;
           }
           setUser(parsed);
@@ -70,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           fetch(`/api/user/credits?userId=${parsed.id}`)
             .then((res) => res.json())
             .then((data) => {
-              if (data?.credits !== undefined && parsed.role !== "ADMIN") {
+              if (data?.credits !== undefined && parsed.role !== "ADMIN" && parsed.email?.toLowerCase() !== "hoanglinhcntti@gmail.com") {
                 setUser((prev) => (prev ? { ...prev, credits: data.credits } : prev));
                 localStorage.setItem(
                   STORAGE_KEY,
@@ -98,7 +99,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         bc.onmessage = (event) => {
           if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
             const newUser = event.data.user;
-            if (newUser.role === "ADMIN") newUser.credits = 999999;
+            if (newUser.role === "ADMIN" || newUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+              newUser.role = "ADMIN";
+              newUser.credits = 999999;
+            }
             setUser(newUser);
             try {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
@@ -243,7 +247,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithOAuthUser = (loggedInUser: User) => {
-    if (loggedInUser.role === "ADMIN") {
+    if (loggedInUser.role === "ADMIN" || loggedInUser.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+      loggedInUser.role = "ADMIN";
       loggedInUser.credits = 999999;
     }
     setUser(loggedInUser);

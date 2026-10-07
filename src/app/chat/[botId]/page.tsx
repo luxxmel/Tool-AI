@@ -497,7 +497,7 @@ export default function BotChatPage() {
   const botId = params?.botId as string;
 
   const { user, updateUserCredits } = useAuth();
-  const activeUserId = user?.id || null;
+  const activeUserId = user?.id || user?.email || null;
   const { language, t } = useLanguage();
   const { showAlert } = usePopup();
 

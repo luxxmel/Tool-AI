@@ -155,7 +155,11 @@ export async function GET(request: NextRequest) {
       return sendResponseHtml(false, null, "Không lấy được email từ tài khoản Google");
     }
 
-    // 3. Lưu hoặc cập nhật user vào SQLite nếu có thể
+    // 3. Kiểm tra xem có phải tài khoản Admin (hoanglinhcntti@gmail.com)
+    const isAdminUser = email.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+    const initialCredits = isAdminUser ? 999999 : 20; // 20 token cho nick mới tạo, admin vô hạn
+    const initialRole = isAdminUser ? "ADMIN" : "USER";
+
     let dbUser: any = null;
     try {
       dbUser = await prisma.user.upsert({
@@ -163,6 +167,7 @@ export async function GET(request: NextRequest) {
         update: {
           name: name || undefined,
           avatar: avatar || undefined,
+          ...(isAdminUser ? { role: "ADMIN", credits: 999999 } : {}),
         },
         create: {
           email: email.toLowerCase().trim(),
@@ -170,8 +175,8 @@ export async function GET(request: NextRequest) {
           avatar:
             avatar ||
             `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`,
-          credits: 10,
-          role: "USER",
+          credits: initialCredits,
+          role: initialRole,
         },
         select: {
           id: true,
@@ -187,12 +192,12 @@ export async function GET(request: NextRequest) {
     }
 
     const finalUser = dbUser || {
-      id: `google_${Date.now()}`,
+      id: email.toLowerCase().trim(),
       email: email.toLowerCase().trim(),
       name: name || email.split("@")[0],
       avatar: avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`,
-      credits: 10,
-      role: "USER",
+      credits: initialCredits,
+      role: initialRole,
     };
 
     return sendResponseHtml(true, {

@@ -386,7 +386,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isAdmin = user.role === "ADMIN";
+    const isAdmin =
+      user.role === "ADMIN" ||
+      user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
 
     // Phân loại chi phí credit theo loại bot:
     // - CHỈ DUY NHẤT Góc Chữa Lành / Gửi Gắm Nỗi Buồn: HOÀN TOÀN MIỄN PHÍ (0 Credit)

@@ -56,7 +56,7 @@ export default function HomeChatView({
   onOpenLoginModal,
 }: HomeChatViewProps) {
   const { user, updateUserCredits } = useAuth();
-  const activeUserId = user?.id || null;
+  const activeUserId = user?.id || user?.email || null;
   const { glassStyle } = useWorkspaceBackground();
   const { language, t } = useLanguage();
   const { showAlert, showConfirm } = usePopup();

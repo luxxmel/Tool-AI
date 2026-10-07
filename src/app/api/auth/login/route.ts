@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
           email: cleanEmail,
           name: cleanName,
           avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-          credits: isAdmin ? 999999 : 50,
+          credits: isAdmin ? 999999 : 20,
           role: isAdmin ? "ADMIN" : "USER",
           status: "active",
         },
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       email: cleanEmail,
       name: cleanName,
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-      credits: isAdmin ? 999999 : 50,
+      credits: isAdmin ? 999999 : 20,
       role: isAdmin ? "ADMIN" : "USER",
     };
 
