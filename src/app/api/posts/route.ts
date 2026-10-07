@@ -168,26 +168,23 @@ export async function POST(request: NextRequest) {
 
     // Đảm bảo authorUser chắc chắn có record trong SQLite trước khi create post
     try {
-      const dbUserCheck = await prisma.user.findUnique({ where: { id: validAuthorId } });
-      if (!dbUserCheck) {
-        const syncedUser = await prisma.user.create({
-          data: {
-            id: validAuthorId.length > 5 && !validAuthorId.includes("@") ? validAuthorId : undefined,
-            email: authorUser.email,
-            name: authorUser.name,
-            avatar: authorUser.avatar,
-            role: authorUser.role,
-            credits: authorUser.credits,
-          },
-        });
-        validAuthorId = syncedUser.id;
-      }
-    } catch {
-      // Tìm lại theo email nếu id custom không hợp lệ
-      const byEmail = await prisma.user.findFirst({ where: { email: authorUser.email } });
-      if (byEmail) {
-        validAuthorId = byEmail.id;
-      }
+      const syncedUser = await prisma.user.upsert({
+        where: { email: authorUser.email },
+        update: {
+          name: authorUser.name,
+          avatar: authorUser.avatar,
+        },
+        create: {
+          email: authorUser.email,
+          name: authorUser.name,
+          avatar: authorUser.avatar,
+          role: authorUser.role,
+          credits: authorUser.credits,
+        },
+      });
+      validAuthorId = syncedUser.id;
+    } catch (e) {
+      console.warn("User upsert before post create warning:", e);
     }
 
     const categoryLabels: Record<string, string> = {
