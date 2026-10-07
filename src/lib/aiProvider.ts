@@ -92,7 +92,7 @@ export function getAIModel(modelOrBrainId?: string) {
     normalizedId === "gpt" ||
     normalizedId.includes("nhanh")
   ) {
-    if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+    if (TROLLLLM_KEY && trollLLMClient) {
       return {
         model: trollLLMClient("gpt-5.5"),
         modelId: "gpt-5.5",
@@ -120,7 +120,7 @@ export function getAIModel(modelOrBrainId?: string) {
     normalizedId.includes("claude") ||
     normalizedId.includes("sau")
   ) {
-    if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+    if (TROLLLLM_KEY && trollLLMClient) {
       return {
         model: trollLLMClient("claude-sonnet-4.5"),
         modelId: "claude-sonnet-4.5",
@@ -146,7 +146,7 @@ export function getAIModel(modelOrBrainId?: string) {
     normalizedId.includes("creative") ||
     normalizedId.includes("gemini")
   ) {
-    if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+    if (TROLLLLM_KEY && trollLLMClient) {
       return {
         model: trollLLMClient("claude-fable-5.1"),
         modelId: "claude-fable-5.1",
@@ -165,7 +165,7 @@ export function getAIModel(modelOrBrainId?: string) {
   }
 
   // 4. Default Fallbacks
-  if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+  if (TROLLLLM_KEY && trollLLMClient) {
     return {
       model: trollLLMClient("gpt-5.5"),
       modelId: "gpt-5.5",
