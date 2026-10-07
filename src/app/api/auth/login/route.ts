@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     const finalUser = user || {
-      id: isAdmin ? "cmuchyzaf0000tar86bsjbasb" : `usr_${Date.now()}`,
+      id: isAdmin ? "cmuchyzaf0000tar86bsjbasb" : cleanEmail,
       email: cleanEmail,
       name: cleanName,
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
