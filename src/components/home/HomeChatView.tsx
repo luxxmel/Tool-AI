@@ -595,6 +595,28 @@ export default function HomeChatView({
       if (convIdHeader) {
         currentConvIdRef.current = convIdHeader;
         setConversationId(convIdHeader);
+
+        const uid = currentUser?.id || currentUser?.email || activeUserId;
+        if (uid) {
+          try {
+            const title = userText.slice(0, 30) || (images.length > 0 ? "Hình ảnh tải lên" : "Đoạn chat mới");
+            const newSummary = {
+              id: convIdHeader,
+              title,
+              botId: targetBotId,
+              botName: selectedAssistant?.name || "OmniAI",
+              botAvatar: selectedAssistant?.avatar,
+              messagesCount: newHistory.length,
+              updatedAt: new Date().toISOString(),
+            };
+            const storageKey = `omni_recent_convs_${uid}`;
+            const existing = JSON.parse(localStorage.getItem(storageKey) || "[]");
+            const filtered = Array.isArray(existing) ? existing.filter((c: any) => c && c.id !== convIdHeader) : [];
+            filtered.unshift(newSummary);
+            localStorage.setItem(storageKey, JSON.stringify(filtered));
+          } catch {}
+        }
+
         if (!conversationId) {
           onConversationCreated?.(convIdHeader);
           setConversationTitle(userText.slice(0, 30) || (images.length > 0 ? "Hình ảnh tải lên" : "Đoạn chat mới"));

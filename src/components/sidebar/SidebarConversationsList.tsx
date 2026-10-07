@@ -65,16 +65,44 @@ export default function SidebarConversationsList({
     }
     try {
       setIsLoading(true);
+      let serverConvs: ConversationSummary[] = [];
       const res = await fetch(`/api/conversations?userId=${encodeURIComponent(uid)}`);
       if (res.ok) {
         const data = await res.json();
-        setConversations(Array.isArray(data) ? data : []);
-      } else {
-        setConversations([]);
+        if (Array.isArray(data)) serverConvs = data;
       }
+
+      // Đọc bản lưu dự phòng từ localStorage
+      let localConvs: ConversationSummary[] = [];
+      try {
+        const stored = localStorage.getItem(`omni_recent_convs_${uid}`);
+        if (stored) {
+          localConvs = JSON.parse(stored);
+        }
+      } catch {}
+
+      // Hợp nhất serverConvs và localConvs không bị lặp ID, sắp xếp theo thời gian mới nhất
+      const map = new Map<string, ConversationSummary>();
+      [...serverConvs, ...localConvs].forEach((item) => {
+        if (item && item.id) {
+          const existing = map.get(item.id);
+          if (!existing || new Date(item.updatedAt) > new Date(existing.updatedAt)) {
+            map.set(item.id, item);
+          }
+        }
+      });
+
+      const merged = Array.from(map.values()).sort(
+        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+
+      setConversations(merged);
+
+      try {
+        localStorage.setItem(`omni_recent_convs_${uid}`, JSON.stringify(merged));
+      } catch {}
     } catch (err) {
       console.error("Lỗi tải danh sách đoạn chat:", err);
-      setConversations([]);
     } finally {
       setIsLoading(false);
     }

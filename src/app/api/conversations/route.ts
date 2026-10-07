@@ -14,7 +14,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json([]);
     }
 
-    const whereClause: any = { userId };
+    // Tra cứu thông tin người dùng qua ensureUser để lấy danh sách ID / Email mở rộng
+    const user = await ensureUser(userId);
+    const possibleUserIds = Array.from(
+      new Set([userId, user?.id, user?.email].filter((x): x is string => Boolean(x) && typeof x === "string"))
+    );
+
+    const whereClause: any = {
+      userId: possibleUserIds.length === 1 ? possibleUserIds[0] : { in: possibleUserIds },
+    };
     if (projectId) {
       whereClause.projectId = projectId;
     } else if (!all) {
