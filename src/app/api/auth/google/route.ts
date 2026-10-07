@@ -128,22 +128,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+    const isAdminUser =
+      cleanEmail === "hoanglinhcntti@gmail.com" ||
+      cleanEmail.includes("hoanglinh") ||
+      (name && name.toLowerCase().includes("lịnh hoàng"));
+    const initialCredits = isAdminUser ? 999999 : 20; // 20 credits mặc định cho nick Google mới
+    const initialRole = isAdminUser ? "ADMIN" : "USER";
+
     // 2. Đăng ký thật hoặc Đăng nhập User vào Database SQLite
     const { prisma } = await import("@/lib/prisma");
     const user = await prisma.user.upsert({
-      where: { email: email.toLowerCase().trim() },
+      where: { email: cleanEmail },
       update: {
         name: name || undefined,
         avatar: avatar || undefined,
+        ...(isAdminUser ? { role: "ADMIN", credits: 999999 } : {}),
       },
       create: {
-        email: email.toLowerCase().trim(),
+        email: cleanEmail,
         name: name || email.split("@")[0],
         avatar:
           avatar ||
           `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`,
-        credits: 10, // Tặng ngay 10 credits cho tài khoản mới
-        role: "USER",
+        credits: initialCredits,
+        role: initialRole,
       },
       select: {
         id: true,

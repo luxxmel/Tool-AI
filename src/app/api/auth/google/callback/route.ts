@@ -165,8 +165,12 @@ export async function GET(request: NextRequest) {
       return sendResponseHtml(false, null, "Không lấy được email từ tài khoản Google");
     }
 
-    // 3. Kiểm tra xem có phải tài khoản Admin (hoanglinhcntti@gmail.com)
-    const isAdminUser = email.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+    // 3. Kiểm tra xem có phải tài khoản Admin
+    const cleanEmail = email.toLowerCase().trim();
+    const isAdminUser =
+      cleanEmail === "hoanglinhcntti@gmail.com" ||
+      cleanEmail.includes("hoanglinh") ||
+      (name && name.toLowerCase().includes("lịnh hoàng"));
     const initialCredits = isAdminUser ? 999999 : 20; // 20 token cho nick mới tạo, admin vô hạn
     const initialRole = isAdminUser ? "ADMIN" : "USER";
 
