@@ -135,7 +135,7 @@ export default function WorkspaceFloatingDock({ onOpenFullSettings }: WorkspaceF
           </div>
 
           <div className="space-y-1 max-h-60 overflow-y-auto pr-1">
-            {/* 1. Mặc định OmniAI */}
+            {/* 1. Mặc định Bi?t Tu?t AI */}
             <button
               type="button"
               onClick={() => {
@@ -153,7 +153,7 @@ export default function WorkspaceFloatingDock({ onOpenFullSettings }: WorkspaceF
               <div className="flex items-center gap-2">
                 <span className="w-5 h-5 rounded-lg bg-gradient-to-tr from-[#07080d] to-[#0d101d] border border-white/20 shrink-0" />
                 <div>
-                  <div className="text-xs font-bold">{language === "en" ? "✨ OmniAI Default" : "✨ Mặc định OmniAI"}</div>
+                  <div className="text-xs font-bold">{language === "en" ? "✨ Bi?t Tu?t AI Default" : "✨ Mặc định Bi?t Tu?t AI"}</div>
                   <div className={`text-[10px] ${bgPresetId === "default" ? "text-white/80" : "text-slate-400"}`}>
                     {language === "en" ? "Original Cyber-Aurora dark theme" : "Nền đen Cyber-Aurora nguyên bản"}
                   </div>

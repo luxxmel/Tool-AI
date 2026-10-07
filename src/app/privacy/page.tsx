@@ -35,12 +35,12 @@ export default function PrivacyPage() {
               <span>1.</span> Nguồn Dữ Liệu Thu Thập
             </h2>
             <p>
-              OmniAI cam kết chỉ thu thập các thông tin tối thiểu cần thiết nhằm vận hành dịch vụ và cá nhân hóa trải nghiệm cho bạn:
+              Bi?t Tu?t AI cam kết chỉ thu thập các thông tin tối thiểu cần thiết nhằm vận hành dịch vụ và cá nhân hóa trải nghiệm cho bạn:
             </p>
             <ul className="list-disc pl-5 space-y-1 text-slate-300">
               <li><strong>Thông tin tài khoản:</strong> Họ tên, Địa chỉ Email, Ảnh đại diện đại diện công khai khi bạn đăng ký/đăng nhập.</li>
               <li><strong>Dữ liệu hội thoại:</strong> Nội dung các câu hỏi, lịch sử đoạn chat với trợ lý AI nhằm duy trì ngữ cảnh trò chuyện.</li>
-              <li><strong>Dữ liệu giao dịch:</strong> Lịch sử nạp Credits, mã đơn hàng thanh toán (OmniAI không lưu trữ thông tin thẻ tín dụng/mật khẩu ngân hàng của bạn).</li>
+              <li><strong>Dữ liệu giao dịch:</strong> Lịch sử nạp Credits, mã đơn hàng thanh toán (Bi?t Tu?t AI không lưu trữ thông tin thẻ tín dụng/mật khẩu ngân hàng của bạn).</li>
             </ul>
           </section>
 
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
               <span>3.</span> Cam Kết Không Chia Sẻ Cho Bên Thứ Ba
             </h2>
             <p>
-              OmniAI <strong>TUYỆT ĐỐI KHÔNG</strong> bán, trao đổi hoặc thương mại hóa dữ liệu cá nhân hay lịch sử trò chuyện riêng tư của người dùng cho bất kỳ bên thứ ba nào vì mục đích quảng cáo rác.
+              Bi?t Tu?t AI <strong>TUYỆT ĐỐI KHÔNG</strong> bán, trao đổi hoặc thương mại hóa dữ liệu cá nhân hay lịch sử trò chuyện riêng tư của người dùng cho bất kỳ bên thứ ba nào vì mục đích quảng cáo rác.
             </p>
             <p>
               Dữ liệu chỉ được cung cấp trong trường hợp có yêu cầu chính thức bằng văn bản từ cơ quan pháp luật có thẩm quyền theo đúng quy định của pháp luật Việt Nam.
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
               <span>4.</span> Bảo Mật Dữ Liệu & Mã Hóa
             </h2>
             <p>
-              Mọi dữ liệu truyền tải giữa trình duyệt của bạn và máy chủ OmniAI đều được mã hóa bằng giao thức bảo mật chuẩn SSL/TLS (HTTPS). Lịch sử hội thoại được lưu trữ trên cơ sở dữ liệu bảo mật cao với cơ chế kiểm soát truy cập nghiêm ngặt.
+              Mọi dữ liệu truyền tải giữa trình duyệt của bạn và máy chủ Bi?t Tu?t AI đều được mã hóa bằng giao thức bảo mật chuẩn SSL/TLS (HTTPS). Lịch sử hội thoại được lưu trữ trên cơ sở dữ liệu bảo mật cao với cơ chế kiểm soát truy cập nghiêm ngặt.
             </p>
           </section>
 
@@ -93,14 +93,14 @@ export default function PrivacyPage() {
               <span>6.</span> Liên Hệ Hỗ Trợ Bảo Mật
             </h2>
             <p>
-              Nếu bạn có bất kỳ thắc mắc hoặc góp ý nào về chính sách quyền riêng tư, vui lòng liên hệ với Đội ngũ Hỗ trợ OmniAI qua Email: <strong>support@omniai.app</strong>.
+              Nếu bạn có bất kỳ thắc mắc hoặc góp ý nào về chính sách quyền riêng tư, vui lòng liên hệ với Đội ngũ Hỗ trợ Bi?t Tu?t AI qua Email: <strong>support@Bi?t Tu?t AI.app</strong>.
             </p>
           </section>
         </div>
 
         {/* Footer info */}
         <div className="pt-6 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-          <p>© 2026 OmniAI Platform. Tất cả quyền được bảo lưu.</p>
+          <p>© 2026 Bi?t Tu?t AI. Tất cả quyền được bảo lưu.</p>
           <Link href="/terms" className="text-cyan-400 hover:underline">
             Xem Điều khoản dịch vụ →
           </Link>

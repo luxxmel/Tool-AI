@@ -37,7 +37,7 @@ function sanitizeBrandLeaks(text: string): string {
     .replace(/Gemini/gi, "Biết Tuốt AI")
     .replace(/Google\s*DeepMind/gi, "Biết Tuốt AI")
     .replace(/TrollLLM/gi, "Biết Tuốt AI")
-    .replace(/OmniAI/gi, "Biết Tuốt AI")
+    .replace(/Bi?t Tu?t AI/gi, "Biết Tuốt AI")
     .replace(/Omni-AI/gi, "Biết Tuốt AI")
     .replace(/Omni\s*AI/gi, "Biết Tuốt AI");
 }
@@ -498,10 +498,10 @@ export async function POST(request: NextRequest) {
       } else {
         bot = {
           id: botId,
-          name: "OmniAI",
+          name: "Bi?t Tu?t AI",
           avatar: "/icons/icon-192x192.png",
           description: "Trợ lý trí tuệ nhân tạo toàn năng",
-          systemPrompt: "Bạn là OmniAI, trợ lý trí tuệ nhân tạo toàn năng độc quyền của nền tảng OmniAI.",
+          systemPrompt: "Bạn là Bi?t Tu?t AI, trợ lý trí tuệ nhân tạo toàn năng độc quyền của nền tảng Bi?t Tu?t AI.",
         };
       }
     }
@@ -904,7 +904,7 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
         "X-Remaining-Credits": String(isAdmin ? 999999 : updatedUser.credits),
         "X-Conversation-Id": finalConvId,
         "X-AI-Model-Id": selectedAI?.modeId || "fast",
-        "X-AI-Model": encodeURIComponent(selectedAI?.name || "OmniAI"),
+        "X-AI-Model": encodeURIComponent(selectedAI?.name || "Bi?t Tu?t AI"),
       },
     });
   } catch (error) {

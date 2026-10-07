@@ -383,12 +383,12 @@ export default function HomeChatView({
   // 1.3. Xuất cuộc trò chuyện dạng file Markdown (.md)
   const handleExportChat = () => {
     if (messages.length === 0) return;
-    const title = conversationTitle || "Cuoc-tro-chuyen-OmniAI";
+    const title = conversationTitle || "Cuoc-tro-chuyen-Bi?t Tu?t AI";
     let markdown = `# ${title}\n\n`;
-    markdown += `*Được xuất từ OmniAI Platform vào ${new Date().toLocaleString("vi-VN")}*\n\n---\n\n`;
+    markdown += `*Được xuất từ Bi?t Tu?t AI vào ${new Date().toLocaleString("vi-VN")}*\n\n---\n\n`;
 
     messages.forEach((m) => {
-      const sender = m.role === "user" ? "👤 **Bạn (User)**" : `🤖 **${m.modelName || (selectedAssistant ? selectedAssistant.name : "OmniAI")}**`;
+      const sender = m.role === "user" ? "👤 **Bạn (User)**" : `🤖 **${m.modelName || (selectedAssistant ? selectedAssistant.name : "Bi?t Tu?t AI")}**`;
       markdown += `### ${sender}\n\n${m.content}\n\n`;
       if (m.images && m.images.length > 0) {
         m.images.forEach((img, idx) => {
@@ -604,7 +604,7 @@ export default function HomeChatView({
               id: convIdHeader,
               title,
               botId: targetBotId,
-              botName: selectedAssistant?.name || "OmniAI",
+              botName: selectedAssistant?.name || "Bi?t Tu?t AI",
               botAvatar: selectedAssistant?.avatar,
               messagesCount: newHistory.length,
               updatedAt: new Date().toISOString(),
@@ -1005,7 +1005,7 @@ export default function HomeChatView({
                     <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-100 dark:border-slate-800/80">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
-                          {selectedAssistant ? selectedAssistant.name : "OmniAI"}
+                          {selectedAssistant ? selectedAssistant.name : "Biết Tuốt AI"}
                         </span>
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/50 dark:border-indigo-800/50">
                           {selectedModel === "deep" ? "🧠 Suy luận sâu" : selectedModel === "creative" ? "🎨 Sáng tạo" : "⚡ Suy nghĩ nhanh"}
@@ -1457,8 +1457,8 @@ export default function HomeChatView({
               activeTool
                 ? activeTool.placeholder
                 : typeof window !== "undefined" && localStorage.getItem("omni_send_mode") === "ctrl_enter"
-                ? "Hỏi tiếp OmniAI, dán ảnh (Ctrl+V)... (Ctrl+Enter để gửi)"
-                : "Hỏi tiếp OmniAI, dán ảnh (Ctrl+V)... (Enter để gửi)"
+                ? "Hỏi tiếp Bi?t Tu?t AI, dán ảnh (Ctrl+V)... (Ctrl+Enter để gửi)"
+                : "Hỏi tiếp Bi?t Tu?t AI, dán ảnh (Ctrl+V)... (Enter để gửi)"
             }
             disabled={isTyping}
             className="flex-1 max-h-56 min-h-[54px] sm:min-h-[58px] py-2.5 px-3 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 text-sm sm:text-base leading-relaxed focus:outline-hidden resize-none scrollbar-thin"

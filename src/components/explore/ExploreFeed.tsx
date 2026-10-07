@@ -41,7 +41,7 @@ const ANNOUNCEMENTS = [
     tagColor: "from-rose-600 to-orange-500",
     title: "Thử thách Prompt AI — Giải thưởng 500K VND!",
     titleEn: "AI Prompt Contest — Win 500K VND Prizes!",
-    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ OmniAI.",
+    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ Bi?t Tu?t AI.",
     descEn: "Participate in the most creative AI prompt contest. Top submissions will be featured on homepage with rewards.",
     cta: "Đăng bài dự thi →",
     ctaEn: "Submit Entry →",

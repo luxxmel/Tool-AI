@@ -7,7 +7,7 @@ export async function GET() {
   return NextResponse.json({
     status: "active",
     gateway: "PayOS VietQR PRO",
-    message: "OmniAI PayOS Webhook Endpoint is ready and listening",
+    message: "Bi?t Tu?t AI PayOS Webhook Endpoint is ready and listening",
   });
 }
 

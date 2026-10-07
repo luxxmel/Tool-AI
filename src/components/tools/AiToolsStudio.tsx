@@ -1608,7 +1608,7 @@ export default function AiToolsStudio() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {["ChatGPT / Claude", "Midjourney", "OmniAI Studio"].map((ai) => (
+                {["ChatGPT / Claude", "Midjourney", "Bi?t Tu?t Studio"].map((ai) => (
                   <button
                     key={ai}
                     type="button"

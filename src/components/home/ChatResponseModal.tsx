@@ -198,7 +198,7 @@ export default function ChatResponseModal({
 
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                {selectedAssistant ? selectedAssistant.name : "OmniAI Core Ultra"}
+                {selectedAssistant ? selectedAssistant.name : "Bi?t Tu?t AI Core Ultra"}
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 font-semibold border border-cyan-500/20">
                   Online 24/7
                 </span>
@@ -272,7 +272,7 @@ export default function ChatResponseModal({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={language === "en" ? "Ask OmniAI follow-up question..." : "Hỏi tiếp OmniAI..."}
+            placeholder={language === "en" ? "Ask Bi?t Tu?t AI follow-up question..." : "Hỏi tiếp Bi?t Tu?t AI..."}
             disabled={isTyping}
             className="flex-1 bg-[#151724] border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-50"
           />

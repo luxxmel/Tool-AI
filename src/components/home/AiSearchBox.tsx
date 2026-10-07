@@ -173,12 +173,12 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
         </p>
       </div>
 
-      {/* OmniAI Custom Cyber-Bento Feature Suite (Đưa lên trên SearchBox - Không bao giờ bị chèn đè) */}
+      {/* Bi?t Tu?t AI Custom Cyber-Bento Feature Suite (Đưa lên trên SearchBox - Không bao giờ bị chèn đè) */}
       <div className="w-full mb-4">
         <div className="flex items-center justify-between px-1 mb-2">
           <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-            {language === "en" ? "Omni Special Engines" : "Bộ Công Cụ Độc Quyền OmniAI"}
+            {language === "en" ? "Omni Special Engines" : "Bộ Công Cụ Độc Quyền Bi?t Tu?t AI"}
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
             v3.5 Supermind

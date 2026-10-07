@@ -202,7 +202,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
         prompt: data.prompt,
         enhancedPrompt: data.enhancedPrompt,
         style: "ai-natural",
-        styleLabel: "Tạo bởi OmniAI",
+        styleLabel: "Tạo bởi Bi?t Tu?t AI",
         aspectRatio: data.aspectRatio,
         referenceImage: data.referenceImage || referenceImage || null,
         createdAt: "Vừa xong",

@@ -647,7 +647,7 @@ export default function BotChatPage() {
     if (messages.length === 0) return;
     const charName = bot?.name || "Nhan-vat-AI";
     let markdown = `# Cuộc Trò Chuyện Với ${charName}\n\n`;
-    markdown += `*Được xuất từ OmniAI Platform vào ${new Date().toLocaleString("vi-VN")}*\n\n---\n\n`;
+    markdown += `*Được xuất từ biettuot.io Platform vào ${new Date().toLocaleString("vi-VN")}*\n\n---\n\n`;
 
     messages.forEach((m) => {
       const sender = m.role === "user" ? "👤 **Bạn**" : `🎭 **${charName}**`;

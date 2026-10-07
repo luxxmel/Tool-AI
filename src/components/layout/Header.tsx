@@ -35,7 +35,7 @@ export default function Header({ onOpenLoginModal }: HeaderProps) {
             </div>
             <div>
               <span className="text-lg font-extrabold text-white tracking-tight flex items-center gap-1.5">
-                OmniAI <span className="text-amber-400 font-mono text-sm px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/20">PRO</span>
+                Bi?t Tu?t AI <span className="text-amber-400 font-mono text-sm px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/20">PRO</span>
               </span>
               <span className="text-[11px] text-slate-400 block -mt-1">
                 Nền tảng trí tuệ nhân tạo toàn năng
