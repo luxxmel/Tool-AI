@@ -70,16 +70,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(parsed))}; path=/; max-age=31536000; SameSite=Lax`;
           }
 
-          // Đồng bộ credits mới nhất từ Database máy chủ
+          // Đồng bộ vai trò và credits mới nhất từ Database máy chủ
           fetch(`/api/user/credits?userId=${parsed.id}`)
             .then((res) => res.json())
             .then((data) => {
-              if (data?.credits !== undefined && parsed.role !== "ADMIN" && parsed.email?.toLowerCase() !== "hoanglinhcntti@gmail.com") {
-                setUser((prev) => (prev ? { ...prev, credits: data.credits } : prev));
-                localStorage.setItem(
-                  STORAGE_KEY,
-                  JSON.stringify({ ...parsed, credits: data.credits })
-                );
+              if (data && data.id) {
+                const isRoot = parsed.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+                const syncedRole = isRoot ? "ADMIN" : (data.role || "USER");
+                const syncedCredits = isRoot ? 999999 : Number(data.credits ?? 20);
+
+                const updatedUser: User = {
+                  ...parsed,
+                  role: syncedRole,
+                  credits: syncedCredits,
+                };
+                setUser(updatedUser);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+                if (typeof document !== "undefined") {
+                  document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(updatedUser))}; path=/; max-age=31536000; SameSite=Lax`;
+                }
               }
             })
             .catch(() => {});
