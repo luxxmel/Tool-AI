@@ -340,7 +340,7 @@
     "distDirRoot": ".next",
     "supportsImmutableAssets": false
   },
-  "appDir": "/home/cuacongn/biettuot.io.vn",
+  "appDir": "C:\\Tool-AI",
   "relativeAppDir": "",
   "files": [
     ".next\\package.json",
