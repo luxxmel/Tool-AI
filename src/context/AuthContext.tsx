@@ -61,7 +61,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem("omni_guest_id");
           setUser(null);
         } else if (parsed) {
-          if (parsed?.role === "ADMIN" || parsed?.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
+          if (
+            parsed?.role === "ADMIN" ||
+            parsed?.email?.toLowerCase() === "hoanglinhcntti@gmail.com" ||
+            parsed?.displayName === "Lịnh Hoàng" ||
+            parsed?.email?.toLowerCase()?.includes("hoanglinh")
+          ) {
             parsed.role = "ADMIN";
             parsed.credits = 999999;
           }

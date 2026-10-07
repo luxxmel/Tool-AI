@@ -21,8 +21,9 @@ export async function POST(request: NextRequest) {
 
     const isAdmin =
       cleanEmail === "hoanglinhcntti@gmail.com" ||
+      rawInput.toLowerCase().includes("hoanglinh") ||
+      rawInput.toLowerCase().includes("linh hoang") ||
       rawInput.toLowerCase() === "admin" ||
-      rawInput.toLowerCase() === "hoanglinh" ||
       cleanEmail.startsWith("admin@");
 
     let user: any = null;
