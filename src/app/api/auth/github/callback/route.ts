@@ -12,6 +12,8 @@ export async function GET(request: NextRequest) {
     user: Record<string, unknown> | null,
     errorMessage: string = ""
   ) => {
+    const userJson = user ? JSON.stringify(user) : "null";
+    const userJsonEscaped = user ? encodeURIComponent(JSON.stringify(user)) : "";
     return new NextResponse(
       `<!DOCTYPE html>
       <html lang="vi">
@@ -20,8 +22,8 @@ export async function GET(request: NextRequest) {
           <title>Xác thực GitHub</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0e1017; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-            .box { text-align: center; }
-            .spinner { width: 40px; height: 40px; border: 4px solid #f43f5e; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+            .box { text-align: center; max-width: 380px; padding: 24px; border-radius: 16px; background: #161926; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            .spinner { width: 44px; height: 44px; border: 4px solid #f43f5e; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
             @keyframes spin { to { transform: rotate(360deg); } }
           </style>
         </head>
@@ -29,21 +31,54 @@ export async function GET(request: NextRequest) {
           <div class="box">
             ${
               success
-                ? `<div class="spinner"></div><p>Đăng nhập GitHub thành công! Đang chuyển hướng...</p>`
-                : `<p style="color: #f43f5e;">⚠️ Lỗi: ${errorMessage}</p><button onclick="window.close()" style="background:#f43f5e;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">Đóng</button>`
+                ? `<div class="spinner"></div><p style="font-size:16px;font-weight:500;">Đăng nhập GitHub thành công!</p><p style="color:#94a3b8;font-size:13px;">Đang đồng bộ phiên đăng nhập...</p>`
+                : `<p style="color: #f43f5e; font-size:15px;">⚠️ Lỗi: ${errorMessage}</p><button onclick="window.close()" style="background:#f43f5e;color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;font-weight:500;">Đóng</button>`
             }
           </div>
           <script>
-            if (window.opener) {
-              window.opener.postMessage({
-                type: "${success ? "OAUTH_AUTH_SUCCESS" : "OAUTH_AUTH_ERROR"}",
-                provider: "github",
-                user: ${user ? JSON.stringify(user) : "null"},
-                error: "${errorMessage}"
-              }, "*");
-              setTimeout(() => window.close(), 1000);
-            } else {
-              window.location.href = "/";
+            try {
+              var userObj = ${userJson};
+              if (userObj) {
+                try {
+                  localStorage.setItem("tool_ai_auth_user", JSON.stringify(userObj));
+                  document.cookie = "tool_ai_auth_user=" + "${userJsonEscaped}" + "; path=/; max-age=2592000; SameSite=Lax";
+                } catch(e) {}
+              }
+
+              var sentToOpener = false;
+              if (window.opener && !window.opener.closed) {
+                try {
+                  window.opener.postMessage({
+                    type: "${success ? "OAUTH_AUTH_SUCCESS" : "OAUTH_AUTH_ERROR"}",
+                    provider: "github",
+                    user: userObj,
+                    error: "${errorMessage}"
+                  }, "*");
+                  sentToOpener = true;
+                } catch(e) {}
+              }
+
+              try {
+                if (window.BroadcastChannel) {
+                  var bc = new BroadcastChannel("oauth_channel");
+                  bc.postMessage({
+                    type: "${success ? "OAUTH_AUTH_SUCCESS" : "OAUTH_AUTH_ERROR"}",
+                    provider: "github",
+                    user: userObj,
+                    error: "${errorMessage}"
+                  });
+                  setTimeout(function() { bc.close(); }, 1000);
+                }
+              } catch(e) {}
+
+              setTimeout(function() {
+                try { window.close(); } catch(e) {}
+                if (!window.closed && !sentToOpener) {
+                  window.location.replace("/");
+                }
+              }, 600);
+            } catch(globalErr) {
+              setTimeout(function() { window.location.replace("/"); }, 800);
             }
           </script>
         </body>

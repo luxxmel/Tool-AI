@@ -42,7 +42,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      let stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored && typeof document !== "undefined") {
+        const match = document.cookie.match(/(?:^|;\s*)tool_ai_auth_user=([^;]+)/);
+        if (match && match[1]) {
+          try {
+            stored = decodeURIComponent(match[1]);
+            localStorage.setItem(STORAGE_KEY, stored);
+          } catch {}
+        }
+      }
+
       if (stored) {
         const parsed: User = JSON.parse(stored);
         // Nếu là phiên khách tự động cũ, xóa bỏ để người dùng tự đăng nhập / tạo tài khoản
@@ -79,6 +89,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
+
+    // Lắng nghe BroadcastChannel để đồng bộ tức thì khi đăng nhập từ tab khác hoặc popup
+    let bc: BroadcastChannel | null = null;
+    try {
+      if (typeof window !== "undefined" && window.BroadcastChannel) {
+        bc = new BroadcastChannel("oauth_channel");
+        bc.onmessage = (event) => {
+          if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
+            const newUser = event.data.user;
+            if (newUser.role === "ADMIN") newUser.credits = 999999;
+            setUser(newUser);
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
+            } catch {}
+          }
+        };
+      }
+    } catch {}
+
+    return () => {
+      if (bc) bc.close();
+    };
   }, []);
 
   const loginWithGoogle = async (data: {

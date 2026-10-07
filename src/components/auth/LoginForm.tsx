@@ -34,7 +34,7 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
     }
   }, [clientId]);
 
-  // 2. Lắng nghe thông điệp từ popup OAuth (GitHub)
+  // 2. Lắng nghe thông điệp từ popup OAuth (Google, GitHub, Facebook)
   useEffect(() => {
     function handleOAuthMessage(event: MessageEvent) {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
@@ -48,7 +48,28 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
     }
 
     window.addEventListener("message", handleOAuthMessage);
-    return () => window.removeEventListener("message", handleOAuthMessage);
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      if (typeof window !== "undefined" && window.BroadcastChannel) {
+        bc = new BroadcastChannel("oauth_channel");
+        bc.onmessage = (event) => {
+          if (event.data?.type === "OAUTH_AUTH_SUCCESS" && event.data?.user) {
+            loginWithOAuthUser(event.data.user);
+            setIsLoading(false);
+            onSuccess?.();
+          } else if (event.data?.type === "OAUTH_AUTH_ERROR") {
+            setError(event.data.error || "Đăng nhập OAuth thất bại");
+            setIsLoading(false);
+          }
+        };
+      }
+    } catch {}
+
+    return () => {
+      window.removeEventListener("message", handleOAuthMessage);
+      if (bc) bc.close();
+    };
   }, [loginWithOAuthUser, onSuccess]);
 
   // 3. Xử lý Đăng nhập bằng Email hoặc Tên tài khoản
