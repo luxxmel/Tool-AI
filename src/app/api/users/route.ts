@@ -60,7 +60,24 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Nếu cơ sở dữ liệu trên server vì lý do nào chưa có dòng hoanglinhcntti@gmail.com, bổ sung vào đầu danh sách
+    // Đảm bảo tài khoản Admin luôn luôn có dòng thực tế trong SQLite Database
+    try {
+      await prisma.user.upsert({
+        where: { email: "hoanglinhcntti@gmail.com" },
+        update: { role: "ADMIN", credits: 999999 },
+        create: {
+          email: "hoanglinhcntti@gmail.com",
+          name: "Lịnh Hoàng",
+          avatar: "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
+          role: "ADMIN",
+          credits: 999999,
+        },
+      });
+    } catch (e) {
+      console.warn("Admin upsert warning in /api/users:", e);
+    }
+
+    // Nếu cơ sở dữ liệu trên server vì lý do nào chưa có dòng hoanglinhcntti@gmail.com trong kết quả, bổ sung vào đầu danh sách
     const hasAdmin = formattedUsers.some(
       (u) => u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
     );
