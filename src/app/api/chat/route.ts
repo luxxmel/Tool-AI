@@ -641,19 +641,22 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
       dbContent = userPromptText ? `${imagesMd}\n\n${userPromptText}` : imagesMd;
     }
 
-    // 4. Lưu tin nhắn User bất đồng bộ (không await làm chậm phản hồi)
-    prisma.message.create({
-      data: {
-        conversationId: convId,
-        sender: "USER",
-        content: dbContent,
-      },
-    }).catch((err) => console.warn("Lỗi lưu message async:", err));
-
-    prisma.conversation.update({
-      where: { id: convId },
-      data: { updatedAt: new Date() },
-    }).catch(() => {});
+    // 4. Lưu tin nhắn User vào database (await để đảm bảo lịch sử hội thoại được lưu chính xác)
+    try {
+      await prisma.message.create({
+        data: {
+          conversationId: convId,
+          sender: "USER",
+          content: dbContent,
+        },
+      });
+      await prisma.conversation.update({
+        where: { id: convId },
+        data: { updatedAt: new Date() },
+      });
+    } catch (msgErr) {
+      console.warn("Lỗi khi lưu tin nhắn người dùng vào DB:", msgErr);
+    }
 
     // 4.5. Kiểm tra phát hiện yêu cầu Tạo hình mới hoặc Sửa hình theo yêu cầu
     let activeReferenceImage = userImages.length > 0 ? userImages[0] : undefined;
