@@ -232,6 +232,12 @@
       "namedRegex": "^/api/conversations(?:/)?$"
     },
     {
+      "page": "/api/debug-auth",
+      "regex": "^/api/debug\\-auth(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/debug\\-auth(?:/)?$"
+    },
+    {
       "page": "/api/images/generate",
       "regex": "^/api/images/generate(?:/)?$",
       "routeKeys": {},

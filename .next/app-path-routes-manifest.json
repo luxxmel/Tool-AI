@@ -14,6 +14,7 @@
   "/api/chat/route": "/api/chat",
   "/api/conversations/[id]/route": "/api/conversations/[id]",
   "/api/conversations/route": "/api/conversations",
+  "/api/debug-auth/route": "/api/debug-auth",
   "/api/images/generate/route": "/api/images/generate",
   "/api/payment/check-status/route": "/api/payment/check-status",
   "/api/payment/confirm-order/route": "/api/payment/confirm-order",
