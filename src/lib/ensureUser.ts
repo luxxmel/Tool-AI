@@ -6,22 +6,32 @@ import { prisma } from "@/lib/prisma";
  * - Các tài khoản người dùng mới luôn được cấp sẵn 20 Credits.
  * - Có cơ chế Fallback chống sập nếu SQLite trên hosting gặp sự cố.
  */
-export async function ensureUser(userId?: string | null) {
-  if (!userId || typeof userId !== "string") return null;
-  const targetId = userId.trim();
+export async function ensureUser(
+  userId?: string | null,
+  userEmail?: string | null,
+  userName?: string | null
+) {
+  const targetId = typeof userId === "string" ? userId.trim() : "";
+  const targetEmail = typeof userEmail === "string" ? userEmail.trim().toLowerCase() : "";
+
+  // 1. Kiểm tra tính hợp lệ cơ bản
+  if (!targetId && !targetEmail) return null;
   if (
-    !targetId ||
-    targetId === "user-demo-123" ||
-    targetId.startsWith("guest_") ||
+    (targetId === "user-demo-123" && !targetEmail) ||
+    (targetId.startsWith("guest_") && !targetEmail) ||
     targetId === "null" ||
     targetId === "undefined"
   ) {
-    return null;
+    if (!targetEmail || targetEmail.startsWith("guest_")) return null;
   }
 
+  // 2. Tài khoản Admin cố định: Lịnh Hoàng (hoanglinhcntti@gmail.com hoặc id demo)
   const isHoangLinhAdmin =
     targetId.toLowerCase().includes("hoanglinhcntti") ||
-    targetId.toLowerCase() === "hoanglinhcntti@gmail.com";
+    targetId.toLowerCase() === "hoanglinhcntti@gmail.com" ||
+    targetId === "cmuchyzaf0000tar86bsjbasb" ||
+    targetEmail === "hoanglinhcntti@gmail.com" ||
+    targetEmail.includes("hoanglinhcntti");
 
   if (isHoangLinhAdmin) {
     try {
@@ -30,7 +40,7 @@ export async function ensureUser(userId?: string | null) {
         update: { role: "ADMIN", credits: 999999 },
         create: {
           email: "hoanglinhcntti@gmail.com",
-          name: "Lịnh Hoàng",
+          name: userName || "Lịnh Hoàng",
           avatar:
             "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
           role: "ADMIN",
@@ -42,7 +52,7 @@ export async function ensureUser(userId?: string | null) {
       return {
         id: "hoanglinhcntti@gmail.com",
         email: "hoanglinhcntti@gmail.com",
-        name: "Lịnh Hoàng",
+        name: userName || "Lịnh Hoàng",
         avatar:
           "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
         role: "ADMIN",
@@ -51,12 +61,25 @@ export async function ensureUser(userId?: string | null) {
     }
   }
 
+  // 3. Tìm trong Database theo ID hoặc Email
   try {
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [{ id: targetId }, { email: targetId.toLowerCase() }],
-      },
-    });
+    const searchConditions: Array<{ id?: string; email?: string }> = [];
+    if (targetId && targetId !== "null" && targetId !== "undefined") {
+      searchConditions.push({ id: targetId });
+      if (targetId.includes("@")) {
+        searchConditions.push({ email: targetId.toLowerCase() });
+      }
+    }
+    if (targetEmail) {
+      searchConditions.push({ email: targetEmail });
+    }
+
+    let user =
+      searchConditions.length > 0
+        ? await prisma.user.findFirst({
+            where: { OR: searchConditions },
+          })
+        : null;
 
     if (user) {
       if (user.email.toLowerCase() === "hoanglinhcntti@gmail.com") {
@@ -70,61 +93,56 @@ export async function ensureUser(userId?: string | null) {
       return user;
     }
 
-    // Nếu không tìm thấy bằng id/email nhưng targetId là email hoặc id hợp lệ, tự động tạo mới với 20 Credits
-    if (
-      targetId.includes("@") ||
-      targetId.startsWith("google_") ||
-      targetId.startsWith("gh_") ||
-      targetId.startsWith("fb_")
-    ) {
-      const email = targetId.includes("@")
+    // 4. Nếu không tìm thấy trong DB (ví dụ session từ máy khác hoặc DB mới), tự tạo mới với 20 Credits
+    const effectiveEmail =
+      targetEmail ||
+      (targetId.includes("@")
         ? targetId.toLowerCase()
-        : `${targetId}@omni.user`;
-      try {
-        const newUser = await prisma.user.upsert({
-          where: { email },
-          update: {},
-          create: {
-            email,
-            name: email.split("@")[0],
-            avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
-              email
-            )}`,
-            credits: 20,
-            role: "USER",
-          },
-        });
-        return newUser;
-      } catch {
-        return {
-          id: targetId,
-          email,
-          name: email.split("@")[0],
-          avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
-            email
-          )}`,
+        : `${targetId}@omni.user`);
+    const effectiveName = userName || effectiveEmail.split("@")[0];
+    const effectiveAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
+      effectiveEmail
+    )}`;
+
+    try {
+      const newUser = await prisma.user.upsert({
+        where: { email: effectiveEmail },
+        update: {},
+        create: {
+          email: effectiveEmail,
+          name: effectiveName,
+          avatar: effectiveAvatar,
           credits: 20,
           role: "USER",
-        };
-      }
-    }
-
-    return null;
-  } catch (err) {
-    console.error(`Lỗi khi tìm user ${targetId} trong DB:`, err);
-    // Fallback an toàn cho tài khoản đã có email
-    if (targetId.includes("@")) {
+        },
+      });
+      return newUser;
+    } catch {
       return {
-        id: targetId,
-        email: targetId.toLowerCase(),
-        name: targetId.split("@")[0],
-        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
-          targetId
-        )}`,
+        id: targetId || effectiveEmail,
+        email: effectiveEmail,
+        name: effectiveName,
+        avatar: effectiveAvatar,
         credits: 20,
         role: "USER",
       };
     }
-    return null;
+  } catch (err) {
+    console.error(`Lỗi khi tìm user ${targetId || targetEmail} trong DB:`, err);
+    const effectiveEmail =
+      targetEmail ||
+      (targetId.includes("@")
+        ? targetId.toLowerCase()
+        : `${targetId}@omni.user`);
+    return {
+      id: targetId || effectiveEmail,
+      email: effectiveEmail,
+      name: userName || effectiveEmail.split("@")[0],
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
+        effectiveEmail
+      )}`,
+      credits: 20,
+      role: "USER",
+    };
   }
 }

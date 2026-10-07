@@ -60,12 +60,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem("omni_guest_id");
           setUser(null);
-        } else {
           if (parsed?.role === "ADMIN" || parsed?.email?.toLowerCase() === "hoanglinhcntti@gmail.com") {
             parsed.role = "ADMIN";
             parsed.credits = 999999;
           }
           setUser(parsed);
+          if (typeof document !== "undefined") {
+            document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(parsed))}; path=/; max-age=2592000; SameSite=Lax`;
+          }
 
           // Đồng bộ credits từ Database máy chủ
           fetch(`/api/user/credits?userId=${parsed.id}`)
@@ -176,6 +178,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const loggedInUser: User = resData.user;
       setUser(loggedInUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(loggedInUser));
+      if (typeof document !== "undefined") {
+        document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(loggedInUser))}; path=/; max-age=2592000; SameSite=Lax`;
+      }
       return { success: true };
     } catch (err) {
       console.error("Lỗi khi kết nối đến API auth Google:", err);
@@ -207,6 +212,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
       setUser(loggedInUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(loggedInUser));
+      if (typeof document !== "undefined") {
+        document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(loggedInUser))}; path=/; max-age=2592000; SameSite=Lax`;
+      }
       return { success: true };
     } catch (err) {
       console.error("Lỗi khi đăng nhập Facebook:", err);
@@ -262,6 +270,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setUser(loggedInUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(loggedInUser));
+      if (typeof document !== "undefined") {
+        document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(loggedInUser))}; path=/; max-age=2592000; SameSite=Lax`;
+      }
       return { success: true };
     } catch (e) {
       console.error("Lỗi đăng nhập:", e);
@@ -281,6 +292,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     setUser(demoUser);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(demoUser));
+    if (typeof document !== "undefined") {
+      document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(demoUser))}; path=/; max-age=2592000; SameSite=Lax`;
+    }
   };
 
   const loginWithOAuthUser = (loggedInUser: User) => {
@@ -291,6 +305,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(loggedInUser);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(loggedInUser));
+      if (typeof document !== "undefined") {
+        document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(loggedInUser))}; path=/; max-age=2592000; SameSite=Lax`;
+      }
     } catch (err) {
       console.error("Lỗi lưu user vào localStorage:", err);
     }
@@ -302,6 +319,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const updated = { ...prev, ...data };
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        if (typeof document !== "undefined") {
+          document.cookie = `tool_ai_auth_user=${encodeURIComponent(JSON.stringify(updated))}; path=/; max-age=2592000; SameSite=Lax`;
+        }
       } catch (err) {
         console.error("Lỗi cập nhật localStorage:", err);
       }
@@ -312,6 +332,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem("omni_guest_id");
+    if (typeof document !== "undefined") {
+      document.cookie = "tool_ai_auth_user=; path=/; max-age=0; SameSite=Lax";
+    }
     setUser(null);
   };
 

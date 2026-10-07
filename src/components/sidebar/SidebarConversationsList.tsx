@@ -57,14 +57,15 @@ export default function SidebarConversationsList({
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
   const fetchConversations = async () => {
-    if (!user?.id) {
+    const uid = user?.id || user?.email;
+    if (!uid) {
       setConversations([]);
       setIsLoading(false);
       return;
     }
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/conversations?userId=${user.id}`);
+      const res = await fetch(`/api/conversations?userId=${encodeURIComponent(uid)}`);
       if (res.ok) {
         const data = await res.json();
         setConversations(Array.isArray(data) ? data : []);
@@ -80,12 +81,13 @@ export default function SidebarConversationsList({
   };
 
   const fetchProjects = async () => {
-    if (!user?.id) {
+    const uid = user?.id || user?.email;
+    if (!uid) {
       setProjects([]);
       return;
     }
     try {
-      const res = await fetch(`/api/projects?userId=${user.id}`);
+      const res = await fetch(`/api/projects?userId=${encodeURIComponent(uid)}`);
       if (res.ok) {
         const data = await res.json();
         setProjects(Array.isArray(data) ? data : []);

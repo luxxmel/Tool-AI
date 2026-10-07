@@ -100,13 +100,33 @@ function HomeContent() {
     return () => clearInterval(interval);
   }, [currentTab, isChatOpen]);
 
+  // Tự động đóng modal đăng nhập khi người dùng đã có phiên đăng nhập
+  useEffect(() => {
+    if (user) {
+      setShowLoginModal(false);
+    }
+  }, [user]);
+
   // Mở đoạn chat mới từ thanh tìm kiếm với bộ não đã chọn và hình ảnh kèm theo (nếu có)
   const handlePromptSubmit = (
     promptText: string,
     modelId: string = "fast",
     images: string[] = []
   ) => {
-    if (!user) {
+    let currentUser = user;
+    if (!currentUser && typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("tool_ai_auth_user");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && !parsed.id?.startsWith("guest_")) {
+            currentUser = parsed;
+          }
+        }
+      } catch {}
+    }
+
+    if (!currentUser) {
       setShowLoginModal(true);
       return;
     }

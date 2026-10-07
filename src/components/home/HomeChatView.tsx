@@ -489,7 +489,20 @@ export default function HomeChatView({
   ) => {
     if (!userText.trim() && images.length === 0) return;
 
-    if (!user) {
+    let currentUser = user;
+    if (!currentUser && typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("tool_ai_auth_user");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && !parsed.id?.startsWith("guest_")) {
+            currentUser = parsed;
+          }
+        }
+      } catch {}
+    }
+
+    if (!currentUser) {
       onOpenLoginModal?.();
       return;
     }
@@ -520,7 +533,9 @@ export default function HomeChatView({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           botId: targetBotId,
-          userId: activeUserId,
+          userId: currentUser?.id || currentUser?.email || activeUserId,
+          userEmail: currentUser?.email,
+          userName: currentUser?.displayName || currentUser?.username,
           conversationId,
           projectId: projectId || undefined,
           model: selectedModel,

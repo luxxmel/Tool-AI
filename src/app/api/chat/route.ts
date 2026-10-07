@@ -366,7 +366,24 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { botId, messages, conversationId, projectId, model: requestedModel, language } = body;
-    const userId = body.userId;
+    let userId = body.userId;
+    let userEmail = body.userEmail;
+    let userName = body.userName;
+
+    // Cookie fallback: Nếu thiếu userId hoặc userEmail, tự động đọc từ HTTP cookie
+    if (!userId || !userEmail) {
+      const cookieAuth = request.cookies.get("tool_ai_auth_user");
+      if (cookieAuth?.value) {
+        try {
+          const cookieUser = JSON.parse(decodeURIComponent(cookieAuth.value));
+          if (!userId && cookieUser?.id) userId = cookieUser.id;
+          if (!userEmail && cookieUser?.email) userEmail = cookieUser.email;
+          if (!userName && (cookieUser?.displayName || cookieUser?.name || cookieUser?.username)) {
+            userName = cookieUser?.displayName || cookieUser?.name || cookieUser?.username;
+          }
+        } catch {}
+      }
+    }
 
     if (!botId) {
       return NextResponse.json({ error: "Thiếu botId" }, { status: 400 });
@@ -377,7 +394,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Kiểm tra User & Credits trong Database (Bắt buộc phải đăng nhập, không tự tạo tài khoản khách)
-    let user = await ensureUser(userId);
+    let user = await ensureUser(userId, userEmail, userName);
 
     if (!user) {
       return NextResponse.json(

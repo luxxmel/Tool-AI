@@ -837,7 +837,20 @@ export default function BotChatPage() {
     customImages?: string[]
   ) => {
     if (e) e.preventDefault();
-    if (!user) {
+    let currentUser = user;
+    if (!currentUser && typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("tool_ai_auth_user");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && !parsed.id?.startsWith("guest_")) {
+            currentUser = parsed;
+          }
+        }
+      } catch {}
+    }
+
+    if (!currentUser) {
       setShowLoginModal(true);
       return;
     }
@@ -859,7 +872,7 @@ export default function BotChatPage() {
     const requiredCost = isFreeHealing ? 0 : (isVipStory ? 2 : 1);
 
     // Kiểm tra credit trước khi gửi ở frontend (Admin được miễn phí và vô hạn)
-    if (user?.role !== "ADMIN" && requiredCost > 0 && credits !== null && credits < requiredCost) {
+    if (currentUser?.role !== "ADMIN" && requiredCost > 0 && credits !== null && credits < requiredCost) {
       setShowCreditModal(true);
       return;
     }
@@ -897,7 +910,9 @@ export default function BotChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           botId,
-          userId: activeUserId,
+          userId: currentUser?.id || currentUser?.email || activeUserId,
+          userEmail: currentUser?.email,
+          userName: currentUser?.displayName || currentUser?.username,
           conversationId,
           language,
           messages: newMessages.map((m) => ({
