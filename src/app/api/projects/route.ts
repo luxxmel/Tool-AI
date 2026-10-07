@@ -26,13 +26,10 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(projects);
+    return NextResponse.json(Array.isArray(projects) ? projects : []);
   } catch (error) {
-    console.error("Lỗi khi tải danh sách dự án:", error);
-    return NextResponse.json(
-      { error: "Lỗi hệ thống khi tải danh sách dự án" },
-      { status: 500 }
-    );
+    console.warn("Lỗi khi tải danh sách dự án (fallback rỗng):", error);
+    return NextResponse.json([]);
   }
 }
 

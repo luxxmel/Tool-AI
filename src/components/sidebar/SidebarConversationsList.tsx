@@ -67,10 +67,13 @@ export default function SidebarConversationsList({
       const res = await fetch(`/api/conversations?userId=${user.id}`);
       if (res.ok) {
         const data = await res.json();
-        setConversations(data);
+        setConversations(Array.isArray(data) ? data : []);
+      } else {
+        setConversations([]);
       }
     } catch (err) {
       console.error("Lỗi tải danh sách đoạn chat:", err);
+      setConversations([]);
     } finally {
       setIsLoading(false);
     }
@@ -85,10 +88,13 @@ export default function SidebarConversationsList({
       const res = await fetch(`/api/projects?userId=${user.id}`);
       if (res.ok) {
         const data = await res.json();
-        setProjects(data);
+        setProjects(Array.isArray(data) ? data : []);
+      } else {
+        setProjects([]);
       }
     } catch (err) {
       console.error("Lỗi tải danh sách dự án:", err);
+      setProjects([]);
     }
   };
 
@@ -157,7 +163,7 @@ export default function SidebarConversationsList({
               : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
           }`}
         >
-          {t("sidebar.projects")} ({projects.length})
+          {t("sidebar.projects")} ({(projects?.length || 0)})
         </button>
       </div>
 
@@ -198,16 +204,16 @@ export default function SidebarConversationsList({
       <div className="flex-1 overflow-y-auto space-y-0.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800 max-h-[190px]">
         {activeTab === "chats" ? (
           /* CHATS LIST */
-          isLoading && conversations.length === 0 ? (
+          isLoading && (conversations?.length || 0) === 0 ? (
             <div className="p-3 text-center text-[11px] text-slate-400">
               {t("sidebar.loading_chats")}
             </div>
-          ) : conversations.length === 0 ? (
+          ) : (conversations?.length || 0) === 0 ? (
             <div className="p-3 text-center text-[11px] text-slate-400">
               {t("sidebar.no_conversations")}
             </div>
           ) : (
-            conversations.map((conv) => {
+            (conversations || []).map((conv) => {
               const isActive = activeConversationId === conv.id;
               return (
                 <div
@@ -244,7 +250,7 @@ export default function SidebarConversationsList({
           )
         ) : (
           /* PROJECTS LIST */
-          projects.length === 0 ? (
+          (projects?.length || 0) === 0 ? (
             <div className="p-3 text-center text-[11px] text-slate-400">
               <p>{t("sidebar.no_projects")}</p>
               <button
@@ -262,7 +268,7 @@ export default function SidebarConversationsList({
               </button>
             </div>
           ) : (
-            projects.map((proj) => {
+            (projects || []).map((proj) => {
               const isActive = activeProjectId === proj.id;
               return (
                 <div

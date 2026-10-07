@@ -50,13 +50,10 @@ export async function GET(request: NextRequest) {
       createdAt: c.createdAt,
     }));
 
-    return NextResponse.json(data);
+    return NextResponse.json(Array.isArray(data) ? data : []);
   } catch (error) {
-    console.error("Lỗi khi tải danh sách hội thoại:", error);
-    return NextResponse.json(
-      { error: "Lỗi hệ thống khi tải danh sách hội thoại" },
-      { status: 500 }
-    );
+    console.warn("Lỗi khi tải danh sách hội thoại (fallback rỗng):", error);
+    return NextResponse.json([]);
   }
 }
 
