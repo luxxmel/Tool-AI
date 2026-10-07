@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         name: u.name || (isHLAdmin ? "Lịnh Hoàng" : "Chưa đặt tên"),
         username: u.email.split("@")[0],
         email: u.email,
-        role: (isHLAdmin ? "admin" : u.role.toLowerCase()) as "admin" | "vip" | "member",
+        role: (isHLAdmin ? "admin" : (u.role.toUpperCase() === "USER" ? "member" : u.role.toLowerCase())) as "admin" | "vip" | "member",
         status: (u.status || "active") as "active" | "banned",
         avatar:
           u.avatar ||
