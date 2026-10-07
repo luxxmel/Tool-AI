@@ -239,12 +239,12 @@ export async function POST(request: NextRequest) {
         status: newPost.status,
         createdAt: "Vừa xong",
         author: {
-          id: newPost.author.id,
-          name: newPost.author.name || "Người dùng",
-          username: newPost.author.email.split("@")[0],
-          avatar: newPost.author.avatar,
-          isVip: newPost.author.role === "VIP" || newPost.author.role === "ADMIN",
-          role: newPost.author.role,
+          id: newPost.author?.id || validAuthorId,
+          name: newPost.author?.name || authorUser.name || "Người dùng",
+          username: (newPost.author?.email || authorUser.email || "user@omni").split("@")[0],
+          avatar: newPost.author?.avatar || authorUser.avatar,
+          isVip: newPost.author?.role === "VIP" || newPost.author?.role === "ADMIN" || authorUser.role === "ADMIN",
+          role: newPost.author?.role || authorUser.role || "USER",
         },
       },
     });
