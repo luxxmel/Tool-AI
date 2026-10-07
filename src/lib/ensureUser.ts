@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
  * Lấy hoặc bảo đảm thông tin người dùng từ Database SQLite của máy chủ.
  * - Tài khoản hoanglinhcntti@gmail.com luôn luôn là ADMIN với vô hạn credits (999999).
  * - Các tài khoản người dùng mới luôn được cấp sẵn 20 Credits.
- * - Có cơ chế Fallback chống sập nếu SQLite trên hosting gặp sự cố.
+ * - Có cơ chế Fallback chống sập nếu SQLite / Prisma trên hosting gặp sự cố hoặc trả về null.
  */
 export async function ensureUser(
   userId?: string | null,
@@ -47,21 +47,39 @@ export async function ensureUser(
           credits: 999999,
         },
       });
-      return adminUser;
-    } catch {
-      return {
-        id: "hoanglinhcntti@gmail.com",
-        email: "hoanglinhcntti@gmail.com",
-        name: userName || "Lịnh Hoàng",
-        avatar:
-          "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
-        role: "ADMIN",
-        credits: 999999,
-      };
+      if (adminUser && adminUser.id) {
+        return {
+          ...adminUser,
+          role: "ADMIN",
+          credits: 999999,
+        };
+      }
+    } catch (e) {
+      console.warn("Prisma admin upsert warn:", e);
     }
+    // Fallback đảm bảo ADMIN luôn luôn có tài khoản hợp lệ
+    return {
+      id: "hoanglinhcntti@gmail.com",
+      email: "hoanglinhcntti@gmail.com",
+      name: userName || "Lịnh Hoàng",
+      avatar:
+        "https://lh3.googleusercontent.com/a/ACg8ocKwhgR9M80V5bzwAD5z_9NZ4wxJsUIdJ6X1kPKCNWOwRgv67iY=s96-c",
+      role: "ADMIN",
+      credits: 999999,
+    };
   }
 
   // 3. Tìm trong Database theo ID hoặc Email
+  const effectiveEmail =
+    targetEmail ||
+    (targetId.includes("@")
+      ? targetId.toLowerCase()
+      : `${targetId}@omni.user`);
+  const effectiveName = userName || effectiveEmail.split("@")[0];
+  const effectiveAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
+    effectiveEmail
+  )}`;
+
   try {
     const searchConditions: Array<{ id?: string; email?: string }> = [];
     if (targetId && targetId !== "null" && targetId !== "undefined") {
@@ -74,75 +92,50 @@ export async function ensureUser(
       searchConditions.push({ email: targetEmail });
     }
 
-    let user =
-      searchConditions.length > 0
-        ? await prisma.user.findFirst({
-            where: { OR: searchConditions },
-          })
-        : null;
+    if (searchConditions.length > 0) {
+      const user = await prisma.user.findFirst({
+        where: { OR: searchConditions },
+      });
 
-    if (user) {
-      if (user.email.toLowerCase() === "hoanglinhcntti@gmail.com") {
-        if (user.role !== "ADMIN" || user.credits < 999999) {
-          user = await prisma.user.update({
-            where: { id: user.id },
-            data: { role: "ADMIN", credits: 999999 },
-          });
+      if (user && user.id) {
+        if (user.email.toLowerCase() === "hoanglinhcntti@gmail.com") {
+          return {
+            ...user,
+            role: "ADMIN",
+            credits: 999999,
+          };
         }
+        return user;
       }
-      return user;
     }
 
-    // 4. Nếu không tìm thấy trong DB (ví dụ session từ máy khác hoặc DB mới), tự tạo mới với 20 Credits
-    const effectiveEmail =
-      targetEmail ||
-      (targetId.includes("@")
-        ? targetId.toLowerCase()
-        : `${targetId}@omni.user`);
-    const effectiveName = userName || effectiveEmail.split("@")[0];
-    const effectiveAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
-      effectiveEmail
-    )}`;
-
-    try {
-      const newUser = await prisma.user.upsert({
-        where: { email: effectiveEmail },
-        update: {},
-        create: {
-          email: effectiveEmail,
-          name: effectiveName,
-          avatar: effectiveAvatar,
-          credits: 20,
-          role: "USER",
-        },
-      });
-      return newUser;
-    } catch {
-      return {
-        id: targetId || effectiveEmail,
+    // 4. Nếu không tìm thấy trong DB, tự tạo mới với 20 Credits
+    const newUser = await prisma.user.upsert({
+      where: { email: effectiveEmail },
+      update: {},
+      create: {
         email: effectiveEmail,
         name: effectiveName,
         avatar: effectiveAvatar,
         credits: 20,
         role: "USER",
-      };
+      },
+    });
+
+    if (newUser && newUser.id) {
+      return newUser;
     }
   } catch (err) {
-    console.error(`Lỗi khi tìm user ${targetId || targetEmail} trong DB:`, err);
-    const effectiveEmail =
-      targetEmail ||
-      (targetId.includes("@")
-        ? targetId.toLowerCase()
-        : `${targetId}@omni.user`);
-    return {
-      id: targetId || effectiveEmail,
-      email: effectiveEmail,
-      name: userName || effectiveEmail.split("@")[0],
-      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
-        effectiveEmail
-      )}`,
-      credits: 20,
-      role: "USER",
-    };
+    console.warn(`Lỗi khi tìm/tạo user trong DB:`, err);
   }
+
+  // 5. Fallback vững chắc: Trả về tài khoản hợp lệ nếu Prisma không hoạt động
+  return {
+    id: targetId || effectiveEmail,
+    email: effectiveEmail,
+    name: effectiveName,
+    avatar: effectiveAvatar,
+    credits: 20,
+    role: "USER",
+  };
 }
