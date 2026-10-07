@@ -249,7 +249,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const cleanInput = emailOrUsername.trim();
       const email = cleanInput.includes("@")
         ? cleanInput.toLowerCase()
-        : `${cleanInput.toLowerCase()}@omni.ai`;
+        : `${cleanInput.toLowerCase()}@biettuot.ai`;
 
       const res = await fetch("/api/auth/login", {
         method: "POST",
