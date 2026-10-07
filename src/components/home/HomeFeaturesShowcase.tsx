@@ -74,28 +74,25 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
           <button
             key={item.id}
             onClick={() => onSelectTab(item.id)}
-            className={`p-4 rounded-2xl bg-[#0d0f18]/90 backdrop-blur-xl border ${item.glowColor} transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-32`}
+            className="p-4 rounded-2xl bg-white dark:bg-[#11131c] border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400 dark:hover:border-indigo-500/60 transition-all duration-300 hover:-translate-y-1 shadow-xs hover:shadow-md group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-32"
           >
-            {/* Ambient Corner Glow */}
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${item.accent} rounded-bl-full pointer-events-none transition-opacity opacity-60 group-hover:opacity-100`} />
-
             {/* Top row */}
             <div className="flex items-center justify-between relative z-10">
               <span className="text-2xl group-hover:scale-110 transition-transform">
                 {item.icon}
               </span>
-              <span className={`text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full border ${item.tagBg}`}>
+              <span className={`text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full border ${item.tagBg}`}>
                 {item.badge}
               </span>
             </div>
 
             {/* Content */}
             <div className="relative z-10 mt-auto">
-              <h3 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors flex items-center gap-1">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors flex items-center gap-1">
                 <span>{item.title}</span>
-                <span className="text-xs opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-cyan-400">→</span>
+                <span className="text-xs opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-indigo-500 dark:text-cyan-400">→</span>
               </h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                 {item.subtitle}
               </p>
             </div>
