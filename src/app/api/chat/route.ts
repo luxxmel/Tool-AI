@@ -779,6 +779,7 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
     });
 
     // Danh sách ứng viên AI theo thứ tự ưu tiên (Failover Chain)
+    const { googleAI } = await import("@/lib/aiProvider");
     const candidateModels: Array<{ model: any; name: string }> = [];
 
     // Ưu tiên hàng đầu: Mô hình người dùng trực tiếp lựa chọn
@@ -786,10 +787,8 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
       candidateModels.push({ model: selectedAI.model, name: selectedAI.name });
     }
 
-    if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      candidateModels.push({ model: google("gemini-2.5-flash"), name: "Gemini 2.5 Flash" });
-      candidateModels.push({ model: google("gemini-3.7-flash"), name: "Gemini 3.7 Flash" });
-    }
+    candidateModels.push({ model: googleAI("gemini-2.5-flash"), name: "Gemini 2.5 Flash" });
+    candidateModels.push({ model: googleAI("gemini-3.7-flash"), name: "Gemini 3.7 Flash" });
 
     if (trollLLMClient) {
       candidateModels.push({ model: trollLLMClient("gpt-5.5"), name: "Omni Fast (Backup)" });
@@ -815,14 +814,20 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
               messages: formattedMessages,
             };
 
-            // Chỉ đính kèm Google Search cho các câu hỏi tổng hợp kiến thức (không dùng cho nhập vai/truyện)
-            if (!isStoryOrHealingBot) {
-              streamOptions.tools = {
-                google_search: google.tools.googleSearch({}),
-              };
+            // Thử đính kèm Google Search, nếu lỗi sẽ tự bỏ tools để phản hồi nội dung trực tiếp
+            let result;
+            try {
+              if (!isStoryOrHealingBot) {
+                streamOptions.tools = {
+                  google_search: google.tools.googleSearch({}),
+                };
+              }
+              result = streamText(streamOptions);
+            } catch (toolErr) {
+              console.warn("Bỏ qua google_search tool do lỗi:", toolErr);
+              delete streamOptions.tools;
+              result = streamText(streamOptions);
             }
-
-            const result = streamText(streamOptions);
 
             for await (const chunk of result.textStream) {
               if (chunk) {
