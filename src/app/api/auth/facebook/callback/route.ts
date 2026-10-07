@@ -116,41 +116,55 @@ export async function GET(request: NextRequest) {
       fbUser.picture?.data?.url ||
       `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`;
 
-    // 3. Lưu hoặc cập nhật người dùng vào SQLite dev.db
-    const user = await prisma.user.upsert({
-      where: { email: email.toLowerCase().trim() },
-      update: {
-        name: name,
-        avatar: avatar,
-      },
-      create: {
-        email: email.toLowerCase().trim(),
-        name: name,
-        avatar: avatar,
-        credits: 10,
-        role: "USER",
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        avatar: true,
-        credits: true,
-        role: true,
-      },
-    });
+    // 3. Lưu hoặc cập nhật người dùng vào SQLite dev.db nếu có thể
+    let dbUser: any = null;
+    try {
+      dbUser = await prisma.user.upsert({
+        where: { email: email.toLowerCase().trim() },
+        update: {
+          name: name,
+          avatar: avatar,
+        },
+        create: {
+          email: email.toLowerCase().trim(),
+          name: name,
+          avatar: avatar,
+          credits: 10,
+          role: "USER",
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          avatar: true,
+          credits: true,
+          role: true,
+        },
+      });
+    } catch (dbErr) {
+      console.warn("Lỗi lưu SQLite (dùng session user):", dbErr);
+    }
+
+    const finalUser = dbUser || {
+      id: `fb_${fbUser.id || Date.now()}`,
+      email: email.toLowerCase().trim(),
+      name: name,
+      avatar: avatar,
+      credits: 10,
+      role: "USER",
+    };
 
     return sendResponseHtml(true, {
-      id: user.id,
-      email: user.email,
-      username: user.email.split("@")[0],
-      displayName: user.name || user.email.split("@")[0],
-      avatar: user.avatar,
-      credits: user.credits,
-      role: user.role,
+      id: finalUser.id,
+      email: finalUser.email,
+      username: finalUser.email.split("@")[0],
+      displayName: finalUser.name || finalUser.email.split("@")[0],
+      avatar: finalUser.avatar,
+      credits: finalUser.credits,
+      role: finalUser.role,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("Lỗi xử lý callback Facebook:", err);
-    return sendResponseHtml(false, null, "Đã xảy ra lỗi hệ thống khi đăng nhập Facebook");
+    return sendResponseHtml(false, null, err?.message || "Đã xảy ra lỗi hệ thống khi đăng nhập Facebook");
   }
 }

@@ -25,41 +25,55 @@ export async function POST(request: NextRequest) {
       rawInput.toLowerCase() === "hoanglinh" ||
       cleanEmail.startsWith("admin@");
 
-    const user = await prisma.user.upsert({
-      where: { email: cleanEmail },
-      update: {
-        name: cleanName,
-        role: isAdmin ? "ADMIN" : undefined,
-        credits: isAdmin ? 999999 : undefined,
-      },
-      create: {
-        email: cleanEmail,
-        name: cleanName,
-        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-        credits: isAdmin ? 999999 : 50,
-        role: isAdmin ? "ADMIN" : "USER",
-        status: "active",
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        avatar: true,
-        credits: true,
-        role: true,
-      },
-    });
+    let user: any = null;
+    try {
+      user = await prisma.user.upsert({
+        where: { email: cleanEmail },
+        update: {
+          name: cleanName,
+          role: isAdmin ? "ADMIN" : undefined,
+          credits: isAdmin ? 999999 : undefined,
+        },
+        create: {
+          email: cleanEmail,
+          name: cleanName,
+          avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
+          credits: isAdmin ? 999999 : 50,
+          role: isAdmin ? "ADMIN" : "USER",
+          status: "active",
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          avatar: true,
+          credits: true,
+          role: true,
+        },
+      });
+    } catch (dbErr) {
+      console.warn("Lỗi lưu DB login (dùng session user):", dbErr);
+    }
+
+    const finalUser = user || {
+      id: isAdmin ? "cmuchyzaf0000tar86bsjbasb" : `usr_${Date.now()}`,
+      email: cleanEmail,
+      name: cleanName,
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
+      credits: isAdmin ? 999999 : 50,
+      role: isAdmin ? "ADMIN" : "USER",
+    };
 
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        email: user.email,
-        username: user.email.split("@")[0],
-        displayName: user.name || user.email.split("@")[0],
-        avatar: user.avatar,
-        credits: user.role === "ADMIN" ? 999999 : user.credits,
-        role: user.role,
+        id: finalUser.id,
+        email: finalUser.email,
+        username: finalUser.email.split("@")[0],
+        displayName: finalUser.name || finalUser.email.split("@")[0],
+        avatar: finalUser.avatar,
+        credits: finalUser.role === "ADMIN" ? 999999 : finalUser.credits,
+        role: finalUser.role,
       },
     });
   } catch (error) {

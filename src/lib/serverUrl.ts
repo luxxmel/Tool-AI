@@ -11,11 +11,20 @@ export function getAppOrigin(request: NextRequest): string {
   }
 
   // 2. Lấy thông tin từ headers chuyển tiếp của Cloudflare Tunnel / Proxy
-  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
-  const forwardedProto = request.headers.get("x-forwarded-proto") || (request.url.startsWith("https") ? "https" : "http");
+  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+  let forwardedProto = request.headers.get("x-forwarded-proto") || (request.url.startsWith("https") ? "https" : "http");
+
+  // Nếu là domain chính thức biettuot.io.vn thì luôn luôn là https
+  if (forwardedHost.includes("biettuot.io.vn")) {
+    forwardedProto = "https";
+  }
 
   if (forwardedHost) {
     return `${forwardedProto}://${forwardedHost}`;
+  }
+
+  if (request.nextUrl.host.includes("biettuot.io.vn")) {
+    return `https://${request.nextUrl.host}`;
   }
 
   // 3. Mặc định theo request.nextUrl
