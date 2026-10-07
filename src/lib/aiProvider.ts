@@ -85,13 +85,21 @@ export type AvailableModel = typeof AVAILABLE_MODELS[number];
 export function getAIModel(modelOrBrainId?: string) {
   const normalizedId = (modelOrBrainId || "fast").toLowerCase().trim();
 
-  // 1. BỘ NÃO SUY NGHĨ NHANH: Gemini 2.5 Flash - Phản hồi siêu tốc (~1s)
+  // 1. BỘ NÃO SUY NGHĨ NHANH: GPT-5.5 / Gemini 2.5 Flash
   if (
     normalizedId === "fast" ||
     normalizedId === "gpt-5.5" ||
     normalizedId === "gpt" ||
     normalizedId.includes("nhanh")
   ) {
+    if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+      return {
+        model: trollLLMClient("gpt-5.5"),
+        modelId: "gpt-5.5",
+        modeId: "fast",
+        name: "Suy nghĩ nhanh",
+      };
+    }
     if (GEMINI_API_KEY) {
       return {
         model: googleAI("gemini-2.5-flash"),
@@ -100,17 +108,9 @@ export function getAIModel(modelOrBrainId?: string) {
         name: "Suy nghĩ nhanh",
       };
     }
-    if (trollLLMClient) {
-      return {
-        model: trollLLMClient("gpt-5.5"),
-        modelId: "gpt-5.5",
-        modeId: "fast",
-        name: "Suy nghĩ nhanh",
-      };
-    }
   }
 
-  // 2. BỘ NÃO SUY LUẬN SÂU: Gemini 3.7 Flash / 3.5 Flash
+  // 2. BỘ NÃO SUY LUẬN SÂU: Claude Sonnet 4.5 / Gemini 3.7 Flash
   if (
     normalizedId === "deep" ||
     normalizedId === "claude-sonnet-4.5" ||
@@ -120,6 +120,14 @@ export function getAIModel(modelOrBrainId?: string) {
     normalizedId.includes("claude") ||
     normalizedId.includes("sau")
   ) {
+    if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+      return {
+        model: trollLLMClient("claude-sonnet-4.5"),
+        modelId: "claude-sonnet-4.5",
+        modeId: "deep",
+        name: "Suy luận sâu",
+      };
+    }
     if (GEMINI_API_KEY) {
       return {
         model: googleAI("gemini-3.7-flash"),
@@ -128,18 +136,9 @@ export function getAIModel(modelOrBrainId?: string) {
         name: "Suy luận sâu",
       };
     }
-    if (trollLLMClient) {
-      return {
-        model: trollLLMClient("gemini-3-7-flash"),
-        modelId: "gemini-3-7-flash",
-        modeId: "deep",
-        modeName: "Suy luận sâu",
-        name: "Suy luận sâu",
-      };
-    }
   }
 
-  // 3. BỘ NÃO SÁNG TẠO: Gemini 2.5 Flash
+  // 3. BỘ NÃO SÁNG TẠO: Gemini 2.5 Flash / Claude Fable
   if (
     normalizedId === "creative" ||
     normalizedId === "gemini-2.5-flash" ||
@@ -147,6 +146,14 @@ export function getAIModel(modelOrBrainId?: string) {
     normalizedId.includes("creative") ||
     normalizedId.includes("gemini")
   ) {
+    if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
+      return {
+        model: trollLLMClient("claude-fable-5.1"),
+        modelId: "claude-fable-5.1",
+        modeId: "creative",
+        name: "Sáng tạo",
+      };
+    }
     if (GEMINI_API_KEY) {
       return {
         model: googleAI("gemini-2.5-flash"),
@@ -158,19 +165,19 @@ export function getAIModel(modelOrBrainId?: string) {
   }
 
   // 4. Default Fallbacks
-  if (GEMINI_API_KEY) {
+  if (process.env.TROLLLLM_API_KEY && trollLLMClient) {
     return {
-      model: googleAI("gemini-2.5-flash"),
-      modelId: "gemini-2.5-flash",
+      model: trollLLMClient("gpt-5.5"),
+      modelId: "gpt-5.5",
       modeId: "fast",
       name: "Suy nghĩ nhanh",
     };
   }
 
-  if (trollLLMClient) {
+  if (GEMINI_API_KEY) {
     return {
-      model: trollLLMClient("gpt-5.5"),
-      modelId: "gpt-5.5",
+      model: googleAI("gemini-2.5-flash"),
+      modelId: "gemini-2.5-flash",
       modeId: "fast",
       name: "Suy nghĩ nhanh",
     };
