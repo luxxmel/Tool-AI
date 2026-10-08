@@ -919,18 +919,18 @@ export default function AdminCmsPage() {
               </div>
 
               {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+              <div className="overflow-x-auto rounded-2xl">
+                <table className="w-full text-left text-xs table-auto">
                   <thead className="bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase font-semibold">
                     <tr>
-                      <th className="py-3 px-4">Người dùng</th>
-                      <th className="py-3 px-4">Email</th>
-                      <th className="py-3 px-4">Vai trò</th>
-                      <th className="py-3 px-4">Token (Credits)</th>
-                      <th className="py-3 px-4">Trạng thái</th>
-                      <th className="py-3 px-4">Ngày tham gia</th>
-                      <th className="py-3 px-4">Lượt Prompt</th>
-                      <th className="py-3 px-4 text-right">Hành động</th>
+                      <th className="py-3 px-3">Người dùng</th>
+                      <th className="py-3 px-3">Email</th>
+                      <th className="py-3 px-2">Vai trò</th>
+                      <th className="py-3 px-2 text-center">Token</th>
+                      <th className="py-3 px-2 text-center">Trạng thái</th>
+                      <th className="py-3 px-2 text-center whitespace-nowrap">Ngày tạo</th>
+                      <th className="py-3 px-2 text-center whitespace-nowrap">Prompt</th>
+                      <th className="py-3 px-3 text-right">Hành động</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -946,29 +946,31 @@ export default function AdminCmsPage() {
                           key={u.id}
                           className="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors"
                         >
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
+                          <td className="py-2.5 px-3">
+                            <div className="flex items-center gap-2.5 min-w-[140px] max-w-[190px]">
                               <img
                                 src={u.avatar}
                                 alt={u.name}
-                                className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0"
+                                className="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0"
                               />
-                              <div>
-                                <div className="font-bold text-slate-900 dark:text-white">
+                              <div className="min-w-0 flex-1">
+                                <div className="font-bold text-slate-900 dark:text-white truncate" title={u.name}>
                                   {u.name}
                                 </div>
-                                <div className="text-[11px] text-slate-400 font-mono">
+                                <div className="text-[11px] text-slate-400 font-mono truncate" title={`@${u.username}`}>
                                   @{u.username}
                                 </div>
                               </div>
                             </div>
                           </td>
 
-                          <td className="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono">
-                            {u.email}
+                          <td className="py-2.5 px-3">
+                            <div className="max-w-[200px] truncate text-slate-600 dark:text-slate-300 font-mono text-[11px]" title={u.email}>
+                              {u.email}
+                            </div>
                           </td>
 
-                          <td className="py-3 px-4">
+                          <td className="py-2.5 px-2">
                             <select
                               value={u.role}
                               onChange={async (e) => {
@@ -982,28 +984,28 @@ export default function AdminCmsPage() {
                                   handleChangeRole(u.id, newRole);
                                 }
                               }}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border focus:outline-none cursor-pointer shadow-xs transition-colors ${
+                              className={`px-2 py-1 rounded-lg text-[11px] font-semibold border focus:outline-none cursor-pointer shadow-xs transition-colors ${
                                 u.role === "vip"
                                   ? "bg-amber-500/10 text-amber-500 border-amber-500/30"
                                   : "bg-white dark:bg-[#1a1c24] text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-700 hover:border-indigo-500"
                               }`}
                             >
-                              <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Thành viên thường</option>
-                              <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ Thành viên VIP</option>
-                              <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Thăng cấp Admin</option>
+                              <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Thành viên</option>
+                              <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ VIP</option>
+                              <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Admin</option>
                             </select>
                           </td>
 
-                          <td className="py-3 px-4">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                          <td className="py-2.5 px-2 text-center whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold font-mono bg-amber-500/10 text-amber-500 border border-amber-500/20">
                               <span>🪙</span>
                               <span>{typeof u.credits === "number" ? u.credits.toLocaleString() : "20"}</span>
                             </span>
                           </td>
 
-                          <td className="py-3 px-4">
+                          <td className="py-2.5 px-2 text-center whitespace-nowrap">
                             <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                                 u.status === "active"
                                   ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40"
                                   : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/40"
@@ -1018,16 +1020,16 @@ export default function AdminCmsPage() {
                             </span>
                           </td>
 
-                          <td className="py-3 px-4 text-slate-500 dark:text-slate-400">
+                          <td className="py-2.5 px-2 text-center text-slate-500 dark:text-slate-400 whitespace-nowrap text-[11px]">
                             {u.joinedDate}
                           </td>
 
-                          <td className="py-3 px-4 font-mono text-slate-700 dark:text-slate-300 font-medium">
+                          <td className="py-2.5 px-2 text-center font-mono text-slate-700 dark:text-slate-300 font-bold text-xs whitespace-nowrap">
                             {u.promptsCount}
                           </td>
 
-                          <td className="py-3 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
+                          <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => handleToggleStatus(u.id)}
                                 className={`p-1.5 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
@@ -1045,7 +1047,7 @@ export default function AdminCmsPage() {
                                 className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/50 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
                                 title="Xóa tài khoản"
                               >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                               </button>
@@ -1225,18 +1227,18 @@ export default function AdminCmsPage() {
               </div>
 
               {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+              <div className="overflow-x-auto rounded-2xl">
+                <table className="w-full text-left text-xs table-auto">
                   <thead className="bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase font-semibold">
                     <tr>
-                      <th className="py-3 px-4">Quản trị viên</th>
-                      <th className="py-3 px-4">Email Quản trị</th>
-                      <th className="py-3 px-4">Cấp bậc</th>
-                      <th className="py-3 px-4">Token (Credits)</th>
-                      <th className="py-3 px-4">Trạng thái</th>
-                      <th className="py-3 px-4">Ngày cấp quyền</th>
-                      <th className="py-3 px-4">Thao tác Prompt</th>
-                      <th className="py-3 px-4 text-right">Hành động</th>
+                      <th className="py-3 px-3">Quản trị viên</th>
+                      <th className="py-3 px-3">Email</th>
+                      <th className="py-3 px-2">Cấp bậc</th>
+                      <th className="py-3 px-2 text-center">Token</th>
+                      <th className="py-3 px-2 text-center">Trạng thái</th>
+                      <th className="py-3 px-2 text-center whitespace-nowrap">Ngày cấp</th>
+                      <th className="py-3 px-2 text-center whitespace-nowrap">Prompt</th>
+                      <th className="py-3 px-3 text-right">Hành động</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -1252,41 +1254,43 @@ export default function AdminCmsPage() {
                           key={u.id}
                           className="hover:bg-purple-50/20 dark:hover:bg-purple-950/20 transition-colors"
                         >
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
-                              <div className="relative">
+                          <td className="py-2.5 px-3">
+                            <div className="flex items-center gap-2.5 min-w-[140px] max-w-[190px]">
+                              <div className="relative shrink-0">
                                 <img
                                   src={u.avatar}
                                   alt={u.name}
-                                  className="w-9 h-9 rounded-full object-cover border-2 border-purple-500/50 bg-slate-100 dark:bg-slate-800 shrink-0"
+                                  className="w-8 h-8 rounded-full object-cover border-2 border-purple-500/50 bg-slate-100 dark:bg-slate-800"
                                 />
-                                <span className="absolute -bottom-1 -right-1 text-[10px]" title="Quản trị viên">
+                                <span className="absolute -bottom-1 -right-1 text-[9px]" title="Quản trị viên">
                                   🛡️
                                 </span>
                               </div>
-                              <div>
-                                <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                                  <span>{u.name}</span>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1 truncate" title={u.name}>
+                                  <span className="truncate">{u.name}</span>
                                   {user?.id === u.id && (
-                                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-400 font-normal">
-                                      (Bạn)
+                                    <span className="text-[9px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-400 font-normal shrink-0">
+                                      Bạn
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-[11px] text-slate-400 font-mono">
+                                <div className="text-[11px] text-slate-400 font-mono truncate" title={`@${u.username}`}>
                                   @{u.username}
                                 </div>
                               </div>
                             </div>
                           </td>
 
-                          <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">
-                            {u.email}
+                          <td className="py-2.5 px-3">
+                            <div className="max-w-[200px] truncate text-slate-700 dark:text-slate-300 font-mono text-[11px]" title={u.email}>
+                              {u.email}
+                            </div>
                           </td>
 
-                          <td className="py-3 px-4">
+                          <td className="py-2.5 px-2">
                             {u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com" ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-500 border border-amber-500/30">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/30 whitespace-nowrap">
                                 <span>👑</span>
                                 <span>Root Admin</span>
                               </span>
@@ -1304,21 +1308,21 @@ export default function AdminCmsPage() {
                                     handleChangeRole(u.id, newRole);
                                   }
                                 }}
-                                className="px-3 py-1.5 rounded-xl text-xs font-semibold border focus:outline-none cursor-pointer bg-white dark:bg-[#1a1c24] text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-700 hover:border-purple-500 shadow-xs transition-colors"
+                                className="px-2 py-1 rounded-lg text-[11px] font-semibold border focus:outline-none cursor-pointer bg-white dark:bg-[#1a1c24] text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-700 hover:border-purple-500 shadow-xs transition-colors"
                               >
-                                <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Quản trị viên (Admin)</option>
-                                <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ Hạ xuống VIP</option>
-                                <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Hạ xuống Thành viên</option>
+                                <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Admin</option>
+                                <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ VIP</option>
+                                <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Thành viên</option>
                               </select>
                             )}
                           </td>
 
-                          <td className="py-3 px-4">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                          <td className="py-2.5 px-2 text-center whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
                               <span>🪙</span>
                               <span>
                                 {u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
-                                  ? "Vô hạn (Admin)"
+                                  ? "Vô hạn"
                                   : typeof u.credits === "number"
                                   ? u.credits.toLocaleString()
                                   : "999,999"}
@@ -1326,9 +1330,9 @@ export default function AdminCmsPage() {
                             </span>
                           </td>
 
-                          <td className="py-3 px-4">
+                          <td className="py-2.5 px-2 text-center whitespace-nowrap">
                             <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                                 u.status === "active"
                                   ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40"
                                   : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/40"
@@ -1343,20 +1347,20 @@ export default function AdminCmsPage() {
                             </span>
                           </td>
 
-                          <td className="py-3 px-4 text-slate-500 dark:text-slate-400">
+                          <td className="py-2.5 px-2 text-center text-slate-500 dark:text-slate-400 whitespace-nowrap text-[11px]">
                             {u.joinedDate}
                           </td>
 
-                          <td className="py-3 px-4 font-mono text-purple-600 dark:text-purple-400 font-bold">
+                          <td className="py-2.5 px-2 text-center font-mono text-purple-600 dark:text-purple-400 font-bold text-xs whitespace-nowrap">
                             {u.promptsCount}
                           </td>
 
-                          <td className="py-3 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
+                          <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => handleToggleStatus(u.id)}
                                 disabled={user?.id === u.id || u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"}
-                                className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed ${
+                                className={`px-2 py-1 rounded-lg border text-xs font-semibold transition-all cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed ${
                                   u.status === "active"
                                     ? "bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
                                     : "bg-emerald-50 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white"
@@ -1377,7 +1381,7 @@ export default function AdminCmsPage() {
                               <button
                                 onClick={() => handleDeleteUser(u.id, u.name)}
                                 disabled={user?.id === u.id || u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"}
-                                className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
+                                className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed"
                                 title={
                                   u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
                                     ? "Không thể xóa tài khoản Root Admin"
@@ -1386,7 +1390,7 @@ export default function AdminCmsPage() {
                                     : "Xóa tài khoản admin này"
                                 }
                               >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                               </button>
