@@ -83,16 +83,43 @@ interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onMarkAllAsRead?: () => void;
-  announcements?: AnnouncementItem[];
+  announcements?: any[];
 }
 
 export default function NotificationModal({
   isOpen,
   onClose,
   onMarkAllAsRead,
-  announcements = SYSTEM_ANNOUNCEMENTS,
+  announcements: propAnnouncements,
 }: NotificationModalProps) {
   const { language } = useLanguage();
+  const [items, setItems] = React.useState<any[]>(propAnnouncements || SYSTEM_ANNOUNCEMENTS);
+
+  React.useEffect(() => {
+    if (propAnnouncements && propAnnouncements.length > 0) {
+      setItems(propAnnouncements);
+      return;
+    }
+
+    // Tự động lấy danh sách thông báo mới nhất từ API hệ thống
+    const fetchLiveAnnouncements = async () => {
+      try {
+        const res = await fetch("/api/announcements");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.announcements && Array.isArray(data.announcements) && data.announcements.length > 0) {
+            setItems(data.announcements);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải thông báo hệ thống:", err);
+      }
+    };
+
+    if (isOpen) {
+      fetchLiveAnnouncements();
+    }
+  }, [isOpen, propAnnouncements]);
 
   if (!isOpen) return null;
 
@@ -102,6 +129,8 @@ export default function NotificationModal({
     }
     onClose();
   };
+
+  const announcements = items;
 
   return (
     <div
