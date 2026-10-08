@@ -175,83 +175,137 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
 
       {/* Biệt Tuốt AI Custom Feature Suite - Circular Icon Badges */}
       <div className="w-full mb-6">
-        <div className="flex items-center justify-between px-1 mb-3">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-            {language === "en" ? "Omni Special Engines" : "Bộ Công Cụ Độc Quyền Biệt Tuốt AI"}
-          </span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-            v3.5 Supermind
+        <div className="flex items-center justify-between px-1 mb-3.5">
+          <span className="text-[12px] font-bold tracking-wide text-slate-500 dark:text-neutral-400 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+            {language === "en" ? "Omni Special Engines" : "BỘ CÔNG CỤ ĐỘC QUYỀN BIỆT TUỐT AI"}
           </span>
         </div>
 
-        <div className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 overflow-x-auto no-scrollbar py-2 px-1">
+        <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-7 overflow-x-auto no-scrollbar py-3 px-1">
           {[
             {
               id: "tarot",
               name: "Tarot",
-              icon: "🎴",
-              color: "from-pink-600 to-rose-600 text-white shadow-pink-500/30",
-              dot: "bg-pink-400",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="10" height="15" x="2" y="5" rx="2" transform="rotate(-12 7 12)" />
+                  <rect width="10" height="15" x="12" y="4" rx="2" transform="rotate(12 17 11)" />
+                </svg>
+              ),
+              circleStyle: "bg-[#2b0816] text-[#ff2a6d] border border-[#ff2a6d]/40 shadow-[0_0_15px_rgba(255,42,109,0.35)]",
+              dot: "bg-[#ff4d88] shadow-[0_0_6px_#ff4d88]",
               tab: "tarot",
               prompt: "",
             },
             {
               id: "tuvi",
               name: "Tử Vi",
-              icon: "🌙",
-              color: "from-indigo-600 to-blue-600 text-white shadow-indigo-500/30",
-              dot: "bg-indigo-400",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                  <path d="M19 4v4" />
+                  <path d="M21 6h-4" />
+                </svg>
+              ),
+              circleStyle: "bg-[#14153b] text-[#7075ff] border border-[#7075ff]/40 shadow-[0_0_15px_rgba(112,117,255,0.35)]",
+              dot: "bg-[#8b8fff] shadow-[0_0_6px_#8b8fff]",
               tab: "tarot",
               prompt: "Lập lá số Tử Vi cho tôi: ",
             },
             {
               id: "chiemtinh",
               name: "Chiêm Tinh",
-              icon: "🪐",
-              color: "from-cyan-600 to-teal-600 text-white shadow-cyan-500/30",
-              dot: "bg-cyan-400",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4.5" />
+                  <path d="M3.5 14.5c3-6 14-6 17 0" />
+                  <circle cx="19" cy="5" r="1.5" fill="currentColor" />
+                </svg>
+              ),
+              circleStyle: "bg-[#062633] text-[#00d2d3] border border-[#00d2d3]/40 shadow-[0_0_15px_rgba(0,210,211,0.35)]",
+              dot: "bg-[#00e5e5] shadow-[0_0_6px_#00e5e5]",
               tab: "tarot",
               prompt: "Lập bản đồ sao Chiêm Tinh hoàng đạo cho tôi: ",
             },
             {
               id: "battu",
               name: "Bát Tự",
-              icon: "📜",
-              color: "from-amber-600 to-yellow-600 text-white shadow-amber-500/30",
-              dot: "bg-amber-400",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="3" />
+                  <path d="M8 3v18" />
+                  <path d="M12 3v18" />
+                  <path d="M16 3v18" />
+                </svg>
+              ),
+              circleStyle: "bg-[#331800] text-[#ff9f1a] border border-[#ff9f1a]/40 shadow-[0_0_15px_rgba(255,159,26,0.35)]",
+              dot: "bg-[#ffb03a] shadow-[0_0_6px_#ffb03a]",
               tab: "tarot",
               prompt: "Luận giải Bát Tự Tứ Trụ cho tôi: ",
             },
             {
               id: "toan",
               name: "Giải Toán",
-              icon: "🧮",
-              color: "from-blue-700 to-indigo-700 text-white shadow-blue-500/30",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="16" height="20" x="4" y="2" rx="2" />
+                  <line x1="8" x2="16" y1="6" y2="6" />
+                  <line x1="16" x2="16" y1="14" />
+                  <path d="M16 10h.01" />
+                  <path d="M12 10h.01" />
+                  <path d="M8 10h.01" />
+                  <path d="M12 14h.01" />
+                  <path d="M8 14h.01" />
+                  <path d="M12 18h.01" />
+                  <path d="M8 18h.01" />
+                </svg>
+              ),
+              circleStyle: "bg-[#0b1b38] text-[#388bfd] border border-[#388bfd]/30 shadow-[0_0_12px_rgba(56,139,253,0.25)]",
+              dot: null,
               tab: "home",
               prompt: "Hãy giúp tôi giải bài toán sau từng bước chi tiết: ",
             },
             {
               id: "english",
               name: "Học tiếng Anh",
-              icon: "💬",
-              color: "from-purple-700 to-violet-700 text-white shadow-purple-500/30",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              ),
+              circleStyle: "bg-[#230d3d] text-[#bf5af2] border border-[#bf5af2]/30 shadow-[0_0_12px_rgba(191,90,242,0.25)]",
+              dot: null,
               tab: "home",
               prompt: "Hãy đóng vai gia sư tiếng Anh luyện giao tiếp với tôi: ",
             },
             {
               id: "writer",
               name: "Viết lách",
-              icon: "✍️",
-              color: "from-orange-600 to-red-600 text-white shadow-orange-500/30",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                </svg>
+              ),
+              circleStyle: "bg-[#331405] text-[#ff793f] border border-[#ff793f]/30 shadow-[0_0_12px_rgba(255,121,63,0.25)]",
+              dot: null,
               tab: "home",
               prompt: "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
             },
             {
               id: "ocr",
               name: "Dịch ảnh/PDF",
-              icon: "🔍",
-              color: "from-teal-600 to-emerald-600 text-white shadow-teal-500/30",
+              icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                  <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                  <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                  <line x1="8" x2="16" y1="12" y2="12" />
+                </svg>
+              ),
+              circleStyle: "bg-[#052624] text-[#2bcbba] border border-[#2bcbba]/30 shadow-[0_0_12px_rgba(43,203,186,0.25)]",
+              dot: null,
               tab: "home",
               prompt: "Hãy trích xuất nội dung văn bản và dịch sang tiếng Việt: ",
             },
@@ -274,24 +328,24 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               <Component
                 key={idx}
                 {...(extraProps as any)}
-                className="flex flex-col items-center gap-1.5 shrink-0 group cursor-pointer transition-all"
+                className="flex flex-col items-center gap-2 shrink-0 group cursor-pointer transition-transform hover:-translate-y-1 active:translate-y-0"
               >
-                {/* Circular Icon with Glow */}
+                {/* Sleek Dark Circular Icon Badge */}
                 <div className="relative">
                   <div
-                    className={`w-12 h-12 rounded-full bg-gradient-to-tr ${item.color} flex items-center justify-center text-lg shadow-lg group-hover:scale-110 group-active:scale-95 transition-all duration-300 ring-2 ring-white/10`}
+                    className={`w-12 h-12 rounded-full ${item.circleStyle} flex items-center justify-center transition-all duration-300 group-hover:scale-110`}
                   >
-                    <span>{item.icon}</span>
+                    {item.icon}
                   </div>
                   {item.dot && (
                     <span
-                      className={`absolute top-0 right-0 w-2.5 h-2.5 rounded-full ${item.dot} ring-2 ring-slate-900 animate-pulse`}
+                      className={`absolute top-0 right-0 w-2.5 h-2.5 rounded-full ${item.dot} ring-2 ring-[#0c0e17] dark:ring-black`}
                     />
                   )}
                 </div>
 
-                {/* Title below */}
-                <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition-colors whitespace-nowrap">
+                {/* Clean minimalist text label */}
+                <span className="text-[12px] font-medium text-slate-700 dark:text-neutral-300 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors whitespace-nowrap">
                   {item.name}
                 </span>
               </Component>
