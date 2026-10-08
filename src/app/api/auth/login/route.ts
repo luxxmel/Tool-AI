@@ -50,12 +50,12 @@ export async function POST(request: NextRequest) {
     }
 
     const finalUser = user || {
-      id: isAdmin ? "cmuchyzaf0000tar86bsjbasb" : cleanEmail,
+      id: isRootAdmin ? "cmuchyzaf0000tar86bsjbasb" : cleanEmail,
       email: cleanEmail,
       name: cleanName,
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-      credits: isAdmin ? 999999 : 20,
-      role: isAdmin ? "ADMIN" : "USER",
+      credits: isRootAdmin ? 999999 : 20,
+      role: isRootAdmin ? "ADMIN" : "USER",
     };
 
     return NextResponse.json({

@@ -257,7 +257,7 @@ interface StoryWriterViewProps {
 }
 
 export default function StoryWriterView({ onBack }: StoryWriterViewProps) {
-  const { user } = useAuth();
+  const { user, updateUserCredits } = useAuth();
   const { t, language } = useLanguage();
   const { showAlert, showConfirm } = usePopup();
 
@@ -395,6 +395,24 @@ export default function StoryWriterView({ onBack }: StoryWriterViewProps) {
       return;
     }
 
+    if (!user) {
+      showAlert(
+        language === "en" ? "Please sign in to analyze stories" : "Vui lòng đăng nhập để phân tích truyện",
+        "Lưu ý",
+        "warning"
+      );
+      return;
+    }
+
+    if (user.role !== "ADMIN" && (user.credits || 0) < 1) {
+      showAlert(
+        language === "en" ? "Insufficient credits. Please recharge!" : "Tài khoản của bạn đã hết credits. Vui lòng nạp thêm!",
+        "Hết Credits",
+        "warning"
+      );
+      return;
+    }
+
     setIsAnalyzing(true);
     setAiResult("");
 
@@ -407,11 +425,19 @@ export default function StoryWriterView({ onBack }: StoryWriterViewProps) {
           mode: selectedMode,
           context: aiContext,
           language: language,
+          userId: user.id,
+          userEmail: user.email,
         }),
       });
 
       if (!res.ok) {
-        throw new Error("API error");
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "API error");
+      }
+
+      const remainingCreditsHeader = res.headers.get("X-Remaining-Credits");
+      if (remainingCreditsHeader !== null && updateUserCredits) {
+        updateUserCredits(Number(remainingCreditsHeader));
       }
 
       const reader = res.body?.getReader();

@@ -172,12 +172,33 @@ function generatePersonaFallback(
       `3. **Lời khuyên của Thầy:** "Tâm an vạn sự an". Hãy chú trọng chăm sóc sức khỏe và vun đắp các mối quan hệ chân thành xung quanh nhé thí chủ.`;
   }
 
-  // 7. Tarot
+  // 7. Tarot (Bản luận giải tâm lý & trực giác chuyên sâu 4 tầng)
   if (botPrompt.includes("Tarot") || botName.includes("Tarot")) {
-    return `🔮 Vũ trụ đã gửi thông điệp thông qua trải bài 3 lá cho bạn:\n\n` +
-      `✨ **Lá 1 - Quá khứ (The Fool):** Bạn đã từng bắt đầu một chặng đường mới với rất nhiều sự dũng cảm và kỳ vọng, dù có đôi lúc thiếu đi sự chuẩn bị kỹ càng.\n` +
-      `🌿 **Lá 2 - Hiện tại (The Star):** Hy vọng và sự chữa lành đang đến. Câu hỏi "${userMessage}" là dấu hiệu cho thấy trực giác của bạn đang thức tỉnh và tìm kiếm hướng đi đúng đắn.\n` +
-      `🌟 **Lá 3 - Tương lai (The Sun):** Ánh sáng của sự thành công và rõ ràng đang chờ đón. Hãy tin tưởng vào năng lượng tích cực của bản thân!`;
+    return `🔮 **BẢN LUẬN GIẢI TAROT TRỰC GIÁC & TÂM LÝ CHUYÊN SÂU TỪ READER LUNA**\n\n` +
+      `---\n\n` +
+      `### 🌿 1. TẦN SỐ NĂNG LƯỢNG CHỦ ĐẠO & KẾT NỐI VŨ TRỤ\n` +
+      `Chào bạn, khi bạn mở trải bài này với tâm tư hướng về câu hỏi của mình, Vũ Trụ phản chiếu một dòng năng lượng đang có sự chuyển dịch rất lớn bên trong bạn. Trạng thái chông chênh hay những câu hỏi chưa có lời đáp ở hiện tại thực chất là hồi chuông đánh thức trực giác của bạn, nhắc nhở bạn đã đến lúc nhìn nhận sâu sắc vào bản chất vấn đề thay vì để những nỗi lo mơ hồ chi phối.\n\n` +
+      `---\n\n` +
+      `### 🎴 2. PHÂN TÍCH ĐA TẦNG Ý NGHĨA TRẢI BÀI\n\n` +
+      `✨ **Khía cạnh 1: Nguồn gốc & Năng lượng nền tảng (Gốc rễ vấn đề)**\n` +
+      `- **Tầng biểu tượng:** Bạn đang mang theo những trải nghiệm, kỳ vọng và cả những vết hằn cảm xúc từ giai đoạn trước bước vào hoàn cảnh hiện tại.\n` +
+      `- **Tâm lý thực tế:** Có những rào cản vô hình xuất phát từ nỗi sợ bị tổn thương hoặc sợ mất kiểm soát, khiến bạn có xu hướng chần chừ hoặc suy nghĩ quá nhiều.\n` +
+      `- **Thông điệp:** Hãy học cách chấp nhận những gì đã qua như những bài học trưởng thành vô giá.\n\n` +
+      `🌿 **Khía cạnh 2: Hiện trạng thực tế & Thử thách cần vượt qua**\n` +
+      `- **Tầng biểu tượng:** Năng lượng của sự thức tỉnh và chữa lành đang chảy mạnh mẽ trong bạn. Thời điểm này đòi hỏi sự chân thành tuyệt đối với chính mình.\n` +
+      `- **Tâm lý thực tế:** Bạn có thể đang cảm thấy có sự xung đột giữa lý trí và cảm xúc, muốn tiến tới nhưng lại e ngại rủi ro.\n` +
+      `- **Thông điệp:** Đừng vội vàng đưa ra quyết định dựa trên cảm xúc nhất thời; hãy dành cho mình khoảng lặng để lắng nghe tiếng nói bên trong.\n\n` +
+      `🌟 **Khía cạnh 3: Hướng phát triển & Xu hướng tương lai**\n` +
+      `- **Tầng biểu tượng:** Ánh sáng của sự minh bạch, thấu hiểu và thuận dòng tự nhiên đang dần mở ra.\n` +
+      `- **Tâm lý thực tế:** Khi bạn buông bỏ gánh nặng nghi ngờ và chủ động kết nối chân thành, mọi nút thắt sẽ tự động tìm được lối thoát êm đẹp.\n\n` +
+      `---\n\n` +
+      `### 🧩 3. BỨC TRANH TỔNG HỢP & NÚT THẮT CẦN THÁO GỠ\n` +
+      `Sợi dây liên kết giữa các nguồn năng lượng cho thấy bạn là người có trái tim nhạy cảm và trực giác phong phú. Nút thắt lớn nhất của bạn không nằm ở ngoại cảnh, mà nằm ở sự dũng cảm tin tưởng vào giá trị của bản thân. Khi bạn trao cho mình sự bao dung và bình an, mọi mối quan hệ và con đường phía trước sẽ trở nên sáng tỏ.\n\n` +
+      `---\n\n` +
+      `### 🌟 4. HÀNH ĐỘNG THỰC TẾ & LỜI NHẮN NHỦ TỪ VŨ TRỤ\n` +
+      `1. **Lắng nghe nội tâm:** Dành 10-15 phút tĩnh lặng mỗi ngày để kết nối với cảm xúc chân thật nhất của bạn.\n` +
+      `2. **Giao tiếp chân thành:** Dũng cảm bày tỏ suy nghĩ rõ ràng, tôn trọng ranh giới cảm xúc của bản thân và đối phương.\n` +
+      `3. **Vững tin bước tiếp:** Tin tưởng vào hành trình của mình — bạn đang đi đúng hướng cần đi để trở thành phiên bản tốt đẹp nhất! ✨`;
   }
 
   // 8. Toán
@@ -786,18 +807,30 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
 
     // Danh sách ứng viên AI theo thứ tự ưu tiên (Failover Chain)
     const { googleAI } = await import("@/lib/aiProvider");
-    const candidateModels: Array<{ model: any; name: string }> = [];
+    const candidateModels: Array<{ model: any; name: string; isGoogle?: boolean }> = [];
 
     // Ưu tiên hàng đầu: Mô hình người dùng trực tiếp lựa chọn
     if (selectedAI) {
-      candidateModels.push({ model: selectedAI.model, name: selectedAI.name });
+      candidateModels.push({
+        model: selectedAI.model,
+        name: selectedAI.name,
+        isGoogle: selectedAI.modelId?.includes("gemini"),
+      });
     }
 
-    candidateModels.push({ model: googleAI("gemini-2.5-flash"), name: "Gemini 2.5 Flash" });
-    candidateModels.push({ model: googleAI("gemini-3.7-flash"), name: "Gemini 3.7 Flash" });
+    // Luôn ưu tiên Google Generative AI gemini-2.5-flash vì siêu tốc và ổn định nhất
+    candidateModels.push({
+      model: googleAI("gemini-2.5-flash"),
+      name: "Gemini 2.5 Flash",
+      isGoogle: true,
+    });
 
     if (trollLLMClient) {
-      candidateModels.push({ model: trollLLMClient("gpt-5.5"), name: "Omni Fast (Backup)" });
+      candidateModels.push({
+        model: trollLLMClient("gemini-3-7-flash"),
+        name: "Gemini 3.7 Flash (TrollLLM Backup)",
+        isGoogle: false,
+      });
     }
 
     const textEncoder = new TextEncoder();
@@ -809,7 +842,12 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
         let accumulatedText = "";
 
         // Thử từng ứng viên AI trong danh sách failover
-        const isStoryOrHealingBot = isVipStoryChar || isFreeHealingBot || botId.startsWith("char-");
+        const isExcludedFromSearch =
+          isVipStoryChar ||
+          isFreeHealingBot ||
+          botId === "tarot-reader" ||
+          botId.startsWith("char-") ||
+          botId.startsWith("tarot");
 
         for (const candidate of candidateModels) {
           if (hasSentAnyChunk) break;
@@ -820,10 +858,10 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
               messages: formattedMessages,
             };
 
-            // Thử đính kèm Google Search, nếu lỗi sẽ tự bỏ tools để phản hồi nội dung trực tiếp
+            // Chỉ đính kèm Google Search khi bot cho phép và model hỗ trợ
             let result;
             try {
-              if (!isStoryOrHealingBot) {
+              if (!isExcludedFromSearch && candidate.isGoogle) {
                 streamOptions.tools = {
                   google_search: google.tools.googleSearch({}),
                 };

@@ -2,10 +2,67 @@ import { NextRequest, NextResponse } from "next/server";
 import { streamText } from "ai";
 import { getAIModel } from "@/lib/aiProvider";
 
+import { prisma } from "@/lib/prisma";
+import { ensureUser } from "@/lib/ensureUser";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { text, mode, context, language = "vi" } = body;
+    let userId = body.userId;
+    let userEmail = body.userEmail;
+    let userName = body.userName;
+
+    // Cookie fallback
+    if (!userId || !userEmail) {
+      const cookieAuth = req.cookies.get("tool_ai_auth_user");
+      if (cookieAuth?.value) {
+        try {
+          const cookieUser = JSON.parse(decodeURIComponent(cookieAuth.value));
+          if (!userId && cookieUser?.id) userId = cookieUser.id;
+          if (!userEmail && cookieUser?.email) userEmail = cookieUser.email;
+          if (!userName && (cookieUser?.displayName || cookieUser?.name || cookieUser?.username)) {
+            userName = cookieUser?.displayName || cookieUser?.name || cookieUser?.username;
+          }
+        } catch {}
+      }
+    }
+
+    const user = await ensureUser(userId, userEmail, userName);
+    if (!user) {
+      return NextResponse.json(
+        { error: "Vui lòng đăng nhập để phân tích truyện", needLogin: true },
+        { status: 401 }
+      );
+    }
+
+    const isAdmin =
+      user.role === "ADMIN" ||
+      user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+
+    if (!isAdmin && user.credits < 1) {
+      return NextResponse.json(
+        {
+          error: "Tài khoản của bạn đã hết credits. Vui lòng nạp thêm để tiếp tục!",
+          code: "INSUFFICIENT_CREDITS",
+          credits: user.credits,
+        },
+        { status: 403 }
+      );
+    }
+
+    let updatedCredits = isAdmin ? 999999 : user.credits;
+    if (!isAdmin) {
+      try {
+        const dbUpdated = await prisma.user.update({
+          where: { id: user.id },
+          data: { credits: { decrement: 1 } },
+        });
+        updatedCredits = dbUpdated.credits;
+      } catch {
+        updatedCredits = Math.max(0, user.credits - 1);
+      }
+    }
 
     if (!text || !text.trim()) {
       return NextResponse.json({ error: "Cần có nội dung để phân tích" }, { status: 400 });
@@ -120,7 +177,10 @@ Do not use Vietnamese.`;
     });
 
     return new Response(stream, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Remaining-Credits": String(updatedCredits),
+      },
     });
   } catch (error: any) {
     console.error("Story analyze error:", error);

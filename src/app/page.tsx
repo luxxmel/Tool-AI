@@ -312,7 +312,7 @@ function HomeContent() {
           ) : currentTab === "profile" ? (
             <UserProfileView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : currentTab === "tarot" ? (
-            <TarotView />
+            <TarotView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : isChatOpen ? (
             /* Direct In-Page Chat (ChatGPT Style) */
             <HomeChatView

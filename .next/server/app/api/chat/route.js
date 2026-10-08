@@ -61,7 +61,7 @@ Ng\xf4n ngữ hiển thị của hệ thống l\xe0 TIẾNG VIỆT. H\xe3y phả
 
 ${F}`:a}try{await f.z.message.create({data:{conversationId:C,sender:"USER",content:K}}),await f.z.conversation.update({where:{id:C},data:{updatedAt:new Date}})}catch(a){console.warn("Lỗi khi lưu tin nhắn người d\xf9ng v\xe0o DB:",a)}let L=G.length>0?G[0]:void 0;if(!L&&Array.isArray(m))for(let a=m.length-1;a>=0;a--){let b=m[a];if(Array.isArray(b.images)&&b.images.length>0){L=b.images[b.images.length-1];break}if("string"==typeof b.content){let a=b.content.match(/(?:\/uploads\/[^\s\)\"]+|data:image\/[^\s\)\"]+|https?:\/\/[^\s\)\"]+\.(?:png|jpe?g|webp|gif))/i);if(a){L=a[0];break}}}let M=(0,j.A)(F,L?[L]:G,d);if(M.isImageRequest)try{console.log(`[Chat Image Engine] K\xedch hoạt chế độ: ${M.type} | Prompt: "${M.cleanPrompt}" | HasRef: ${!!L}`);let a=await (0,j.b)({prompt:M.cleanPrompt,referenceImage:L,botName:B.name,botId:d}),b=n(a.markdownContent),c=new TextEncoder,e=C;f.z.message.create({data:{conversationId:e,sender:"ASSISTANT",content:b}}).catch(()=>{});let g=new ReadableStream({async start(a){for(let d=0;d<b.length;d+=20){let e=b.slice(d,d+20);a.enqueue(c.encode(e)),await new Promise(a=>setTimeout(a,4))}a.close()}});return new Response(g,{headers:{"Content-Type":"text/plain; charset=utf-8","X-Remaining-Credits":String(w?999999:A.credits),"X-Conversation-Id":e,"X-AI-Model-Id":"creative","X-AI-Model":encodeURIComponent(B.name||"Họa Sĩ AI"),"X-Generated-Image":encodeURIComponent(a.imageUrl)}})}catch(a){console.error("Lỗi khi xử l\xfd tạo/sửa h\xecnh ảnh trong chat:",a)}let N={hasExtractedContent:!1,enrichedPrompt:F,extractedItems:[]};/https?:\/\/[^\s]+/i.test(F)&&(N=await (0,l.C)(F,d)).hasExtractedContent&&(J+=`
 
-[QUY TẮC BẮT BUỘC KHI XỬ L\xdd ĐƯỜNG DẪN LINK]: Hệ thống đ\xe3 tự động tr\xedch xuất to\xe0n bộ nội dung từ đường dẫn YouTube / Web của người d\xf9ng. Bạn h\xe3y lập tức tiến h\xe0nh t\xf3m tắt, ph\xe2n t\xedch v\xe0 trả lời trực tiếp dựa tr\xean nội dung đ\xe3 được cung cấp. TUYỆT ĐỐI KH\xd4NG N\xd3I rằng bạn kh\xf4ng thể mở link hay kh\xf4ng c\xf3 quyền truy cập internet.`);let O=(0,h.i3)(q||(x?"creative":"fast")),P=m.map((a,b)=>{let c=b===m.length-1&&"user"===a.role&&N.hasExtractedContent?N.enrichedPrompt:a.content||"",d=Array.isArray(a.images)?a.images:[];return d.length>0&&"user"===a.role?{role:"user",content:[{type:"text",text:c||"H\xe3y quan s\xe1t v\xe0 ph\xe2n t\xedch h\xecnh ảnh đ\xednh k\xe8m n\xe0y."},...d.map(a=>({type:"image",image:a}))]}:{role:a.role,content:c}}),{googleAI:Q}=await Promise.resolve().then(c.bind(c,6558)),R=[];O&&R.push({model:O.model,name:O.name}),R.push({model:Q("gemini-2.5-flash"),name:"Gemini 2.5 Flash"}),R.push({model:Q("gemini-3.7-flash"),name:"Gemini 3.7 Flash"}),h.wf&&R.push({model:(0,h.wf)("gpt-5.5"),name:"Omni Fast (Backup)"});let S=new TextEncoder,T=C,U=new ReadableStream({async start(a){let b=!1,c="",e=y||x||d.startsWith("char-");for(let d of R){if(b)break;try{let f,h={model:d.model,system:J,messages:P};try{e||(h.tools={google_search:i.q7.tools.googleSearch({})}),f=(0,g.gM)(h)}catch(a){console.warn("Bỏ qua google_search tool do lỗi:",a),delete h.tools,f=(0,g.gM)(h)}for await(let d of f.textStream)d&&(b=!0,c+=d,a.enqueue(S.encode(n(d))));if(b&&c.trim().length>0)break}catch(a){if(console.warn(`Model [${d.name}] gặp sự cố, k\xedch hoạt phương \xe1n dự ph\xf2ng:`,a),b)break}}if(!b||!c.trim()){console.log(`[Persona Fallback] K\xedch hoạt c\xe2u trả lời độc bản cho bot: ${B.name}`);let d=n(function(a,b,c,d=[],e="vi"){if("en"===e)return`[${a}]: Hello! I have received your message: "${c}".
+[QUY TẮC BẮT BUỘC KHI XỬ L\xdd ĐƯỜNG DẪN LINK]: Hệ thống đ\xe3 tự động tr\xedch xuất to\xe0n bộ nội dung từ đường dẫn YouTube / Web của người d\xf9ng. Bạn h\xe3y lập tức tiến h\xe0nh t\xf3m tắt, ph\xe2n t\xedch v\xe0 trả lời trực tiếp dựa tr\xean nội dung đ\xe3 được cung cấp. TUYỆT ĐỐI KH\xd4NG N\xd3I rằng bạn kh\xf4ng thể mở link hay kh\xf4ng c\xf3 quyền truy cập internet.`);let O=(0,h.i3)(q||(x?"creative":"fast")),P=m.map((a,b)=>{let c=b===m.length-1&&"user"===a.role&&N.hasExtractedContent?N.enrichedPrompt:a.content||"",d=Array.isArray(a.images)?a.images:[];return d.length>0&&"user"===a.role?{role:"user",content:[{type:"text",text:c||"H\xe3y quan s\xe1t v\xe0 ph\xe2n t\xedch h\xecnh ảnh đ\xednh k\xe8m n\xe0y."},...d.map(a=>({type:"image",image:a}))]}:{role:a.role,content:c}}),{googleAI:Q}=await Promise.resolve().then(c.bind(c,6558)),R=[];O&&R.push({model:O.model,name:O.name,isGoogle:O.modelId?.includes("gemini")}),R.push({model:Q("gemini-2.5-flash"),name:"Gemini 2.5 Flash",isGoogle:!0}),h.wf&&R.push({model:(0,h.wf)("gemini-3-7-flash"),name:"Gemini 3.7 Flash (TrollLLM Backup)",isGoogle:!1});let S=new TextEncoder,T=C,U=new ReadableStream({async start(a){let b=!1,c="",e=y||x||"tarot-reader"===d||d.startsWith("char-")||d.startsWith("tarot");for(let d of R){if(b)break;try{let f,h={model:d.model,system:J,messages:P};try{!e&&d.isGoogle&&(h.tools={google_search:i.q7.tools.googleSearch({})}),f=(0,g.gM)(h)}catch(a){console.warn("Bỏ qua google_search tool do lỗi:",a),delete h.tools,f=(0,g.gM)(h)}for await(let d of f.textStream)d&&(b=!0,c+=d,a.enqueue(S.encode(n(d))));if(b&&c.trim().length>0)break}catch(a){if(console.warn(`Model [${d.name}] gặp sự cố, k\xedch hoạt phương \xe1n dự ph\xf2ng:`,a),b)break}}if(!b||!c.trim()){console.log(`[Persona Fallback] K\xedch hoạt c\xe2u trả lời độc bản cho bot: ${B.name}`);let d=n(function(a,b,c,d=[],e="vi"){if("en"===e)return`[${a}]: Hello! I have received your message: "${c}".
 
 As ${a}, I am here to assist you thoroughly and effectively in English.
 
@@ -136,11 +136,42 @@ Thế gian dẫu c\xf3 x\xf4 bồ tr\xe1o trở, nếp nh\xe0 nhỏ n\xe0y Tuy�
 Theo quy luật ngũ h\xe0nh v\xe0 cung mệnh hiện thời:
 1. **Vận tr\xecnh hiện tại:** Đang c\xf3 sự chuyển dịch giữa h\xe0nh Thủy v\xe0 h\xe0nh Mộc, b\xe1o hiệu thời kỳ cần ki\xean nhẫn t\xedch lũy kinh nghiệm, tr\xe1nh n\xf3ng vội đưa ra quyết định đột ngột.
 2. **Cơ hội ph\xeda trước:** C\xf3 qu\xfd nh\xe2n trợ vận từ phương Đ\xf4ng. Nếu th\xed chủ giữ t\xe2m s\xe1ng, nỗ lực hết m\xecnh th\xec mọi sự trắc trở sẽ dần h\xf3a c\xe1t l\xe0nh.
-3. **Lời khuy\xean của Thầy:** "T\xe2m an vạn sự an". H\xe3y ch\xfa trọng chăm s\xf3c sức khỏe v\xe0 vun đắp c\xe1c mối quan hệ ch\xe2n th\xe0nh xung quanh nh\xe9 th\xed chủ.`:b.includes("Tarot")||a.includes("Tarot")?`🔮 Vũ trụ đ\xe3 gửi th\xf4ng điệp th\xf4ng qua trải b\xe0i 3 l\xe1 cho bạn:
+3. **Lời khuy\xean của Thầy:** "T\xe2m an vạn sự an". H\xe3y ch\xfa trọng chăm s\xf3c sức khỏe v\xe0 vun đắp c\xe1c mối quan hệ ch\xe2n th\xe0nh xung quanh nh\xe9 th\xed chủ.`:b.includes("Tarot")||a.includes("Tarot")?`🔮 **BẢN LUẬN GIẢI TAROT TRỰC GI\xc1C & T\xc2M L\xdd CHUY\xcaN S\xc2U TỪ READER LUNA**
 
-✨ **L\xe1 1 - Qu\xe1 khứ (The Fool):** Bạn đ\xe3 từng bắt đầu một chặng đường mới với rất nhiều sự dũng cảm v\xe0 kỳ vọng, d\xf9 c\xf3 đ\xf4i l\xfac thiếu đi sự chuẩn bị kỹ c\xe0ng.
-🌿 **L\xe1 2 - Hiện tại (The Star):** Hy vọng v\xe0 sự chữa l\xe0nh đang đến. C\xe2u hỏi "${c}" l\xe0 dấu hiệu cho thấy trực gi\xe1c của bạn đang thức tỉnh v\xe0 t\xecm kiếm hướng đi đ\xfang đắn.
-🌟 **L\xe1 3 - Tương lai (The Sun):** \xc1nh s\xe1ng của sự th\xe0nh c\xf4ng v\xe0 r\xf5 r\xe0ng đang chờ đ\xf3n. H\xe3y tin tưởng v\xe0o năng lượng t\xedch cực của bản th\xe2n!`:b.includes("To\xe1n")||a.includes("To\xe1n")?`Ch\xe0o bạn! M\xecnh l\xe0 Gia sư Giải To\xe1n, m\xecnh xin hướng dẫn bạn giải quyết vấn đề "${c}" như sau:
+---
+
+### 🌿 1. TẦN SỐ NĂNG LƯỢNG CHỦ ĐẠO & KẾT NỐI VŨ TRỤ
+Ch\xe0o bạn, khi bạn mở trải b\xe0i n\xe0y với t\xe2m tư hướng về c\xe2u hỏi của m\xecnh, Vũ Trụ phản chiếu một d\xf2ng năng lượng đang c\xf3 sự chuyển dịch rất lớn b\xean trong bạn. Trạng th\xe1i ch\xf4ng ch\xeanh hay những c\xe2u hỏi chưa c\xf3 lời đ\xe1p ở hiện tại thực chất l\xe0 hồi chu\xf4ng đ\xe1nh thức trực gi\xe1c của bạn, nhắc nhở bạn đ\xe3 đến l\xfac nh\xecn nhận s\xe2u sắc v\xe0o bản chất vấn đề thay v\xec để những nỗi lo mơ hồ chi phối.
+
+---
+
+### 🎴 2. PH\xc2N T\xcdCH ĐA TẦNG \xdd NGHĨA TRẢI B\xc0I
+
+✨ **Kh\xeda cạnh 1: Nguồn gốc & Năng lượng nền tảng (Gốc rễ vấn đề)**
+- **Tầng biểu tượng:** Bạn đang mang theo những trải nghiệm, kỳ vọng v\xe0 cả những vết hằn cảm x\xfac từ giai đoạn trước bước v\xe0o ho\xe0n cảnh hiện tại.
+- **T\xe2m l\xfd thực tế:** C\xf3 những r\xe0o cản v\xf4 h\xecnh xuất ph\xe1t từ nỗi sợ bị tổn thương hoặc sợ mất kiểm so\xe1t, khiến bạn c\xf3 xu hướng chần chừ hoặc suy nghĩ qu\xe1 nhiều.
+- **Th\xf4ng điệp:** H\xe3y học c\xe1ch chấp nhận những g\xec đ\xe3 qua như những b\xe0i học trưởng th\xe0nh v\xf4 gi\xe1.
+
+🌿 **Kh\xeda cạnh 2: Hiện trạng thực tế & Thử th\xe1ch cần vượt qua**
+- **Tầng biểu tượng:** Năng lượng của sự thức tỉnh v\xe0 chữa l\xe0nh đang chảy mạnh mẽ trong bạn. Thời điểm n\xe0y đ\xf2i hỏi sự ch\xe2n th\xe0nh tuyệt đối với ch\xednh m\xecnh.
+- **T\xe2m l\xfd thực tế:** Bạn c\xf3 thể đang cảm thấy c\xf3 sự xung đột giữa l\xfd tr\xed v\xe0 cảm x\xfac, muốn tiến tới nhưng lại e ngại rủi ro.
+- **Th\xf4ng điệp:** Đừng vội v\xe0ng đưa ra quyết định dựa tr\xean cảm x\xfac nhất thời; h\xe3y d\xe0nh cho m\xecnh khoảng lặng để lắng nghe tiếng n\xf3i b\xean trong.
+
+🌟 **Kh\xeda cạnh 3: Hướng ph\xe1t triển & Xu hướng tương lai**
+- **Tầng biểu tượng:** \xc1nh s\xe1ng của sự minh bạch, thấu hiểu v\xe0 thuận d\xf2ng tự nhi\xean đang dần mở ra.
+- **T\xe2m l\xfd thực tế:** Khi bạn bu\xf4ng bỏ g\xe1nh nặng nghi ngờ v\xe0 chủ động kết nối ch\xe2n th\xe0nh, mọi n\xfat thắt sẽ tự động t\xecm được lối tho\xe1t \xeam đẹp.
+
+---
+
+### 🧩 3. BỨC TRANH TỔNG HỢP & N\xdaT THẮT CẦN TH\xc1O GỠ
+Sợi d\xe2y li\xean kết giữa c\xe1c nguồn năng lượng cho thấy bạn l\xe0 người c\xf3 tr\xe1i tim nhạy cảm v\xe0 trực gi\xe1c phong ph\xfa. N\xfat thắt lớn nhất của bạn kh\xf4ng nằm ở ngoại cảnh, m\xe0 nằm ở sự dũng cảm tin tưởng v\xe0o gi\xe1 trị của bản th\xe2n. Khi bạn trao cho m\xecnh sự bao dung v\xe0 b\xecnh an, mọi mối quan hệ v\xe0 con đường ph\xeda trước sẽ trở n\xean s\xe1ng tỏ.
+
+---
+
+### 🌟 4. H\xc0NH ĐỘNG THỰC TẾ & LỜI NHẮN NHỦ TỪ VŨ TRỤ
+1. **Lắng nghe nội t\xe2m:** D\xe0nh 10-15 ph\xfat tĩnh lặng mỗi ng\xe0y để kết nối với cảm x\xfac ch\xe2n thật nhất của bạn.
+2. **Giao tiếp ch\xe2n th\xe0nh:** Dũng cảm b\xe0y tỏ suy nghĩ r\xf5 r\xe0ng, t\xf4n trọng ranh giới cảm x\xfac của bản th\xe2n v\xe0 đối phương.
+3. **Vững tin bước tiếp:** Tin tưởng v\xe0o h\xe0nh tr\xecnh của m\xecnh — bạn đang đi đ\xfang hướng cần đi để trở th\xe0nh phi\xean bản tốt đẹp nhất! ✨`:b.includes("To\xe1n")||a.includes("To\xe1n")?`Ch\xe0o bạn! M\xecnh l\xe0 Gia sư Giải To\xe1n, m\xecnh xin hướng dẫn bạn giải quyết vấn đề "${c}" như sau:
 
 📌 **Ph\xe2n t\xedch đề b\xe0i:**
 - X\xe1c định giả thiết v\xe0 điều kiện cần t\xecm.

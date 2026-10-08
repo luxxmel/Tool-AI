@@ -21,8 +21,12 @@ interface TarotHistoryItem {
   readingText: string;
 }
 
-export default function TarotView() {
-  const { user } = useAuth();
+interface TarotViewProps {
+  onOpenLoginModal?: () => void;
+}
+
+export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
+  const { user, updateUserCredits } = useAuth();
   const [showRechargeModal, setShowRechargeModal] = useState(false);
 
   // Flow steps matching tatca.ai: 'home' -> 'select_spread' -> 'target_info' -> 'shuffle' -> 'draw' -> 'reading'
@@ -172,6 +176,16 @@ export default function TarotView() {
 
   // Bốc tất cả ngẫu nhiên
   const handlePickAllAuto = () => {
+    if (!user) {
+      onOpenLoginModal?.();
+      return;
+    }
+    const isAdmin = user.role === "ADMIN" || user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+    if (!isAdmin && (user.credits || 0) < 1) {
+      setShowRechargeModal(true);
+      return;
+    }
+
     const targetCount = selectedSpread.cardCount;
     const currentUnpicked = deck.filter(c => !pickedCards.some(p => p.card.id === c.id));
     const needed = targetCount - pickedCards.length;
@@ -196,6 +210,16 @@ export default function TarotView() {
   };
 
   const handleAddExtraCard = () => {
+    if (!user) {
+      onOpenLoginModal?.();
+      return;
+    }
+    const isAdmin = user.role === "ADMIN" || user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+    if (!isAdmin && (user.credits || 0) < 1) {
+      setShowRechargeModal(true);
+      return;
+    }
+
     const unpicked = deck.filter(c => !pickedCards.some(p => p.card.id === c.id));
     if (unpicked.length === 0) return;
     const randomCard = unpicked[Math.floor(Math.random() * unpicked.length)];
@@ -214,11 +238,32 @@ export default function TarotView() {
 
   const handleStartReading = () => {
     if (pickedCards.length < selectedSpread.cardCount) return;
+    if (!user) {
+      onOpenLoginModal?.();
+      return;
+    }
+    const isAdmin = user.role === "ADMIN" || user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+    if (!isAdmin && (user.credits || 0) < 1) {
+      setShowRechargeModal(true);
+      return;
+    }
+
     setStep('reading');
     generateAiReading(pickedCards);
   };
 
   const generateAiReading = async (currentPicked: SelectedCardItem[]) => {
+    if (!user) {
+      onOpenLoginModal?.();
+      return;
+    }
+
+    const isAdmin = user.role === "ADMIN" || user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
+    if (!isAdmin && (user.credits || 0) < 1) {
+      setShowRechargeModal(true);
+      return;
+    }
+
     setIsReadingLoading(true);
     setReadingText('');
 
@@ -269,14 +314,34 @@ QUY TẮC LUẬN GIẢI CHUẨN XÁC VÀ TÂM LÝ CHUYÊN SÂU (Viết dài, ít
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           botId: 'tarot-reader',
-          userId: user?.id || 'tarot_user_anonymous',
+          userId: user.id,
+          userEmail: user.email,
+          userName: user.displayName || user.username,
           messages: [{ role: 'user', content: prompt }]
         })
       });
 
+      if (response.status === 401) {
+        onOpenLoginModal?.();
+        setIsReadingLoading(false);
+        return;
+      }
+
+      if (response.status === 403) {
+        setShowRechargeModal(true);
+        setIsReadingLoading(false);
+        return;
+      }
+
       if (!response.ok) {
         const errJson = await response.json().catch(() => ({}));
         throw new Error(errJson.error || 'API Error');
+      }
+
+      // Cập nhật số token/credits ngay lập tức từ header phản hồi của server
+      const remainingCreditsHeader = response.headers.get("X-Remaining-Credits");
+      if (remainingCreditsHeader !== null) {
+        updateUserCredits(Number(remainingCreditsHeader));
       }
 
       const reader = response.body?.getReader();
