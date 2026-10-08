@@ -574,68 +574,6 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   return (
     <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6 px-3 sm:px-6 py-2">
 
-      {/* ── ANNOUNCEMENT CAROUSEL BANNER ── */}
-      {activeAnnouncements.length > 0 && announcement && (
-        <div className={`relative overflow-hidden rounded-3xl border ${announcement.accent || "border-violet-500/30"} bg-gradient-to-r ${announcement.bg || "from-violet-950/80 via-indigo-950/80 to-slate-950/90"} p-5 sm:p-6 text-white shadow-xl transition-all duration-500`}>
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">{announcement.emoji || "✨"}</span>
-                <span className={`text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-gradient-to-r ${announcement.tagColor || "from-violet-600 to-indigo-600"} text-white shadow-xs`}>
-                  {bannerTag}
-                </span>
-                {activeAnnouncements.length > 1 && (
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    {safeIdx + 1} / {activeAnnouncements.length}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-base sm:text-lg font-black text-white tracking-tight line-clamp-1">
-                {bannerTitle}
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 mt-1 line-clamp-2 max-w-3xl">
-                {bannerDesc}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
-              {announcement.ctaHref && announcement.ctaHref !== "#" ? (
-                <Link
-                  href={announcement.ctaHref}
-                  className="px-4 py-2 rounded-xl bg-white text-slate-900 hover:bg-slate-100 text-xs font-bold transition-all shadow-md active:scale-95"
-                >
-                  {bannerCta}
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleOpenCreateModal}
-                  className="px-4 py-2 rounded-xl bg-white text-slate-900 hover:bg-slate-100 text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
-                >
-                  {bannerCta}
-                </button>
-              )}
-
-              {/* Carousel indicator dots */}
-              {activeAnnouncements.length > 1 && (
-                <div className="flex items-center gap-1.5 ml-2">
-                  {activeAnnouncements.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => goBanner(idx)}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        idx === safeIdx ? "w-6 bg-white" : "w-2 bg-white/30 hover:bg-white/60"
-                      }`}
-                      aria-label={`Chuyển đến thông báo ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ── MAIN CONTENT: Feed + Sidebar ── */}
       <div className="w-full flex flex-col lg:flex-row gap-6 items-start justify-between">
 
