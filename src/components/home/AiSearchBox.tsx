@@ -186,7 +186,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
           {[
             {
               id: "tarot",
-              name: "Tarot",
+              name: language === "en" ? "Tarot" : "Tarot",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="10" height="15" x="2" y="5" rx="2" transform="rotate(-12 7 12)" />
@@ -200,7 +200,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
             },
             {
               id: "tuvi",
-              name: "Tử Vi",
+              name: language === "en" ? "Tu Vi" : "Tử Vi",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
@@ -215,7 +215,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
             },
             {
               id: "chiemtinh",
-              name: "Chiêm Tinh",
+              name: language === "en" ? "Astrology" : "Chiêm Tinh",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="4.5" />
@@ -230,7 +230,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
             },
             {
               id: "battu",
-              name: "Bát Tự",
+              name: language === "en" ? "Bazi Chart" : "Bát Tự",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="18" height="18" x="3" y="3" rx="3" />
@@ -246,7 +246,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
             },
             {
               id: "toan",
-              name: "Giải Toán",
+              name: language === "en" ? "Math Solver" : "Giải Toán",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="16" height="20" x="4" y="2" rx="2" />
@@ -264,11 +264,11 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               circleStyle: "bg-[#0b1b38] text-[#388bfd] border border-[#388bfd]/30 shadow-[0_0_12px_rgba(56,139,253,0.25)]",
               dot: null,
               tab: "home",
-              prompt: "Hãy giúp tôi giải bài toán sau từng bước chi tiết: ",
+              prompt: language === "en" ? "Please solve this math problem step-by-step: " : "Hãy giúp tôi giải bài toán sau từng bước chi tiết: ",
             },
             {
               id: "english",
-              name: "Học tiếng Anh",
+              name: language === "en" ? "Learn English" : "Học tiếng Anh",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -277,11 +277,11 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               circleStyle: "bg-[#230d3d] text-[#bf5af2] border border-[#bf5af2]/30 shadow-[0_0_12px_rgba(191,90,242,0.25)]",
               dot: null,
               tab: "home",
-              prompt: "Hãy đóng vai gia sư tiếng Anh luyện giao tiếp với tôi: ",
+              prompt: language === "en" ? "Please act as an English conversational tutor: " : "Hãy đóng vai gia sư tiếng Anh luyện giao tiếp với tôi: ",
             },
             {
               id: "writer",
-              name: "Viết lách",
+              name: language === "en" ? "Writer" : "Viết lách",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -290,11 +290,11 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               circleStyle: "bg-[#331405] text-[#ff793f] border border-[#ff793f]/30 shadow-[0_0_12px_rgba(255,121,63,0.25)]",
               dot: null,
               tab: "home",
-              prompt: "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
+              prompt: language === "en" ? "Please help me write an engaging piece about: " : "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
             },
             {
               id: "ocr",
-              name: "Dịch ảnh/PDF",
+              name: language === "en" ? "OCR & Translate" : "Dịch ảnh/PDF",
               icon: (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 7V5a2 2 0 0 1 2-2h2" />
@@ -307,7 +307,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               circleStyle: "bg-[#052624] text-[#2bcbba] border border-[#2bcbba]/30 shadow-[0_0_12px_rgba(43,203,186,0.25)]",
               dot: null,
               tab: "home",
-              prompt: "Hãy trích xuất nội dung văn bản và dịch sang tiếng Việt: ",
+              prompt: language === "en" ? "Extract the text and translate it: " : "Hãy trích xuất nội dung văn bản và dịch sang tiếng Việt: ",
             },
           ].map((item, idx) => {
             const isDirectTab = item.tab !== "home" && !item.prompt;
