@@ -926,6 +926,7 @@ export default function AdminCmsPage() {
                       <th className="py-3 px-4">Người dùng</th>
                       <th className="py-3 px-4">Email</th>
                       <th className="py-3 px-4">Vai trò</th>
+                      <th className="py-3 px-4">Token (Credits)</th>
                       <th className="py-3 px-4">Trạng thái</th>
                       <th className="py-3 px-4">Ngày tham gia</th>
                       <th className="py-3 px-4">Lượt Prompt</th>
@@ -935,7 +936,7 @@ export default function AdminCmsPage() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                     {filteredMembers.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="py-12 text-center text-slate-400">
+                        <td colSpan={8} className="py-12 text-center text-slate-400">
                           Không tìm thấy người dùng nào phù hợp với bộ lọc.
                         </td>
                       </tr>
@@ -991,6 +992,13 @@ export default function AdminCmsPage() {
                               <option value="vip" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">⭐ Thành viên VIP</option>
                               <option value="admin" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">🛡️ Thăng cấp Admin</option>
                             </select>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                              <span>🪙</span>
+                              <span>{typeof u.credits === "number" ? u.credits.toLocaleString() : "20"}</span>
+                            </span>
                           </td>
 
                           <td className="py-3 px-4">
@@ -1224,6 +1232,7 @@ export default function AdminCmsPage() {
                       <th className="py-3 px-4">Quản trị viên</th>
                       <th className="py-3 px-4">Email Quản trị</th>
                       <th className="py-3 px-4">Cấp bậc</th>
+                      <th className="py-3 px-4">Token (Credits)</th>
                       <th className="py-3 px-4">Trạng thái</th>
                       <th className="py-3 px-4">Ngày cấp quyền</th>
                       <th className="py-3 px-4">Thao tác Prompt</th>
@@ -1233,7 +1242,7 @@ export default function AdminCmsPage() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                     {filteredAdmins.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="py-12 text-center text-slate-400">
+                        <td colSpan={8} className="py-12 text-center text-slate-400">
                           Không tìm thấy Quản trị viên nào phù hợp.
                         </td>
                       </tr>
@@ -1302,6 +1311,19 @@ export default function AdminCmsPage() {
                                 <option value="member" className="bg-white dark:bg-[#1a1c24] text-slate-900 dark:text-slate-100 py-1">👤 Hạ xuống Thành viên</option>
                               </select>
                             )}
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                              <span>🪙</span>
+                              <span>
+                                {u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com"
+                                  ? "Vô hạn (Admin)"
+                                  : typeof u.credits === "number"
+                                  ? u.credits.toLocaleString()
+                                  : "999,999"}
+                              </span>
+                            </span>
                           </td>
 
                           <td className="py-3 px-4">

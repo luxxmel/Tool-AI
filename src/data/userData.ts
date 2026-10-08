@@ -9,5 +9,6 @@ export interface CmsUser {
   joinedDate: string;
   lastLogin: string;
   promptsCount: number;
+  credits?: number;
 }
 
