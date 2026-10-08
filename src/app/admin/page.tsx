@@ -124,13 +124,15 @@ export default function AdminCmsPage() {
   const [creditToast, setCreditToast] = useState<string | null>(null);
   const [isCreditLoading, setIsCreditLoading] = useState(false);
 
-  // Announcements compose state
+  // Announcements state
+  const [announcementsList, setAnnouncementsList] = useState<any[]>([]);
+  const [isPostingAnnouncement, setIsPostingAnnouncement] = useState(false);
   const [compose, setCompose] = useState<ComposeForm>({
     emoji: "✨",
     tag: "Tính năng mới",
     title: "",
     desc: "",
-    cta: "Tìm hiểu thêm →",
+    cta: "Khám phá ngay →",
   });
   const [showComposedCode, setShowComposedCode] = useState(false);
 
@@ -206,17 +208,85 @@ export default function AdminCmsPage() {
     }
   };
 
+  const fetchAnnouncements = useCallback(async () => {
+    try {
+      const res = await fetch("/api/announcements");
+      if (res.ok) {
+        const data = await res.json();
+        setAnnouncementsList(data.announcements || []);
+      }
+    } catch (err) {
+      console.error("Lỗi khi tải danh sách thông báo:", err);
+    }
+  }, []);
+
+  const handlePublishAnnouncement = async () => {
+    if (!compose.title.trim() || !compose.desc.trim()) {
+      showAlert("Vui lòng nhập đầy đủ tiêu đề và nội dung thông báo", "Thiếu thông tin", "warning");
+      return;
+    }
+    setIsPostingAnnouncement(true);
+    try {
+      const res = await fetch("/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          emoji: compose.emoji || "📣",
+          tag: compose.tag || "Tính năng mới",
+          title: compose.title.trim(),
+          desc: compose.desc.trim(),
+          cta: compose.cta.trim() || "Khám phá ngay →",
+          ctaHref: "#",
+          type: "new_feature",
+          adminId: user?.id,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Lỗi khi đăng thông báo");
+
+      setAnnouncementsList(data.announcements || []);
+      showAlert("🎉 Đã đăng thông báo thành công lên toàn hệ thống!", "Thành công", "success");
+      setCompose({ emoji: "✨", tag: "Tính năng mới", title: "", desc: "", cta: "Khám phá ngay →" });
+    } catch (err: any) {
+      showError(err.message || "Không thể đăng thông báo");
+    } finally {
+      setIsPostingAnnouncement(false);
+    }
+  };
+
+  const handleDeleteAnnouncement = async (annId: string | number) => {
+    const ok = await showConfirm("Bạn có chắc chắn muốn xóa thông báo này khỏi hệ thống không?", "Xác nhận xóa");
+    if (!ok) return;
+    try {
+      const res = await fetch(
+        `/api/announcements?id=${encodeURIComponent(annId)}&adminId=${encodeURIComponent(user?.id || "")}`,
+        { method: "DELETE" }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Lỗi khi xóa thông báo");
+
+      setAnnouncementsList(data.announcements || []);
+      showAlert("Đã xóa thông báo thành công!", "Thành công", "success");
+    } catch (err: any) {
+      showError(err.message || "Lỗi khi xóa thông báo");
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
     fetchPosts();
     fetchSupportTickets();
-  }, [fetchSupportTickets]);
+    fetchAnnouncements();
+  }, [fetchSupportTickets, fetchAnnouncements]);
 
   useEffect(() => {
     if (adminTab === "support") {
       fetchSupportTickets();
     }
-  }, [adminTab, fetchSupportTickets]);
+    if (adminTab === "announcements") {
+      fetchAnnouncements();
+    }
+  }, [adminTab, fetchSupportTickets, fetchAnnouncements]);
 
   // ── Credit toast helper ─────────────────────────────────────────────────────
   const showToast = useCallback((msg: string) => {
@@ -1709,67 +1779,184 @@ export default function AdminCmsPage() {
         {adminTab === "announcements" && (
           <>
             {/* Stats row */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
                 <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Đang hiển thị</div>
-                <div className="text-3xl font-black text-amber-500 font-mono">3</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">thông báo</div>
+                <div className="text-3xl font-black text-amber-500 font-mono">{announcementsList.length}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">thông báo trên toàn hệ thống</div>
               </div>
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Loại</div>
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Phân loại hỗ trợ</div>
                 <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-3 space-y-1">
-                  <div>✨ new_feature</div>
-                  <div>🎉 event</div>
-                  <div>💡 tip</div>
+                  <div>✨ new_feature (Tính năng mới)</div>
+                  <div>🎉 event (Sự kiện)</div>
+                  <div>💡 tip (Mẹo hay)</div>
                 </div>
               </div>
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Vị trí file</div>
-                <code className="text-[10px] text-indigo-500 dark:text-indigo-400 break-all font-mono">
-                  src/components/explore/ExploreFeed.tsx
-                </code>
-              </div>
-            </div>
-
-            {/* Info box */}
-            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 flex gap-3">
-              <span className="text-xl shrink-0">💡</span>
-              <div>
-                <p className="text-sm font-bold text-amber-900 dark:text-amber-300 mb-1">
-                  Để chỉnh nội dung thông báo:
-                </p>
-                <p className="text-xs text-amber-800 dark:text-amber-400">
-                  Mở file{" "}
-                  <code className="font-mono bg-amber-100 dark:bg-amber-900/50 px-1.5 py-0.5 rounded text-amber-700 dark:text-amber-300">
-                    src/components/explore/ExploreFeed.tsx
-                  </code>{" "}
-                  → tìm{" "}
-                  <code className="font-mono bg-amber-100 dark:bg-amber-900/50 px-1.5 py-0.5 rounded text-amber-700 dark:text-amber-300">
-                    const ANNOUNCEMENTS
-                  </code>{" "}
-                  và chỉnh mảng dữ liệu trực tiếp.
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Trạng thái phát hành</div>
+                <div className="mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Lưu trữ trực tiếp & hiển thị tức thì
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Đăng thông báo ở đây sẽ hiển thị ngay cho toàn bộ người dùng mà không cần sửa code.
                 </p>
               </div>
             </div>
 
-            {/* Current announcements preview */}
+            {/* Quick Compose & Publish Form */}
+            <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 shadow-xs">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>📢</span>
+                  <span>Đăng thông báo mới lên trang Khám phá & Trang chủ</span>
+                </h2>
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                  Cập nhật thời gian thực
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+                    Emoji biểu tượng
+                  </label>
+                  <input
+                    type="text"
+                    value={compose.emoji}
+                    onChange={(e) => setCompose((p) => ({ ...p, emoji: e.target.value }))}
+                    placeholder="VD: 🚀, ✨, 🎉, 💡"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+                    Thẻ Tag phân loại
+                  </label>
+                  <input
+                    type="text"
+                    value={compose.tag}
+                    onChange={(e) => setCompose((p) => ({ ...p, tag: e.target.value }))}
+                    placeholder="VD: Tính năng mới, Sự kiện hot, Mẹo AI"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+                    Tiêu đề thông báo <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={compose.title}
+                    onChange={(e) => setCompose((p) => ({ ...p, title: e.target.value }))}
+                    placeholder="VD: Ra mắt tính năng tạo ảnh AI thế hệ mới..."
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+                    Nội dung chi tiết <span className="text-rose-500">*</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={compose.desc}
+                    onChange={(e) => setCompose((p) => ({ ...p, desc: e.target.value }))}
+                    placeholder="Mô tả tóm tắt tính năng, sự kiện hoặc hướng dẫn người dùng..."
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
+                    Chữ trên nút kêu gọi (CTA)
+                  </label>
+                  <input
+                    type="text"
+                    value={compose.cta}
+                    onChange={(e) => setCompose((p) => ({ ...p, cta: e.target.value }))}
+                    placeholder="VD: Thử ngay →, Khám phá ngay →"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handlePublishAnnouncement}
+                  disabled={isPostingAnnouncement || !compose.title.trim() || !compose.desc.trim()}
+                  className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 hover:opacity-90 disabled:opacity-40 text-white text-sm font-bold rounded-xl shadow-md shadow-indigo-600/30 transition-all cursor-pointer active:scale-95 flex items-center gap-2"
+                >
+                  {isPostingAnnouncement ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                      <span>Đang đăng thông báo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🚀</span>
+                      <span>Đăng thông báo ngay</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowComposedCode((v) => !v)}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-xl transition-all cursor-pointer"
+                >
+                  {showComposedCode ? "Ẩn code dự phòng" : "Xem code JSON"}
+                </button>
+              </div>
+
+              {showComposedCode && (
+                <div className="mt-4">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                    Code xem trước (dành cho lập trình viên nếu cần backup):
+                  </p>
+                  <pre className="bg-slate-900 text-emerald-400 text-xs font-mono rounded-2xl p-4 overflow-x-auto whitespace-pre-wrap border border-slate-700">
+                    {composedCode}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            {/* Current announcements list */}
             <div>
-              <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">
-                📋 Thông báo đang hiển thị (xem trước)
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {ANNOUNCEMENTS_DATA.map((ann) => (
-                  <div
-                    key={ann.id}
-                    className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs"
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-2xl">{ann.emoji}</span>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                            {ann.tag}
-                          </span>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>📋</span>
+                  <span>Danh sách thông báo đang hoạt động ({announcementsList.length})</span>
+                </h2>
+                <button
+                  type="button"
+                  onClick={fetchAnnouncements}
+                  className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  🔄 Tải lại
+                </button>
+              </div>
+
+              {announcementsList.length === 0 ? (
+                <div className="p-12 text-center bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl text-slate-400">
+                  <div className="text-4xl mb-2">📭</div>
+                  <p className="text-sm">Hiện chưa có thông báo nào. Hãy đăng thông báo đầu tiên ở biểu mẫu phía trên!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {announcementsList.map((ann) => (
+                    <div
+                      key={ann.id}
+                      className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between transition-all hover:border-slate-300 dark:hover:border-slate-700"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl">{ann.emoji || "📣"}</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                              {ann.tag || "Thông báo"}
+                            </span>
+                          </div>
                           <span
                             className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
                               ann.type === "new_feature"
@@ -1782,102 +1969,31 @@ export default function AdminCmsPage() {
                             {ann.type}
                           </span>
                         </div>
+
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">
+                          {ann.title}
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-3">
+                          {ann.desc}
+                        </p>
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between gap-2">
+                        <span className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold truncate">
+                          {ann.cta || "Xem ngay →"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAnnouncement(ann.id)}
+                          className="px-2.5 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                          title="Xóa thông báo này"
+                        >
+                          <span>🗑️</span>
+                          <span>Xóa</span>
+                        </button>
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">
-                      {ann.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-3">
-                      {ann.desc}
-                    </p>
-                    <span className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold">
-                      {ann.cta}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Compose */}
-            <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 shadow-xs">
-              <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">
-                ✍️ Soạn thông báo mới (tạo code sẵn)
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
-                    Emoji
-                  </label>
-                  <input
-                    type="text"
-                    value={compose.emoji}
-                    onChange={(e) => setCompose((p) => ({ ...p, emoji: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
-                    Tag
-                  </label>
-                  <input
-                    type="text"
-                    value={compose.tag}
-                    onChange={(e) => setCompose((p) => ({ ...p, tag: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
-                    Tiêu đề
-                  </label>
-                  <input
-                    type="text"
-                    value={compose.title}
-                    onChange={(e) => setCompose((p) => ({ ...p, title: e.target.value }))}
-                    placeholder="VD: Ra mắt tính năng mới X..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
-                    Mô tả
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={compose.desc}
-                    onChange={(e) => setCompose((p) => ({ ...p, desc: e.target.value }))}
-                    placeholder="Nội dung mô tả chi tiết..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1.5">
-                    Nút CTA
-                  </label>
-                  <input
-                    type="text"
-                    value={compose.cta}
-                    onChange={(e) => setCompose((p) => ({ ...p, cta: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-              </div>
-              <button
-                onClick={() => setShowComposedCode((v) => !v)}
-                disabled={!compose.title || !compose.desc}
-                className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-white text-sm font-bold rounded-xl shadow-sm shadow-amber-500/30 transition-all cursor-pointer active:scale-95"
-              >
-                {showComposedCode ? "🙈 Ẩn code" : "📋 Tạo code để copy"}
-              </button>
-
-              {showComposedCode && (
-                <div className="mt-4">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
-                    Copy đoạn code này và thêm vào mảng ANNOUNCEMENTS trong ExploreFeed.tsx:
-                  </p>
-                  <pre className="bg-slate-900 text-emerald-400 text-xs font-mono rounded-2xl p-4 overflow-x-auto whitespace-pre-wrap border border-slate-700">
-                    {composedCode}
-                  </pre>
+                  ))}
                 </div>
               )}
             </div>

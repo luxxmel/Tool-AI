@@ -2,6 +2,7 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/_global-error/page": "app/_global-error/page.js",
   "/api/admin/credits/route": "app/api/admin/credits/route.js",
+  "/api/announcements/route": "app/api/announcements/route.js",
   "/api/auth/facebook/callback/route": "app/api/auth/facebook/callback/route.js",
   "/api/auth/facebook/route": "app/api/auth/facebook/route.js",
   "/api/auth/github/callback/route": "app/api/auth/github/callback/route.js",
