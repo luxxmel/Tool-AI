@@ -30,7 +30,6 @@ import {
   CharacterItem,
 } from "@/data/aiData";
 import WorkspaceBackgroundLayer from "@/components/theme/WorkspaceBackgroundLayer";
-import WorkspaceFloatingDock from "@/components/theme/WorkspaceFloatingDock";
 import { useWorkspaceBackground } from "@/context/WorkspaceBackgroundContext";
 import UserSettingsModal, { SettingsTab } from "@/components/user/UserSettingsModal";
 import { useLanguage } from "@/context/LanguageContext";
@@ -248,18 +247,6 @@ function HomeContent() {
           <span>{t("sidebar.expand")}</span>
         </button>
       )}
-
-      {/* Workspace Floating Dock (Surprise Me, Ambient Soundscape, Particles, Studio) */}
-      <WorkspaceFloatingDock
-        onOpenFullSettings={() => {
-          if (!user) {
-            setShowLoginModal(true);
-          } else {
-            setSettingsTab("appearance");
-            setIsSettingsOpen(true);
-          }
-        }}
-      />
 
       {/* Main Content Area */}
       <main
