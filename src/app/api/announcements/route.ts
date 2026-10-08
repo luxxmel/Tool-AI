@@ -103,6 +103,80 @@ export async function POST(req: NextRequest) {
   }
 }
 
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, emoji, tag, title, desc, cta, ctaHref, type, adminId } = body;
+
+    let user = null;
+    if (adminId) {
+      user = await ensureUser(adminId);
+    }
+
+    if (!user) {
+      const cookieAuth = req.cookies.get("tool_ai_auth_user");
+      if (cookieAuth?.value) {
+        try {
+          const cookieUser = JSON.parse(decodeURIComponent(cookieAuth.value));
+          if (cookieUser?.id) user = await ensureUser(cookieUser.id);
+        } catch {}
+      }
+    }
+
+    const isAdmin =
+      user?.role === "ADMIN" ||
+      user?.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: "Chỉ Quản trị viên (ADMIN) mới có quyền chỉnh sửa thông báo!" },
+        { status: 403 }
+      );
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: "Thiếu ID thông báo cần sửa" }, { status: 400 });
+    }
+
+    if (!title || !title.trim()) {
+      return NextResponse.json({ error: "Tiêu đề thông báo không được để trống" }, { status: 400 });
+    }
+
+    const currentList = getStoredAnnouncements();
+    const targetIndex = currentList.findIndex((item) => String(item.id) === String(id));
+
+    if (targetIndex === -1) {
+      return NextResponse.json({ error: "Không tìm thấy thông báo cần sửa" }, { status: 404 });
+    }
+
+    const updatedList = [...currentList];
+    updatedList[targetIndex] = {
+      ...updatedList[targetIndex],
+      emoji: emoji?.trim() || updatedList[targetIndex].emoji || "📣",
+      tag: tag?.trim() || updatedList[targetIndex].tag || "Thông báo",
+      title: title.trim(),
+      desc: desc?.trim() || "",
+      cta: cta?.trim() || updatedList[targetIndex].cta || "Xem ngay →",
+      ctaHref: ctaHref?.trim() || updatedList[targetIndex].ctaHref || "#",
+      type: (type || updatedList[targetIndex].type || "new_feature") as AnnouncementItem["type"],
+    };
+
+    saveStoredAnnouncements(updatedList);
+
+    return NextResponse.json({
+      success: true,
+      message: "Đã cập nhật thông báo thành công!",
+      announcements: updatedList,
+    });
+  } catch (err: any) {
+    console.error("Lỗi khi cập nhật thông báo:", err);
+    return NextResponse.json(
+      { error: err?.message || "Không thể cập nhật thông báo" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

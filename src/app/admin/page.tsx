@@ -127,6 +127,7 @@ export default function AdminCmsPage() {
   // Announcements state
   const [announcementsList, setAnnouncementsList] = useState<any[]>([]);
   const [isPostingAnnouncement, setIsPostingAnnouncement] = useState(false);
+  const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | number | null>(null);
   const [compose, setCompose] = useState<ComposeForm>({
     emoji: "✨",
     tag: "Tính năng mới",
@@ -134,7 +135,6 @@ export default function AdminCmsPage() {
     desc: "",
     cta: "Khám phá ngay →",
   });
-  const [showComposedCode, setShowComposedCode] = useState(false);
 
   // Support Tickets State
   const [supportTickets, setSupportTickets] = useState<any[]>([]);
@@ -227,31 +227,65 @@ export default function AdminCmsPage() {
     }
     setIsPostingAnnouncement(true);
     try {
-      const res = await fetch("/api/announcements", {
-        method: "POST",
+      const isEditing = editingAnnouncementId !== null;
+      const url = "/api/announcements";
+      const method = isEditing ? "PUT" : "POST";
+      const payload: any = {
+        emoji: compose.emoji || "📣",
+        tag: compose.tag || "Tính năng mới",
+        title: compose.title.trim(),
+        desc: compose.desc.trim(),
+        cta: compose.cta.trim() || "Khám phá ngay →",
+        ctaHref: "#",
+        type: "new_feature",
+        adminId: user?.id,
+      };
+
+      if (isEditing) {
+        payload.id = editingAnnouncementId;
+      }
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          emoji: compose.emoji || "📣",
-          tag: compose.tag || "Tính năng mới",
-          title: compose.title.trim(),
-          desc: compose.desc.trim(),
-          cta: compose.cta.trim() || "Khám phá ngay →",
-          ctaHref: "#",
-          type: "new_feature",
-          adminId: user?.id,
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Lỗi khi đăng thông báo");
+      if (!res.ok) throw new Error(data.error || "Lỗi khi lưu thông báo");
 
       setAnnouncementsList(data.announcements || []);
-      showAlert("🎉 Đã đăng thông báo thành công lên toàn hệ thống!", "Thành công", "success");
+      showAlert(
+        isEditing
+          ? "🎉 Đã cập nhật nội dung thông báo thành công!"
+          : "🎉 Đã đăng thông báo thành công lên toàn hệ thống!",
+        "Thành công",
+        "success"
+      );
+      setEditingAnnouncementId(null);
       setCompose({ emoji: "✨", tag: "Tính năng mới", title: "", desc: "", cta: "Khám phá ngay →" });
     } catch (err: any) {
-      showError(err.message || "Không thể đăng thông báo");
+      showError(err.message || "Không thể lưu thông báo");
     } finally {
       setIsPostingAnnouncement(false);
     }
+  };
+
+  const handleStartEditAnnouncement = (ann: any) => {
+    setEditingAnnouncementId(ann.id);
+    setCompose({
+      emoji: ann.emoji || "✨",
+      tag: ann.tag || "Tính năng mới",
+      title: ann.title || "",
+      desc: ann.desc || "",
+      cta: ann.cta || "Khám phá ngay →",
+    });
+    // Cuộn nhẹ lên khung nhập liệu
+    window.scrollTo({ top: 400, behavior: "smooth" });
+  };
+
+  const handleCancelEditAnnouncement = () => {
+    setEditingAnnouncementId(null);
+    setCompose({ emoji: "✨", tag: "Tính năng mới", title: "", desc: "", cta: "Khám phá ngay →" });
   };
 
   const handleDeleteAnnouncement = async (annId: string | number) => {
@@ -1778,43 +1812,34 @@ export default function AdminCmsPage() {
         ══════════════════════════════════════════════════════════════════════ */}
         {adminTab === "announcements" && (
           <>
-            {/* Stats row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Đang hiển thị</div>
-                <div className="text-3xl font-black text-amber-500 font-mono">{announcementsList.length}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">thông báo trên toàn hệ thống</div>
-              </div>
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Phân loại hỗ trợ</div>
-                <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mt-3 space-y-1">
-                  <div>✨ new_feature (Tính năng mới)</div>
-                  <div>🎉 event (Sự kiện)</div>
-                  <div>💡 tip (Mẹo hay)</div>
-                </div>
-              </div>
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Trạng thái phát hành</div>
-                <div className="mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Lưu trữ trực tiếp & hiển thị tức thì
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Đăng thông báo ở đây sẽ hiển thị ngay cho toàn bộ người dùng mà không cần sửa code.
-                </p>
-              </div>
-            </div>
-
-            {/* Quick Compose & Publish Form */}
+            {/* Quick Compose / Edit Form */}
             <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 shadow-xs">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <span>📢</span>
-                  <span>Đăng thông báo mới lên trang Khám phá & Trang chủ</span>
-                </h2>
-                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
-                  Cập nhật thời gian thực
-                </span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <div>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>{editingAnnouncementId !== null ? "✏️" : "📢"}</span>
+                    <span>
+                      {editingAnnouncementId !== null
+                        ? "Chỉnh sửa thông báo đang đăng"
+                        : "Đăng thông báo mới cho tất cả người dùng"}
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {editingAnnouncementId !== null
+                      ? "Thay đổi nội dung bên dưới và nhấn Lưu thay đổi để cập nhật ngay"
+                      : "Thông báo sau khi đăng sẽ tự động xuất hiện trên đầu trang Khám phá & Trang chủ của toàn bộ người dùng"}
+                  </p>
+                </div>
+
+                {editingAnnouncementId !== null && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEditAnnouncement}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 transition-colors self-start sm:self-auto cursor-pointer"
+                  >
+                    ✖ Hủy chỉnh sửa
+                  </button>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -1838,7 +1863,7 @@ export default function AdminCmsPage() {
                     type="text"
                     value={compose.tag}
                     onChange={(e) => setCompose((p) => ({ ...p, tag: e.target.value }))}
-                    placeholder="VD: Tính năng mới, Sự kiện hot, Mẹo AI"
+                    placeholder="VD: Tính năng mới, Sự kiện, Mẹo AI"
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                   />
                 </div>
@@ -1850,7 +1875,7 @@ export default function AdminCmsPage() {
                     type="text"
                     value={compose.title}
                     onChange={(e) => setCompose((p) => ({ ...p, title: e.target.value }))}
-                    placeholder="VD: Ra mắt tính năng tạo ảnh AI thế hệ mới..."
+                    placeholder="VD: Ra mắt tính năng theo dõi Index tự động hàng loạt..."
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                   />
                 </div>
@@ -1862,7 +1887,7 @@ export default function AdminCmsPage() {
                     rows={3}
                     value={compose.desc}
                     onChange={(e) => setCompose((p) => ({ ...p, desc: e.target.value }))}
-                    placeholder="Mô tả tóm tắt tính năng, sự kiện hoặc hướng dẫn người dùng..."
+                    placeholder="Nội dung mô tả chi tiết thông báo..."
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none"
                   />
                 </div>
@@ -1874,13 +1899,13 @@ export default function AdminCmsPage() {
                     type="text"
                     value={compose.cta}
                     onChange={(e) => setCompose((p) => ({ ...p, cta: e.target.value }))}
-                    placeholder="VD: Thử ngay →, Khám phá ngay →"
+                    placeholder="VD: Khám phá ngay →, Tìm hiểu thêm →"
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handlePublishAnnouncement}
@@ -1890,35 +1915,26 @@ export default function AdminCmsPage() {
                   {isPostingAnnouncement ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                      <span>Đang đăng thông báo...</span>
+                      <span>Đang lưu thông báo...</span>
                     </>
                   ) : (
                     <>
-                      <span>🚀</span>
-                      <span>Đăng thông báo ngay</span>
+                      <span>{editingAnnouncementId !== null ? "💾" : "🚀"}</span>
+                      <span>{editingAnnouncementId !== null ? "Lưu thay đổi" : "Đăng thông báo"}</span>
                     </>
                   )}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setShowComposedCode((v) => !v)}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-xl transition-all cursor-pointer"
-                >
-                  {showComposedCode ? "Ẩn code dự phòng" : "Xem code JSON"}
-                </button>
+                {editingAnnouncementId !== null && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEditAnnouncement}
+                    className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-xl transition-all cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                )}
               </div>
-
-              {showComposedCode && (
-                <div className="mt-4">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
-                    Code xem trước (dành cho lập trình viên nếu cần backup):
-                  </p>
-                  <pre className="bg-slate-900 text-emerald-400 text-xs font-mono rounded-2xl p-4 overflow-x-auto whitespace-pre-wrap border border-slate-700">
-                    {composedCode}
-                  </pre>
-                </div>
-              )}
             </div>
 
             {/* Current announcements list */}
@@ -1926,7 +1942,7 @@ export default function AdminCmsPage() {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <span>📋</span>
-                  <span>Danh sách thông báo đang hoạt động ({announcementsList.length})</span>
+                  <span>Danh sách thông báo đã đăng ({announcementsList.length})</span>
                 </h2>
                 <button
                   type="button"
@@ -1944,56 +1960,74 @@ export default function AdminCmsPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {announcementsList.map((ann) => (
-                    <div
-                      key={ann.id}
-                      className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between transition-all hover:border-slate-300 dark:hover:border-slate-700"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <div className="flex items-center gap-2">
-                            <span className="text-2xl">{ann.emoji || "📣"}</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                              {ann.tag || "Thông báo"}
+                  {announcementsList.map((ann) => {
+                    const isBeingEdited = editingAnnouncementId === ann.id;
+                    return (
+                      <div
+                        key={ann.id}
+                        className={`bg-white dark:bg-[#111218] border rounded-2xl p-5 shadow-xs flex flex-col justify-between transition-all ${
+                          isBeingEdited
+                            ? "border-indigo-500 ring-2 ring-indigo-500/30"
+                            : "border-slate-200/90 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-2xl">{ann.emoji || "📣"}</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                {ann.tag || "Thông báo"}
+                              </span>
+                            </div>
+                            <span
+                              className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                                ann.type === "new_feature"
+                                  ? "bg-violet-100 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400"
+                                  : ann.type === "event"
+                                  ? "bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400"
+                                  : "bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400"
+                              }`}
+                            >
+                              {ann.type}
                             </span>
                           </div>
-                          <span
-                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                              ann.type === "new_feature"
-                                ? "bg-violet-100 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400"
-                                : ann.type === "event"
-                                ? "bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400"
-                                : "bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400"
-                            }`}
-                          >
-                            {ann.type}
-                          </span>
+
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">
+                            {ann.title}
+                          </h3>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-3">
+                            {ann.desc}
+                          </p>
                         </div>
 
-                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">
-                          {ann.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-3">
-                          {ann.desc}
-                        </p>
+                        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between gap-2">
+                          <span className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold truncate">
+                            {ann.cta || "Xem ngay →"}
+                          </span>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditAnnouncement(ann)}
+                              className="px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                              title="Chỉnh sửa thông báo này"
+                            >
+                              <span>✏️</span>
+                              <span>Sửa</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAnnouncement(ann.id)}
+                              className="px-2.5 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                              title="Xóa thông báo này"
+                            >
+                              <span>🗑️</span>
+                              <span>Xóa</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
-
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between gap-2">
-                        <span className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold truncate">
-                          {ann.cta || "Xem ngay →"}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteAnnouncement(ann.id)}
-                          className="px-2.5 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1 shrink-0"
-                          title="Xóa thông báo này"
-                        >
-                          <span>🗑️</span>
-                          <span>Xóa</span>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
