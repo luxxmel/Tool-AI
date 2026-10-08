@@ -21,4 +21,4 @@
             <button onclick="window.close()">Đ\xf3ng cửa sổ n\xe0y</button>
           </div>
         </body>
-      </html>`,{headers:{"Content-Type":"text/html; charset=utf-8"}});let g=`https://www.facebook.com/v19.0/dialog/oauth?client_id=${encodeURIComponent(b)}&redirect_uri=${encodeURIComponent(f)}&scope=public_profile`;return d.NextResponse.redirect(g)}},78335:()=>{},86439:a=>{"use strict";a.exports=require("next/dist/shared/lib/no-fallback-error.external")},96487:()=>{}};var b=require("../../../../webpack-runtime.js");b.C(a);var c=b.X(0,[3445,1813],()=>b(b.s=54075));module.exports=c})();
+      </html>`,{headers:{"Content-Type":"text/html; charset=utf-8"}});let g=`https://www.facebook.com/v19.0/dialog/oauth?client_id=${encodeURIComponent(b)}&redirect_uri=${encodeURIComponent(f)}&scope=email,public_profile&response_type=code`;return d.NextResponse.redirect(g)}},78335:()=>{},86439:a=>{"use strict";a.exports=require("next/dist/shared/lib/no-fallback-error.external")},96487:()=>{}};var b=require("../../../../webpack-runtime.js");b.C(a);var c=b.X(0,[3445,1813],()=>b(b.s=54075));module.exports=c})();
