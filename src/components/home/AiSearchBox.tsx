@@ -192,8 +192,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               desc: "Luận giải số mệnh",
               tab: "tarot",
               tag: "HOT",
-              tagBg: "bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700/50",
-              borderHover: "hover:border-purple-500/60 dark:hover:border-purple-400/60",
+              tagBg: "bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 font-bold",
+              borderHover: "hover:border-purple-400 dark:hover:border-purple-500",
               prompt: "",
             },
             {
@@ -201,8 +201,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               desc: "Lá số hoàng đạo",
               tab: "tarot",
               tag: "BÓI",
-              tagBg: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700/50",
-              borderHover: "hover:border-blue-500/60 dark:hover:border-blue-400/60",
+              tagBg: "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-bold",
+              borderHover: "hover:border-blue-400 dark:hover:border-blue-500",
               prompt: "Lập lá số Tử Vi và Chiêm Tinh hoàng đạo cho tôi: ",
             },
             {
@@ -210,8 +210,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               desc: "Tâm sự giải tỏa",
               tab: "healing",
               tag: "ASMR",
-              tagBg: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700/50",
-              borderHover: "hover:border-emerald-500/60 dark:hover:border-emerald-400/60",
+              tagBg: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 font-bold",
+              borderHover: "hover:border-emerald-400 dark:hover:border-emerald-500",
               prompt: "",
             },
             {
@@ -219,8 +219,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               desc: "Tạo ảnh DSLR",
               tab: "images",
               tag: "PRO",
-              tagBg: "bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-700/50",
-              borderHover: "hover:border-rose-500/60 dark:hover:border-rose-400/60",
+              tagBg: "bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800 font-bold",
+              borderHover: "hover:border-rose-400 dark:hover:border-rose-500",
               prompt: "",
             },
             {
@@ -228,8 +228,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               desc: "Roleplay & Tâm sự",
               tab: "explore",
               tag: "BOT",
-              tagBg: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700/50",
-              borderHover: "hover:border-amber-500/60 dark:hover:border-amber-400/60",
+              tagBg: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 font-bold",
+              borderHover: "hover:border-amber-400 dark:hover:border-amber-500",
               prompt: "",
             },
             {
@@ -237,8 +237,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               desc: "Chuyển Văn bản - Giọng",
               tab: "audio",
               tag: "TTS",
-              tagBg: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-700/50",
-              borderHover: "hover:border-violet-500/60 dark:hover:border-violet-400/60",
+              tagBg: "bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800 font-bold",
+              borderHover: "hover:border-violet-400 dark:hover:border-violet-500",
               prompt: "",
             },
           ].map((item, idx) => {
@@ -308,7 +308,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   textareaRef.current?.focus();
                 }
               }}
-              className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100/90 dark:bg-slate-800/80 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-cyan-300 border border-slate-200/80 dark:border-slate-700/60 transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-indigo-50 dark:bg-[#1a1c28] dark:hover:bg-indigo-950/70 text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-slate-700/80 transition-all cursor-pointer shadow-2xs active:scale-95"
             >
               {chip.label}
             </button>
