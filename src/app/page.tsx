@@ -21,7 +21,6 @@ import AiToolsStudio from "@/components/tools/AiToolsStudio";
 import HealingCorner from "@/components/healing/HealingCorner";
 import UserProfileView from "@/components/profile/UserProfileView";
 import TarotView from "@/components/tarot/TarotView";
-import HomeQuickStatsBar from "@/components/home/HomeQuickStatsBar";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import {
   FEATURED_ASSISTANTS,
@@ -323,9 +322,6 @@ function HomeContent() {
               <div className="pt-2 sm:pt-6 pb-4 w-full">
                 <AiSearchBox onSubmitPrompt={handlePromptSubmit} />
               </div>
-
-              {/* Quick Platform Stats Bar */}
-              <HomeQuickStatsBar onSelectTab={handleSelectTab} />
 
               {/* Ecosystem Features Showcase Grid */}
               <HomeFeaturesShowcase onSelectTab={handleSelectTab} />
