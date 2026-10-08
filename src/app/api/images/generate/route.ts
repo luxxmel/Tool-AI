@@ -35,6 +35,17 @@ export async function POST(request: NextRequest) {
 
     const isAdmin = user?.role === "ADMIN";
 
+    if (!isAdmin && (user as any).status === "banned") {
+      return NextResponse.json(
+        {
+          error: "Tài khoản của bạn đã bị khóa. Không thể tạo ảnh!",
+          code: "ACCOUNT_BANNED",
+          isBanned: true,
+        },
+        { status: 403 }
+      );
+    }
+
     if (!isAdmin && user.credits <= 0) {
       return NextResponse.json(
         {

@@ -10,6 +10,7 @@ export interface User {
   avatar: string;
   role: string;
   credits: number;
+  status?: string;
 }
 
 interface AuthContextType {
@@ -78,11 +79,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const isRoot = parsed.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
                 const syncedRole = isRoot ? "ADMIN" : (data.role || "USER");
                 const syncedCredits = isRoot ? 999999 : Number(data.credits ?? 20);
+                const syncedStatus = isRoot ? "active" : (data.status || "active");
+
+                if (!isRoot && syncedStatus === "banned") {
+                  // Nếu tài khoản đã bị khóa bởi Admin, xóa phiên và đăng xuất ngay
+                  localStorage.removeItem(STORAGE_KEY);
+                  if (typeof document !== "undefined") {
+                    document.cookie = "tool_ai_auth_user=; path=/; max-age=0; SameSite=Lax";
+                  }
+                  setUser(null);
+                  return;
+                }
 
                 const updatedUser: User = {
                   ...parsed,
                   role: syncedRole,
                   credits: syncedCredits,
+                  status: syncedStatus,
                 };
                 setUser(updatedUser);
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));

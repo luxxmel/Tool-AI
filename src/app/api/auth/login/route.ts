@@ -43,10 +43,18 @@ export async function POST(request: NextRequest) {
           avatar: true,
           credits: true,
           role: true,
+          status: true,
         },
       });
     } catch (dbErr) {
       console.warn("Lỗi lưu DB login (dùng session user):", dbErr);
+    }
+
+    if (user && user.status === "banned" && !isRootAdmin) {
+      return NextResponse.json(
+        { error: "Tài khoản của bạn đã bị Quản trị viên khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ!" },
+        { status: 403 }
+      );
     }
 
     const finalUser = user || {
@@ -56,6 +64,7 @@ export async function POST(request: NextRequest) {
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
       credits: isRootAdmin ? 999999 : 20,
       role: isRootAdmin ? "ADMIN" : "USER",
+      status: "active",
     };
 
     return NextResponse.json({

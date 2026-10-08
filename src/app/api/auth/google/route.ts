@@ -297,9 +297,17 @@ export async function POST(request: NextRequest) {
         avatar: true,
         credits: true,
         role: true,
+        status: true,
         createdAt: true,
       },
     });
+
+    if (user && (user as any).status === "banned" && !isRootAdmin) {
+      return NextResponse.json(
+        { error: "Tài khoản này đã bị Quản trị viên khóa. Vui lòng liên hệ Admin!" },
+        { status: 403 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -312,6 +320,7 @@ export async function POST(request: NextRequest) {
         avatar: user.avatar,
         credits: user.role === "ADMIN" ? 999999 : user.credits,
         role: user.role,
+        status: (user as any).status || "active",
       },
     });
   } catch (error: any) {

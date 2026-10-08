@@ -110,6 +110,7 @@ export async function ensureUser(
             ...user,
             role: "ADMIN",
             credits: 999999,
+            status: "active",
           };
         }
         return user;

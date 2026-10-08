@@ -22,11 +22,16 @@ export async function GET(request: NextRequest) {
         ...user,
         role: "ADMIN",
         credits: 999999,
+        status: "active",
         isUnlimited: true,
       });
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({
+      ...user,
+      status: (user as any).status || "active",
+      isBanned: (user as any).status === "banned",
+    });
   } catch (error) {
     console.error("Lỗi khi lấy thông tin credit user:", error);
     return NextResponse.json(

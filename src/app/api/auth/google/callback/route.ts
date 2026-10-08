@@ -196,10 +196,15 @@ export async function GET(request: NextRequest) {
           avatar: true,
           credits: true,
           role: true,
+          status: true,
         },
       });
     } catch (dbErr) {
       console.warn("Lỗi lưu SQLite (dùng session user):", dbErr);
+    }
+
+    if (dbUser && dbUser.status === "banned" && !isRootAdmin) {
+      return sendResponseHtml(false, null, "Tài khoản của bạn đã bị Quản trị viên khóa. Vui lòng liên hệ Admin!");
     }
 
     const finalUser = dbUser || {
@@ -209,6 +214,7 @@ export async function GET(request: NextRequest) {
       avatar: avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`,
       credits: initialCredits,
       role: initialRole,
+      status: "active",
     };
 
     return sendResponseHtml(true, {

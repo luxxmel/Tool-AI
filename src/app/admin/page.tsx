@@ -429,13 +429,26 @@ export default function AdminCmsPage() {
     );
 
     try {
-      await fetch(`/api/users/${userId}`, {
+      const res = await fetch(`/api/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
+      if (res.ok) {
+        showAlert(
+          newStatus === "banned"
+            ? `Đã khóa tài khoản "${u.name}"! Người dùng này sẽ bị cấm nhắn tin và đăng nhập.`
+            : `Đã mở khóa tài khoản "${u.name}" thành công!`,
+          "Thông báo",
+          newStatus === "banned" ? "warning" : "success"
+        );
+      } else {
+        const data = await res.json();
+        showError(data.error || "Không thể cập nhật trạng thái");
+      }
     } catch (e) {
       console.error("Lỗi cập nhật trạng thái user:", e);
+      showError("Lỗi kết nối máy chủ");
     }
   };
 

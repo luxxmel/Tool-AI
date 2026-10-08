@@ -431,6 +431,18 @@ export async function POST(request: NextRequest) {
       user.role === "ADMIN" ||
       user.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
 
+    // Kiểm tra trạng thái tài khoản bị khóa
+    if (!isAdmin && (user as any).status === "banned") {
+      return NextResponse.json(
+        {
+          error: "Tài khoản của bạn đã bị Quản trị viên khóa do vi phạm tiêu chuẩn cộng đồng hoặc chính sách sử dụng.",
+          code: "ACCOUNT_BANNED",
+          isBanned: true,
+        },
+        { status: 403 }
+      );
+    }
+
     // Phân loại chi phí credit theo loại bot:
     // - CHỈ DUY NHẤT Góc Chữa Lành / Gửi Gắm Nỗi Buồn: HOÀN TOÀN MIỄN PHÍ (0 Credit)
     // - TOÀN BỘ các bot, xem Tarot, trợ lý, sinh ảnh còn lại: BẮT BUỘC TRỪ CREDITS (1 - 2 Credits)
