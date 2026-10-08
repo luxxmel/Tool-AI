@@ -138,6 +138,14 @@
         "nxtPbotId": "nxtPbotId"
       },
       "namedRegex": "^/chat/(?<nxtPbotId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/webhook/[...slug]",
+      "regex": "^/webhook/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/webhook/(?<nxtPslug>.+?)(?:/)?$"
     }
   ],
   "staticRoutes": [
@@ -328,6 +336,12 @@
       "namedRegex": "^/api/users(?:/)?$"
     },
     {
+      "page": "/api/webhook/facebook",
+      "regex": "^/api/webhook/facebook(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/webhook/facebook(?:/)?$"
+    },
+    {
       "page": "/favicon.ico",
       "regex": "^/favicon\\.ico(?:/)?$",
       "routeKeys": {},
@@ -350,6 +364,12 @@
       "regex": "^/typing(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/typing(?:/)?$"
+    },
+    {
+      "page": "/webhook",
+      "regex": "^/webhook(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/webhook(?:/)?$"
     }
   ],
   "dataRoutes": [],

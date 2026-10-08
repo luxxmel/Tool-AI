@@ -416,6 +416,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/webhook/facebook/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhook/facebook">> = Specific
+  const handler = {} as typeof import("../../src/app/api/webhook/facebook/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/webhook/[...slug]/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/webhook/[...slug]">> = Specific
+  const handler = {} as typeof import("../../src/app/webhook/[...slug]/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/webhook/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/webhook">> = Specific
+  const handler = {} as typeof import("../../src/app/webhook/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 
 
 
