@@ -35,10 +35,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="vi"
-      className={`${geistSans.variable} ${geistMono.variable} ${beVietnamPro.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${beVietnamPro.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('omni_theme_mode');
+                  if (saved === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch(e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
         <Script
           id="clean-extension-attrs"
           strategy="beforeInteractive"
