@@ -1,9 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAppOrigin } from "@/lib/serverUrl";
 
 export async function GET(request: NextRequest) {
   try {
-    // Giao diện Đăng nhập Google mượt mà, chống chặn bảo mật Google OAuth
+    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const origin = getAppOrigin(request);
+    const redirectUri = `${origin}/api/auth/google/callback`;
+
+    // Nếu có cấu hình GOOGLE_CLIENT_ID, chuyển hướng trực tiếp đến trang chọn tài khoản chính thức của Google
+    if (clientId) {
+      const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+      googleAuthUrl.searchParams.set("client_id", clientId);
+      googleAuthUrl.searchParams.set("redirect_uri", redirectUri);
+      googleAuthUrl.searchParams.set("response_type", "code");
+      googleAuthUrl.searchParams.set("scope", "openid email profile");
+      googleAuthUrl.searchParams.set("prompt", "select_account"); // Bắt buộc Google luôn hiện danh sách các tài khoản Google để chọn
+      googleAuthUrl.searchParams.set("access_type", "offline");
+
+      return NextResponse.redirect(googleAuthUrl.toString());
+    }
+
+    // Dự phòng khi chưa có Google Client ID
     const html = `<!DOCTYPE html>
 <html lang="vi">
 <head>
