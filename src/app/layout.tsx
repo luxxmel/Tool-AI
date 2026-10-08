@@ -7,6 +7,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { WorkspaceBackgroundProvider } from "@/context/WorkspaceBackgroundContext";
 import { PopupProvider } from "@/context/PopupContext";
+import NotificationToast from "@/components/notifications/NotificationToast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <WorkspaceBackgroundProvider>
                 <PopupProvider>
                   {children}
+                  <NotificationToast />
                 </PopupProvider>
               </WorkspaceBackgroundProvider>
             </AuthProvider>
