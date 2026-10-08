@@ -173,9 +173,9 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
         </p>
       </div>
 
-      {/* Bi?t Tu?t AI Custom Feature Suite */}
-      <div className="w-full mb-5">
-        <div className="flex items-center justify-between px-1 mb-2.5">
+      {/* Biệt Tuốt AI Custom Feature Suite - Circular Icon Badges */}
+      <div className="w-full mb-6">
+        <div className="flex items-center justify-between px-1 mb-3">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
             {language === "en" ? "Omni Special Engines" : "Bộ Công Cụ Độc Quyền Biệt Tuốt AI"}
@@ -185,61 +185,75 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        <div className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 overflow-x-auto no-scrollbar py-2 px-1">
           {[
             {
-              name: "🔮 Tarot & Bói Bài",
-              desc: "Luận giải số mệnh",
+              id: "tarot",
+              name: "Tarot",
+              icon: "🎴",
+              color: "from-pink-600 to-rose-600 text-white shadow-pink-500/30",
+              dot: "bg-pink-400",
               tab: "tarot",
-              tag: "HOT",
-              tagBg: "bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 font-bold",
-              borderHover: "hover:border-purple-400 dark:hover:border-purple-500",
               prompt: "",
             },
             {
-              name: "🌙 Tử Vi & Chiêm Tinh",
-              desc: "Lá số hoàng đạo",
+              id: "tuvi",
+              name: "Tử Vi",
+              icon: "🌙",
+              color: "from-indigo-600 to-blue-600 text-white shadow-indigo-500/30",
+              dot: "bg-indigo-400",
               tab: "tarot",
-              tag: "BÓI",
-              tagBg: "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 font-bold",
-              borderHover: "hover:border-blue-400 dark:hover:border-blue-500",
-              prompt: "Lập lá số Tử Vi và Chiêm Tinh hoàng đạo cho tôi: ",
+              prompt: "Lập lá số Tử Vi cho tôi: ",
             },
             {
-              name: "🌿 Góc Chữa Lành",
-              desc: "Tâm sự giải tỏa",
-              tab: "healing",
-              tag: "ASMR",
-              tagBg: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 font-bold",
-              borderHover: "hover:border-emerald-400 dark:hover:border-emerald-500",
-              prompt: "",
+              id: "chiemtinh",
+              name: "Chiêm Tinh",
+              icon: "🪐",
+              color: "from-cyan-600 to-teal-600 text-white shadow-cyan-500/30",
+              dot: "bg-cyan-400",
+              tab: "tarot",
+              prompt: "Lập bản đồ sao Chiêm Tinh hoàng đạo cho tôi: ",
             },
             {
-              name: "🎨 Studio AI 8K",
-              desc: "Tạo ảnh DSLR",
-              tab: "images",
-              tag: "PRO",
-              tagBg: "bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800 font-bold",
-              borderHover: "hover:border-rose-400 dark:hover:border-rose-500",
-              prompt: "",
+              id: "battu",
+              name: "Bát Tự",
+              icon: "📜",
+              color: "from-amber-600 to-yellow-600 text-white shadow-amber-500/30",
+              dot: "bg-amber-400",
+              tab: "tarot",
+              prompt: "Luận giải Bát Tự Tứ Trụ cho tôi: ",
             },
             {
-              name: "💬 Trợ Lý Nhân Vật",
-              desc: "Roleplay & Tâm sự",
-              tab: "explore",
-              tag: "BOT",
-              tagBg: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 font-bold",
-              borderHover: "hover:border-amber-400 dark:hover:border-amber-500",
-              prompt: "",
+              id: "toan",
+              name: "Giải Toán",
+              icon: "🧮",
+              color: "from-blue-700 to-indigo-700 text-white shadow-blue-500/30",
+              tab: "home",
+              prompt: "Hãy giúp tôi giải bài toán sau từng bước chi tiết: ",
             },
             {
-              name: "🔊 Giọng Nói Neural",
-              desc: "Chuyển Văn bản - Giọng",
-              tab: "audio",
-              tag: "TTS",
-              tagBg: "bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800 font-bold",
-              borderHover: "hover:border-violet-400 dark:hover:border-violet-500",
-              prompt: "",
+              id: "english",
+              name: "Học tiếng Anh",
+              icon: "💬",
+              color: "from-purple-700 to-violet-700 text-white shadow-purple-500/30",
+              tab: "home",
+              prompt: "Hãy đóng vai gia sư tiếng Anh luyện giao tiếp với tôi: ",
+            },
+            {
+              id: "writer",
+              name: "Viết lách",
+              icon: "✍️",
+              color: "from-orange-600 to-red-600 text-white shadow-orange-500/30",
+              tab: "home",
+              prompt: "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
+            },
+            {
+              id: "ocr",
+              name: "Dịch ảnh/PDF",
+              icon: "🔍",
+              color: "from-teal-600 to-emerald-600 text-white shadow-teal-500/30",
+              tab: "home",
+              prompt: "Hãy trích xuất nội dung văn bản và dịch sang tiếng Việt: ",
             },
           ].map((item, idx) => {
             const isDirectTab = item.tab !== "home" && !item.prompt;
@@ -260,18 +274,25 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               <Component
                 key={idx}
                 {...(extraProps as any)}
-                className={`p-3 rounded-2xl bg-white dark:bg-[#12141e] border border-slate-200 dark:border-slate-800 ${item.borderHover} shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group flex flex-col justify-between cursor-pointer text-left`}
+                className="flex flex-col items-center gap-1.5 shrink-0 group cursor-pointer transition-all"
               >
-                <div className="flex items-center justify-between gap-1 mb-1.5">
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
-                    {item.name}
-                  </span>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${item.tagBg} shrink-0`}>
-                    {item.tag}
-                  </span>
+                {/* Circular Icon with Glow */}
+                <div className="relative">
+                  <div
+                    className={`w-12 h-12 rounded-full bg-gradient-to-tr ${item.color} flex items-center justify-center text-lg shadow-lg group-hover:scale-110 group-active:scale-95 transition-all duration-300 ring-2 ring-white/10`}
+                  >
+                    <span>{item.icon}</span>
+                  </div>
+                  {item.dot && (
+                    <span
+                      className={`absolute top-0 right-0 w-2.5 h-2.5 rounded-full ${item.dot} ring-2 ring-slate-900 animate-pulse`}
+                    />
+                  )}
                 </div>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors truncate">
-                  {item.desc}
+
+                {/* Title below */}
+                <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition-colors whitespace-nowrap">
+                  {item.name}
                 </span>
               </Component>
             );
