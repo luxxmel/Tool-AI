@@ -210,8 +210,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               ),
               circleStyle: "bg-[#14153b] text-[#7075ff] border border-[#7075ff]/40 shadow-[0_0_15px_rgba(112,117,255,0.35)]",
               dot: "bg-[#8b8fff] shadow-[0_0_6px_#8b8fff]",
-              tab: "tarot",
-              prompt: "Lập lá số Tử Vi cho tôi: ",
+              tab: "tuvi",
+              prompt: "",
             },
             {
               id: "chiemtinh",
@@ -225,8 +225,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               ),
               circleStyle: "bg-[#062633] text-[#00d2d3] border border-[#00d2d3]/40 shadow-[0_0_15px_rgba(0,210,211,0.35)]",
               dot: "bg-[#00e5e5] shadow-[0_0_6px_#00e5e5]",
-              tab: "tarot",
-              prompt: "Lập bản đồ sao Chiêm Tinh hoàng đạo cho tôi: ",
+              tab: "chiemtinh",
+              prompt: "",
             },
             {
               id: "battu",
@@ -241,8 +241,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               ),
               circleStyle: "bg-[#331800] text-[#ff9f1a] border border-[#ff9f1a]/40 shadow-[0_0_15px_rgba(255,159,26,0.35)]",
               dot: "bg-[#ffb03a] shadow-[0_0_6px_#ffb03a]",
-              tab: "tarot",
-              prompt: "Luận giải Bát Tự Tứ Trụ cho tôi: ",
+              tab: "battu",
+              prompt: "",
             },
             {
               id: "toan",
