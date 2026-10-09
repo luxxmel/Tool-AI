@@ -4,11 +4,14 @@
  * - Bước 2: Gemini 3.8 Flash (gemini-3-8-flash) tối ưu hóa chiều sâu nhiếp ảnh, chi tiết da thật và ánh sáng
  */
 
-const TROLLLLM_API_KEY =
-  process.env.TROLLLLM_API_KEY ||
-  "sk-trollllm-b28bae23ee1d9bc12cbcaada91d7ec306d0a91fab5fc2ba3f04f110380b83301";
+function getTrollllmApiKey(): string {
+  const envKey = process.env.TROLLLLM_API_KEY?.replace(/["']/g, "")?.trim();
+  if (envKey && envKey.startsWith("sk-") && envKey.length > 25 && !envKey.includes("YOUR_")) {
+    return envKey;
+  }
+  return "sk-trollllm-b28bae23ee1d9bc12cbcaada91d7ec306d0a91fab5fc2ba3f04f110380b83301";
+}
 
-const ANTHROPIC_ENDPOINT = "https://chat.trollllm.xyz/v1/messages";
 const OPENAI_ENDPOINT = "https://chat.trollllm.xyz/v1/chat/completions";
 
 interface GeneratePromptParams {
@@ -20,49 +23,44 @@ interface GeneratePromptParams {
 export async function generateOptimizedPromptWithFableAndGemini({
   prompt,
   aspectRatio = "1:1",
-  referenceImage,
 }: GeneratePromptParams): Promise<{
   fablePrompt: string;
   finalPrompt: string;
 }> {
   const cleanUserPrompt = prompt.trim();
   let fablePrompt = cleanUserPrompt;
+  const apiKey = getTrollllmApiKey();
 
-  // Sử dụng Gemini 3.8 Flash hoặc DeepSeek v4 Flash để dịch và tối ưu prompt sang tiếng Anh chuẩn điện ảnh
+  // Sử dụng DeepSeek v4 Flash siêu tốc (2-3s) và hiểu tiếng Việt cực kỳ chuẩn xác
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
-
     const res = await fetch(OPENAI_ENDPOINT, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${TROLLLLM_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-3-8-flash",
+        model: "deepseek-v4-flash",
         messages: [
           {
             role: "system",
-            content: `You are an elite AI image prompt specialist.
-Task: Translate and enhance the user's Vietnamese request into an ultra-high-definition, photorealistic English prompt for image generation.
+            content: `You are an elite AI image prompt translator and visual director.
+Task: Convert any user request (including casual Vietnamese, slang, or celebrity names like "tao cho t 1 hinh cua son tung mtp") into a photorealistic, high-detail English image prompt for an image AI model.
 Selected Aspect Ratio: ${aspectRatio}.
 
 CRITICAL RULES:
-1. STRICT ADHERENCE: Faithfully capture every element of the user's request (e.g. if warehouse/xe nâng/pallet, depict an authentic warehouse with active forklifts and cargo pallets). NEVER change the core theme.
-2. PHOTOREALISM: Specify true photographic detail, authentic lighting, accurate materials, and natural depth of field.
-3. CONCISENESS: Return ONLY the final English prompt (under 60 words). No commentary, no preamble, no markdown formatting.`,
+1. SUBJECT FIDELITY: If the user names a person, character, object, or location (e.g. "Sơn Tùng M-TP"), vividly describe them accurately with photorealistic style, hairstyle, outfit, expression, and environment.
+2. PHOTOREALISM: Specify true photography qualities (camera angle, 8k, photorealistic, professional lighting, cinematic, natural textures).
+3. PURITY: Output ONLY the English prompt under 45 words. NO conversation, NO intro, NO markdown quotes.`,
           },
           {
             role: "user",
-            content: `User prompt: "${cleanUserPrompt}". Aspect ratio: ${aspectRatio}`,
+            content: cleanUserPrompt,
           },
         ],
       }),
-      signal: controller.signal,
+      signal: AbortSignal.timeout(6500),
     });
-
-    clearTimeout(timeoutId);
 
     if (res.ok) {
       const data = await res.json();
@@ -70,37 +68,9 @@ CRITICAL RULES:
       if (text) {
         fablePrompt = text.replace(/^["'`]|["'`]$/g, "").trim();
       }
-    } else {
-      // Fallback nhanh sang deepseek-v4-flash nếu gemini bận
-      const dsRes = await fetch(OPENAI_ENDPOINT, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${TROLLLLM_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "deepseek-v4-flash",
-          messages: [
-            {
-              role: "system",
-              content: "Translate user's image prompt into high-quality descriptive English. Output ONLY the English prompt under 50 words.",
-            },
-            {
-              role: "user",
-              content: cleanUserPrompt,
-            },
-          ],
-        }),
-        signal: AbortSignal.timeout(5000),
-      });
-      if (dsRes.ok) {
-        const dsData = await dsRes.json();
-        const dsText = dsData?.choices?.[0]?.message?.content?.trim();
-        if (dsText) fablePrompt = dsText.replace(/^["'`]|["'`]$/g, "").trim();
-      }
     }
   } catch (err) {
-    console.warn("[TrollLLM] Cảnh báo tối ưu prompt, giữ prompt gốc:", err);
+    console.warn("[TrollLLM] Cảnh báo tối ưu prompt DeepSeek, giữ prompt gốc:", err);
   }
 
   return {
