@@ -98,37 +98,14 @@ function HomeContent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("appearance");
 
-  // Đồng bộ URL tab parameter và làm sạch thanh địa chỉ trình duyệt
+  // Đồng bộ URL tab parameter (?tab=xxx) với state currentTab
   useEffect(() => {
-    // Kiểm tra pathname nếu truy cập trực tiếp các route như /explore, /images,...
-    if (typeof window !== "undefined") {
-      const pathname = window.location.pathname.replace(/^\//, "");
-      const validTabs = ["explore", "images", "characters", "healing", "stories", "tools", "profile", "tarot", "tuvi", "chiemtinh", "battu"];
-      if (validTabs.includes(pathname)) {
-        setCurrentTab(pathname);
-        setIsChatOpen(false);
-      } else if (tabQuery && tabQuery !== currentTab) {
-        setCurrentTab(tabQuery);
-        if (tabQuery === "home") {
-          setIsChatOpen(false);
-        }
-      }
-    } else if (tabQuery && tabQuery !== currentTab) {
+    if (tabQuery && tabQuery !== currentTab) {
       setCurrentTab(tabQuery);
-      if (tabQuery === "home") {
-        setIsChatOpen(false);
-      }
-    }
-
-    // Lắng nghe nút Back/Forward của trình duyệt
-    const handlePopState = () => {
-      if (typeof window === "undefined") return;
-      const path = window.location.pathname.replace(/^\//, "") || "home";
-      setCurrentTab(path);
       setIsChatOpen(false);
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+      setActiveProjectId(null);
+      setIsCreatingProject(false);
+    }
   }, [tabQuery]);
 
   // Tự động cuộn Trợ lý nổi bật & Nhân vật xu hướng cực kỳ mượt mà (Pause khi rê chuột)
@@ -271,7 +248,7 @@ function HomeContent() {
       }
     } else {
       if (typeof window !== "undefined") {
-        window.history.pushState(null, "", `/${tab}`);
+        window.history.pushState(null, "", `/?tab=${tab}`);
       }
     }
   };
