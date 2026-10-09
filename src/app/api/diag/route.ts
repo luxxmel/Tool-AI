@@ -21,6 +21,8 @@ export async function GET() {
       const stat = fs.statSync(dbPath);
       diag.dbStat = { size: stat.size, mode: (stat.mode & 0o777).toString(8) };
     }
+    diag.yescaleKeyLength = (process.env.YESCALE_API_KEY || "").length;
+    diag.trollllmKeyLength = (process.env.TROLLLLM_API_KEY || "").length;
   } catch (e: any) {
     diag.dbError = e.message;
   }
