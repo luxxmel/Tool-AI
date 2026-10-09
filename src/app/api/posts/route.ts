@@ -139,9 +139,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(formattedPosts);
   } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
     console.error("Lỗi khi tải danh sách bài viết:", error);
     return NextResponse.json(
-      { error: "Lỗi hệ thống khi tải bài viết" },
+      { error: "Lỗi hệ thống khi tải bài viết: " + msg },
       { status: 500 }
     );
   }
