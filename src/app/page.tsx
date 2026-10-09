@@ -63,9 +63,9 @@ function HomeContent() {
   useEffect(() => {
     if (tabQuery && tabQuery !== currentTab) {
       setCurrentTab(tabQuery);
-      if (tabQuery === "home") {
-        setIsChatOpen(false);
-      }
+      setIsChatOpen(false);
+      setActiveProjectId(null);
+      setIsCreatingProject(false);
     }
   }, [tabQuery]);
 
@@ -199,6 +199,9 @@ function HomeContent() {
 
   const handleSelectTab = (tab: string) => {
     setCurrentTab(tab);
+    setIsChatOpen(false);
+    setActiveProjectId(null);
+    setIsCreatingProject(false);
     if (tab === "home") {
       handleNewChat();
       router.push("/");
