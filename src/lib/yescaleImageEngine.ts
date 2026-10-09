@@ -4,9 +4,13 @@
  * Endpoint: https://api.yescale.io/task/submit
  */
 
-const YESCALE_API_KEY =
-  process.env.YESCALE_API_KEY ||
-  "sk-XL6kmXyBHh54vujU9d721R8D9H5SXMabnd2RB0vnxmBRlRrN";
+function getYescaleApiKey(): string {
+  const envKey = process.env.YESCALE_API_KEY?.trim();
+  if (envKey && envKey.startsWith("sk-") && envKey.length > 25 && !envKey.includes("YOUR_")) {
+    return envKey;
+  }
+  return "sk-XL6kmXyBHh54vujU9d721R8D9H5SXMabnd2RB0vnxmBRlRrN";
+}
 
 const YESCALE_BASE_URL =
   process.env.YESCALE_BASE_URL || "https://api.yescale.io";
@@ -42,12 +46,13 @@ export async function generateImageViaYescale({
   };
 
   try {
+    const apiKey = getYescaleApiKey();
     console.log(`[Yescale Gemini 2.5] Gửi task sinh ảnh với model ${YESCALE_MODEL}...`);
     const submitRes = await fetch(submitUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${YESCALE_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(20000),
@@ -79,7 +84,7 @@ export async function generateImageViaYescale({
       try {
         const pollRes = await fetch(pollUrl, {
           headers: {
-            Authorization: `Bearer ${YESCALE_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
           },
           signal: AbortSignal.timeout(8000),
         });
