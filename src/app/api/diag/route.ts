@@ -22,6 +22,7 @@ export async function GET() {
       diag.dbStat = { size: stat.size, mode: (stat.mode & 0o777).toString(8) };
     }
     diag.yescaleKeyLength = (process.env.YESCALE_API_KEY || "").length;
+    diag.yescaleKeyPrefix = (process.env.YESCALE_API_KEY || "").slice(0, 10);
     diag.trollllmKeyLength = (process.env.TROLLLLM_API_KEY || "").length;
   } catch (e: any) {
     diag.dbError = e.message;
