@@ -342,16 +342,16 @@ export default function AppSidebar({
               }
 
               return (
-                <Link
+                <button
                   key={item.id}
-                  href={item.href || "/"}
-                  onClick={(e) => {
-                    e.preventDefault();
+                  type="button"
+                  data-tab-id={item.id}
+                  onClick={() => {
                     onSelectTab(item.id);
                     setIsFlyoutOpen(false);
                     setIsMobileOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer text-left ${
                     isActive
                       ? "bg-indigo-50/90 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs font-semibold"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
@@ -369,7 +369,7 @@ export default function AppSidebar({
                       {item.badge}
                     </span>
                   )}
-                </Link>
+                </button>
               );
             })}
 

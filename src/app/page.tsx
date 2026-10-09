@@ -100,17 +100,35 @@ function HomeContent() {
 
   // Đồng bộ URL tab parameter và làm sạch thanh địa chỉ trình duyệt
   useEffect(() => {
-    if (tabQuery && tabQuery !== currentTab) {
+    // Kiểm tra pathname nếu truy cập trực tiếp các route như /explore, /images,...
+    if (typeof window !== "undefined") {
+      const pathname = window.location.pathname.replace(/^\//, "");
+      const validTabs = ["explore", "images", "characters", "healing", "stories", "tools", "profile", "tarot", "tuvi", "chiemtinh", "battu"];
+      if (validTabs.includes(pathname)) {
+        setCurrentTab(pathname);
+        setIsChatOpen(false);
+      } else if (tabQuery && tabQuery !== currentTab) {
+        setCurrentTab(tabQuery);
+        if (tabQuery === "home") {
+          setIsChatOpen(false);
+        }
+      }
+    } else if (tabQuery && tabQuery !== currentTab) {
       setCurrentTab(tabQuery);
       if (tabQuery === "home") {
         setIsChatOpen(false);
       }
     }
-    // Khi trang tải với ?tab=explore, chuyển URL bar thành /explore cho đẹp mắt
-    if (typeof window !== "undefined" && window.location.search.includes("tab=")) {
-      const targetPath = tabQuery && tabQuery !== "home" ? `/${tabQuery}` : "/";
-      window.history.replaceState(null, "", targetPath);
-    }
+
+    // Lắng nghe nút Back/Forward của trình duyệt
+    const handlePopState = () => {
+      if (typeof window === "undefined") return;
+      const path = window.location.pathname.replace(/^\//, "") || "home";
+      setCurrentTab(path);
+      setIsChatOpen(false);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, [tabQuery]);
 
   // Tự động cuộn Trợ lý nổi bật & Nhân vật xu hướng cực kỳ mượt mà (Pause khi rê chuột)
@@ -244,6 +262,8 @@ function HomeContent() {
   const handleSelectTab = (tab: string) => {
     setCurrentTab(tab);
     setIsChatOpen(false);
+    setActiveProjectId(null);
+    setIsCreatingProject(false);
     if (tab === "home") {
       handleNewChat();
       if (typeof window !== "undefined") {
