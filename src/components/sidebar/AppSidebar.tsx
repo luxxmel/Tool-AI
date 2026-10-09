@@ -167,7 +167,7 @@ export default function AppSidebar({
             ▲
           </div>
           <span className="font-black text-slate-900 dark:text-white text-base tracking-tight">
-            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io.vn</span>
+            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io</span>
           </span>
         </div>
 
@@ -207,15 +207,6 @@ export default function AppSidebar({
         </div>
       </div>
 
-      {/* Mobile Backdrop Overlay */}
-      {isMobileOpen && (
-        <div
-          onClick={() => setIsMobileOpen(false)}
-          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
-          aria-hidden="true"
-        />
-      )}
-
       {/* Main Sidebar */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white/95 dark:bg-[#090a10]/95 backdrop-blur-xl border-r border-slate-200/80 dark:border-indigo-950/50 flex flex-col justify-between p-3.5 transition-all duration-300 ${
@@ -229,46 +220,28 @@ export default function AppSidebar({
         <div>
           {/* Brand Logo & Theme Toggle */}
           <div className="flex items-center justify-between px-1.5 py-2.5 mb-2 gap-1.5 min-w-0">
-            <Link 
-              href="/" 
-              onClick={(e) => {
-                e.preventDefault();
-                onSelectTab("home");
-                setIsMobileOpen(false);
-              }}
-              className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink"
-            >
+            <Link href="/" className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink">
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
                 </svg>
               </div>
               <span className="text-base font-black text-slate-900 dark:text-white tracking-tight truncate">
-                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io.vn</span>
+                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io</span>
               </span>
             </Link>
 
             <div className="flex items-center gap-1 shrink-0">
-              {/* Close button for mobile drawer */}
-              <button
-                type="button"
-                onClick={() => setIsMobileOpen(false)}
-                className="lg:hidden w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white transition-all cursor-pointer flex items-center justify-center border border-slate-200 dark:border-slate-700"
-                title="Đóng menu"
-              >
-                ✕
-              </button>
-
               {/* Collapse button for desktop */}
               {onToggleCollapse && (
                 <button
                   type="button"
                   onClick={onToggleCollapse}
-                  className="hidden lg:flex w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer items-center justify-center border border-slate-200 dark:border-slate-700"
+                  className="hidden lg:flex p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer"
                   title={t("sidebar.collapse")}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                   </svg>
                 </button>
               )}
@@ -277,14 +250,14 @@ export default function AppSidebar({
               <button
                 type="button"
                 onClick={() => setIsNotificationOpen(true)}
-                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer relative flex items-center justify-center border border-slate-200 dark:border-slate-700"
+                className="p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-xs transition-all cursor-pointer relative"
                 title="Xem thông báo hệ thống"
               >
                 <span className="text-xs">🔔</span>
                 {hasUnreadNotifications && (
                   <>
-                    <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
-                    <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full" />
+                    <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
+                    <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-rose-500 rounded-full" />
                   </>
                 )}
               </button>
@@ -293,10 +266,10 @@ export default function AppSidebar({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 border border-amber-200/80 dark:border-slate-700 transition-all cursor-pointer flex items-center justify-center text-xs shadow-2xs"
+                className="p-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-xs transition-all cursor-pointer"
                 title={theme === "dark" ? t("sidebar.light_mode") : t("sidebar.dark_mode")}
               >
-                <span>{theme === "dark" ? "☀️" : "🌙"}</span>
+                <span className="text-xs">{theme === "dark" ? "☀️" : "🌙"}</span>
               </button>
             </div>
           </div>
@@ -342,16 +315,15 @@ export default function AppSidebar({
               }
 
               return (
-                <button
+                <Link
                   key={item.id}
-                  type="button"
-                  data-tab-id={item.id}
+                  href={item.href || "/"}
                   onClick={() => {
                     onSelectTab(item.id);
                     setIsFlyoutOpen(false);
                     setIsMobileOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer text-left ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                     isActive
                       ? "bg-indigo-50/90 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs font-semibold"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
@@ -369,7 +341,7 @@ export default function AppSidebar({
                       {item.badge}
                     </span>
                   )}
-                </button>
+                </Link>
               );
             })}
 
