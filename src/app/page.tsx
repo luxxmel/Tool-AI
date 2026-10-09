@@ -243,6 +243,7 @@ function HomeContent() {
 
   const handleSelectTab = (tab: string) => {
     setCurrentTab(tab);
+    setIsChatOpen(false);
     if (tab === "home") {
       handleNewChat();
       if (typeof window !== "undefined") {

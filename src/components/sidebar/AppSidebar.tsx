@@ -231,7 +231,11 @@ export default function AppSidebar({
           <div className="flex items-center justify-between px-1.5 py-2.5 mb-2 gap-1.5 min-w-0">
             <Link 
               href="/" 
-              onClick={() => setIsMobileOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                onSelectTab("home");
+                setIsMobileOpen(false);
+              }}
               className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink"
             >
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
@@ -341,7 +345,8 @@ export default function AppSidebar({
                 <Link
                   key={item.id}
                   href={item.href || "/"}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     onSelectTab(item.id);
                     setIsFlyoutOpen(false);
                     setIsMobileOpen(false);
