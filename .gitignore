@@ -14,15 +14,8 @@
 /coverage
 
 # next.js
-/.next/cache/
-/.next/dev/
-/.next/trace*
-/.next/diagnostics/
-/.next/types/
+/.next/
 /out/
-
-# production
-/build
 
 # misc
 .DS_Store
@@ -45,6 +38,8 @@ yarn-error.log*
 # database
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 
 # vercel
 .vercel

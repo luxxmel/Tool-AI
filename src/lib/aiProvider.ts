@@ -85,21 +85,15 @@ export type AvailableModel = typeof AVAILABLE_MODELS[number];
 export function getAIModel(modelOrBrainId?: string) {
   const normalizedId = (modelOrBrainId || "fast").toLowerCase().trim();
 
-  // 1. BỘ NÃO SUY NGHĨ NHANH: Gemini 2.5 Flash / Gemini 3.7 Flash
+  // 1. BỘ NÃO SUY NGHĨ NHANH: Gemini 3.7 Flash (Tốc độ phản hồi cực nhanh, thông minh thế hệ mới)
   if (
     normalizedId === "fast" ||
+    normalizedId === "gemini-3.7-flash" ||
+    normalizedId === "gemini-3-7-flash" ||
     normalizedId === "gpt-5.5" ||
     normalizedId === "gpt" ||
     normalizedId.includes("nhanh")
   ) {
-    if (GEMINI_API_KEY) {
-      return {
-        model: googleAI("gemini-2.5-flash"),
-        modelId: "gemini-2.5-flash",
-        modeId: "fast",
-        name: "Suy nghĩ nhanh",
-      };
-    }
     if (TROLLLLM_KEY && trollLLMClient) {
       return {
         model: trollLLMClient("gemini-3-7-flash"),
@@ -108,56 +102,69 @@ export function getAIModel(modelOrBrainId?: string) {
         name: "Suy nghĩ nhanh",
       };
     }
+    if (GEMINI_API_KEY) {
+      return {
+        model: googleAI("gemini-2.5-flash"),
+        modelId: "gemini-2.5-flash",
+        modeId: "fast",
+        name: "Suy nghĩ nhanh",
+      };
+    }
   }
 
-  // 2. BỘ NÃO SUY LUẬN SÂU: Gemini 2.5 Flash / Claude Sonnet 4.5
+  // 2. BỘ NÃO SUY LUẬN SÂU (VIP): Claude Opus 5.5 / Claude Sonnet 5.5 (Đỉnh cao tư duy toán học, logic và lập trình)
   if (
     normalizedId === "deep" ||
+    normalizedId === "claude-opus-5.5" ||
+    normalizedId === "claude-opus-5-5" ||
+    normalizedId === "claude-sonnet-5.5" ||
     normalizedId === "claude-sonnet-4.5" ||
-    normalizedId === "claude-sonnet-4-5" ||
     normalizedId === "claude-fable-5.1" ||
+    normalizedId.includes("opus") ||
     normalizedId.includes("fable") ||
     normalizedId.includes("claude") ||
     normalizedId.includes("sau")
   ) {
-    if (GEMINI_API_KEY) {
+    if (TROLLLLM_KEY && trollLLMClient) {
       return {
-        model: googleAI("gemini-2.5-flash"),
-        modelId: "gemini-2.5-flash",
+        model: trollLLMClient("claude-opus-5.5"),
+        modelId: "claude-opus-5.5",
         modeId: "deep",
         name: "Suy luận sâu",
       };
     }
-    if (TROLLLLM_KEY && trollLLMClient) {
+    if (GEMINI_API_KEY) {
       return {
-        model: trollLLMClient("claude-sonnet-4.5"),
-        modelId: "claude-sonnet-4.5",
+        model: googleAI("gemini-2.5-flash"),
+        modelId: "gemini-2.5-flash",
         modeId: "deep",
         name: "Suy luận sâu",
       };
     }
   }
 
-  // 3. BỘ NÃO SÁNG TẠO: Gemini 2.5 Flash / Claude Sonnet
+  // 3. BỘ NÃO SÁNG TẠO: Claude Sonnet 5.5 / Claude Fable 5.1 (Văn phong mượt mà, giàu cảm xúc, thơ văn & kịch bản)
   if (
     normalizedId === "creative" ||
-    normalizedId === "gemini-2.5-flash" ||
+    normalizedId === "claude-sonnet-5.5" ||
+    normalizedId === "claude-sonnet-5-5" ||
+    normalizedId === "claude-fable-5.1" ||
+    normalizedId === "gpt-5.6-luna" ||
     normalizedId.includes("sangtao") ||
-    normalizedId.includes("creative") ||
-    normalizedId.includes("gemini")
+    normalizedId.includes("creative")
   ) {
-    if (GEMINI_API_KEY) {
+    if (TROLLLLM_KEY && trollLLMClient) {
       return {
-        model: googleAI("gemini-2.5-flash"),
-        modelId: "gemini-2.5-flash",
+        model: trollLLMClient("claude-sonnet-5.5"),
+        modelId: "claude-sonnet-5.5",
         modeId: "creative",
         name: "Sáng tạo",
       };
     }
-    if (TROLLLLM_KEY && trollLLMClient) {
+    if (GEMINI_API_KEY) {
       return {
-        model: trollLLMClient("gemini-3-7-flash"),
-        modelId: "gemini-3-7-flash",
+        model: googleAI("gemini-2.5-flash"),
+        modelId: "gemini-2.5-flash",
         modeId: "creative",
         name: "Sáng tạo",
       };

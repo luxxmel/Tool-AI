@@ -402,8 +402,8 @@ export const CATEGORIZED_ASSISTANTS: Record<
     items: [
       {
         id: "career-guide",
-        name: "Cố Vấn Sự Nghiệp & CV",
-        nameEn: "Career & CV Advisor",
+        name: "Coach David · Cố Vấn CV & Sự Nghiệp",
+        nameEn: "Coach David · Career & CV Advisor",
         category: "work",
         avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
         description: "Định hướng phát triển bản thân, viết CV chuẩn ATS và luyện phỏng vấn.",

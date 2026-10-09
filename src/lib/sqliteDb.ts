@@ -12,7 +12,17 @@ function getDb() {
   if (dbInstance) return dbInstance;
 
   try {
-    const { DatabaseSync } = require("node:sqlite");
+    // Nạp node:sqlite chuẩn xác mà không bị Turbopack/bundler can thiệp
+    const g = globalThis as any;
+    const nodeSqlite =
+      (typeof process !== "undefined" && typeof (process as any).getBuiltinModule === "function"
+        ? (process as any).getBuiltinModule("node:sqlite")
+        : null) ||
+      (typeof g.__non_webpack_require__ === "function"
+        ? g.__non_webpack_require__("node:sqlite")
+        : eval('require')("node:sqlite"));
+
+    const { DatabaseSync } = nodeSqlite;
     const dbPath = path.resolve(process.cwd(), "prisma", "dev.db");
     
     // Đảm bảo thư mục prisma tồn tại
@@ -24,6 +34,14 @@ function getDb() {
     dbInstance = new DatabaseSync(dbPath);
     dbInstance.exec("PRAGMA journal_mode = WAL;");
     dbInstance.exec("PRAGMA foreign_keys = ON;");
+    dbInstance.exec(`
+      CREATE TABLE IF NOT EXISTS ExploreSearch (
+        id TEXT PRIMARY KEY,
+        query TEXT NOT NULL,
+        normalizedQuery TEXT NOT NULL,
+        createdAt INTEGER NOT NULL
+      );
+    `);
     return dbInstance;
   } catch (err) {
     console.error("[SQLiteDb] Lỗi khởi tạo node:sqlite:", err);
@@ -397,10 +415,12 @@ export const conversation = {
     };
 
     if (include?.bot) {
-      res.bot = bot.findUnique({ where: { id: row.botId } });
+      const bRow = db.prepare("SELECT * FROM Bot WHERE id = ?").get(row.botId);
+      res.bot = bRow ? { ...bRow, createdAt: toDate(bRow.createdAt), updatedAt: toDate(bRow.updatedAt) } : null;
     }
     if (include?.project && row.projectId) {
-      res.project = project.findUnique({ where: { id: row.projectId } });
+      const pRow = db.prepare("SELECT * FROM Project WHERE id = ?").get(row.projectId);
+      res.project = pRow ? project._format(pRow, include?.project?.include) : null;
     }
     if (include?.messages) {
       const msgs = db.prepare("SELECT * FROM Message WHERE conversationId = ? ORDER BY createdAt ASC").all(row.id);
@@ -533,13 +553,15 @@ export const project = {
   },
 
   _format(row: any, include: any) {
+    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.conversations) {
-      res.conversations = conversation.findMany({ where: { projectId: row.id } });
+      const cRows = db.prepare("SELECT * FROM Conversation WHERE projectId = ? ORDER BY createdAt DESC").all(row.id);
+      res.conversations = cRows.map((c: any) => conversation._format(c, include?.conversations?.include));
     }
     return res;
   }
@@ -571,6 +593,21 @@ export const post = {
     if (where.status) {
       conds.push("status = ?");
       params.push(where.status);
+    }
+    if (where.OR && Array.isArray(where.OR)) {
+      const orConds: string[] = [];
+      for (const cond of where.OR) {
+        if (cond.title?.contains) {
+          orConds.push("title LIKE ?");
+          params.push(`%${cond.title.contains}%`);
+        } else if (cond.content?.contains) {
+          orConds.push("content LIKE ?");
+          params.push(`%${cond.content.contains}%`);
+        }
+      }
+      if (orConds.length > 0) {
+        conds.push(`(${orConds.join(" OR ")})`);
+      }
     }
 
     if (conds.length) sql += " WHERE " + conds.join(" AND ");
@@ -657,13 +694,16 @@ export const post = {
     };
 
     if (include?.author) {
-      res.author = user.findUnique({ where: { id: row.authorId } });
+      const aRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.authorId);
+      res.author = aRow ? user._format(aRow, include?.author?.include, include?.author?.select) : null;
     }
     if (include?.comments) {
-      res.comments = comment.findMany({ where: { postId: row.id } });
+      const cRows = db.prepare("SELECT * FROM Comment WHERE postId = ? ORDER BY createdAt ASC").all(row.id);
+      res.comments = cRows.map((c: any) => comment._format(c, include?.comments?.include));
     }
     if (include?.reactions) {
-      res.reactions = postReaction.findMany({ where: { postId: row.id } });
+      const rRows = db.prepare("SELECT * FROM PostReaction WHERE postId = ?").all(row.id);
+      res.reactions = rRows.map((r: any) => ({ ...r, createdAt: toDate(r.createdAt) }));
     }
     if (include?._count) {
       res._count = {
@@ -737,16 +777,19 @@ export const comment = {
   },
 
   _format(row: any, include: any) {
+    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.user) {
-      res.user = user.findUnique({ where: { id: row.userId } });
+      const uRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.userId);
+      res.user = uRow ? user._format(uRow, include?.user?.include, include?.user?.select) : null;
     }
     if (include?.post) {
-      res.post = post.findUnique({ where: { id: row.postId } });
+      const pRow = db.prepare("SELECT * FROM Post WHERE id = ?").get(row.postId);
+      res.post = pRow ? post._format(pRow, include?.post?.include) : null;
     }
     return res;
   }
@@ -907,16 +950,56 @@ export const paymentOrder = {
   },
 
   _format(row: any, include: any) {
+    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.user) {
-      res.user = user.findUnique({ where: { id: row.userId } });
+      const uRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.userId);
+      res.user = uRow ? user._format(uRow, include?.user?.include, include?.user?.select) : null;
     }
     return res;
   }
+};
+
+// ==================== EXPLORE SEARCH ====================
+export const exploreSearch = {
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const now = toTimestamp(data.createdAt || Date.now());
+    const query = String(data.query || "").trim();
+    const normalizedQuery = String(data.normalizedQuery || query.toLowerCase().replace(/[?!.,;:…]+$/, "").trim());
+
+    db.prepare("INSERT INTO ExploreSearch (id, query, normalizedQuery, createdAt) VALUES (?, ?, ?, ?)")
+      .run(id, query, normalizedQuery, now);
+
+    return { id, query, normalizedQuery, createdAt: toDate(now) };
+  },
+
+  async findMany({ where = {}, orderBy, take }: any = {}) {
+    const db = getDb();
+    let sql = "SELECT * FROM ExploreSearch";
+    const params: any[] = [];
+    const conds: string[] = [];
+
+    if (where.createdAt?.gte) {
+      conds.push("createdAt >= ?");
+      params.push(toTimestamp(where.createdAt.gte));
+    }
+
+    if (conds.length) sql += " WHERE " + conds.join(" AND ");
+    sql += " ORDER BY createdAt DESC";
+    if (take) sql += ` LIMIT ${Number(take)}`;
+
+    const rows = db.prepare(sql).all(...params);
+    return rows.map((r: any) => ({
+      ...r,
+      createdAt: toDate(r.createdAt),
+    }));
+  },
 };
 
 // ==================== TRANSACTION HELPER ====================
@@ -932,6 +1015,7 @@ export async function $transaction(arg: any) {
       comment,
       postReaction,
       paymentOrder,
+      exploreSearch,
     });
   }
   if (Array.isArray(arg)) {
@@ -950,5 +1034,6 @@ export const sqliteClient = {
   comment,
   postReaction,
   paymentOrder,
+  exploreSearch,
   $transaction,
 };

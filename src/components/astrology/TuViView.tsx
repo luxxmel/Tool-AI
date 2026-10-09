@@ -29,6 +29,8 @@ export default function TuViView({ onOpenLoginModal }: { onOpenLoginModal?: () =
   const [birthDay, setBirthDay] = useState(15);
   const [birthHour, setBirthHour] = useState(9);
   const [birthMinute, setBirthMinute] = useState(30);
+  const [isUnknownHour, setIsUnknownHour] = useState(false);
+  const [approximatePeriod, setApproximatePeriod] = useState<'sang' | 'chieu' | 'toi' | 'khong_ro'>('khong_ro');
 
   // Result state
   const [chartData, setChartData] = useState<{
@@ -65,19 +67,29 @@ export default function TuViView({ onOpenLoginModal }: { onOpenLoginModal?: () =
       setReadingText('');
 
       // 1. Tính toán chuẩn xác theo Thiên văn Âm Dương Lịch
-      const solar = Solar.fromYmdHms(birthYear, birthMonth, birthDay, birthHour, birthMinute, 0);
+      // Nếu không biết giờ sinh: Dùng giờ ước lượng hoặc giờ Ngọ (12:00 trưa - thời điểm dương khí cực thịnh theo cổ thư) để an bàn mẫu
+      let effectiveHour = birthHour;
+      let effectiveMinute = birthMinute;
+      if (isUnknownHour) {
+        if (approximatePeriod === 'sang') { effectiveHour = 8; effectiveMinute = 0; }
+        else if (approximatePeriod === 'chieu') { effectiveHour = 14; effectiveMinute = 0; }
+        else if (approximatePeriod === 'toi') { effectiveHour = 20; effectiveMinute = 0; }
+        else { effectiveHour = 12; effectiveMinute = 0; } // Giờ Ngọ chính khí
+      }
+
+      const solar = Solar.fromYmdHms(birthYear, birthMonth, birthDay, effectiveHour, effectiveMinute, 0);
       const lunar = solar.getLunar();
 
       const canChiYear = translateGanZhi(lunar.getYearInGanZhi());
       const canChiMonth = translateGanZhi(lunar.getMonthInGanZhi());
       const canChiDay = translateGanZhi(lunar.getDayInGanZhi());
-      const canChiHour = translateGanZhi(lunar.getTimeInGanZhi());
+      const canChiHour = isUnknownHour ? 'Chưa định (Tham chiếu giờ Ngọ)' : translateGanZhi(lunar.getTimeInGanZhi());
       const menh = MENH_NGU_HANH[canChiYear] || 'Thiên Thượng Hỏa';
 
       // 12 Cung Địa Bàn
       const branches = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
       const lunarMonthNum = Math.abs(lunar.getMonth());
-      const hourBranchIndex = Math.floor(((birthHour + 1) % 24) / 2);
+      const hourBranchIndex = Math.floor(((effectiveHour + 1) % 24) / 2);
       
       // Vị trí cung Mệnh: Khởi từ Dần (index 2), thuận theo tháng, nghịch theo giờ
       const menhIndex = (2 + (lunarMonthNum - 1) - hourBranchIndex + 24) % 12;
@@ -112,7 +124,9 @@ export default function TuViView({ onOpenLoginModal }: { onOpenLoginModal?: () =
       });
 
       const fullChart = {
-        solarStr: `${birthDay}/${birthMonth}/${birthYear} ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')}`,
+        solarStr: isUnknownHour 
+          ? `${birthDay}/${birthMonth}/${birthYear} (Chưa rõ giờ sinh - ${approximatePeriod === 'sang' ? 'Ước lượng Buổi Sáng' : approximatePeriod === 'chieu' ? 'Ước lượng Buổi Chiều' : approximatePeriod === 'toi' ? 'Ước lượng Buổi Tối' : 'Chưa rõ khung giờ, lấy giờ Ngọ làm mốc'})`
+          : `${birthDay}/${birthMonth}/${birthYear} ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')}`,
         lunarStr: `Ngày ${lunar.getDay()} tháng ${lunar.getMonth()} năm ${canChiYear}`,
         canChiYear,
         canChiMonth,
@@ -131,16 +145,24 @@ export default function TuViView({ onOpenLoginModal }: { onOpenLoginModal?: () =
 - Giới tính: ${gender === 'nam' ? 'Nam mạng' : 'Nữ mạng'}
 - Dương lịch: ${fullChart.solarStr}
 - Âm lịch: ${fullChart.lunarStr}
-- Tứ Trụ Can Chi: Năm ${canChiYear}, Tháng ${canChiMonth}, Ngày ${canChiDay}, Giờ ${canChiHour}
+- Tứ Trụ Can Chi: Năm ${canChiYear}, Tháng ${canChiMonth}, Ngày ${canChiDay}, ${isUnknownHour ? 'Giờ sinh: CHƯA RÕ GIỜ CHÍNH XÁC (Dùng mốc tham chiếu giờ Ngọ)' : `Giờ ${canChiHour}`}
 - Bản Mệnh: ${menh}
 - Cung Mệnh an tại: ${fullChart.cungMenh}
-
+${isUnknownHour ? `
+⚠️ LƯU Ý ĐẶC BIỆT KHI KHÔNG BIẾT GIỜ SINH:
+- Đương số KHÔNG NHỚ RÕ GIỜ SINH. Trong học thuật Tử Vi Đẩu Số, Năm - Tháng - Ngày sinh quyết định 70% đại cục bản mệnh (gồm Căn Mệnh, Ngũ Hành Nạp Âm, Can Chi niên nguyệt nhật, sao lưu đại hạn).
+- Hãy áp dụng phương pháp ĐỊNH GIỜ SINH THEO TÍNH CÁCH VÀ BIẾN CỐ (Cân Xương Đoán Mạng / Tử Vi Biện Chứng):
+  1. Tập trung luận giải sâu những phần BẤT BIẾN dựa trên Năm - Tháng - Ngày: Bản mệnh ${menh}, can chi ${canChiYear} - ${canChiMonth} - ${canChiDay}, tính cách nền tảng, phúc đức tổ tiên, xu hướng tài vận lớn.
+  2. Đưa ra 2-3 gợi ý đặc điểm ngoại hình hoặc thói quen để người dùng tự xác minh lại giờ sinh chuẩn của mình (ví dụ sinh giờ Tý/Ngọ/Mão/Dậu thì đỉnh đầu/dáng ngủ ra sao, giờ Thìn/Tuất/Sửu/Mùi thì tính khí thế nào).
+  3. Lời khuyên định hướng cuộc đời vững vàng không phụ thuộc vào giờ sinh.
+` : `
 Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
 1. 🌟 TỔNG QUAN BẢN MỆNH & CỤC: Đánh giá sự tương sinh tương khắc giữa Mệnh và Cục, tính cách cốt lõi, ưu nhược điểm thiên bẩm.
 2. 🏛️ LUẬN GIẢI 3 CUNG TAM HỢP CỐT LÕI (MỆNH - QUAN LỘC - TÀI BẠCH): Công danh sự nghiệp, đường tiền tài, thế mạnh kinh doanh hay học thuật.
 3. 💑 DUYÊN NỢ & GIA ĐẠO (CUNG PHU THÊ & PHÚC ĐỨC): Tình cảm, hôn nhân, thời điểm kết duyên và cách hòa giải xung khắc.
 4. 🌪️ ĐẠI HẠN & TIỂU HẠN NĂM NAY: Cơ hội đột phá, lưu ý sức khỏe, các tháng cần cẩn trọng.
-5. 🌿 LỜI KHUYÊN PHONG THỦY CẢI MỆNH: Màu sắc, hướng đi, tu tâm tích đức để chuyển hóa vận mệnh.`;
+5. 🌿 LỜI KHUYÊN PHONG THỦY CẢI MỆNH: Màu sắc, hướng đi, tu tâm tích đức để chuyển hóa vận mệnh.
+`}`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -301,27 +323,59 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Giờ Sinh (Chính xác)</label>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="number"
-                min="0"
-                max="23"
-                value={birthHour}
-                onChange={(e) => setBirthHour(Number(e.target.value))}
-                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
-                placeholder="Giờ (0-23)"
-              />
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={birthMinute}
-                onChange={(e) => setBirthMinute(Number(e.target.value))}
-                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
-                placeholder="Phút (0-59)"
-              />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-slate-400">
+                Giờ Sinh <span className="text-[10px] text-slate-400 font-normal">(Không bắt buộc)</span>
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-indigo-400 hover:text-indigo-300 font-medium">
+                <input
+                  type="checkbox"
+                  checked={isUnknownHour}
+                  onChange={(e) => setIsUnknownHour(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded accent-indigo-500 cursor-pointer"
+                />
+                <span>Quên / Không nhớ giờ?</span>
+              </label>
             </div>
+
+            {isUnknownHour ? (
+              <div className="space-y-2">
+                <select
+                  value={approximatePeriod}
+                  onChange={(e) => setApproximatePeriod(e.target.value as any)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-indigo-500/50 text-indigo-200 text-xs outline-none focus:border-indigo-400 font-medium"
+                >
+                  <option value="khong_ro">❓ Hoàn toàn không nhớ (Lấy giờ Ngọ làm mốc)</option>
+                  <option value="sang">🌅 Khoảng Buổi Sáng (06:00 - 11:00)</option>
+                  <option value="chieu">☀️ Khoảng Buổi Chiều (13:00 - 17:00)</option>
+                  <option value="toi">🌙 Khoảng Buổi Tối / Đêm (18:00 - 23:00)</option>
+                </select>
+                <p className="text-[10px] text-amber-400/90 leading-tight">
+                  💡 AI sẽ luận bản mệnh theo Năm - Tháng - Ngày và hướng dẫn bạn tự dò giờ sinh qua tướng mạo/biến cố.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="23"
+                  value={birthHour}
+                  onChange={(e) => setBirthHour(Number(e.target.value))}
+                  className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                  placeholder="Giờ (0-23)"
+                />
+                <input
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={birthMinute}
+                  onChange={(e) => setBirthMinute(Number(e.target.value))}
+                  className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                  placeholder="Phút (0-59)"
+                />
+              </div>
+            )}
           </div>
         </div>
 

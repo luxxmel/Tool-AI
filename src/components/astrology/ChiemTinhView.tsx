@@ -47,6 +47,8 @@ export default function ChiemTinhView({ onOpenLoginModal }: { onOpenLoginModal?:
   const [birthHour, setBirthHour] = useState(14);
   const [birthMinute, setBirthMinute] = useState(20);
   const [birthCity, setBirthCity] = useState('Hà Nội');
+  const [isUnknownHour, setIsUnknownHour] = useState(false);
+  const [approximatePeriod, setApproximatePeriod] = useState<'sang' | 'chieu' | 'toi' | 'khong_ro'>('khong_ro');
 
   const [natalChart, setNatalChart] = useState<any | null>(null);
   const [readingText, setReadingText] = useState('');
@@ -72,22 +74,34 @@ export default function ChiemTinhView({ onOpenLoginModal }: { onOpenLoginModal?:
 
       const sunSign = getSunSign(birthDay, birthMonth);
       
-      // Tính Cung Mọc (Ascendant) & Cung Mặt Trăng (Moon Sign) xấp xỉ chính xác theo giờ sinh
-      const ascIndex = (Math.floor(birthHour / 2) + birthMonth * 2) % 12;
+      let effectiveHour = birthHour;
+      let effectiveMinute = birthMinute;
+      if (isUnknownHour) {
+        if (approximatePeriod === 'sang') { effectiveHour = 8; effectiveMinute = 0; }
+        else if (approximatePeriod === 'chieu') { effectiveHour = 14; effectiveMinute = 0; }
+        else if (approximatePeriod === 'toi') { effectiveHour = 20; effectiveMinute = 0; }
+        else { effectiveHour = 12; effectiveMinute = 0; } // Solar Noon Chart chuẩn phương Tây
+      }
+
+      // Tính Cung Mọc (Ascendant) & Cung Mặt Trăng (Moon Sign)
+      const ascIndex = (Math.floor(effectiveHour / 2) + birthMonth * 2) % 12;
       const moonIndex = (birthDay * 2 + birthMonth + 3) % 12;
 
-      const ascSign = ZODIAC_SIGNS[ascIndex]?.name || 'Thiên Bình (Libra)';
+      const ascSign = isUnknownHour ? 'Chưa định (Biểu Đồ Mặt Trời Noon Chart)' : (ZODIAC_SIGNS[ascIndex]?.name || 'Thiên Bình (Libra)');
       const moonSign = ZODIAC_SIGNS[moonIndex]?.name || 'Cự Giải (Cancer)';
 
       const chartObj = {
         name,
-        birthStr: `${birthDay}/${birthMonth}/${birthYear} lúc ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')} tại ${birthCity}`,
+        birthStr: isUnknownHour 
+          ? `${birthDay}/${birthMonth}/${birthYear} tại ${birthCity} (Không rõ giờ sinh - Dùng Noon Chart)`
+          : `${birthDay}/${birthMonth}/${birthYear} lúc ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')} tại ${birthCity}`,
         sunSign,
         moonSign,
         ascSign,
         mercury: ZODIAC_SIGNS[(ascIndex + 1) % 12]?.name,
         venus: ZODIAC_SIGNS[(ascIndex + 2) % 12]?.name,
         mars: ZODIAC_SIGNS[(ascIndex + 4) % 12]?.name,
+        isUnknownHour
       };
 
       setNatalChart(chartObj);
@@ -95,18 +109,28 @@ export default function ChiemTinhView({ onOpenLoginModal }: { onOpenLoginModal?:
       const prompt = `Bạn là Chuyên gia Chiêm Tinh Học (Astrologer) chuyên về Bản Đồ Sao Cá Nhân (Natal Chart) chuẩn phương Tây. Hãy phân tích chuyên sâu cho:
 - Đương sự: ${name}
 - Ngày giờ và nơi sinh: ${chartObj.birthStr}
-- Bộ Ba Quyền Năng (Big Three):
-  + Cung Mặt Trời (Sun Sign): ${sunSign} (Bản ngã, mục đích sống)
+- Vị trí các hành tinh:
+  + Cung Mặt Trời (Sun Sign): ${sunSign} (Bản ngã, mục đích sống cốt lõi)
   + Cung Mặt Trăng (Moon Sign): ${moonSign} (Thế giới nội tâm, vô thức)
-  + Cung Mọc (Ascendant): ${ascSign} (Lớp mặt nạ xã hội, ấn tượng đầu tiên)
+  + Cung Mọc (Ascendant): ${ascSign}
 - Các hành tinh cá nhân: Sao Thủy (${chartObj.mercury}), Sao Kim (${chartObj.venus}), Sao Hỏa (${chartObj.mars})
 
+${isUnknownHour ? `
+⚠️ LƯU Ý KHI ĐƯƠNG SỰ KHÔNG RÕ GIỜ SINH (SOLAR NOON CHART METHOD):
+- Trong Chiêm Tinh Học phương Tây, khi không biết giờ sinh, chuẩn mực học thuật là thiết lập "Noon Chart" (lấy 12:00 trưa làm mốc).
+- Vị trí của Cung Mặt Trời (${sunSign}), Sao Thủy, Sao Kim, Sao Hỏa và phần lớn Mặt Trăng di chuyển rất chậm trong ngày nên hoàn toàn chính xác 90-95%!
+- Chỉ có Cung Mọc (Ascendant) thay đổi mỗi 2 tiếng. Do đó:
+  1. Tập trung luận giải sâu sắc Sun Sign, Moon Sign và tương tác giữa các hành tinh cá nhân.
+  2. Gợi ý 2-3 phong thái ngoại hình hoặc cách giao tiếp lần đầu gặp mặt để đương sự tự nhận diện Cung Mọc khả dĩ nhất của mình.
+  3. Lời khuyên khai mở tiềm năng theo nguyên tố chi phối (Lửa/Đất/Khí/Nước).
+` : `
 Hãy luận giải theo cấu trúc 5 phần chuẩn xác:
 1. ☀️ BỘ BA QUYỀN NĂNG (BIG THREE): Sự giao thoa giữa Mặt Trời, Mặt Trăng và Cung Mọc tạo nên cá tính độc bản như thế nào.
 2. 💖 TÌNH YÊU & CẢM XÚC (SAO KIM & SAO HỎA): Cách yêu, nhu cầu được yêu, đối tượng lý tưởng và thách thức trong mối quan hệ.
 3. 💼 SỰ NGHIỆP & TÀI CHÍNH (NHÀ 2, NHÀ 6, NHÀ 10): Điểm mạnh nghề nghiệp, lĩnh vực bứt phá tài lộc.
 4. 🪐 BÀI HỌC VŨ TRỤ (SATURN RETURN & ĐIỂM NGHẼN): Những rào cản cần vượt qua để hoàn thiện linh hồn.
-5. 🌌 THÔNG ĐIỆP DẪN LỐI TỪ VŨ TRỤ: Lời khuyên định hướng trong giai đoạn hiện tại.`;
+5. 🌌 THÔNG ĐIỆP DẪN LỐI TỪ VŨ TRỤ: Lời khuyên định hướng trong giai đoạn hiện tại.
+`}`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -251,27 +275,59 @@ Hãy luận giải theo cấu trúc 5 phần chuẩn xác:
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Giờ Sinh</label>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="number"
-                min="0"
-                max="23"
-                value={birthHour}
-                onChange={(e) => setBirthHour(Number(e.target.value))}
-                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-cyan-500"
-                placeholder="Giờ (0-23)"
-              />
-              <input
-                type="number"
-                min="0"
-                max="59"
-                value={birthMinute}
-                onChange={(e) => setBirthMinute(Number(e.target.value))}
-                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-cyan-500"
-                placeholder="Phút"
-              />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-slate-400">
+                Giờ Sinh <span className="text-[10px] text-slate-400 font-normal">(Không bắt buộc)</span>
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-cyan-400 hover:text-cyan-300 font-medium">
+                <input
+                  type="checkbox"
+                  checked={isUnknownHour}
+                  onChange={(e) => setIsUnknownHour(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded accent-cyan-500 cursor-pointer"
+                />
+                <span>Quên / Không nhớ giờ?</span>
+              </label>
             </div>
+
+            {isUnknownHour ? (
+              <div className="space-y-2">
+                <select
+                  value={approximatePeriod}
+                  onChange={(e) => setApproximatePeriod(e.target.value as any)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-cyan-500/50 text-cyan-200 text-xs outline-none focus:border-cyan-400 font-medium"
+                >
+                  <option value="khong_ro">❓ Hoàn toàn không nhớ (Dùng Solar Noon Chart)</option>
+                  <option value="sang">🌅 Khoảng Buổi Sáng (06:00 - 11:00)</option>
+                  <option value="chieu">☀️ Khoảng Buổi Chiều (13:00 - 17:00)</option>
+                  <option value="toi">🌙 Khoảng Buổi Tối / Đêm (18:00 - 23:00)</option>
+                </select>
+                <p className="text-[10px] text-cyan-400/90 leading-tight">
+                  💡 Hệ thống sử dụng biểu đồ Mặt Trời Noon Chart – phân tích chính xác Sun Sign, Moon Sign và các hành tinh.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="23"
+                  value={birthHour}
+                  onChange={(e) => setBirthHour(Number(e.target.value))}
+                  className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-cyan-500"
+                  placeholder="Giờ (0-23)"
+                />
+                <input
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={birthMinute}
+                  onChange={(e) => setBirthMinute(Number(e.target.value))}
+                  className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-cyan-500"
+                  placeholder="Phút"
+                />
+              </div>
+            )}
           </div>
         </div>
 

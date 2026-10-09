@@ -79,7 +79,7 @@ export default function AppSidebar({
     {
       id: "explore",
       label: t("nav.explore"),
-      href: "/?tab=explore",
+      href: "/explore",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -89,7 +89,7 @@ export default function AppSidebar({
     {
       id: "images",
       label: t("nav.images"),
-      href: "/?tab=images",
+      href: "/images",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -99,7 +99,7 @@ export default function AppSidebar({
     {
       id: "characters",
       label: t("nav.characters"),
-      href: "/?tab=characters",
+      href: "/characters",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -109,7 +109,7 @@ export default function AppSidebar({
     {
       id: "healing",
       label: t("nav.healing"),
-      href: "/?tab=healing",
+      href: "/healing",
       badge: "Free",
       icon: (
         <svg className="w-5 h-5 text-rose-500 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -130,7 +130,7 @@ export default function AppSidebar({
     {
       id: "stories",
       label: t("nav.stories"),
-      href: "/?tab=stories",
+      href: "/stories",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -140,7 +140,7 @@ export default function AppSidebar({
     {
       id: "tools",
       label: t("nav.tools"),
-      href: "/?tab=tools",
+      href: "/tools",
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -167,7 +167,7 @@ export default function AppSidebar({
             ▲
           </div>
           <span className="font-black text-slate-900 dark:text-white text-base tracking-tight">
-            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io</span>
+            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io.vn</span>
           </span>
         </div>
 
@@ -207,6 +207,15 @@ export default function AppSidebar({
         </div>
       </div>
 
+      {/* Mobile Backdrop Overlay */}
+      {isMobileOpen && (
+        <div
+          onClick={() => setIsMobileOpen(false)}
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Main Sidebar */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white/95 dark:bg-[#090a10]/95 backdrop-blur-xl border-r border-slate-200/80 dark:border-indigo-950/50 flex flex-col justify-between p-3.5 transition-all duration-300 ${
@@ -220,18 +229,32 @@ export default function AppSidebar({
         <div>
           {/* Brand Logo & Theme Toggle */}
           <div className="flex items-center justify-between px-1.5 py-2.5 mb-2 gap-1.5 min-w-0">
-            <Link href="/" className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink">
+            <Link 
+              href="/" 
+              onClick={() => setIsMobileOpen(false)}
+              className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink"
+            >
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
                 </svg>
               </div>
               <span className="text-base font-black text-slate-900 dark:text-white tracking-tight truncate">
-                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io</span>
+                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io.vn</span>
               </span>
             </Link>
 
             <div className="flex items-center gap-1 shrink-0">
+              {/* Close button for mobile drawer */}
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(false)}
+                className="lg:hidden w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white transition-all cursor-pointer flex items-center justify-center border border-slate-200 dark:border-slate-700"
+                title="Đóng menu"
+              >
+                ✕
+              </button>
+
               {/* Collapse button for desktop */}
               {onToggleCollapse && (
                 <button

@@ -133,6 +133,8 @@ export default function UserSettingsModal({
   const [isRechargeModalOpen, setIsRechargeModalOpen] = useState(false);
   const [selectedRechargePkg, setSelectedRechargePkg] = useState<string | undefined>(undefined);
   const [modalCustomCredits, setModalCustomCredits] = useState<number>(50);
+  const [seatPriceOverride, setSeatPriceOverride] = useState<number | undefined>(undefined);
+  const [seatTitleOverride, setSeatTitleOverride] = useState<string | undefined>(undefined);
 
   // Admin Credits State
   const [adminUsers, setAdminUsers] = useState<AdminUserItem[]>([]);
@@ -2464,7 +2466,11 @@ export default function UserSettingsModal({
                           const pkgToBuy = selectedSeatPkg;
                           setIsBuyingSeatModalOpen(false);
                           // Chuyển hướng sang cổng thanh toán VietQR / PayOS thực tế với giá tiền của gói ghế
-                          setModalCustomCredits(pkgToBuy.credits || 200);
+                          if (pkgToBuy) {
+                            setModalCustomCredits(pkgToBuy.credits || 200);
+                            setSeatPriceOverride(pkgToBuy.price);
+                            setSeatTitleOverride(`Mua ${pkgToBuy.name} (${pkgToBuy.seats} ghế)`);
+                          }
                           setSelectedRechargePkg(undefined);
                           setIsRechargeModalOpen(true);
                         }}
@@ -2623,9 +2629,15 @@ export default function UserSettingsModal({
       {/* Credit Recharge Modal */}
       <RechargeModal
         isOpen={isRechargeModalOpen}
-        onClose={() => setIsRechargeModalOpen(false)}
+        onClose={() => {
+          setIsRechargeModalOpen(false);
+          setSeatPriceOverride(undefined);
+          setSeatTitleOverride(undefined);
+        }}
         defaultPackageId={selectedRechargePkg}
         initialCustomCredits={modalCustomCredits}
+        customPriceOverride={seatPriceOverride}
+        customTitleOverride={seatTitleOverride}
         autoCheckout={true}
       />
     </div>

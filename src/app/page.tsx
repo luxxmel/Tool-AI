@@ -2,28 +2,14 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AppSidebar from "@/components/sidebar/AppSidebar";
 import AiSearchBox from "@/components/home/AiSearchBox";
 import AssistantCard from "@/components/home/AssistantCard";
 import CharacterCard from "@/components/home/CharacterCard";
-import ChatResponseModal from "@/components/home/ChatResponseModal";
 import LoginForm from "@/components/auth/LoginForm";
-import ExploreFeed from "@/components/explore/ExploreFeed";
-import AiImageStudio from "@/components/images/AiImageStudio";
-import CharactersDirectory from "@/components/characters/CharactersDirectory";
-import MyStoriesView from "@/components/stories/MyStoriesView";
-import HomeChatView from "@/components/home/HomeChatView";
-import ProjectDetailView from "@/components/projects/ProjectDetailView";
-import CreateProjectView from "@/components/projects/CreateProjectView";
-import AiToolsStudio from "@/components/tools/AiToolsStudio";
-import HealingCorner from "@/components/healing/HealingCorner";
-import UserProfileView from "@/components/profile/UserProfileView";
-import TarotView from "@/components/tarot/TarotView";
-import TuViView from "@/components/astrology/TuViView";
-import ChiemTinhView from "@/components/astrology/ChiemTinhView";
-import BatTuView from "@/components/astrology/BatTuView";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import {
   FEATURED_ASSISTANTS,
@@ -35,6 +21,58 @@ import WorkspaceBackgroundLayer from "@/components/theme/WorkspaceBackgroundLaye
 import { useWorkspaceBackground } from "@/context/WorkspaceBackgroundContext";
 import UserSettingsModal, { SettingsTab } from "@/components/user/UserSettingsModal";
 import { useLanguage } from "@/context/LanguageContext";
+
+// Loading skeleton nhẹ cho các view được tải động
+const ViewLoadingSkeleton = () => (
+  <div className="w-full py-16 flex flex-col items-center justify-center gap-3">
+    <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+    <span className="text-xs text-slate-400 font-mono">Đang tải nội dung...</span>
+  </div>
+);
+
+// Dynamic imports cho các module tính năng để trang chủ tải nhanh tức thì (<100ms)
+const ExploreFeed = dynamic(() => import("@/components/explore/ExploreFeed"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const AiImageStudio = dynamic(() => import("@/components/images/AiImageStudio"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const CharactersDirectory = dynamic(() => import("@/components/characters/CharactersDirectory"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const MyStoriesView = dynamic(() => import("@/components/stories/MyStoriesView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const HomeChatView = dynamic(() => import("@/components/home/HomeChatView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const ProjectDetailView = dynamic(() => import("@/components/projects/ProjectDetailView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const CreateProjectView = dynamic(() => import("@/components/projects/CreateProjectView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const AiToolsStudio = dynamic(() => import("@/components/tools/AiToolsStudio"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const HealingCorner = dynamic(() => import("@/components/healing/HealingCorner"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const UserProfileView = dynamic(() => import("@/components/profile/UserProfileView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const TarotView = dynamic(() => import("@/components/tarot/TarotView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const TuViView = dynamic(() => import("@/components/astrology/TuViView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const ChiemTinhView = dynamic(() => import("@/components/astrology/ChiemTinhView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
+const BatTuView = dynamic(() => import("@/components/astrology/BatTuView"), {
+  loading: () => <ViewLoadingSkeleton />,
+});
 
 function HomeContent() {
   const router = useRouter();
@@ -60,13 +98,18 @@ function HomeContent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("appearance");
 
-  // Đồng bộ URL tab parameter
+  // Đồng bộ URL tab parameter và làm sạch thanh địa chỉ trình duyệt
   useEffect(() => {
     if (tabQuery && tabQuery !== currentTab) {
       setCurrentTab(tabQuery);
       if (tabQuery === "home") {
         setIsChatOpen(false);
       }
+    }
+    // Khi trang tải với ?tab=explore, chuyển URL bar thành /explore cho đẹp mắt
+    if (typeof window !== "undefined" && window.location.search.includes("tab=")) {
+      const targetPath = tabQuery && tabQuery !== "home" ? `/${tabQuery}` : "/";
+      window.history.replaceState(null, "", targetPath);
     }
   }, [tabQuery]);
 
@@ -202,9 +245,13 @@ function HomeContent() {
     setCurrentTab(tab);
     if (tab === "home") {
       handleNewChat();
-      router.push("/");
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", "/");
+      }
     } else {
-      router.push(`/?tab=${tab}`);
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", `/${tab}`);
+      }
     }
   };
 
@@ -255,14 +302,14 @@ function HomeContent() {
         className={`flex-1 ${
           isChatOpen
             ? "h-screen max-h-[100dvh] overflow-hidden px-2 sm:px-4 pt-14 lg:pt-3 pb-2"
-            : "min-h-full px-1 sm:px-3 lg:px-4 pt-16 lg:pt-8 pb-32 sm:pb-44"
+            : "min-h-full px-2 sm:px-4 lg:px-6 pt-14 sm:pt-16 lg:pt-8 pb-24 sm:pb-36"
         } flex flex-col ${isChatOpen ? "items-stretch" : "items-center"} justify-start w-full relative z-10 transition-all duration-300 ${
           isSidebarCollapsed ? "lg:ml-0" : "lg:ml-64"
         }`}
       >
 
         {/* Centered Unified Content Container */}
-        <div className={`w-full ${isChatOpen || currentTab === "characters" || currentTab === "explore" ? "h-full min-h-0 max-w-full" : "max-w-[980px]"} flex flex-col`}>
+        <div className={`w-full ${isChatOpen || currentTab === "characters" || currentTab === "explore" ? "h-full min-h-0 max-w-full" : "max-w-[1000px]"} flex flex-col`}>
           {isCreatingProject ? (
             /* Inline Project Creation View in center of chat area */
             <CreateProjectView
@@ -328,7 +375,7 @@ function HomeContent() {
           ) : (
             <>
               {/* Center Search / Prompt Area */}
-              <div className="pt-2 sm:pt-6 pb-4 w-full">
+              <div className="pt-1 sm:pt-4 pb-2 w-full">
                 <AiSearchBox onSubmitPrompt={handlePromptSubmit} />
               </div>
 
@@ -336,10 +383,10 @@ function HomeContent() {
               <HomeFeaturesShowcase onSelectTab={handleSelectTab} />
 
               {/* Section 1: Trợ lý nổi bật */}
-              <section className="mb-12 w-full relative group">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2.5">
-                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              <section className="mb-8 sm:mb-12 w-full relative group">
+                <div className="flex items-center justify-between mb-3 sm:mb-5">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                       {t("home.featured_assistants")}
                     </h2>
                     <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-xs shadow-cyan-400/60 animate-pulse" />
@@ -356,14 +403,14 @@ function HomeContent() {
                         handleSelectTab("tools");
                       }
                     }}
-                    className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer"
+                    className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer py-1"
                   >
                     <span>{t("home.view_all")}</span>
                     <span>→</span>
                   </button>
                 </div>
 
-                {/* Left Arrow Button */}
+                {/* Left Arrow Button (chỉ hiển thị trên desktop để không che nội dung mobile) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -376,13 +423,13 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang trái"
                 >
                   ◀
                 </button>
 
-                {/* Right Arrow Button */}
+                {/* Right Arrow Button (chỉ hiển thị trên desktop) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -395,7 +442,7 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang phải"
                 >
                   ▶
@@ -404,10 +451,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Featured Assistants Only */}
                 <div
                   id="featured-assistants-scroll"
-                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-2"
+                  className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0.5 sm:px-2 touch-pan-x"
                 >
                   {FEATURED_ASSISTANTS.map((assistant) => (
-                    <div key={assistant.id} className="w-[280px] sm:w-[300px] shrink-0 snap-start">
+                    <div key={assistant.id} className="w-[260px] sm:w-[300px] shrink-0 snap-start">
                       <AssistantCard
                         assistant={assistant}
                         onClick={handleSelectAssistant}
@@ -418,27 +465,27 @@ function HomeContent() {
               </section>
 
               {/* Section 2: Nhân vật xu hướng */}
-              <section className="mb-12 w-full relative group">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2.5">
-                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              <section className="mb-8 sm:mb-12 w-full relative group">
+                <div className="flex items-center justify-between mb-3 sm:mb-5">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                       {t("home.trending_characters")}
                     </h2>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-gradient-to-r from-violet-500/15 to-cyan-500/15 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-500/20 dark:border-cyan-500/30">
+                    <span className="text-[11px] sm:text-xs px-2 sm:px-2.5 py-0.5 rounded-full bg-gradient-to-r from-violet-500/15 to-cyan-500/15 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-500/20 dark:border-cyan-500/30">
                       {t("home.trending")}
                     </span>
                   </div>
 
                   <button
                     onClick={() => handleSelectTab("characters")}
-                    className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer"
+                    className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors cursor-pointer py-1"
                   >
                     <span>{t("home.view_all")}</span>
                     <span>→</span>
                   </button>
                 </div>
 
-                {/* Left Arrow Button */}
+                {/* Left Arrow Button (desktop only) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -451,13 +498,13 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang trái"
                 >
                   ◀
                 </button>
 
-                {/* Right Arrow Button */}
+                {/* Right Arrow Button (desktop only) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -470,7 +517,7 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang phải"
                 >
                   ▶
@@ -479,10 +526,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Trending Characters */}
                 <div
                   id="trending-characters-scroll"
-                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-2"
+                  className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0.5 sm:px-2 touch-pan-x"
                 >
                   {TRENDING_CHARACTERS.map((char) => (
-                    <div key={char.id} className="w-[280px] sm:w-[300px] shrink-0 snap-start">
+                    <div key={char.id} className="w-[260px] sm:w-[300px] shrink-0 snap-start">
                       <CharacterCard
                         character={char}
                         onClick={handleSelectCharacter}

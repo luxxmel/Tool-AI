@@ -255,6 +255,26 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
     }
   };
 
+  // Ghi nhận tìm kiếm của người dùng trong thanh tìm kiếm tab Khám phá
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q || q.length < 2) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await fetch("/api/trending-questions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: q }),
+        });
+      } catch (e) {
+        // Silent catch
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     fetchPosts();
     fetchTopContributors();
@@ -353,7 +373,13 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
       const res = await fetch(`/api/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, content: text }),
+        body: JSON.stringify({
+          userId: user.id,
+          content: text,
+          userName: user.displayName || (user as any).name || "Thành viên",
+          userAvatar: user.avatar,
+          userRole: user.role,
+        }),
       });
 
       if (res.ok) {
@@ -411,7 +437,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
 
   // Chia sẻ bài viết (Web Share hoặc Copy Link)
   const handleSharePost = async (post: ExplorePost) => {
-    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/?tab=explore#${post.id}` : "";
+    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/explore#${post.id}` : "";
     const shareData = {
       title: post.title,
       text: `${post.title}\n\n${post.content.slice(0, 140)}...`,
@@ -703,7 +729,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <Link
-                          href={`/?tab=profile&userId=${(post.author as any)?.id || (post as any).authorId || ""}`}
+                          href={`/profile?userId=${(post.author as any)?.id || (post as any).authorId || ""}`}
                           className="flex items-center gap-3 group/author cursor-pointer"
                         >
                           <div className="relative">
@@ -983,18 +1009,39 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                                     user?.id === post.author?.id ||
                                     user?.role === "ADMIN");
 
+                                const isCurrentLoggedUser = Boolean(user && comment.userId === user.id);
+                                const isAuthorOfThisPost = Boolean(post.author && comment.userId === (post.author.id || (post as any).authorId));
+                                const commenterName =
+                                  (comment.user?.name && comment.user.name !== "Thành viên" ? comment.user.name : null) ||
+                                  (isCurrentLoggedUser ? user?.displayName || (user as any)?.name : null) ||
+                                  (isAuthorOfThisPost ? post.author.name : null) ||
+                                  comment.user?.name ||
+                                  "Thành viên";
+                                const commenterAvatar =
+                                  (comment.user?.avatar && !comment.user.avatar.includes("bottts") ? comment.user.avatar : null) ||
+                                  (isCurrentLoggedUser ? user?.avatar : null) ||
+                                  (isAuthorOfThisPost ? post.author.avatar : null) ||
+                                  comment.user?.avatar ||
+                                  "https://api.dicebear.com/7.x/bottts/svg?seed=guest";
+                                const commenterRole =
+                                  (comment.user?.role && comment.user.role !== "USER" ? comment.user.role : null) ||
+                                  (isCurrentLoggedUser ? user?.role : null) ||
+                                  (isAuthorOfThisPost ? post.author.role : null) ||
+                                  comment.user?.role ||
+                                  "USER";
+
                                 return (
                                   <div
                                     key={comment.id}
                                     className="flex items-start gap-2.5 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-xs"
                                   >
                                     <Link
-                                      href={`/?tab=profile&userId=${comment.userId || ""}`}
+                                      href={`/profile?userId=${comment.userId || ""}`}
                                       className="shrink-0 group/commenter"
                                     >
                                       <img
-                                        src={comment.user.avatar}
-                                        alt={comment.user.name}
+                                        src={commenterAvatar}
+                                        alt={commenterName}
                                         className="w-7 h-7 rounded-full object-cover mt-0.5 border border-slate-200 dark:border-slate-700 group-hover/commenter:border-cyan-400 transition-colors"
                                       />
                                     </Link>
@@ -1002,17 +1049,17 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                                       <div className="flex items-center justify-between gap-1 mb-0.5">
                                         <div className="flex items-center gap-1.5">
                                           <Link
-                                            href={`/?tab=profile&userId=${comment.userId || ""}`}
+                                            href={`/profile?userId=${comment.userId || ""}`}
                                             className="font-bold text-slate-900 dark:text-white truncate hover:text-cyan-400 transition-colors"
                                           >
-                                            {comment.user.name}
+                                            {commenterName}
                                           </Link>
-                                          {comment.user.role === "VIP" && (
+                                          {commenterRole === "VIP" && (
                                             <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-500 font-bold">
                                               VIP
                                             </span>
                                           )}
-                                          {comment.user.role === "ADMIN" && (
+                                          {commenterRole === "ADMIN" && (
                                             <span className="text-[9px] px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-400 font-bold">
                                               ADMIN
                                             </span>
@@ -1149,20 +1196,26 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
             ) : (
               <div className="flex flex-col gap-1.5">
                 {trendingQuestions.map((q, idx) => (
-                  <div
+                  <button
                     key={idx}
-                    className="flex items-start gap-2 w-full px-2.5 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors group"
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(q.text);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    title="Bấm để tìm kiếm chủ đề này trong Khám phá"
+                    className="flex items-start gap-2 w-full px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all group text-left cursor-pointer"
                   >
-                    <span className="text-[10px] font-bold text-slate-400 mt-0.5 w-4 flex-shrink-0">
+                    <span className="text-[10px] font-bold text-slate-400 group-hover:text-cyan-400 mt-0.5 w-4 flex-shrink-0">
                       {idx + 1}.
                     </span>
-                    <span className="text-xs text-slate-700 dark:text-slate-300 flex-1 line-clamp-2 leading-relaxed">
+                    <span className="text-xs text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-cyan-300 flex-1 line-clamp-2 leading-relaxed font-medium">
                       {q.text}
                     </span>
-                    <span className="text-[10px] text-orange-500 dark:text-orange-400 font-bold bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                    <span className="text-[10px] text-orange-500 dark:text-orange-400 font-bold bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded-full flex-shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-colors">
                       {q.count}x
                     </span>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -1204,7 +1257,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 {topContributors.map((c, i) => (
                   <Link
                     key={c.id || c.username}
-                    href={`/?tab=profile&userId=${c.id || ""}`}
+                    href={`/profile?userId=${c.id || ""}`}
                     className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group"
                     title={language === "en" ? `View ${c.name}'s profile` : `Xem trang cá nhân của ${c.name}`}
                   >

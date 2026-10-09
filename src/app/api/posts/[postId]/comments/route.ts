@@ -36,12 +36,12 @@ export async function GET(
         minute: "2-digit",
       }),
       user: {
-        id: c.user.id,
-        name: c.user.name || "Thành viên",
+        id: c.user?.id || c.userId,
+        name: c.user?.name || "Thành viên",
         avatar:
-          c.user.avatar ||
-          `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(c.user.email)}`,
-        role: c.user.role,
+          c.user?.avatar ||
+          `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(c.user?.email || c.userId)}`,
+        role: c.user?.role || "USER",
       },
     }));
 
@@ -62,7 +62,7 @@ export async function POST(
   try {
     const { postId } = await context.params;
     const body = await request.json();
-    const { userId, content } = body;
+    const { userId, content, userName, userAvatar, userRole } = body;
 
     if (!userId) {
       return NextResponse.json(
@@ -78,9 +78,24 @@ export async function POST(
       );
     }
 
-    const user = await ensureUser(userId);
+    const user = await ensureUser(userId, null, userName);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Đảm bảo thông tin user (tên, avatar) được cập nhật đồng bộ vào SQLite User table
+    if (userName || userAvatar) {
+      try {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            ...(userName ? { name: userName } : {}),
+            ...(userAvatar ? { avatar: userAvatar } : {}),
+          },
+        });
+      } catch {
+        // Ignored nếu chưa update được
+      }
     }
 
     const newComment = await prisma.comment.create({
@@ -112,6 +127,15 @@ export async function POST(
       data: { commentsCount: count },
     });
 
+    const resolvedUser = newComment.user || user;
+    const authorName = resolvedUser?.name || userName || user?.name || "Thành viên";
+    const authorAvatar =
+      resolvedUser?.avatar ||
+      userAvatar ||
+      user?.avatar ||
+      `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(resolvedUser?.email || user?.email || "user")}`;
+    const authorRole = resolvedUser?.role || userRole || user?.role || "USER";
+
     return NextResponse.json({
       success: true,
       comment: {
@@ -120,12 +144,10 @@ export async function POST(
         content: newComment.content,
         createdAt: "Vừa xong",
         user: {
-          id: newComment.user.id,
-          name: newComment.user.name || "Thành viên",
-          avatar:
-            newComment.user.avatar ||
-            `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(newComment.user.email)}`,
-          role: newComment.user.role,
+          id: resolvedUser?.id || user.id,
+          name: authorName,
+          avatar: authorAvatar,
+          role: authorRole,
         },
       },
       commentsCount: count,

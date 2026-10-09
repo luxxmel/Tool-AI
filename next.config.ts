@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  serverExternalPackages: ["node:sqlite"],
   devIndicators: false,
   allowedDevOrigins: [
     "*.trycloudflare.com",

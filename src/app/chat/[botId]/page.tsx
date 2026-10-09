@@ -176,7 +176,7 @@ function getBotQuickTools(botId: string, category?: string): QuickToolItem[] {
         id: "tuvi_laso",
         label: "🔮 Lập & Luận giải lá số",
         promptPrefix: "Hãy luận giải lá số Tử Vi chi tiết dựa trên thông tin ngày giờ sinh:\n",
-        placeholder: "Nhập Giới tính, Ngày tháng năm sinh (Dương/Âm) và Giờ sinh...",
+        placeholder: "Nhập Giới tính, Ngày tháng năm sinh (Dương/Âm) và Giờ sinh (nếu có)...",
         isHighlight: true,
       },
       {
@@ -1311,7 +1311,13 @@ export default function BotChatPage() {
               <div className="w-full max-w-lg mx-auto mb-6 p-4 rounded-2xl bg-white/90 dark:bg-[#11131e]/90 border border-slate-200 dark:border-indigo-950/70 shadow-sm text-left relative">
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-xs font-semibold text-indigo-600 dark:text-cyan-400 flex items-center gap-1.5">
-                    <span>💬</span> {language === "en" ? `Roleplay greeting from ${bot.name}:` : `Lời chào nhập vai từ ${bot.name}:`}
+                    <span>💬</span> {(() => {
+                    const isNovel = ["char-tong-tai", "char-co-da-than", "char-tieu-viem", "char-lam-tuyet-dao", "char-luna", "char-mira", "char-zen", "char-alex"].includes(bot.id) || bot.category === "novel";
+                    if (isNovel) {
+                      return language === "en" ? `Roleplay greeting from ${bot.name}:` : `Lời chào nhập vai từ ${bot.name}:`;
+                    }
+                    return language === "en" ? `Greeting & introduction from ${bot.name}:` : `Lời chào & Giới thiệu từ ${bot.name}:`;
+                  })()}
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-normal italic">
@@ -1340,7 +1346,7 @@ export default function BotChatPage() {
                       <span className="text-indigo-500 dark:text-cyan-400 text-sm group-hover:scale-110 transition-transform">
                         💬
                       </span>
-                      <span className="truncate">{suggestion}</span>
+                      <span className="line-clamp-2 leading-snug break-words text-left">{suggestion}</span>
                     </span>
                     <span className="text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-cyan-400 text-xs shrink-0 ml-2 font-medium">
                       {language === "en" ? "Send →" : "Gửi →"}
