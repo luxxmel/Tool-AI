@@ -166,7 +166,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
             </>
           )}
         </h1>
-        <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base mt-3 max-w-2xl mx-auto transition-colors leading-relaxed font-normal">
+        <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg mt-4 mb-2 max-w-2xl mx-auto transition-colors leading-relaxed font-medium">
           {language === "en"
             ? "Your ultimate AI assistant ready to answer all questions, solve code, generate images, and assist your daily tasks."
             : "Trợ lý AI đa nhiệm luôn sẵn sàng giải đáp mọi thắc mắc, viết code, tạo hình ảnh và hỗ trợ bạn trong mọi công việc."}
@@ -174,15 +174,15 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
       </div>
 
       {/* Biệt Tuốt AI Custom Feature Suite - Circular Icon Badges */}
-      <div className="w-full mb-6">
-        <div className="flex items-center justify-between px-1 mb-3.5">
-          <span className="text-[12px] font-bold tracking-wide text-slate-500 dark:text-neutral-400 flex items-center gap-2">
+      <div className="w-full mb-8 mt-2">
+        <div className="flex items-center justify-between px-1 mb-4">
+          <span className="text-[12px] font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2 uppercase">
             <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
             {language === "en" ? "Omni Special Engines" : "BỘ CÔNG CỤ ĐỘC QUYỀN BIỆT TUỐT AI"}
           </span>
         </div>
 
-        <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-7 overflow-x-auto no-scrollbar py-3 px-1">
+        <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-7 overflow-x-auto no-scrollbar py-2 px-1">
           {[
             {
               id: "tarot",
@@ -193,8 +193,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <rect width="10" height="15" x="12" y="4" rx="2" transform="rotate(12 17 11)" />
                 </svg>
               ),
-              circleStyle: "bg-[#2b0816] text-[#ff2a6d] border border-[#ff2a6d]/40 shadow-[0_0_15px_rgba(255,42,109,0.35)]",
-              dot: "bg-[#ff4d88] shadow-[0_0_6px_#ff4d88]",
+              circleStyle: "bg-indigo-500/10 text-indigo-500 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.2)]",
+              dot: "bg-indigo-500 shadow-[0_0_6px_#6366f1]",
               tab: "tarot",
               prompt: "",
             },
@@ -208,8 +208,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 6h-4" />
                 </svg>
               ),
-              circleStyle: "bg-[#14153b] text-[#7075ff] border border-[#7075ff]/40 shadow-[0_0_15px_rgba(112,117,255,0.35)]",
-              dot: "bg-[#8b8fff] shadow-[0_0_6px_#8b8fff]",
+              circleStyle: "bg-violet-500/10 text-violet-500 dark:bg-violet-950/60 dark:text-violet-400 border border-violet-500/30 shadow-[0_0_12px_rgba(139,92,246,0.2)]",
+              dot: "bg-violet-500 shadow-[0_0_6px_#8b5cf6]",
               tab: "tuvi",
               prompt: "",
             },
@@ -223,8 +223,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <circle cx="19" cy="5" r="1.5" fill="currentColor" />
                 </svg>
               ),
-              circleStyle: "bg-[#062633] text-[#00d2d3] border border-[#00d2d3]/40 shadow-[0_0_15px_rgba(0,210,211,0.35)]",
-              dot: "bg-[#00e5e5] shadow-[0_0_6px_#00e5e5]",
+              circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
+              dot: "bg-cyan-400 shadow-[0_0_6px_#22d3ee]",
               tab: "chiemtinh",
               prompt: "",
             },
@@ -239,8 +239,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M16 3v18" />
                 </svg>
               ),
-              circleStyle: "bg-[#331800] text-[#ff9f1a] border border-[#ff9f1a]/40 shadow-[0_0_15px_rgba(255,159,26,0.35)]",
-              dot: "bg-[#ffb03a] shadow-[0_0_6px_#ffb03a]",
+              circleStyle: "bg-indigo-500/10 text-indigo-500 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.2)]",
+              dot: "bg-indigo-400 shadow-[0_0_6px_#818cf8]",
               tab: "battu",
               prompt: "",
             },
@@ -261,7 +261,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M8 18h.01" />
                 </svg>
               ),
-              circleStyle: "bg-[#0b1b38] text-[#388bfd] border border-[#388bfd]/30 shadow-[0_0_12px_rgba(56,139,253,0.25)]",
+              circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Please solve this math problem step-by-step: " : "Hãy giúp tôi giải bài toán sau từng bước chi tiết: ",
@@ -274,7 +274,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               ),
-              circleStyle: "bg-[#230d3d] text-[#bf5af2] border border-[#bf5af2]/30 shadow-[0_0_12px_rgba(191,90,242,0.25)]",
+              circleStyle: "bg-violet-500/10 text-violet-500 dark:bg-violet-950/60 dark:text-violet-400 border border-violet-500/30 shadow-[0_0_12px_rgba(139,92,246,0.2)]",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Please act as an English conversational tutor: " : "Hãy đóng vai gia sư tiếng Anh luyện giao tiếp với tôi: ",
@@ -287,7 +287,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                 </svg>
               ),
-              circleStyle: "bg-[#331405] text-[#ff793f] border border-[#ff793f]/30 shadow-[0_0_12px_rgba(255,121,63,0.25)]",
+              circleStyle: "bg-indigo-500/10 text-indigo-500 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.2)]",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Please help me write an engaging piece about: " : "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
@@ -304,7 +304,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <line x1="8" x2="16" y1="12" y2="12" />
                 </svg>
               ),
-              circleStyle: "bg-[#052624] text-[#2bcbba] border border-[#2bcbba]/30 shadow-[0_0_12px_rgba(43,203,186,0.25)]",
+              circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Extract the text and translate it: " : "Hãy trích xuất nội dung văn bản và dịch sang tiếng Việt: ",
@@ -354,14 +354,14 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
         </div>
       </div>
 
-      {/* Main Search/Prompt Box Container */}
+      {/* Main Search/Prompt Box Container - LÀM NỔI BẬT KHUNG NHẬP CÂU HỎI */}
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
-        className={`w-full bg-white/90 dark:bg-[#0c0e17]/90 backdrop-blur-2xl rounded-2xl border transition-all duration-300 shadow-xl relative ${
+        className={`w-full bg-white/95 dark:bg-[#0c0e1a]/95 backdrop-blur-2xl rounded-2xl border-2 transition-all duration-300 shadow-2xl relative ${
           isFocused
-            ? "border-indigo-500/70 shadow-2xl shadow-indigo-500/20 ring-2 ring-indigo-500/30 z-30"
-            : "border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/50 dark:hover:border-slate-700/90 z-20"
+            ? "border-indigo-500 shadow-[0_0_35px_rgba(99,102,241,0.35)] ring-4 ring-indigo-500/20 z-30"
+            : "border-slate-300 dark:border-indigo-500/40 hover:border-indigo-400 dark:hover:border-indigo-400 shadow-[0_4px_25px_rgba(99,102,241,0.12)] hover:shadow-[0_0_28px_rgba(99,102,241,0.22)] z-20"
         }`}
       >
         {/* Quick Mode/Task Chips (Gợi ý tác vụ nhanh) */}

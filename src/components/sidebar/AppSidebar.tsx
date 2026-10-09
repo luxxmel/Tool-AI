@@ -166,8 +166,8 @@ export default function AppSidebar({
           <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xs shadow-xs shadow-indigo-500/30">
             ▲
           </div>
-          <span className="font-black text-slate-900 dark:text-white text-base tracking-tight">
-            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io</span>
+          <span className="font-black text-slate-900 dark:text-white text-base tracking-tight whitespace-nowrap">
+            biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io.vn</span>
           </span>
         </div>
 
@@ -220,14 +220,14 @@ export default function AppSidebar({
         <div>
           {/* Brand Logo & Theme Toggle */}
           <div className="flex items-center justify-between px-1.5 py-2.5 mb-2 gap-1.5 min-w-0">
-            <Link href="/" className="flex items-center gap-1.5 group cursor-pointer min-w-0 shrink">
+            <Link href="/" className="flex items-center gap-2 group cursor-pointer min-w-0">
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
                 </svg>
               </div>
-              <span className="text-base font-black text-slate-900 dark:text-white tracking-tight truncate">
-                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io</span>
+              <span className="text-base font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
+                biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io.vn</span>
               </span>
             </Link>
 
