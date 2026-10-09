@@ -14,8 +14,15 @@
 /coverage
 
 # next.js
-/.next/
+/.next/cache/
+/.next/dev/
+/.next/trace*
+/.next/diagnostics/
+/.next/types/
 /out/
+
+# production
+/build
 
 # misc
 .DS_Store
