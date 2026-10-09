@@ -35,6 +35,117 @@ function getDb() {
     dbInstance.exec("PRAGMA journal_mode = WAL;");
     dbInstance.exec("PRAGMA foreign_keys = ON;");
     dbInstance.exec(`
+      CREATE TABLE IF NOT EXISTS User (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        name TEXT,
+        avatar TEXT,
+        role TEXT DEFAULT 'USER',
+        status TEXT DEFAULT 'active',
+        credits INTEGER DEFAULT 10,
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS Bot (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        avatar TEXT NOT NULL,
+        description TEXT,
+        systemPrompt TEXT NOT NULL,
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS Project (
+        id TEXT PRIMARY KEY,
+        userId TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        systemPrompt TEXT,
+        icon TEXT DEFAULT '📁',
+        color TEXT DEFAULT 'indigo',
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL,
+        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS Conversation (
+        id TEXT PRIMARY KEY,
+        userId TEXT NOT NULL,
+        botId TEXT NOT NULL,
+        projectId TEXT,
+        title TEXT DEFAULT 'Cuộc trò chuyện mới',
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL,
+        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE,
+        FOREIGN KEY (botId) REFERENCES Bot(id) ON DELETE CASCADE,
+        FOREIGN KEY (projectId) REFERENCES Project(id) ON DELETE SET NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS Message (
+        id TEXT PRIMARY KEY,
+        conversationId TEXT NOT NULL,
+        sender TEXT NOT NULL,
+        content TEXT NOT NULL,
+        createdAt INTEGER NOT NULL,
+        FOREIGN KEY (conversationId) REFERENCES Conversation(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS Post (
+        id TEXT PRIMARY KEY,
+        authorId TEXT NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        category TEXT DEFAULT 'prompt',
+        categoryLabel TEXT DEFAULT 'Prompt AI',
+        image TEXT,
+        likes INTEGER DEFAULT 0,
+        commentsCount INTEGER DEFAULT 0,
+        status TEXT DEFAULT 'published',
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL,
+        FOREIGN KEY (authorId) REFERENCES User(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS Comment (
+        id TEXT PRIMARY KEY,
+        postId TEXT NOT NULL,
+        userId TEXT NOT NULL,
+        content TEXT NOT NULL,
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL,
+        FOREIGN KEY (postId) REFERENCES Post(id) ON DELETE CASCADE,
+        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS PostReaction (
+        id TEXT PRIMARY KEY,
+        postId TEXT NOT NULL,
+        userId TEXT NOT NULL,
+        type TEXT DEFAULT 'like',
+        createdAt INTEGER NOT NULL,
+        UNIQUE (postId, userId),
+        FOREIGN KEY (postId) REFERENCES Post(id) ON DELETE CASCADE,
+        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS PaymentOrder (
+        id TEXT PRIMARY KEY,
+        orderCode INTEGER UNIQUE NOT NULL,
+        userId TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        credits INTEGER NOT NULL,
+        packageName TEXT,
+        status TEXT DEFAULT 'PENDING',
+        paymentMethod TEXT DEFAULT 'payos_vietqr',
+        payosPaymentLinkId TEXT,
+        transactionId TEXT,
+        createdAt INTEGER NOT NULL,
+        updatedAt INTEGER NOT NULL,
+        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
+      );
+
       CREATE TABLE IF NOT EXISTS ExploreSearch (
         id TEXT PRIMARY KEY,
         query TEXT NOT NULL,
