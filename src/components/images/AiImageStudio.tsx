@@ -202,7 +202,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
         prompt: data.prompt,
         enhancedPrompt: data.enhancedPrompt,
         style: "ai-natural",
-        styleLabel: "Tạo bởi Bi?t Tu?t AI",
+        styleLabel: "Tạo bởi Biết Tuốt AI",
         aspectRatio: data.aspectRatio,
         referenceImage: data.referenceImage || referenceImage || null,
         createdAt: "Vừa xong",
@@ -674,7 +674,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
                   {/* Top Badges */}
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/10">
-                      {item.styleLabel || item.style}
+                      {(item.styleLabel || item.style || "").replace(/Bi\?t Tu\?t/g, "Biết Tuốt")}
                     </span>
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-cyan-400 border border-white/10">
                       {item.aspectRatio}
@@ -797,7 +797,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-4">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                      {activeModalImage.styleLabel || activeModalImage.style}
+                      {(activeModalImage.styleLabel || activeModalImage.style || "").replace(/Bi\?t Tu\?t/g, "Biết Tuốt")}
                     </span>
                     <span className="text-xs font-mono text-cyan-400">
                       {activeModalImage.aspectRatio}
