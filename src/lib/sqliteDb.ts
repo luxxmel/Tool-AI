@@ -12,17 +12,7 @@ function getDb() {
   if (dbInstance) return dbInstance;
 
   try {
-    // Nạp node:sqlite chuẩn xác mà không bị Turbopack/bundler can thiệp
-    const g = globalThis as any;
-    const nodeSqlite =
-      (typeof process !== "undefined" && typeof (process as any).getBuiltinModule === "function"
-        ? (process as any).getBuiltinModule("node:sqlite")
-        : null) ||
-      (typeof g.__non_webpack_require__ === "function"
-        ? g.__non_webpack_require__("node:sqlite")
-        : eval('require')("node:sqlite"));
-
-    const { DatabaseSync } = nodeSqlite;
+    const { DatabaseSync } = require("node:sqlite");
     const dbPath = path.resolve(process.cwd(), "prisma", "dev.db");
     
     // Đảm bảo thư mục prisma tồn tại
@@ -34,125 +24,6 @@ function getDb() {
     dbInstance = new DatabaseSync(dbPath);
     dbInstance.exec("PRAGMA journal_mode = WAL;");
     dbInstance.exec("PRAGMA foreign_keys = ON;");
-    dbInstance.exec(`
-      CREATE TABLE IF NOT EXISTS User (
-        id TEXT PRIMARY KEY,
-        email TEXT UNIQUE NOT NULL,
-        name TEXT,
-        avatar TEXT,
-        role TEXT DEFAULT 'USER',
-        status TEXT DEFAULT 'active',
-        credits INTEGER DEFAULT 10,
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL
-      );
-
-      CREATE TABLE IF NOT EXISTS Bot (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        avatar TEXT NOT NULL,
-        description TEXT,
-        systemPrompt TEXT NOT NULL,
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL
-      );
-
-      CREATE TABLE IF NOT EXISTS Project (
-        id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
-        name TEXT NOT NULL,
-        description TEXT,
-        systemPrompt TEXT,
-        icon TEXT DEFAULT '📁',
-        color TEXT DEFAULT 'indigo',
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL,
-        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS Conversation (
-        id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
-        botId TEXT NOT NULL,
-        projectId TEXT,
-        title TEXT DEFAULT 'Cuộc trò chuyện mới',
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL,
-        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE,
-        FOREIGN KEY (botId) REFERENCES Bot(id) ON DELETE CASCADE,
-        FOREIGN KEY (projectId) REFERENCES Project(id) ON DELETE SET NULL
-      );
-
-      CREATE TABLE IF NOT EXISTS Message (
-        id TEXT PRIMARY KEY,
-        conversationId TEXT NOT NULL,
-        sender TEXT NOT NULL,
-        content TEXT NOT NULL,
-        createdAt INTEGER NOT NULL,
-        FOREIGN KEY (conversationId) REFERENCES Conversation(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS Post (
-        id TEXT PRIMARY KEY,
-        authorId TEXT NOT NULL,
-        title TEXT NOT NULL,
-        content TEXT NOT NULL,
-        category TEXT DEFAULT 'prompt',
-        categoryLabel TEXT DEFAULT 'Prompt AI',
-        image TEXT,
-        likes INTEGER DEFAULT 0,
-        commentsCount INTEGER DEFAULT 0,
-        status TEXT DEFAULT 'published',
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL,
-        FOREIGN KEY (authorId) REFERENCES User(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS Comment (
-        id TEXT PRIMARY KEY,
-        postId TEXT NOT NULL,
-        userId TEXT NOT NULL,
-        content TEXT NOT NULL,
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL,
-        FOREIGN KEY (postId) REFERENCES Post(id) ON DELETE CASCADE,
-        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS PostReaction (
-        id TEXT PRIMARY KEY,
-        postId TEXT NOT NULL,
-        userId TEXT NOT NULL,
-        type TEXT DEFAULT 'like',
-        createdAt INTEGER NOT NULL,
-        UNIQUE (postId, userId),
-        FOREIGN KEY (postId) REFERENCES Post(id) ON DELETE CASCADE,
-        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS PaymentOrder (
-        id TEXT PRIMARY KEY,
-        orderCode INTEGER UNIQUE NOT NULL,
-        userId TEXT NOT NULL,
-        amount INTEGER NOT NULL,
-        credits INTEGER NOT NULL,
-        packageName TEXT,
-        status TEXT DEFAULT 'PENDING',
-        paymentMethod TEXT DEFAULT 'payos_vietqr',
-        payosPaymentLinkId TEXT,
-        transactionId TEXT,
-        createdAt INTEGER NOT NULL,
-        updatedAt INTEGER NOT NULL,
-        FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS ExploreSearch (
-        id TEXT PRIMARY KEY,
-        query TEXT NOT NULL,
-        normalizedQuery TEXT NOT NULL,
-        createdAt INTEGER NOT NULL
-      );
-    `);
     return dbInstance;
   } catch (err) {
     console.error("[SQLiteDb] Lỗi khởi tạo node:sqlite:", err);
@@ -526,12 +397,10 @@ export const conversation = {
     };
 
     if (include?.bot) {
-      const bRow = db.prepare("SELECT * FROM Bot WHERE id = ?").get(row.botId);
-      res.bot = bRow ? { ...bRow, createdAt: toDate(bRow.createdAt), updatedAt: toDate(bRow.updatedAt) } : null;
+      res.bot = bot.findUnique({ where: { id: row.botId } });
     }
     if (include?.project && row.projectId) {
-      const pRow = db.prepare("SELECT * FROM Project WHERE id = ?").get(row.projectId);
-      res.project = pRow ? project._format(pRow, include?.project?.include) : null;
+      res.project = project.findUnique({ where: { id: row.projectId } });
     }
     if (include?.messages) {
       const msgs = db.prepare("SELECT * FROM Message WHERE conversationId = ? ORDER BY createdAt ASC").all(row.id);
@@ -664,15 +533,13 @@ export const project = {
   },
 
   _format(row: any, include: any) {
-    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.conversations) {
-      const cRows = db.prepare("SELECT * FROM Conversation WHERE projectId = ? ORDER BY createdAt DESC").all(row.id);
-      res.conversations = cRows.map((c: any) => conversation._format(c, include?.conversations?.include));
+      res.conversations = conversation.findMany({ where: { projectId: row.id } });
     }
     return res;
   }
@@ -704,21 +571,6 @@ export const post = {
     if (where.status) {
       conds.push("status = ?");
       params.push(where.status);
-    }
-    if (where.OR && Array.isArray(where.OR)) {
-      const orConds: string[] = [];
-      for (const cond of where.OR) {
-        if (cond.title?.contains) {
-          orConds.push("title LIKE ?");
-          params.push(`%${cond.title.contains}%`);
-        } else if (cond.content?.contains) {
-          orConds.push("content LIKE ?");
-          params.push(`%${cond.content.contains}%`);
-        }
-      }
-      if (orConds.length > 0) {
-        conds.push(`(${orConds.join(" OR ")})`);
-      }
     }
 
     if (conds.length) sql += " WHERE " + conds.join(" AND ");
@@ -805,16 +657,13 @@ export const post = {
     };
 
     if (include?.author) {
-      const aRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.authorId);
-      res.author = aRow ? user._format(aRow, include?.author?.include, include?.author?.select) : null;
+      res.author = user.findUnique({ where: { id: row.authorId } });
     }
     if (include?.comments) {
-      const cRows = db.prepare("SELECT * FROM Comment WHERE postId = ? ORDER BY createdAt ASC").all(row.id);
-      res.comments = cRows.map((c: any) => comment._format(c, include?.comments?.include));
+      res.comments = comment.findMany({ where: { postId: row.id } });
     }
     if (include?.reactions) {
-      const rRows = db.prepare("SELECT * FROM PostReaction WHERE postId = ?").all(row.id);
-      res.reactions = rRows.map((r: any) => ({ ...r, createdAt: toDate(r.createdAt) }));
+      res.reactions = postReaction.findMany({ where: { postId: row.id } });
     }
     if (include?._count) {
       res._count = {
@@ -888,19 +737,16 @@ export const comment = {
   },
 
   _format(row: any, include: any) {
-    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.user) {
-      const uRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.userId);
-      res.user = uRow ? user._format(uRow, include?.user?.include, include?.user?.select) : null;
+      res.user = user.findUnique({ where: { id: row.userId } });
     }
     if (include?.post) {
-      const pRow = db.prepare("SELECT * FROM Post WHERE id = ?").get(row.postId);
-      res.post = pRow ? post._format(pRow, include?.post?.include) : null;
+      res.post = post.findUnique({ where: { id: row.postId } });
     }
     return res;
   }
@@ -1061,56 +907,16 @@ export const paymentOrder = {
   },
 
   _format(row: any, include: any) {
-    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.user) {
-      const uRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.userId);
-      res.user = uRow ? user._format(uRow, include?.user?.include, include?.user?.select) : null;
+      res.user = user.findUnique({ where: { id: row.userId } });
     }
     return res;
   }
-};
-
-// ==================== EXPLORE SEARCH ====================
-export const exploreSearch = {
-  async create({ data }: any) {
-    const db = getDb();
-    const id = data.id || createId();
-    const now = toTimestamp(data.createdAt || Date.now());
-    const query = String(data.query || "").trim();
-    const normalizedQuery = String(data.normalizedQuery || query.toLowerCase().replace(/[?!.,;:…]+$/, "").trim());
-
-    db.prepare("INSERT INTO ExploreSearch (id, query, normalizedQuery, createdAt) VALUES (?, ?, ?, ?)")
-      .run(id, query, normalizedQuery, now);
-
-    return { id, query, normalizedQuery, createdAt: toDate(now) };
-  },
-
-  async findMany({ where = {}, orderBy, take }: any = {}) {
-    const db = getDb();
-    let sql = "SELECT * FROM ExploreSearch";
-    const params: any[] = [];
-    const conds: string[] = [];
-
-    if (where.createdAt?.gte) {
-      conds.push("createdAt >= ?");
-      params.push(toTimestamp(where.createdAt.gte));
-    }
-
-    if (conds.length) sql += " WHERE " + conds.join(" AND ");
-    sql += " ORDER BY createdAt DESC";
-    if (take) sql += ` LIMIT ${Number(take)}`;
-
-    const rows = db.prepare(sql).all(...params);
-    return rows.map((r: any) => ({
-      ...r,
-      createdAt: toDate(r.createdAt),
-    }));
-  },
 };
 
 // ==================== TRANSACTION HELPER ====================
@@ -1126,7 +932,6 @@ export async function $transaction(arg: any) {
       comment,
       postReaction,
       paymentOrder,
-      exploreSearch,
     });
   }
   if (Array.isArray(arg)) {
@@ -1145,6 +950,5 @@ export const sqliteClient = {
   comment,
   postReaction,
   paymentOrder,
-  exploreSearch,
   $transaction,
 };

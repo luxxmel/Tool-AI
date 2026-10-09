@@ -45,7 +45,6 @@
   "/chat/[botId]/page": "app/chat/[botId]/page.js",
   "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
-  "/profile/page": "app/profile/page.js",
   "/terms/page": "app/terms/page.js",
   "/typing/page": "app/typing/page.js"
 }

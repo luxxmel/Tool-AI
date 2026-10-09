@@ -5,6 +5,7 @@ import { generateText } from "ai";
 import { ensureUser } from "@/lib/ensureUser";
 import { generateOptimizedPromptWithFableAndGemini } from "@/lib/trollllmImagePrompt";
 import { generateImageViaYescale } from "@/lib/yescaleImageEngine";
+import sharp from "sharp";
 
 const ASPECT_RATIO_DIMS: Record<string, { width: number; height: number }> = {
   "1:1": { width: 1024, height: 1024 },

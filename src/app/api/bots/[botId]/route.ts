@@ -63,15 +63,12 @@ export async function GET(
 
     return NextResponse.json({
       ...bot,
-      name: staticBot?.name || bot.name,
-      avatar: staticBot?.avatar || bot.avatar,
-      description: staticBot?.description || bot.description,
       badge: staticBot?.badge || "Trợ lý AI",
       personality: staticBot?.personality || "",
       tagline: staticBot?.tagline || "",
-      greeting: staticBot?.greeting || `Xin chào! Tôi là ${staticBot?.name || bot.name}. Tôi có thể giúp gì cho bạn hôm nay?`,
+      greeting: staticBot?.greeting || `Xin chào! Tôi là ${bot.name}. Tôi có thể giúp gì cho bạn hôm nay?`,
       suggestedPrompts: staticBot?.suggestedPrompts || [
-        `Xin chào ${staticBot?.name || bot.name}, bạn có thể giúp gì cho tôi?`,
+        `Xin chào ${bot.name}, bạn có thể giúp gì cho tôi?`,
         "Hãy giới thiệu về bản thân và phong cách của bạn",
         "Cho tôi một lời khuyên hữu ích hôm nay",
       ],

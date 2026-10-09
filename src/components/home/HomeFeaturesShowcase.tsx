@@ -68,31 +68,31 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
         </span>
       </div>
 
-      {/* Grid of Sleek Cyber Cards: 2 cột trên mobile, 4 cột trên desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+      {/* Grid of Sleek Cyber Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {features.map((item) => (
           <button
             key={item.id}
             onClick={() => onSelectTab(item.id)}
-            className="p-3 sm:p-4 rounded-2xl bg-white dark:bg-[#11131c] border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400 dark:hover:border-indigo-500/60 transition-all duration-300 hover:-translate-y-0.5 sm:hover:-translate-y-1 shadow-2xs hover:shadow-md group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-28 sm:h-32"
+            className="p-4 rounded-2xl bg-white dark:bg-[#11131c] border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400 dark:hover:border-indigo-500/60 transition-all duration-300 hover:-translate-y-1 shadow-xs hover:shadow-md group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-32"
           >
             {/* Top row */}
             <div className="flex items-center justify-between relative z-10">
-              <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform">
+              <span className="text-2xl group-hover:scale-110 transition-transform">
                 {item.icon}
               </span>
-              <span className={`text-[8px] sm:text-[9px] font-bold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border ${item.tagBg}`}>
+              <span className={`text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full border ${item.tagBg}`}>
                 {item.badge}
               </span>
             </div>
 
             {/* Content */}
             <div className="relative z-10 mt-auto">
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors flex items-center gap-1 line-clamp-1">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors flex items-center gap-1">
                 <span>{item.title}</span>
                 <span className="text-xs opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-indigo-500 dark:text-cyan-400">→</span>
               </h3>
-              <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium truncate">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                 {item.subtitle}
               </p>
             </div>

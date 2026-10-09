@@ -175,24 +175,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
         return;
       }
 
-      const rawText = await res.text();
-      let data: any = {};
-      try {
-        data = JSON.parse(rawText);
-      } catch (parseErr) {
-        console.error("Lỗi khi parse JSON response từ API tạo ảnh:", rawText.slice(0, 300));
-        if (res.status === 502 || res.status === 504 || rawText.includes("Bad Gateway") || rawText.includes("Gateway Timeout")) {
-          throw new Error("Máy chủ AI đang bận hoặc quá tải kết nối. Vui lòng thử lại sau giây lát!");
-        }
-        if (res.status === 404) {
-          throw new Error("Không tìm thấy cổng tạo ảnh. Vui lòng kiểm tra lại dịch vụ máy chủ!");
-        }
-        throw new Error(
-          language === "en"
-            ? "Server returned an unexpected response. Please try again!"
-            : "Máy chủ phản hồi không đúng định dạng. Vui lòng bấm tạo lại!"
-        );
-      }
+      const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.error || "Không thể tạo hình ảnh");

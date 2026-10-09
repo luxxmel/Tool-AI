@@ -182,7 +182,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
           </span>
         </div>
 
-        <div className="flex items-center justify-start sm:justify-center gap-3.5 sm:gap-7 overflow-x-auto no-scrollbar py-2 sm:py-3 px-1 touch-pan-x">
+        <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-7 overflow-x-auto no-scrollbar py-3 px-1">
           {[
             {
               id: "tarot",

@@ -21,7 +21,9 @@ import AiToolsStudio from "@/components/tools/AiToolsStudio";
 import HealingCorner from "@/components/healing/HealingCorner";
 import UserProfileView from "@/components/profile/UserProfileView";
 import TarotView from "@/components/tarot/TarotView";
-import HomeQuickStatsBar from "@/components/home/HomeQuickStatsBar";
+import TuViView from "@/components/astrology/TuViView";
+import ChiemTinhView from "@/components/astrology/ChiemTinhView";
+import BatTuView from "@/components/astrology/BatTuView";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import {
   FEATURED_ASSISTANTS,
@@ -30,7 +32,6 @@ import {
   CharacterItem,
 } from "@/data/aiData";
 import WorkspaceBackgroundLayer from "@/components/theme/WorkspaceBackgroundLayer";
-import WorkspaceFloatingDock from "@/components/theme/WorkspaceFloatingDock";
 import { useWorkspaceBackground } from "@/context/WorkspaceBackgroundContext";
 import UserSettingsModal, { SettingsTab } from "@/components/user/UserSettingsModal";
 import { useLanguage } from "@/context/LanguageContext";
@@ -63,9 +64,9 @@ function HomeContent() {
   useEffect(() => {
     if (tabQuery && tabQuery !== currentTab) {
       setCurrentTab(tabQuery);
-      setIsChatOpen(false);
-      setActiveProjectId(null);
-      setIsCreatingProject(false);
+      if (tabQuery === "home") {
+        setIsChatOpen(false);
+      }
     }
   }, [tabQuery]);
 
@@ -199,9 +200,6 @@ function HomeContent() {
 
   const handleSelectTab = (tab: string) => {
     setCurrentTab(tab);
-    setIsChatOpen(false);
-    setActiveProjectId(null);
-    setIsCreatingProject(false);
     if (tab === "home") {
       handleNewChat();
       router.push("/");
@@ -251,18 +249,6 @@ function HomeContent() {
           <span>{t("sidebar.expand")}</span>
         </button>
       )}
-
-      {/* Workspace Floating Dock (Surprise Me, Ambient Soundscape, Particles, Studio) */}
-      <WorkspaceFloatingDock
-        onOpenFullSettings={() => {
-          if (!user) {
-            setShowLoginModal(true);
-          } else {
-            setSettingsTab("appearance");
-            setIsSettingsOpen(true);
-          }
-        }}
-      />
 
       {/* Main Content Area */}
       <main
@@ -316,6 +302,12 @@ function HomeContent() {
             <UserProfileView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : currentTab === "tarot" ? (
             <TarotView onOpenLoginModal={() => setShowLoginModal(true)} />
+          ) : currentTab === "tuvi" ? (
+            <TuViView onOpenLoginModal={() => setShowLoginModal(true)} />
+          ) : currentTab === "chiemtinh" ? (
+            <ChiemTinhView onOpenLoginModal={() => setShowLoginModal(true)} />
+          ) : currentTab === "battu" ? (
+            <BatTuView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : isChatOpen ? (
             /* Direct In-Page Chat (ChatGPT Style) */
             <HomeChatView
@@ -339,9 +331,6 @@ function HomeContent() {
               <div className="pt-2 sm:pt-6 pb-4 w-full">
                 <AiSearchBox onSubmitPrompt={handlePromptSubmit} />
               </div>
-
-              {/* Quick Platform Stats Bar */}
-              <HomeQuickStatsBar onSelectTab={handleSelectTab} />
 
               {/* Ecosystem Features Showcase Grid */}
               <HomeFeaturesShowcase onSelectTab={handleSelectTab} />

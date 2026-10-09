@@ -784,50 +784,8 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
       }
     }
 
-    // 5. Sinh phản hồi Streaming: Tự động gán model chuẩn xác theo chuyên môn của từng trợ lý
-    let resolvedModel = requestedModel;
-    if (!resolvedModel || resolvedModel === "fast") {
-      const bId = (botId || "").toLowerCase();
-      // Nhóm 1: Tư duy Logic, Toán học, Lập trình, Tử vi & Mệnh lý -> Ép buộc dùng DEEP (Claude Opus 5.5)
-      const isDeepSpecialist =
-        bId === "math-solver" ||
-        bId === "exam-prep" ||
-        bId === "physics-solver" ||
-        bId === "tu-vi-master" ||
-        bId === "bazi-master" ||
-        bId === "numerology" ||
-        bId === "doc-assistant" ||
-        bId === "finance-advisor" ||
-        bId.includes("toan") ||
-        bId.includes("tu-vi") ||
-        bId.includes("bazi") ||
-        bId.includes("code");
-
-      // Nhóm 2: Văn học nghệ thuật, Viết lách, Tâm sự cảm xúc, Nhập vai Roleplay, Bói Tarot -> Ép buộc dùng CREATIVE (Claude Sonnet 5.5)
-      const isCreativeSpecialist =
-        isFreeHealingBot ||
-        isVipStoryChar ||
-        bId.startsWith("char-") ||
-        bId === "goc-chua-lanh" ||
-        bId === "healing-companion" ||
-        bId === "writing-assistant" ||
-        bId === "tarot-reader" ||
-        bId === "love-astrology" ||
-        bId === "cosmic-chart" ||
-        bId === "movie-assistant" ||
-        bId === "book-assistant" ||
-        bId === "cuppy";
-
-      if (isDeepSpecialist) {
-        resolvedModel = "deep";
-      } else if (isCreativeSpecialist) {
-        resolvedModel = "creative";
-      } else {
-        resolvedModel = "fast";
-      }
-    }
-
-    const effectiveModel = resolvedModel;
+    // 5. Sinh phản hồi Streaming với cơ chế Multi-tiered Fallback chống sập 100%
+    const effectiveModel = requestedModel || (isFreeHealingBot ? "creative" : "fast");
     const selectedAI = getAIModel(effectiveModel);
 
     // Chuẩn bị dữ liệu tin nhắn bao gồm văn bản & hình ảnh

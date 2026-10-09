@@ -45,7 +45,6 @@
   "/chat/[botId]/page": "/chat/[botId]",
   "/page": "/",
   "/privacy/page": "/privacy",
-  "/profile/page": "/profile",
   "/terms/page": "/terms",
   "/typing/page": "/typing"
 }

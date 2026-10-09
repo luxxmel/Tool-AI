@@ -110,12 +110,12 @@ export async function GET(request: NextRequest) {
             minute: "2-digit",
           }),
           user: {
-            id: c.user?.id || c.userId,
-            name: c.user?.name || "Thành viên",
+            id: c.user.id,
+            name: c.user.name || "Thành viên",
             avatar:
-              c.user?.avatar ||
-              `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(c.user?.email || c.userId)}`,
-            role: c.user?.role || "USER",
+              c.user.avatar ||
+              `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(c.user.email)}`,
+            role: c.user.role,
           },
         })),
         status: post.status,
@@ -125,24 +125,23 @@ export async function GET(request: NextRequest) {
           year: "numeric",
         }),
         author: {
-          id: post.author?.id || post.authorId,
-          name: post.author?.name || "Người dùng",
-          username: (post.author?.email || "user").split("@")[0],
+          id: post.author.id,
+          name: post.author.name || "Người dùng ẩn danh",
+          username: post.author.email.split("@")[0],
           avatar:
-            post.author?.avatar ||
-            `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(post.author?.email || post.authorId)}`,
-          isVip: post.author?.role === "VIP" || post.author?.role === "ADMIN",
-          role: post.author?.role || "USER",
+            post.author.avatar ||
+            `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(post.author.email)}`,
+          isVip: post.author.role === "VIP" || post.author.role === "ADMIN",
+          role: post.author.role,
         },
       };
     });
 
     return NextResponse.json(formattedPosts);
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
     console.error("Lỗi khi tải danh sách bài viết:", error);
     return NextResponse.json(
-      { error: "Lỗi hệ thống khi tải bài viết: " + msg },
+      { error: "Lỗi hệ thống khi tải bài viết" },
       { status: 500 }
     );
   }
@@ -151,7 +150,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, category, categoryLabel, image, authorId, authorEmail, authorName, authorAvatar, authorRole } = body;
+    const { title, content, category, categoryLabel, image, authorId } = body;
 
     if (!title || !content) {
       return NextResponse.json(
@@ -161,7 +160,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Đảm bảo author tồn tại trong cơ sở dữ liệu máy chủ
-    const authorUser = await ensureUser(authorId, authorEmail, authorName);
+    const authorUser = await ensureUser(authorId);
     if (!authorUser) {
       return NextResponse.json({ error: "Author not found" }, { status: 404 });
     }
@@ -172,14 +171,14 @@ export async function POST(request: NextRequest) {
       const syncedUser = await prisma.user.upsert({
         where: { email: authorUser.email },
         update: {
-          name: authorName || authorUser.name,
-          avatar: authorAvatar || authorUser.avatar,
+          name: authorUser.name,
+          avatar: authorUser.avatar,
         },
         create: {
           email: authorUser.email,
-          name: authorName || authorUser.name,
-          avatar: authorAvatar || authorUser.avatar,
-          role: authorRole || authorUser.role,
+          name: authorUser.name,
+          avatar: authorUser.avatar,
+          role: authorUser.role,
           credits: authorUser.credits,
         },
       });

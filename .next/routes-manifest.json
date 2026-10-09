@@ -360,12 +360,6 @@
       "namedRegex": "^/privacy(?:/)?$"
     },
     {
-      "page": "/profile",
-      "regex": "^/profile(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/profile(?:/)?$"
-    },
-    {
       "page": "/terms",
       "regex": "^/terms(?:/)?$",
       "routeKeys": {},

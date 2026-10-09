@@ -19,8 +19,6 @@ export default function BatTuView({ onOpenLoginModal }: { onOpenLoginModal?: () 
   const [birthDay, setBirthDay] = useState(20);
   const [birthHour, setBirthHour] = useState(11);
   const [birthMinute, setBirthMinute] = useState(15);
-  const [isUnknownHour, setIsUnknownHour] = useState(false);
-  const [approximatePeriod, setApproximatePeriod] = useState<'sang' | 'chieu' | 'toi' | 'khong_ro'>('khong_ro');
 
   const [pillars, setPillars] = useState<any | null>(null);
   const [readingText, setReadingText] = useState('');
@@ -44,38 +42,26 @@ export default function BatTuView({ onOpenLoginModal }: { onOpenLoginModal?: () 
       setIsLoading(true);
       setReadingText('');
 
-      let effectiveHour = birthHour;
-      let effectiveMinute = birthMinute;
-      if (isUnknownHour) {
-        if (approximatePeriod === 'sang') { effectiveHour = 8; effectiveMinute = 0; }
-        else if (approximatePeriod === 'chieu') { effectiveHour = 14; effectiveMinute = 0; }
-        else if (approximatePeriod === 'toi') { effectiveHour = 20; effectiveMinute = 0; }
-        else { effectiveHour = 12; effectiveMinute = 0; }
-      }
-
-      const solar = Solar.fromYmdHms(birthYear, birthMonth, birthDay, effectiveHour, effectiveMinute, 0);
+      const solar = Solar.fromYmdHms(birthYear, birthMonth, birthDay, birthHour, birthMinute, 0);
       const lunar = solar.getLunar();
 
       const yearPillar = translateGanZhi(lunar.getYearInGanZhi());
       const monthPillar = translateGanZhi(lunar.getMonthInGanZhi());
       const dayPillar = translateGanZhi(lunar.getDayInGanZhi());
-      const hourPillar = isUnknownHour ? 'Khuyết Trụ Giờ (Tham chiếu giờ Ngọ)' : translateGanZhi(lunar.getTimeInGanZhi());
+      const hourPillar = translateGanZhi(lunar.getTimeInGanZhi());
       const dayMaster = dayPillar.split(' ')[0]; // Nhật Chủ (Thiên Can Ngày)
       const napAm = MENH_NGU_HANH[yearPillar] || 'Sa Trung Kim';
 
       const data = {
         fullName,
         gender: gender === 'nam' ? 'Nam mạng' : 'Nữ mạng',
-        solarDate: isUnknownHour 
-          ? `${birthDay}/${birthMonth}/${birthYear} (Không rõ giờ sinh)`
-          : `${birthDay}/${birthMonth}/${birthYear} ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')}`,
+        solarDate: `${birthDay}/${birthMonth}/${birthYear} ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')}`,
         yearPillar,
         monthPillar,
         dayPillar,
         hourPillar,
         dayMaster,
-        napAm,
-        isUnknownHour
+        napAm
       };
 
       setPillars(data);
@@ -84,28 +70,18 @@ export default function BatTuView({ onOpenLoginModal }: { onOpenLoginModal?: () 
 - Họ tên: ${fullName} (${gender === 'nam' ? 'Nam' : 'Nữ'})
 - Sinh dương lịch: ${data.solarDate}
 - Tứ Trụ:
-  + Trụ Năm: ${yearPillar} (Tổ tiên, gốc rễ phúc ấm thuở nhỏ)
-  + Trụ Tháng: ${monthPillar} (Cha mẹ, môi trường lớn lên, Nguyệt Lệnh)
-  + Trụ Ngày: ${dayPillar} [NHẬT CHỦ: ${dayMaster} - Bản thể cốt lõi, tâm tính và năng lực nội tại]
-  + Trụ Giờ: ${hourPillar}
+  + Trụ Năm: ${yearPillar} (Tổ tiên, phúc ấm thuở nhỏ)
+  + Trụ Tháng: ${monthPillar} (Cha mẹ, môi trường lớn lên)
+  + Trụ Ngày: ${dayPillar} [NHẬT CHỦ: ${dayMaster} - Bản thể cốt lõi]
+  + Trụ Giờ: ${hourPillar} (Con cái, hậu vận về già)
 - Nạp Âm Bản Mệnh: ${napAm}
 
-${isUnknownHour ? `
-⚠️ LƯU Ý KHI ĐƯƠNG SỐ KHÔNG RÕ GIỜ SINH:
-- Trong thuật Bát Tự Tử Bình, TRỤ NGÀY (Nhật Chủ ${dayMaster}) và TRỤ THÁNG (Nguyệt Lệnh ${monthPillar}) chiếm tới 75-80% quyết định độ Vượng/Suy, Tính Cách và Dụng Thần tổng thể của đời người. Trụ Giờ chủ yếu bổ sung chi tiết về con cái và những năm tháng cuối đời (sau 60 tuổi).
-- Bạn hãy tập trung phân tích chuẩn xác theo "TAM TRỤ BÁT TỰ" (Năm, Tháng, Ngày):
-  1. Phân tích cốt lõi Nhật Chủ ${dayMaster} sinh vào tháng ${monthPillar} (Đắc lệnh hay Thất lệnh, thể chất, tài năng).
-  2. Xác định Dụng Thần & Hỷ Thần dựa trên tương quan Tam Trụ.
-  3. Đưa ra dấu hiệu nhận biết để người dùng tự xác định giờ sinh khả dĩ nhất (ví dụ: nếu có con cái sớm/muộn, tính cách hướng nội hay hướng ngoại khi về già).
-  4. Lời khuyên phát triển sự nghiệp, chọn đối tác và cải vận theo Dụng Thần.
-` : `
 Hãy luận giải chi tiết theo 5 trụ cột:
 1. ☯️ PHÂN TÍCH NHẬT CHỦ & ĐỘ CƯỜNG NHƯỢC: Nhật Chủ ${dayMaster} sinh vào tháng nào, vượng hay suy, có đắc lệnh đắc địa hay không.
 2. 🌊 XÁC ĐỊNH DỤNG THẦN & HỶ THẦN: Ngũ hành nào là chìa khóa then chốt giải cứu mệnh cục, ngũ hành nào là Kỵ Thần cần tránh.
 3. 💼 THẬP THẦN (TÀI - QUAN - ẤN - THỰC - THƯƠNG): Tiềm năng tài chính, sự nghiệp quan trường, con đường kinh doanh hay làm chuyên môn.
 4. 🏡 CUNG PHU THÊ & HÔN NHÂN: Đánh giá Địa Chi trụ ngày, tương hợp tương xung và thời điểm lập gia đình thuận lợi.
-5. 🛡️ PHƯƠNG PHÁP CẢI VẬN THEO DỤNG THẦN: Lựa chọn ngành nghề hợp mệnh, màu sắc y phục, phương hướng phong thủy và đối tác làm ăn.
-`}`;
+5. 🛡️ PHƯƠNG PHÁP CẢI VẬN THEO DỤNG THẦN: Lựa chọn ngành nghề hợp mệnh, màu sắc y phục, phương hướng phong thủy và đối tác làm ăn.`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -266,59 +242,27 @@ Hãy luận giải chi tiết theo 5 trụ cột:
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-semibold text-slate-400">
-                Giờ Sinh <span className="text-[10px] text-slate-400 font-normal">(Không bắt buộc)</span>
-              </label>
-              <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-amber-400 hover:text-amber-300 font-medium">
-                <input
-                  type="checkbox"
-                  checked={isUnknownHour}
-                  onChange={(e) => setIsUnknownHour(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded accent-amber-500 cursor-pointer"
-                />
-                <span>Quên / Không nhớ giờ?</span>
-              </label>
+            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Giờ Sinh</label>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="number"
+                min="0"
+                max="23"
+                value={birthHour}
+                onChange={(e) => setBirthHour(Number(e.target.value))}
+                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-amber-500"
+                placeholder="Giờ"
+              />
+              <input
+                type="number"
+                min="0"
+                max="59"
+                value={birthMinute}
+                onChange={(e) => setBirthMinute(Number(e.target.value))}
+                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-amber-500"
+                placeholder="Phút"
+              />
             </div>
-
-            {isUnknownHour ? (
-              <div className="space-y-2">
-                <select
-                  value={approximatePeriod}
-                  onChange={(e) => setApproximatePeriod(e.target.value as any)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-amber-500/50 text-amber-200 text-xs outline-none focus:border-amber-400 font-medium"
-                >
-                  <option value="khong_ro">❓ Hoàn toàn không nhớ (Luận theo Tam Trụ)</option>
-                  <option value="sang">🌅 Khoảng Buổi Sáng (06:00 - 11:00)</option>
-                  <option value="chieu">☀️ Khoảng Buổi Chiều (13:00 - 17:00)</option>
-                  <option value="toi">🌙 Khoảng Buổi Tối / Đêm (18:00 - 23:00)</option>
-                </select>
-                <p className="text-[10px] text-amber-400/90 leading-tight">
-                  💡 Hệ thống sẽ luận giải chuyên sâu theo Tam Trụ (Năm-Tháng-Ngày) chiếm 80% định hướng vận mệnh.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="number"
-                  min="0"
-                  max="23"
-                  value={birthHour}
-                  onChange={(e) => setBirthHour(Number(e.target.value))}
-                  className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-amber-500"
-                  placeholder="Giờ"
-                />
-                <input
-                  type="number"
-                  min="0"
-                  max="59"
-                  value={birthMinute}
-                  onChange={(e) => setBirthMinute(Number(e.target.value))}
-                  className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-amber-500"
-                  placeholder="Phút"
-                />
-              </div>
-            )}
           </div>
         </div>
 

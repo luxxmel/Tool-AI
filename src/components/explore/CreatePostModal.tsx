@@ -39,54 +39,23 @@ export default function CreatePostModal({
     general: language === "en" ? "Discussion" : "Thảo luận",
   };
 
-  // Đọc và nén ảnh tải lên từ thư mục trên thiết bị (Folder) để lưu mượt mà vào DB
+  // Đọc ảnh tải lên từ thư mục trên thiết bị (Folder)
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 15 * 1024 * 1024) {
-      showError(language === "en" ? "Image size must be less than 15MB" : "Dung lượng ảnh tối đa 15MB!");
+    if (file.size > 10 * 1024 * 1024) {
+      showError(language === "en" ? "Image size must be less than 10MB" : "Dung lượng ảnh tối đa 10MB!");
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const rawBase64 = event.target?.result as string;
-      if (!rawBase64) return;
-
-      // Nén ảnh bằng Canvas để tải cực nhanh và lưu nhẹ vào DB
-      const img = new Image();
-      img.onload = () => {
-        const maxWidth = 1200;
-        const maxHeight = 1200;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth || height > maxHeight) {
-          if (width > height) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          } else {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
-        }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressed = canvas.toDataURL("image/jpeg", 0.82);
-          setImagePreview(compressed);
-          setImageUrl(compressed);
-        } else {
-          setImagePreview(rawBase64);
-          setImageUrl(rawBase64);
-        }
-      };
-      img.src = rawBase64;
+      const base64 = event.target?.result as string;
+      if (base64) {
+        setImagePreview(base64);
+        setImageUrl(base64);
+      }
     };
     reader.readAsDataURL(file);
     if (e.target) e.target.value = "";
@@ -121,10 +90,6 @@ export default function CreatePostModal({
           categoryLabel: categoryLabels[category],
           image: imageUrl.trim() || imagePreview || null,
           authorId: user?.id,
-          authorEmail: user?.email,
-          authorName: user?.displayName || (user as any)?.name,
-          authorAvatar: user?.avatar,
-          authorRole: user?.role,
         }),
       });
 

@@ -236,10 +236,10 @@ export default function UserProfileView({
         </div>
       )}
 
-      {/* ── MODERN GLASSMORPHISM PROFILE HEADER CARD ── */}
-      <div className="relative rounded-3xl overflow-hidden bg-white/80 dark:bg-[#0c0e18]/90 border border-slate-200/80 dark:border-slate-800/80 shadow-2xl backdrop-blur-2xl mb-8 transition-all">
-        {/* Banner nghệ thuật với Glow & Mesh Gradient */}
-        <div className="h-44 sm:h-60 w-full relative overflow-hidden group">
+      {/* ── HIGH-END CYBER PROFILE CARD ── */}
+      <div className="relative rounded-3xl overflow-hidden bg-[#0c0e17]/95 border border-slate-800/80 shadow-2xl backdrop-blur-2xl mb-8">
+        {/* Animated Cyber Banner */}
+        <div className="h-44 sm:h-56 w-full bg-gradient-to-r from-violet-900 via-indigo-900 to-cyan-900 relative overflow-hidden group">
           {bannerUrl ? (
             <img
               src={bannerUrl}
@@ -247,250 +247,208 @@ export default function UserProfileView({
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-violet-900 via-indigo-900 to-cyan-900 relative">
-              {/* Subtle Tech Grid Texture */}
-              <div className="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:20px_20px] opacity-20" />
-              <div className="absolute -top-24 -left-20 w-80 h-80 bg-cyan-500/30 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 right-10 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-            </div>
+            <>
+              {/* Micro Particles Background */}
+              <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px] opacity-25" />
+              <div className="absolute -top-20 -left-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl" />
+              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" />
+            </>
           )}
 
-          {/* Nút đổi ảnh bìa khi hover (chỉ chính chủ) */}
+          {/* Quick Upload Banner Button Overlay (chỉ hiển thị với chính chủ) */}
           {isOwnProfile && (
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
               <button
                 onClick={() => {
                   setIsEditingProfile(true);
                   setTimeout(() => bannerFileInputRef.current?.click(), 100);
                 }}
-                className="pointer-events-auto px-4 py-2.5 rounded-2xl bg-slate-900/90 hover:bg-slate-900 text-white font-bold text-xs border border-white/20 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:scale-105 transition-all cursor-pointer"
+                className="pointer-events-auto px-4 py-2 rounded-xl bg-slate-900/90 text-white font-bold text-xs border border-white/20 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
               >
-                <span>🖼️ Đổi ảnh bìa</span>
+                <span>🖼️ Đổi ảnh bìa Banner</span>
               </button>
             </div>
           )}
 
-          {/* Top Actions Floating Bar */}
+          {/* Edit Profile Button Top Right (chỉ hiển thị với chính chủ) */}
           {isOwnProfile && (
-            <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+            <div className="absolute top-4 right-4 z-10">
               <button
                 onClick={() => setIsEditingProfile((prev) => !prev)}
-                className="px-4 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-900 text-white font-bold text-xs border border-white/20 shadow-xl backdrop-blur-md transition-all cursor-pointer flex items-center gap-2 hover:scale-105"
+                className="px-4 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-900 backdrop-blur-xl text-white font-bold text-xs border border-white/15 shadow-xl transition-all cursor-pointer flex items-center gap-2 group hover:scale-105"
               >
-                <span className="text-cyan-400">✏️</span>
+                <span className="text-cyan-400 group-hover:rotate-12 transition-transform">✏️</span>
                 <span>{isEditingProfile ? "Đóng chỉnh sửa" : "Chỉnh sửa hồ sơ"}</span>
               </button>
             </div>
           )}
         </div>
 
-        {/* Nội dung thông tin chính & Avatar */}
+        {/* Profile Content Body */}
         <div className="px-6 sm:px-8 pb-8 relative z-10">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-16 sm:-mt-20 mb-6">
-            {/* Avatar & Tên người dùng */}
-            <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
-              {/* Avatar với vòng Neon Glow */}
-              <div className="relative group self-start sm:self-auto">
-                <div
-                  onClick={() => avatarFileInputRef.current?.click()}
-                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl overflow-hidden border-4 border-[#f8fafc] dark:border-[#0c0e18] shadow-2xl shrink-0 bg-slate-900 cursor-pointer ring-2 ring-indigo-500/40 hover:ring-cyan-400 transition-all relative"
-                  title="Bấm để thay đổi ảnh đại diện"
-                >
-                  <img
-                    src={avatarUrl || user.avatar}
-                    alt={user.displayName}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-xs font-bold gap-1 backdrop-blur-xs">
-                    <span className="text-xl">📷</span>
-                    <span>Đổi ảnh</span>
-                  </div>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-16 sm:-mt-20 mb-5">
+            {/* Glowing Avatar */}
+            <div className="flex items-end gap-5">
+              <div
+                onClick={() => avatarFileInputRef.current?.click()}
+                className="group relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-4 border-[#0c0e17] shadow-2xl shrink-0 bg-slate-900 cursor-pointer ring-2 ring-indigo-500/50 hover:ring-cyan-400 transition-all"
+                title="Bấm vào đây để thay đổi ảnh đại diện từ máy tính"
+              >
+                <img
+                  src={avatarUrl || user.avatar}
+                  alt={user.displayName}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-xs font-bold gap-1 backdrop-blur-xs">
+                  <span className="text-lg">📷</span>
+                  <span>Đổi ảnh</span>
                 </div>
-                {/* Online Indicator */}
-                <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 border-white dark:border-[#0c0e18] shadow-sm" title="Đang hoạt động" />
+                <span className="absolute bottom-2 right-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-[#0c0e17] shadow-xs" />
               </div>
 
-              {/* Tên & Tagline */}
               <div className="pb-1 min-w-0">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight truncate">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">
                     {user.displayName}
                   </h1>
                   {user.role === "ADMIN" && (
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 dark:text-amber-300 font-extrabold border border-amber-500/40 uppercase tracking-widest flex items-center gap-1 shadow-xs">
-                      <span>👑</span> ADMIN
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-black border border-amber-500/40 uppercase tracking-widest">
+                      👑 ADMIN
                     </span>
                   )}
                   {user.role === "VIP" && (
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 dark:text-purple-300 font-extrabold border border-purple-500/40 uppercase tracking-widest flex items-center gap-1">
-                      <span>✨</span> VIP
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-black border border-purple-500/40 uppercase tracking-widest">
+                      ✨ VIP
                     </span>
                   )}
                 </div>
-
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1.5 flex items-center gap-2 flex-wrap">
-                  <span className="text-indigo-600 dark:text-indigo-400 font-semibold">@{user.username || user.email.split("@")[0]}</span>
+                <div className="text-xs text-slate-400 font-mono mt-1 flex items-center gap-2">
+                  <span>@{user.username || user.email.split("@")[0]}</span>
                   {!privacy.hideLocation && location && (
                     <>
-                      <span className="text-slate-300 dark:text-slate-700">•</span>
-                      <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
-                        <span>📍</span> {location}
-                      </span>
+                      <span>•</span>
+                      <span className="text-slate-400">{location}</span>
                     </>
                   )}
-                  <span className="text-slate-300 dark:text-slate-700">•</span>
-                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <span>📅</span> Tham gia tháng 10/2026
-                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Nút Nạp Credits & Số Dư */}
+            {/* Premium Credits Badge */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsRechargeOpen(true)}
-                className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-600 dark:text-amber-300 border border-amber-500/40 font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md hover:scale-105 group"
+                className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-300 border border-amber-500/40 font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-lg hover:scale-105 group"
               >
                 <span className="text-base group-hover:rotate-12 transition-transform">🪙</span>
                 <span>
-                  {user.role === "ADMIN" ? (language === "en" ? "∞ Unlimited" : "∞ Vô hạn Credits") : `${user.credits ?? 10} Credits`}
+                  {user.role === "ADMIN" ? "∞ Vô hạn Credits" : `${user.credits ?? 10} Credits`}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-lg bg-amber-500 text-slate-950 font-black ml-0.5 uppercase shadow-xs">
+                <span className="text-[10px] px-2 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-black ml-1 uppercase">
                   + Nạp
                 </span>
               </button>
             </div>
           </div>
 
-          {/* Tiểu sử (Bio Card) */}
-          {!privacy.hideBio && (
-            <div className="mb-5 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal shadow-2xs">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                <span>💬</span> Giới thiệu
+          {/* Bio & Social Badges */}
+          <div className="mt-4 space-y-4">
+            {!privacy.hideBio && (
+              <p className="text-sm text-slate-300 max-w-3xl leading-relaxed font-normal bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80">
+                {bio || "Chưa có lời giới thiệu nào. Hãy bấm 'Chỉnh sửa hồ sơ' để giới thiệu bản thân nhé."}
+              </p>
+            )}
+
+            {!privacy.hideSocials && (
+              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+                {!privacy.hideEmail && (
+                  <div className="flex items-center gap-1.5 bg-slate-900/40 px-3 py-1.5 rounded-xl border border-slate-800">
+                    <span>📧</span>
+                    <span className="text-slate-300">{user.email}</span>
+                  </div>
+                )}
+                {website && (
+                  <a
+                    href={website.startsWith("http") ? website : `https://${website}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 bg-slate-900/40 px-3 py-1.5 rounded-xl border border-slate-800 text-cyan-400 hover:text-cyan-300 hover:border-cyan-500/50 transition-all"
+                  >
+                    <span>🔗</span>
+                    <span>{website.replace(/^https?:\/\//, "")}</span>
+                  </a>
+                )}
+                {github && (
+                  <a
+                    href={`https://github.com/${github.replace(/^https?:\/\/github\.com\//, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 bg-slate-900/40 px-3 py-1.5 rounded-xl border border-slate-800 hover:text-white hover:border-slate-700 transition-all"
+                  >
+                    <span>🐙</span>
+                    <span>GitHub</span>
+                  </a>
+                )}
+                {twitter && (
+                  <a
+                    href={`https://twitter.com/${twitter.replace(/^https?:\/\/twitter\.com\//, "").replace(/^@/, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 bg-slate-900/40 px-3 py-1.5 rounded-xl border border-slate-800 text-sky-400 hover:text-sky-300 transition-all"
+                  >
+                    <span>🐦</span>
+                    <span>Twitter / X</span>
+                  </a>
+                )}
+                {facebook && (
+                  <a
+                    href={facebook.startsWith("http") ? facebook : `https://facebook.com/${facebook}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 bg-slate-900/40 px-3 py-1.5 rounded-xl border border-slate-800 text-blue-400 hover:text-blue-300 transition-all"
+                  >
+                    <span>👥</span>
+                    <span>Facebook</span>
+                  </a>
+                )}
               </div>
-              <p>{bio || "Chưa có lời giới thiệu nào. Hãy bấm 'Chỉnh sửa hồ sơ' để giới thiệu bản thân nhé."}</p>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* Mạng xã hội & Liên hệ */}
-          {!privacy.hideSocials && (
-            <div className="flex flex-wrap items-center gap-2.5 text-xs pt-1 mb-6">
-              {!privacy.hideEmail && (
-                <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/60 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
-                  <span>✉️</span>
-                  <span>{user.email}</span>
-                </div>
-              )}
-              {website && (
-                <a
-                  href={website.startsWith("http") ? website : `https://${website}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 bg-cyan-50 dark:bg-cyan-950/30 px-3.5 py-1.5 rounded-xl border border-cyan-200 dark:border-cyan-500/30 text-cyan-600 dark:text-cyan-400 hover:scale-105 transition-all font-medium"
-                >
-                  <span>🌐</span>
-                  <span>{website.replace(/^https?:\/\//, "")}</span>
-                </a>
-              )}
-              {github && (
-                <a
-                  href={`https://github.com/${github.replace(/^https?:\/\/github\.com\//, "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/60 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:scale-105 transition-all font-medium"
-                >
-                  <span>🐙</span>
-                  <span>GitHub</span>
-                </a>
-              )}
-              {twitter && (
-                <a
-                  href={`https://twitter.com/${twitter.replace(/^https?:\/\/twitter\.com\//, "").replace(/^@/, "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 bg-sky-50 dark:bg-sky-950/30 px-3.5 py-1.5 rounded-xl border border-sky-200 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 hover:scale-105 transition-all font-medium"
-                >
-                  <span>🐦</span>
-                  <span>Twitter / X</span>
-                </a>
-              )}
-              {facebook && (
-                <a
-                  href={facebook.startsWith("http") ? facebook : `https://facebook.com/${facebook}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/30 px-3.5 py-1.5 rounded-xl border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 hover:scale-105 transition-all font-medium"
-                >
-                  <span>👥</span>
-                  <span>Facebook</span>
-                </a>
-              )}
-            </div>
-          )}
-
-          {/* ── BỘ CHỈ SỐ THỐNG KÊ (METRICS DASHBOARD CARDS) ── */}
+          {/* Sleek Metrics Bar */}
           {!privacy.hideStats && (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-6 border-t border-slate-200/80 dark:border-slate-800/80">
-              {/* Card 1: Bài viết */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500/50 transition-all flex items-center gap-3.5 group">
-                <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
-                  📝
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">
-                    Bài viết đã đăng
-                  </span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    {posts.length}
-                  </span>
-                </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 mt-6 border-t border-slate-800/80">
+              <div className="p-4 rounded-2xl bg-indigo-950/20 border border-indigo-500/30 text-center hover:border-indigo-500/60 transition-all">
+                <span className="text-2xl font-black text-cyan-400 block">
+                  {posts.length}
+                </span>
+                <span className="text-xs font-bold text-slate-400 mt-1 block">
+                  Bài viết đã đăng 📝
+                </span>
               </div>
-
-              {/* Card 2: Lượt thích */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 hover:border-rose-400 dark:hover:border-rose-500/50 transition-all flex items-center gap-3.5 group">
-                <div className="w-11 h-11 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
-                  ❤️
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">
-                    Lượt yêu thích
-                  </span>
-                  <span className="text-2xl font-black text-rose-500 dark:text-rose-400 tracking-tight">
-                    {totalLikes}
-                  </span>
-                </div>
+              <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/30 text-center hover:border-rose-500/60 transition-all">
+                <span className="text-2xl font-black text-rose-400 block">
+                  {totalLikes}
+                </span>
+                <span className="text-xs font-bold text-slate-400 mt-1 block">
+                  Lượt yêu thích ❤️
+                </span>
               </div>
-
-              {/* Card 3: Bình luận */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all flex items-center gap-3.5 group">
-                <div className="w-11 h-11 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-500 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
-                  💬
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">
-                    Bình luận tương tác
-                  </span>
-                  <span className="text-2xl font-black text-purple-500 dark:text-purple-400 tracking-tight">
-                    {totalComments}
-                  </span>
-                </div>
+              <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 text-center hover:border-purple-500/60 transition-all">
+                <span className="text-2xl font-black text-purple-400 block">
+                  {totalComments}
+                </span>
+                <span className="text-xs font-bold text-slate-400 mt-1 block">
+                  Bình luận tương tác 💬
+                </span>
               </div>
-
-              {/* Card 4: Số dư Credits */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500/50 transition-all flex items-center gap-3.5 group">
-                <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
-                  🪙
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">
-                    Số dư Credits
-                  </span>
-                  <span className="text-2xl font-black text-amber-500 dark:text-amber-300 tracking-tight">
-                    {user.role === "ADMIN" ? (language === "en" ? "∞" : "∞ Vô hạn") : (user.credits ?? 10)}
-                  </span>
-                </div>
+              <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 text-center hover:border-amber-500/60 transition-all">
+                <span className="text-2xl font-black text-amber-300 block">
+                  {user.role === "ADMIN" ? "∞" : (user.credits ?? 10)}
+                </span>
+                <span className="text-xs font-bold text-slate-400 mt-1 block">
+                  Số dư Credits 🪙
+                </span>
               </div>
             </div>
           )}
@@ -835,7 +793,7 @@ export default function UserProfileView({
         </div>
 
         <Link
-          href="/explore"
+          href="/?tab=explore"
           className="pb-3.5 text-xs font-bold text-cyan-400 hover:underline flex items-center gap-1"
         >
           <span>Khám phá cộng đồng →</span>
@@ -859,7 +817,7 @@ export default function UserProfileView({
                 Hãy chia sẻ các mẹo prompt hay, tác phẩm tạo ra từ AI hoặc thắc mắc với cộng đồng ngay hôm nay.
               </p>
               <Link
-                href="/explore"
+                href="/?tab=explore"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-extrabold text-xs shadow-xl shadow-indigo-600/30 hover:scale-105 transition-all"
               >
                 <span>🚀 Đến bảng tin để đăng bài</span>
@@ -921,9 +879,7 @@ export default function UserProfileView({
               </div>
               <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
                 <span className="text-slate-400 block mb-1">Số dư Credits</span>
-                <span className="font-bold text-amber-300">
-                  {user.role === "ADMIN" ? (language === "en" ? "∞ Unlimited" : "∞ Vô hạn Credits") : `${user.credits ?? 10} Credits`}
-                </span>
+                <span className="font-bold text-amber-300">{user.credits} Credits</span>
               </div>
               <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
                 <span className="text-slate-400 block mb-1">Quốc gia</span>

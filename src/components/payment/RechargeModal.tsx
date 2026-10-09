@@ -183,7 +183,6 @@ interface RechargeModalProps {
   initialCustomCredits?: number;
   autoCheckout?: boolean;
   customPriceOverride?: number;
-  customTitleOverride?: string;
 }
 
 export default function RechargeModal({
@@ -193,7 +192,6 @@ export default function RechargeModal({
   initialCustomCredits = 50,
   autoCheckout = false,
   customPriceOverride,
-  customTitleOverride,
 }: RechargeModalProps) {
   const { user, updateUserCredits } = useAuth();
   const { language, t } = useLanguage();
@@ -232,9 +230,7 @@ export default function RechargeModal({
   // Tính toán số tiền hiện tại tùy vào tab đang chọn
   const customPricing = calculateCustomPrice(customCredits);
   const checkoutPrice =
-    customPriceOverride !== undefined
-      ? customPriceOverride
-      : activeTab === "package" && selectedPackage
+    activeTab === "package" && selectedPackage
       ? selectedPackage.price
       : customPricing.totalPrice;
 
@@ -244,9 +240,7 @@ export default function RechargeModal({
       : customCredits;
 
   const checkoutTitle =
-    customTitleOverride !== undefined
-      ? customTitleOverride
-      : activeTab === "package" && selectedPackage
+    activeTab === "package" && selectedPackage
       ? selectedPackage.name
       : `Mua ${customCredits} Credits tùy ý`;
 
@@ -327,7 +321,7 @@ export default function RechargeModal({
           setActiveTab("package");
         }
       }
-      if (initialCustomCredits !== undefined) {
+      if (initialCustomCredits) {
         setCustomCredits(initialCustomCredits);
       }
       if (autoCheckout) {
@@ -341,7 +335,7 @@ export default function RechargeModal({
       setSuccessInfo(null);
       setPayosCheckoutUrl(null);
     }
-  }, [isOpen, defaultPackageId, autoCheckout, initialCustomCredits, customPriceOverride, customTitleOverride]);
+  }, [isOpen, defaultPackageId, autoCheckout, initialCustomCredits]);
 
   if (!isOpen) return null;
 
