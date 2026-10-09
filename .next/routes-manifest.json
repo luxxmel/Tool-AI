@@ -348,10 +348,46 @@
       "namedRegex": "^/api/webhook/facebook(?:/)?$"
     },
     {
+      "page": "/battu",
+      "regex": "^/battu(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/battu(?:/)?$"
+    },
+    {
+      "page": "/characters",
+      "regex": "^/characters(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/characters(?:/)?$"
+    },
+    {
+      "page": "/chiemtinh",
+      "regex": "^/chiemtinh(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/chiemtinh(?:/)?$"
+    },
+    {
+      "page": "/explore",
+      "regex": "^/explore(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/explore(?:/)?$"
+    },
+    {
       "page": "/favicon.ico",
       "regex": "^/favicon\\.ico(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/healing",
+      "regex": "^/healing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/healing(?:/)?$"
+    },
+    {
+      "page": "/images",
+      "regex": "^/images(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/images(?:/)?$"
     },
     {
       "page": "/privacy",
@@ -360,10 +396,40 @@
       "namedRegex": "^/privacy(?:/)?$"
     },
     {
+      "page": "/profile",
+      "regex": "^/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile(?:/)?$"
+    },
+    {
+      "page": "/stories",
+      "regex": "^/stories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/stories(?:/)?$"
+    },
+    {
+      "page": "/tarot",
+      "regex": "^/tarot(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tarot(?:/)?$"
+    },
+    {
       "page": "/terms",
       "regex": "^/terms(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/terms(?:/)?$"
+    },
+    {
+      "page": "/tools",
+      "regex": "^/tools(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools(?:/)?$"
+    },
+    {
+      "page": "/tuvi",
+      "regex": "^/tuvi(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tuvi(?:/)?$"
     },
     {
       "page": "/typing",
