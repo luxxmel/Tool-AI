@@ -657,13 +657,16 @@ export const post = {
     };
 
     if (include?.author) {
-      res.author = user.findUnique({ where: { id: row.authorId } });
+      const aRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.authorId);
+      res.author = aRow ? user._format(aRow, include?.author?.include, include?.author?.select) : null;
     }
     if (include?.comments) {
-      res.comments = comment.findMany({ where: { postId: row.id } });
+      const cRows = db.prepare("SELECT * FROM Comment WHERE postId = ? ORDER BY createdAt ASC").all(row.id);
+      res.comments = cRows.map((c: any) => comment._format(c, include?.comments?.include));
     }
     if (include?.reactions) {
-      res.reactions = postReaction.findMany({ where: { postId: row.id } });
+      const rRows = db.prepare("SELECT * FROM PostReaction WHERE postId = ?").all(row.id);
+      res.reactions = rRows.map((r: any) => ({ ...r, createdAt: toDate(r.createdAt) }));
     }
     if (include?._count) {
       res._count = {
@@ -737,16 +740,19 @@ export const comment = {
   },
 
   _format(row: any, include: any) {
+    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.user) {
-      res.user = user.findUnique({ where: { id: row.userId } });
+      const uRow = db.prepare("SELECT * FROM User WHERE id = ?").get(row.userId);
+      res.user = uRow ? user._format(uRow, include?.user?.include, include?.user?.select) : null;
     }
     if (include?.post) {
-      res.post = post.findUnique({ where: { id: row.postId } });
+      const pRow = db.prepare("SELECT * FROM Post WHERE id = ?").get(row.postId);
+      res.post = pRow ? post._format(pRow, include?.post?.include) : null;
     }
     return res;
   }
