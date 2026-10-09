@@ -17,7 +17,7 @@ export default function TermsPage() {
               Điều Khoản Sử Dụng Dịch Vụ
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Cập nhật lần cuối: Ngày 02 tháng 10 năm 2026 • Áp dụng cho tất cả người dùng Bi?t Tu?t AI
+              Cập nhật lần cuối: Ngày 02 tháng 10 năm 2026 • Áp dụng cho tất cả người dùng Biết Tuốt AI
             </p>
           </div>
           <Link
@@ -35,7 +35,7 @@ export default function TermsPage() {
               <span>1.</span> Chấp Thuận Điều Khoản
             </h2>
             <p>
-              Chào mừng bạn đến với <strong>Bi?t Tu?t AI</strong>. Khi truy cập, đăng ký tài khoản hoặc sử dụng bất kỳ dịch vụ, tính năng trợ lý AI, tạo ảnh hoặc trò chuyện nào trên nền tảng của chúng tôi, bạn đồng ý tuân thủ và chịu sự ràng buộc bởi các Điều khoản dịch vụ này.
+              Chào mừng bạn đến với <strong>Biết Tuốt AI</strong>. Khi truy cập, đăng ký tài khoản hoặc sử dụng bất kỳ dịch vụ, tính năng trợ lý AI, tạo ảnh hoặc trò chuyện nào trên nền tảng của chúng tôi, bạn đồng ý tuân thủ và chịu sự ràng buộc bởi các Điều khoản dịch vụ này.
             </p>
           </section>
 
@@ -55,7 +55,7 @@ export default function TermsPage() {
               <span>3.</span> Quy Định Sử Dụng Trợ Lý AI & Tạo Nội Dung
             </h2>
             <p>
-              Bi?t Tu?t AI cung cấp các mô hình Trí Tuệ Nhân Tạo hỗ trợ công việc, giải trí, sáng tạo nội dung và trải bài trực giác. Người dùng cam kết <strong>KHÔNG</strong> sử dụng dịch vụ để:
+              Biết Tuốt AI cung cấp các mô hình Trí Tuệ Nhân Tạo hỗ trợ công việc, giải trí, sáng tạo nội dung và trải bài trực giác. Người dùng cam kết <strong>KHÔNG</strong> sử dụng dịch vụ để:
             </p>
             <ul className="list-disc pl-5 space-y-1 text-slate-300">
               <li>Tạo ra, phát tán nội dung vi phạm pháp luật, thù ghét, khiêu dâm, kích động bạo lực hoặc giả mạo cá nhân/tổ chức khác.</li>
@@ -69,7 +69,7 @@ export default function TermsPage() {
               <span>4.</span> Quy Định Credits & Thanh Toán
             </h2>
             <p>
-              Hệ thống Bi?t Tu?t AI hoạt động theo cơ chế số dư <strong>Credits</strong>. Mỗi lượt tương tác AI, tạo ảnh hoặc giải bài sẽ khấu trừ một số lượng Credits tương ứng theo công khai trên hệ thống.
+              Hệ thống Biết Tuốt AI hoạt động theo cơ chế số dư <strong>Credits</strong>. Mỗi lượt tương tác AI, tạo ảnh hoặc giải bài sẽ khấu trừ một số lượng Credits tương ứng theo công khai trên hệ thống.
             </p>
             <ul className="list-disc pl-5 space-y-1 text-slate-300">
               <li>Credits đã nạp không có giá trị quy đổi ngược lại thành tiền mặt.</li>
@@ -82,7 +82,7 @@ export default function TermsPage() {
               <span>5.</span> Quyền Sở Hữu Trí Tuệ
             </h2>
             <p>
-              Tất cả giao diện, logo, nhãn hiệu, mã nguồn và dữ liệu độc bản trên Bi?t Tu?t AI thuộc quyền sở hữu trí tuệ của nền tảng. Nội dung văn bản và hình ảnh do người dùng tạo ra thông qua công cụ AI thuộc quyền sử dụng hợp pháp của người dùng theo quy định pháp luật hiện hành.
+              Tất cả giao diện, logo, nhãn hiệu, mã nguồn và dữ liệu độc bản trên Biết Tuốt AI thuộc quyền sở hữu trí tuệ của nền tảng. Nội dung văn bản và hình ảnh do người dùng tạo ra thông qua công cụ AI thuộc quyền sử dụng hợp pháp của người dùng theo quy định pháp luật hiện hành.
             </p>
           </section>
 
@@ -91,14 +91,14 @@ export default function TermsPage() {
               <span>6.</span> Giới Hạn Trách Nhiệm
             </h2>
             <p>
-              Các câu trả lời và nội dung được tạo bởi mô hình AI mang tính chất tham khảo, hỗ trợ và giải trí. Bi?t Tu?t AI không chịu trách nhiệm đối với các tổn thất gián tiếp phát sinh từ việc người dùng hiểu sai hoặc phụ thuộc tuyệt đối vào câu trả lời của AI.
+              Các câu trả lời và nội dung được tạo bởi mô hình AI mang tính chất tham khảo, hỗ trợ và giải trí. Biết Tuốt AI không chịu trách nhiệm đối với các tổn thất gián tiếp phát sinh từ việc người dùng hiểu sai hoặc phụ thuộc tuyệt đối vào câu trả lời của AI.
             </p>
           </section>
         </div>
 
         {/* Footer info */}
         <div className="pt-6 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-          <p>© 2026 Bi?t Tu?t AI. Tất cả quyền được bảo lưu.</p>
+          <p>© 2026 Biết Tuốt AI. Tất cả quyền được bảo lưu.</p>
           <Link href="/privacy" className="text-indigo-400 hover:underline">
             Xem Chính sách bảo mật →
           </Link>

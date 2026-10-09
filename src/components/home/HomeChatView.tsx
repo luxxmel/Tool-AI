@@ -383,12 +383,12 @@ export default function HomeChatView({
   // 1.3. Xuất cuộc trò chuyện dạng file Markdown (.md)
   const handleExportChat = () => {
     if (messages.length === 0) return;
-    const title = conversationTitle || "Cuoc-tro-chuyen-Bi?t Tu?t AI";
+    const title = conversationTitle || "Cuoc-tro-chuyen-Biết Tuốt AI";
     let markdown = `# ${title}\n\n`;
-    markdown += `*Được xuất từ Bi?t Tu?t AI vào ${new Date().toLocaleString("vi-VN")}*\n\n---\n\n`;
+    markdown += `*Được xuất từ Biết Tuốt AI vào ${new Date().toLocaleString("vi-VN")}*\n\n---\n\n`;
 
     messages.forEach((m) => {
-      const sender = m.role === "user" ? "👤 **Bạn (User)**" : `🤖 **${m.modelName || (selectedAssistant ? selectedAssistant.name : "Bi?t Tu?t AI")}**`;
+      const sender = m.role === "user" ? "👤 **Bạn (User)**" : `🤖 **${m.modelName || (selectedAssistant ? selectedAssistant.name : "Biết Tuốt AI")}**`;
       markdown += `### ${sender}\n\n${m.content}\n\n`;
       if (m.images && m.images.length > 0) {
         m.images.forEach((img, idx) => {
@@ -604,7 +604,7 @@ export default function HomeChatView({
               id: convIdHeader,
               title,
               botId: targetBotId,
-              botName: selectedAssistant?.name || "Bi?t Tu?t AI",
+              botName: selectedAssistant?.name || "Biết Tuốt AI",
               botAvatar: selectedAssistant?.avatar,
               messagesCount: newHistory.length,
               updatedAt: new Date().toISOString(),
@@ -1457,8 +1457,8 @@ export default function HomeChatView({
               activeTool
                 ? activeTool.placeholder
                 : typeof window !== "undefined" && localStorage.getItem("omni_send_mode") === "ctrl_enter"
-                ? "Hỏi tiếp Bi?t Tu?t AI, dán ảnh (Ctrl+V)... (Ctrl+Enter để gửi)"
-                : "Hỏi tiếp Bi?t Tu?t AI, dán ảnh (Ctrl+V)... (Enter để gửi)"
+                ? "Hỏi tiếp Biết Tuốt AI, dán ảnh (Ctrl+V)... (Ctrl+Enter để gửi)"
+                : "Hỏi tiếp Biết Tuốt AI, dán ảnh (Ctrl+V)... (Enter để gửi)"
             }
             disabled={isTyping}
             className="flex-1 max-h-56 min-h-[54px] sm:min-h-[58px] py-2.5 px-3 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 text-sm sm:text-base leading-relaxed focus:outline-hidden resize-none scrollbar-thin"

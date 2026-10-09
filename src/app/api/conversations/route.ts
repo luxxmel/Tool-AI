@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       id: c.id,
       title: c.title || "Cuộc trò chuyện mới",
       botId: c.botId,
-      botName: c.bot?.name || "Bi?t Tu?t AI",
+      botName: c.bot?.name || "Biết Tuốt AI",
       botAvatar: c.bot?.avatar,
       projectId: c.projectId,
       messagesCount: c.messages.length,

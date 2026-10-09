@@ -141,7 +141,7 @@ export function detectImageRequest(
 export async function executeChatImageGeneration({
   prompt,
   referenceImage,
-  botName = "Bi?t Tu?t AI",
+  botName = "Biết Tuốt AI",
   botId = "omni-assistant",
 }: {
   prompt: string;
@@ -455,7 +455,7 @@ Return ONLY JSON:
       `- **Xử lý:** ${isEdit ? "Nhận diện đặc trưng chủ thể gốc, phối màu điện ảnh và tái hiện đường nét mới" : "Chuyển hóa văn phong nghệ thuật, tối ưu ánh sáng và độ tương phản cao"}\n\n` +
       `*(Bạn có thể nhấn trực tiếp vào ảnh để phóng to toàn màn hình hoặc tải về máy. Nếu muốn thử góc nhìn hay phong cách khác, bạn cứ nhắn tiếp cho mình nhé!)*`;
   }
-  // 3.7. Mặc định cho Bi?t Tu?t AI và các trợ lý khác
+  // 3.7. Mặc định cho Biết Tuốt AI và các trợ lý khác
   else {
     const actionDesc = customActionText || (isEdit ? "🖌️ Sửa hình ảnh theo yêu cầu" : "🎨 Tạo hình ảnh mới");
     markdownContent =

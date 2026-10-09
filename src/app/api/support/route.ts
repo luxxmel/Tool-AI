@@ -78,10 +78,10 @@ export async function POST(request: NextRequest) {
         update: {},
         create: {
           id: "support-bot",
-          name: "Trung Tâm Hỗ Trợ Bi?t Tu?t AI",
+          name: "Trung Tâm Hỗ Trợ Biết Tuốt AI",
           avatar: "💬",
           description: "Kênh tiếp nhận và giải đáp trực tiếp từ Ban Quản Trị",
-          systemPrompt: "Bạn là Trợ lý hỗ trợ khách hàng chính thức của Bi?t Tu?t AI.",
+          systemPrompt: "Bạn là Trợ lý hỗ trợ khách hàng chính thức của Biết Tuốt AI.",
         },
       });
 

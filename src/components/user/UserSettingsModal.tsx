@@ -729,7 +729,7 @@ export default function UserSettingsModal({
 
           {/* Version stamp at bottom */}
           <div className="pt-3 mt-auto border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
-            <span>Bi?t Tu?t AI v2.5.0 Pro</span>
+            <span>Biết Tuốt AI v2.5.0 Pro</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
           </div>
         </div>
@@ -2355,7 +2355,7 @@ export default function UserSettingsModal({
                       <a
                         href={`https://t.me/share/url?url=${encodeURIComponent(
                           (typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "")) + `?ref=${user.id}`
-                        )}&text=${encodeURIComponent("Tham gia Bi?t Tu?t AI để trải nghiệm trợ lý thông minh và nhận ngay 10 Credits miễn phí!")}`}
+                        )}&text=${encodeURIComponent("Tham gia Biết Tuốt AI để trải nghiệm trợ lý thông minh và nhận ngay 10 Credits miễn phí!")}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-cyan-500 bg-white dark:bg-slate-950 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
@@ -2375,7 +2375,7 @@ export default function UserSettingsModal({
 
                       <a
                         href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                          "Trải nghiệm Bi?t Tu?t AI cực nhanh và thông minh! Đăng ký ngay để nhận 10 Credits:"
+                          "Trải nghiệm Biết Tuốt AI cực nhanh và thông minh! Đăng ký ngay để nhận 10 Credits:"
                         )}&url=${encodeURIComponent(
                           (typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "")) + `?ref=${user.id}`
                         )}`}
@@ -2489,7 +2489,7 @@ export default function UserSettingsModal({
                   <span>{t("tab.help", "Trợ giúp & Câu hỏi thường gặp")}</span>
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Giải đáp các thắc mắc phổ biến và hướng dẫn sử dụng Bi?t Tu?t AI hiệu quả nhất
+                  Giải đáp các thắc mắc phổ biến và hướng dẫn sử dụng Biết Tuốt AI hiệu quả nhất
                 </p>
               </div>
 

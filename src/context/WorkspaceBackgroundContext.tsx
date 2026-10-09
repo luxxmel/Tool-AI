@@ -19,7 +19,7 @@ export const FONT_OPTIONS: FontOption[] = [
   {
     id: "default",
     name: "Mặc định (Geist Sans)",
-    desc: "Phông chữ chuẩn mực, hiện đại của Bi?t Tu?t AI",
+    desc: "Phông chữ chuẩn mực, hiện đại của Biết Tuốt AI",
     css: "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
   {
@@ -67,13 +67,13 @@ export const WORKSPACE_BACKGROUND_PRESETS: BackgroundPreset[] = [
   // --- DEFAULT ---
   {
     id: "default",
-    name: "Mặc định Bi?t Tu?t AI",
-    nameEn: "Bi?t Tu?t AI Default",
+    name: "Mặc định Biết Tuốt AI",
+    nameEn: "Biết Tuốt AI Default",
     type: "default",
     value: "#07080d",
     previewGradient: "linear-gradient(135deg, #07080d 0%, #0d101d 100%)",
     category: "color",
-    description: "Nền đen huyền bí tiêu chuẩn của Bi?t Tu?t AI",
+    description: "Nền đen huyền bí tiêu chuẩn của Biết Tuốt AI",
     recommendedSound: null,
     recommendedParticles: "stardust",
     accentGlow: "#6366f1",
@@ -401,7 +401,7 @@ const STORAGE_KEYS = {
 export function WorkspaceBackgroundProvider({ children }: { children: React.ReactNode }) {
   const [bgType, setBgType] = useState<BackgroundType>("default");
   const [bgValue, setBgValue] = useState<string>("#07080d");
-  const [bgName, setBgName] = useState<string>("Mặc định Bi?t Tu?t AI");
+  const [bgName, setBgName] = useState<string>("Mặc định Biết Tuốt AI");
   const [bgPresetId, setBgPresetId] = useState<string>("default");
   const [overlayOpacity, setOverlayOpacityState] = useState<number>(0.65);
   const [bgBlur, setBgBlurState] = useState<number>(0);
@@ -596,7 +596,7 @@ export function WorkspaceBackgroundProvider({ children }: { children: React.Reac
   const resetToDefault = () => {
     setBgType("default");
     setBgValue("#07080d");
-    setBgName("Mặc định Bi?t Tu?t AI");
+    setBgName("Mặc định Biết Tuốt AI");
     setBgPresetId("default");
     setOverlayOpacityState(0);
     setBgBlurState(0);

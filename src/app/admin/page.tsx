@@ -29,7 +29,7 @@ const ANNOUNCEMENTS_DATA = [
     emoji: "🎉",
     tag: "Sự kiện tháng 10",
     title: "Thử thách Prompt AI — Giải thưởng 500K VND!",
-    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ Bi?t Tu?t AI.",
+    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ Biết Tuốt AI.",
     cta: "Đăng bài dự thi →",
   },
   {
