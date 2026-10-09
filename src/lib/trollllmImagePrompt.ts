@@ -28,110 +28,12 @@ export async function generateOptimizedPromptWithFableAndGemini({
   const cleanUserPrompt = prompt.trim();
   let fablePrompt = cleanUserPrompt;
 
-  // BƯỚC 1: Gọi Claude Fable 5.1
+  // Sử dụng Gemini 3.8 Flash hoặc DeepSeek v4 Flash để dịch và tối ưu prompt sang tiếng Anh chuẩn điện ảnh
   try {
-    if (referenceImage && typeof referenceImage === "string" && referenceImage.startsWith("data:image")) {
-      // Tách mime type và base64 data
-      const match = referenceImage.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.+)$/);
-      if (match) {
-        const mediaType = match[1];
-        const base64Data = match[2];
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-        const fableRes = await fetch(ANTHROPIC_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "x-api-key": TROLLLLM_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "claude-fable-5-1",
-            max_tokens: 400,
-            messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: `You are an elite AI image prompt engineer powered by Claude Fable 5.1.
-Analyze the subject in the attached photo and the user's specific request: "${cleanUserPrompt}".
-Selected aspect ratio: ${aspectRatio}.
-
-CRITICAL MANDATORY RULES:
-1. STRICT ADHERENCE: Strictly adhere to the user's actual request. If the user asks to place them in a workshop/factory ("nhà xưởng"), place them inside an authentic industrial factory/workshop.
-2. NO UNWANTED CLOTHING: Do NOT force formal suits, tuxedos, or vests unless the user explicitly requested it. Dress the subject appropriately for the requested scene.
-3. NO STUDIO PASSPORT BACKGROUNDS: Do NOT force passport photo or studio backdrops unless explicitly asked.
-4. IDENTITY PRESERVATION: Preserve the person's gender, ethnicity, facial structure, and hair from the photo.
-5. STYLE: Authentic real-life photograph, realistic documentary style, natural lighting, true skin texture.
-6. Return ONLY the concise English image prompt (under 80 words). Do NOT add conversational text.`,
-                  },
-                  {
-                    type: "image",
-                    source: {
-                      type: "base64",
-                      media_type: mediaType,
-                      data: base64Data,
-                    },
-                  },
-                ],
-              },
-            ],
-          }),
-          signal: AbortSignal.timeout(15000),
-        });
-
-        if (fableRes.ok) {
-          const fableData = await fableRes.json();
-          const text = fableData?.content?.[0]?.text?.trim();
-          if (text) fablePrompt = text;
-        }
-      }
-    } else {
-      // Text-to-Image qua OpenAI Chat Completions endpoint
-      const fableRes = await fetch(OPENAI_ENDPOINT, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${TROLLLLM_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "claude-fable-5-1",
-          messages: [
-            {
-              role: "system",
-              content: `You are an elite AI image prompt engineer powered by Claude Fable 5.1.
-Translate and craft an exceptional English image prompt strictly following the user's request.
-Selected aspect ratio: ${aspectRatio}.
-
-CRITICAL RULES:
-1. STRICT ADHERENCE: Follow the user's intent 100%. Do NOT invent unwanted objects or unrelated backgrounds.
-2. REALISM: Authentic photographic quality, natural human skin texture with pores, realistic lighting, aspect ratio ${aspectRatio}.
-3. NO WAX/DOLL/ANIME: Strictly photorealistic unless anime/illustration is explicitly demanded.
-4. Return ONLY the English prompt (under 75 words) without preamble or quotes.`,
-            },
-            {
-              role: "user",
-              content: `User request: "${cleanUserPrompt}". Aspect ratio: ${aspectRatio}`,
-            },
-          ],
-        }),
-        signal: AbortSignal.timeout(12000),
-      });
-
-      if (fableRes.ok) {
-        const fableData = await fableRes.json();
-        const text = fableData?.choices?.[0]?.message?.content?.trim();
-        if (text) fablePrompt = text;
-      }
-    }
-  } catch (err) {
-    console.warn("[TrollLLM] Lỗi khi tạo prompt bằng Claude Fable 5.1:", err);
-  }
-
-  // BƯỚC 2: Gọi Gemini 3.8 Flash để tối ưu hóa, đảm bảo bám sát prompt đã tạo
-  let finalPrompt = fablePrompt;
-  try {
-    const geminiRes = await fetch(OPENAI_ENDPOINT, {
+    const res = await fetch(OPENAI_ENDPOINT, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${TROLLLLM_API_KEY}`,
@@ -142,37 +44,67 @@ CRITICAL RULES:
         messages: [
           {
             role: "system",
-            content: `You are Gemini 3.8 Flash, an elite visual director and photographic realism master.
-Review the image prompt created by Claude Fable 5.1 and refine it to ensure supreme photorealism while strictly honoring the exact subject, action, environment, and aspect ratio (${aspectRatio}).
+            content: `You are an elite AI image prompt specialist.
+Task: Translate and enhance the user's Vietnamese request into an ultra-high-definition, photorealistic English prompt for image generation.
+Selected Aspect Ratio: ${aspectRatio}.
 
-RULES:
-1. FAITHFULNESS: Do NOT alter the user's core scene, clothing, or environment.
-2. PHOTOGRAPHIC FIDELITY: Specify realistic camera optics (e.g. 35mm/50mm lens), natural depth of field, authentic ambient illumination, and genuine unretouched human skin texture with visible micro-pores.
-3. NEGATIVE AVOIDANCE: Ensure zero plastic/wax/doll sheen and zero artificial smoothing.
-4. Output ONLY the refined English prompt without markdown or quotes.`,
+CRITICAL RULES:
+1. STRICT ADHERENCE: Faithfully capture every element of the user's request (e.g. if warehouse/xe nâng/pallet, depict an authentic warehouse with active forklifts and cargo pallets). NEVER change the core theme.
+2. PHOTOREALISM: Specify true photographic detail, authentic lighting, accurate materials, and natural depth of field.
+3. CONCISENESS: Return ONLY the final English prompt (under 60 words). No commentary, no preamble, no markdown formatting.`,
           },
           {
             role: "user",
-            content: `Refine this prompt for aspect ratio ${aspectRatio}:\n"${fablePrompt}"`,
+            content: `User prompt: "${cleanUserPrompt}". Aspect ratio: ${aspectRatio}`,
           },
         ],
       }),
-      signal: AbortSignal.timeout(12000),
+      signal: controller.signal,
     });
 
-    if (geminiRes.ok) {
-      const geminiData = await geminiRes.json();
-      const text = geminiData?.choices?.[0]?.message?.content?.trim();
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content?.trim();
       if (text) {
-        finalPrompt = text.replace(/^["'`]|["'`]$/g, "").trim();
+        fablePrompt = text.replace(/^["'`]|["'`]$/g, "").trim();
+      }
+    } else {
+      // Fallback nhanh sang deepseek-v4-flash nếu gemini bận
+      const dsRes = await fetch(OPENAI_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${TROLLLLM_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "deepseek-v4-flash",
+          messages: [
+            {
+              role: "system",
+              content: "Translate user's image prompt into high-quality descriptive English. Output ONLY the English prompt under 50 words.",
+            },
+            {
+              role: "user",
+              content: cleanUserPrompt,
+            },
+          ],
+        }),
+        signal: AbortSignal.timeout(5000),
+      });
+      if (dsRes.ok) {
+        const dsData = await dsRes.json();
+        const dsText = dsData?.choices?.[0]?.message?.content?.trim();
+        if (dsText) fablePrompt = dsText.replace(/^["'`]|["'`]$/g, "").trim();
       }
     }
   } catch (err) {
-    console.warn("[TrollLLM] Lỗi khi tối ưu prompt bằng Gemini 3.8 Flash:", err);
+    console.warn("[TrollLLM] Cảnh báo tối ưu prompt, giữ prompt gốc:", err);
   }
 
   return {
     fablePrompt,
-    finalPrompt,
+    finalPrompt: fablePrompt,
   };
 }

@@ -134,8 +134,8 @@ function generateCleanFallbackImage(prompt: string, aspectRatio: string = "1:1")
   const encodedPrompt = encodeURIComponent(prompt.trim());
   const seed = Math.floor(Math.random() * 1000000);
   
-  // Dùng tham số nologo=1 chuẩn để xóa 100% watermark logo
-  const cleanUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&nologo=1&seed=${seed}`;
+  // Dùng tham số model=flux và nologo=true để ảnh đẹp và không logo
+  const cleanUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=flux&nologo=true&seed=${seed}`;
   
   console.log(`[Clean AI Engine] Sinh ảnh thành công qua Clean AI Engine (No Watermark): ${cleanUrl}`);
   return cleanUrl;

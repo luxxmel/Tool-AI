@@ -39,13 +39,13 @@
   "/favicon.ico/route": "/favicon.ico",
   "/webhook/[...slug]/route": "/webhook/[...slug]",
   "/webhook/route": "/webhook",
-  "/api/contributors/route": "/api/contributors",
-  "/api/images/proxy/route": "/api/images/proxy",
   "/admin/page": "/admin",
   "/chat/[botId]/page": "/chat/[botId]",
   "/page": "/",
   "/privacy/page": "/privacy",
   "/profile/page": "/profile",
   "/terms/page": "/terms",
-  "/typing/page": "/typing"
+  "/typing/page": "/typing",
+  "/api/contributors/route": "/api/contributors",
+  "/api/images/proxy/route": "/api/images/proxy"
 }

@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         referenceImage: referenceImage || null,
       });
       const timeoutPromise = new Promise<{ finalPrompt: string }>((resolve) =>
-        setTimeout(() => resolve({ finalPrompt: prompt.trim() }), 3500)
+        setTimeout(() => resolve({ finalPrompt: prompt.trim() }), 6000)
       );
       const promptResult = await Promise.race([promptPromise, timeoutPromise]);
       if (promptResult?.finalPrompt?.trim()) {
