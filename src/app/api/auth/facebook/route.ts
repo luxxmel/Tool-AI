@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
   const facebookAuthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${encodeURIComponent(
     appId
-  )}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile&response_type=code`;
+  )}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=public_profile&response_type=code`;
 
   return NextResponse.redirect(facebookAuthUrl);
 }
