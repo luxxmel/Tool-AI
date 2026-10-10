@@ -219,23 +219,56 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
     }
   };
 
-  // Fetch top contributors từ cơ sở dữ liệu thật
+  // Fetch top contributors từ cơ sở dữ liệu thật (kèm fallback trực tiếp từ bài viết)
   const fetchTopContributors = async () => {
     try {
       setIsContributorsLoading(true);
       const res = await fetch("/api/contributors");
       if (res.ok) {
         const data = await res.json();
-        if (data.contributors && Array.isArray(data.contributors)) {
+        if (data.contributors && Array.isArray(data.contributors) && data.contributors.length > 0) {
           setTopContributors(data.contributors);
+          return;
         }
       }
     } catch (err) {
-      console.error("Lỗi khi tải top đóng góp:", err);
+      console.error("Lỗi khi tải top đóng góp từ API:", err);
     } finally {
       setIsContributorsLoading(false);
     }
   };
+
+  // Tự động đồng bộ Top Đóng Góp từ danh sách bài viết thực tế nếu API trả về rỗng
+  useEffect(() => {
+    if (topContributors.length === 0 && posts.length > 0) {
+      const map = new Map<string, ContributorItem>();
+      for (const p of posts) {
+        if (!p.author) continue;
+        const authorId = p.author.id || p.author.username;
+        if (!map.has(authorId)) {
+          map.set(authorId, {
+            id: authorId,
+            name: p.author.name || p.author.username,
+            username: p.author.username,
+            avatar: p.author.avatar,
+            role: p.author.role,
+            posts: 0,
+            likes: 0,
+            badge: p.author.role === "ADMIN" ? "Admin 🛡️" : p.author.isVip ? "VIP ⭐" : "Thành viên 🌟",
+          });
+        }
+        const item = map.get(authorId)!;
+        item.posts += 1;
+        item.likes += p.likes || 0;
+      }
+      const list = Array.from(map.values());
+      list.sort((a, b) => {
+        if (b.posts !== a.posts) return b.posts - a.posts;
+        return b.likes - a.likes;
+      });
+      setTopContributors(list.slice(0, 5));
+    }
+  }, [posts, topContributors.length]);
 
   // Fetch câu hỏi hot nhất hôm nay
   const fetchTrendingQuestions = async () => {
