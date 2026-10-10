@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
     const userRes = await fetch("https://api.github.com/user", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "User-Agent": "Biết Tuốt AI-App",
+        "User-Agent": "BietTuotAI-App",
       },
     });
 
@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
         const emailsRes = await fetch("https://api.github.com/user/emails", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "User-Agent": "Biết Tuốt AI-App",
+            "User-Agent": "BietTuotAI-App",
           },
         });
         if (emailsRes.ok) {
