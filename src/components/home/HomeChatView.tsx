@@ -156,29 +156,37 @@ export default function HomeChatView({
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // 1. Tải lịch sử cuộc trò chuyện nếu chọn từ sidebar (khác với conversation hiện tại và không đang gửi tin)
+  // 1. Tải lịch sử cuộc trò chuyện nếu chọn từ sidebar
   useEffect(() => {
-    if (
-      propConversationId &&
-      propConversationId !== currentConvIdRef.current &&
-      !isSendingRef.current
-    ) {
+    if (propConversationId && !isSendingRef.current) {
       currentConvIdRef.current = propConversationId;
       setConversationId(propConversationId);
-      // Chỉ hiện loading nếu chưa có tin nhắn nào hiển thị để tránh chớp màn hình
-      if (messages.length === 0) {
-        setIsLoadingHistory(true);
-      }
 
+      // Bước 1: Khôi phục ngay lập tức từ bộ nhớ cache cục bộ (tránh màn hình trống)
+      try {
+        const cachedMessages = localStorage.getItem(`omni_chat_msgs_${propConversationId}`);
+        if (cachedMessages) {
+          const parsed = JSON.parse(cachedMessages);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMessages(parsed);
+          }
+        }
+      } catch {}
+
+      // Bước 2: Đồng bộ từ Server API
+      setIsLoadingHistory(true);
       fetch(`/api/conversations/${propConversationId}`)
         .then((res) => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.json();
         })
         .then((data) => {
-          if (data && Array.isArray(data.messages)) {
+          if (data && Array.isArray(data.messages) && data.messages.length > 0) {
             setMessages(data.messages);
             if (data.title) setConversationTitle(data.title);
+            try {
+              localStorage.setItem(`omni_chat_msgs_${propConversationId}`, JSON.stringify(data.messages));
+            } catch {}
           }
         })
         .catch((err) => console.error("Lỗi khi tải cuộc trò chuyện:", err))
@@ -637,11 +645,17 @@ export default function HomeChatView({
         const chunk = decoder.decode(value, { stream: true });
         accumulated += chunk;
 
-        setMessages((prev) =>
-          prev.map((msg) =>
+        setMessages((prev) => {
+          const updated = prev.map((msg) =>
             msg.id === aiMsgId ? { ...msg, content: accumulated } : msg
-          )
-        );
+          );
+          if (convIdHeader) {
+            try {
+              localStorage.setItem(`omni_chat_msgs_${convIdHeader}`, JSON.stringify(updated));
+            } catch {}
+          }
+          return updated;
+        });
       }
 
       soundManager.playReceiveSound();
