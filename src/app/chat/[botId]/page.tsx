@@ -1264,9 +1264,9 @@ export default function BotChatPage() {
       {/* 2. Danh Sách Tin Nhắn */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-4xl w-full mx-auto">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-4 sm:p-6 my-auto max-w-2xl mx-auto animate-in fade-in duration-300">
+          <div className="min-h-full flex flex-col items-center justify-start sm:justify-center text-center py-4 px-2 sm:py-6 max-w-2xl mx-auto animate-in fade-in duration-300">
             {/* Bot Avatar with Glow & Badge */}
-            <div className="relative mb-3 group">
+            <div className="relative mb-3 group shrink-0">
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden border-2 border-indigo-500/40 dark:border-cyan-500/40 shadow-xl shadow-indigo-500/15 bg-slate-100 dark:bg-slate-800 transition-all duration-300 group-hover:scale-105">
                 <img
                   src={bot.avatar}
