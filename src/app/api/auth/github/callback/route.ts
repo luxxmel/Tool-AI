@@ -87,11 +87,15 @@ export async function GET(request: NextRequest) {
     );
 
     if (success && user) {
-      response.cookies.set("tool_ai_auth_user", JSON.stringify(user), {
-        path: "/",
-        maxAge: 30 * 24 * 60 * 60,
-        sameSite: "lax",
-      });
+      try {
+        response.cookies.set("tool_ai_auth_user", encodeURIComponent(JSON.stringify(user)), {
+          path: "/",
+          maxAge: 30 * 24 * 60 * 60,
+          sameSite: "lax",
+        });
+      } catch (cookieErr) {
+        console.error("Lỗi set cookie github callback:", cookieErr);
+      }
     }
 
     return response;
