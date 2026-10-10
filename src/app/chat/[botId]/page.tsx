@@ -1262,88 +1262,96 @@ export default function BotChatPage() {
       </header>
 
       {/* 2. Danh Sách Tin Nhắn */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-4xl w-full mx-auto">
+      <div className="flex-1 overflow-y-auto px-3 py-3 sm:px-6 sm:py-5 space-y-4 max-w-4xl w-full mx-auto pb-8 scrollbar-thin">
         {messages.length === 0 ? (
-          <div className="min-h-full flex flex-col items-center justify-start sm:justify-center text-center py-4 px-2 sm:py-6 max-w-2xl mx-auto animate-in fade-in duration-300">
-            {/* Bot Avatar with Glow & Badge */}
-            <div className="relative mb-3 group shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden border-2 border-indigo-500/40 dark:border-cyan-500/40 shadow-xl shadow-indigo-500/15 bg-slate-100 dark:bg-slate-800 transition-all duration-300 group-hover:scale-105">
-                <img
-                  src={bot.avatar}
-                  alt={bot.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&auto=format&fit=crop&q=80";
-                  }}
-                />
+          <div className="min-h-full flex flex-col items-center justify-center text-center py-2 px-1 sm:py-4 max-w-3xl mx-auto animate-in fade-in duration-300">
+            {/* Top Info Compact Card */}
+            <div className="flex flex-col items-center mb-3">
+              {/* Bot Avatar with Glow & Badge */}
+              <div className="relative mb-2 group shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-indigo-500/40 dark:border-cyan-500/40 shadow-lg shadow-indigo-500/15 bg-slate-100 dark:bg-slate-800 transition-all duration-300 group-hover:scale-105">
+                  <img
+                    src={bot.avatar}
+                    alt={bot.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&auto=format&fit=crop&q=80";
+                    }}
+                  />
+                </div>
+                {bot.badge && (
+                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-md whitespace-nowrap">
+                    {bot.badge}
+                  </span>
+                )}
               </div>
-              {bot.badge && (
-                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-md whitespace-nowrap">
-                  {bot.badge}
-                </span>
+
+              {/* Name */}
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-1 mb-1.5 flex items-center justify-center gap-2">
+                <span>{bot.name}</span>
+              </h2>
+
+              {/* Personality Capsule */}
+              {bot.personality && (
+                <div className="text-[11px] font-medium text-indigo-600 dark:text-cyan-300 bg-indigo-50 dark:bg-cyan-950/40 border border-indigo-200/60 dark:border-cyan-800/40 px-3 py-0.5 rounded-full mb-2 max-w-md">
+                  🎭 {bot.personality}
+                </div>
+              )}
+
+              {/* Catchphrase / Tagline */}
+              {bot.tagline && (
+                <div className="relative max-w-lg mx-auto mb-2.5 px-3.5 py-1.5 rounded-xl bg-slate-100/80 dark:bg-[#131522] border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 italic shadow-2xs">
+                  <span className="text-indigo-500 dark:text-cyan-400 font-serif text-base leading-none mr-1">“</span>
+                  {bot.tagline}
+                  <span className="text-indigo-500 dark:text-cyan-400 font-serif text-base leading-none ml-1">”</span>
+                </div>
               )}
             </div>
 
-            {/* Name */}
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-center gap-2">
-              <span>{bot.name}</span>
-            </h2>
-
-            {/* Personality Capsule */}
-            {bot.personality && (
-              <div className="text-xs font-medium text-indigo-600 dark:text-cyan-300 bg-indigo-50 dark:bg-cyan-950/40 border border-indigo-200/60 dark:border-cyan-800/40 px-3.5 py-1 rounded-full mb-3 max-w-md">
-                🎭 {bot.personality}
-              </div>
-            )}
-
-            {/* Catchphrase / Tagline */}
-            {bot.tagline && (
-              <div className="relative max-w-lg mx-auto mb-4 px-4 py-2.5 rounded-2xl bg-slate-100/80 dark:bg-[#131522] border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic shadow-xs">
-                <span className="text-indigo-500 dark:text-cyan-400 font-serif text-lg leading-none mr-1">“</span>
-                {bot.tagline}
-                <span className="text-indigo-500 dark:text-cyan-400 font-serif text-lg leading-none ml-1">”</span>
-              </div>
-            )}
-
             {/* In-character Greeting Card */}
             {bot.greeting && (
-              <div className="w-full max-w-lg mx-auto mb-6 p-4 rounded-2xl bg-white/90 dark:bg-[#11131e]/90 border border-slate-200 dark:border-indigo-950/70 shadow-sm text-left relative">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-cyan-400 flex items-center gap-1.5">
+              <div className="w-full max-w-2xl mx-auto mb-3.5 p-3 sm:p-3.5 rounded-2xl bg-white/90 dark:bg-[#11131e]/90 border border-slate-200 dark:border-indigo-950/70 shadow-xs text-left relative">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[11px] font-semibold text-indigo-600 dark:text-cyan-400 flex items-center gap-1.5">
                     <span>💬</span> {language === "en" ? `Roleplay greeting from ${bot.name}:` : `Lời chào nhập vai từ ${bot.name}:`}
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-normal italic">
+                <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed font-normal italic">
                   "{bot.greeting}"
                 </p>
               </div>
             )}
 
             {/* Suggested Prompts based on Bot's Personality */}
-            <div className="w-full max-w-lg">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2.5 text-center">
-                💡 {language === "en" ? "Start conversation with suggested questions:" : "Bắt đầu trò chuyện với gợi ý câu hỏi:"}
+            <div className="w-full max-w-2xl mx-auto">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 text-center flex items-center justify-center gap-1.5">
+                <span>💡</span>
+                <span>{language === "en" ? "Suggested questions to start:" : "Gợi ý câu hỏi bắt đầu trò chuyện:"}</span>
               </p>
-              <div className="flex flex-col gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
                 {(bot.suggestedPrompts || [
                   language === "en" ? `Hello ${bot.name}, how can you help me today?` : `Xin chào ${bot.name}, bạn có thể giúp gì cho tôi?`,
                   language === "en" ? "Introduce yourself and your specialty" : "Hãy giới thiệu về bản thân và phong cách của bạn",
                   language === "en" ? "Give me a useful tip for today" : "Cho tôi một lời khuyên hữu ích hôm nay",
-                ]).map((suggestion, idx) => (
+                ]).map((suggestion, idx, arr) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleSendMessage(undefined, suggestion)}
-                    className="w-full text-xs px-4 py-3 rounded-xl bg-slate-900/90 dark:bg-[#121524] border border-indigo-500/30 dark:border-cyan-500/30 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-slate-800/90 dark:hover:bg-[#191d33] text-slate-100 transition-all text-left shadow-sm hover:shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 cursor-pointer flex items-center justify-between gap-3 group"
+                    className={`w-full text-xs p-2.5 sm:p-3 rounded-xl bg-slate-900/90 dark:bg-[#121524] border border-indigo-500/30 dark:border-cyan-500/30 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-slate-800/90 dark:hover:bg-[#191d33] text-slate-100 transition-all text-left shadow-xs hover:shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 cursor-pointer flex items-center justify-between gap-2.5 group ${
+                      idx === arr.length - 1 && arr.length % 2 !== 0 ? "sm:col-span-2" : ""
+                    }`}
                   >
-                    <span className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <span className="flex items-center gap-2 min-w-0 flex-1">
                       <span className="text-cyan-400 text-sm group-hover:scale-110 transition-transform shrink-0">
                         💬
                       </span>
-                      <span className="text-slate-200 group-hover:text-white font-medium whitespace-normal break-words leading-relaxed">{suggestion}</span>
+                      <span className="text-slate-200 group-hover:text-white font-medium whitespace-normal break-words leading-relaxed text-[11px] sm:text-xs">
+                        {suggestion}
+                      </span>
                     </span>
-                    <span className="text-cyan-400/90 group-hover:text-cyan-300 text-xs shrink-0 font-semibold whitespace-nowrap">
+                    <span className="text-cyan-400/90 group-hover:text-cyan-300 text-[11px] shrink-0 font-semibold whitespace-nowrap hidden xs:inline">
                       {language === "en" ? "Send →" : "Gửi →"}
                     </span>
                   </button>
