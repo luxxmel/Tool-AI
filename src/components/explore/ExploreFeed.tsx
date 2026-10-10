@@ -1233,47 +1233,73 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 </p>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
-                {topContributors.map((c, i) => (
-                  <Link
-                    key={c.id || c.username}
-                    href={`/?tab=profile&userId=${c.id || ""}`}
-                    className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group"
-                    title={language === "en" ? `View ${c.name}'s profile` : `Xem trang cá nhân của ${c.name}`}
-                  >
-                    <span
-                      className={`text-xs font-black w-4 text-center ${
-                        i === 0
-                          ? "text-amber-500 font-black text-sm"
-                          : i === 1
-                          ? "text-slate-400 font-bold"
-                          : i === 2
-                          ? "text-amber-700 dark:text-amber-600 font-bold"
-                          : "text-slate-400 font-normal"
-                      }`}
+              <div className="flex flex-col gap-2">
+                {topContributors.map((c, i) => {
+                  const rankBadge =
+                    i === 0
+                      ? { icon: "🥇", bg: "bg-amber-500/15 text-amber-500 border-amber-500/30", ring: "ring-2 ring-amber-400/50" }
+                      : i === 1
+                      ? { icon: "🥈", bg: "bg-slate-400/15 text-slate-400 border-slate-400/30", ring: "ring-2 ring-slate-400/40" }
+                      : i === 2
+                      ? { icon: "🥉", bg: "bg-amber-700/15 text-amber-600 dark:text-amber-500 border-amber-600/30", ring: "ring-2 ring-amber-600/40" }
+                      : { icon: `#${i + 1}`, bg: "bg-slate-100 dark:bg-slate-800 text-slate-400 border-transparent", ring: "" };
+
+                  return (
+                    <Link
+                      key={c.id || c.username}
+                      href={`/?tab=profile&userId=${c.id || ""}`}
+                      className="group flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all cursor-pointer"
+                      title={language === "en" ? `View ${c.name}'s profile` : `Xem trang cá nhân của ${c.name}`}
                     >
-                      {i + 1}
-                    </span>
-                    <img
-                      src={c.avatar}
-                      alt={c.name}
-                      className="w-7 h-7 rounded-full object-cover border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
-                          c.username
-                        )}`;
-                      }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition-colors">
-                        {c.name}
-                      </p>
-                      <p className="text-[10px] text-slate-400">
-                        {c.posts} {language === "en" ? "posts" : "bài"} • {c.badge}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
+                      {/* Rank Medal / Number */}
+                      <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black shrink-0 border ${rankBadge.bg}`}>
+                        {rankBadge.icon}
+                      </span>
+
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        <img
+                          src={c.avatar}
+                          alt={c.name}
+                          className={`w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 group-hover:scale-105 transition-transform ${rankBadge.ring}`}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(
+                              c.username
+                            )}`;
+                          }}
+                        />
+                      </div>
+
+                      {/* User Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-cyan-400 transition-colors">
+                            {c.name}
+                          </p>
+                          {c.role === "ADMIN" ? (
+                            <span className="text-[8px] font-black px-1 py-0.5 rounded bg-indigo-500/15 text-indigo-500 border border-indigo-500/25 shrink-0 uppercase">
+                              Admin
+                            </span>
+                          ) : c.badge?.includes("VIP") ? (
+                            <span className="text-[8px] font-black px-1 py-0.5 rounded bg-amber-500/15 text-amber-500 border border-amber-500/25 shrink-0 uppercase">
+                              VIP
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-indigo-600 dark:text-cyan-400 bg-indigo-50 dark:bg-indigo-950/40 px-1.5 py-0.2 rounded-md">
+                            ✍️ {c.posts} {language === "en" ? "posts" : "bài"}
+                          </span>
+                          {c.likes > 0 && (
+                            <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                              ❤️ {c.likes}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
