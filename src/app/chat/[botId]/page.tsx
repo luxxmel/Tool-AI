@@ -1086,11 +1086,11 @@ export default function BotChatPage() {
     >
       <WorkspaceBackgroundLayer />
       {/* 1. Header Trợ Lý & Credit */}
-      <header className="h-16 px-4 sm:px-6 bg-white/80 dark:bg-[#111218]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between shrink-0 z-20">
-        <div className="flex items-center gap-3 min-w-0">
+      <header className="min-h-16 h-auto py-2.5 px-4 sm:px-6 bg-white/80 dark:bg-[#111218]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between shrink-0 z-20">
+        <div className="flex items-center gap-3 min-w-0 flex-1 mr-3">
           <Link
             href="/"
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
             title="Quay lại"
           >
             ←
@@ -1109,9 +1109,9 @@ export default function BotChatPage() {
             <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#111218]" />
           </div>
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">
+              <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                 {bot.name}
               </h1>
               {bot.badge && (
@@ -1123,7 +1123,7 @@ export default function BotChatPage() {
                 Online
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs sm:max-w-md">
+            <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 sm:line-clamp-2 leading-relaxed">
               {bot.tagline || bot.description || "Trợ lý AI thông minh"}
             </p>
           </div>
@@ -1335,15 +1335,15 @@ export default function BotChatPage() {
                     key={idx}
                     type="button"
                     onClick={() => handleSendMessage(undefined, suggestion)}
-                    className="w-full text-xs px-4 py-3 rounded-xl bg-slate-900/90 dark:bg-[#121524] border border-indigo-500/30 dark:border-cyan-500/30 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-slate-800/90 dark:hover:bg-[#191d33] text-slate-100 transition-all text-left shadow-sm hover:shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 cursor-pointer flex items-center justify-between group"
+                    className="w-full text-xs px-4 py-3 rounded-xl bg-slate-900/90 dark:bg-[#121524] border border-indigo-500/30 dark:border-cyan-500/30 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-slate-800/90 dark:hover:bg-[#191d33] text-slate-100 transition-all text-left shadow-sm hover:shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 cursor-pointer flex items-center justify-between gap-3 group"
                   >
-                    <span className="flex items-center gap-2.5 min-w-0">
+                    <span className="flex items-center gap-2.5 min-w-0 flex-1">
                       <span className="text-cyan-400 text-sm group-hover:scale-110 transition-transform shrink-0">
                         💬
                       </span>
-                      <span className="truncate text-slate-200 group-hover:text-white font-medium">{suggestion}</span>
+                      <span className="text-slate-200 group-hover:text-white font-medium whitespace-normal break-words leading-relaxed">{suggestion}</span>
                     </span>
-                    <span className="text-cyan-400/90 group-hover:text-cyan-300 text-xs shrink-0 ml-2 font-semibold">
+                    <span className="text-cyan-400/90 group-hover:text-cyan-300 text-xs shrink-0 font-semibold whitespace-nowrap">
                       {language === "en" ? "Send →" : "Gửi →"}
                     </span>
                   </button>
