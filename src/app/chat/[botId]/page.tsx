@@ -1325,7 +1325,7 @@ export default function BotChatPage() {
               <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2.5 text-center">
                 💡 {language === "en" ? "Start conversation with suggested questions:" : "Bắt đầu trò chuyện với gợi ý câu hỏi:"}
               </p>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 {(bot.suggestedPrompts || [
                   language === "en" ? `Hello ${bot.name}, how can you help me today?` : `Xin chào ${bot.name}, bạn có thể giúp gì cho tôi?`,
                   language === "en" ? "Introduce yourself and your specialty" : "Hãy giới thiệu về bản thân và phong cách của bạn",
@@ -1333,16 +1333,17 @@ export default function BotChatPage() {
                 ]).map((suggestion, idx) => (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => handleSendMessage(undefined, suggestion)}
-                    className="text-xs px-4 py-3 rounded-xl bg-white dark:bg-[#141624] border border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-cyan-500 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 transition-all text-left shadow-xs hover:-translate-y-0.5 cursor-pointer flex items-center justify-between group"
+                    className="w-full text-xs px-4 py-3 rounded-xl bg-slate-900/90 dark:bg-[#121524] border border-indigo-500/30 dark:border-cyan-500/30 hover:border-cyan-400 dark:hover:border-cyan-400 hover:bg-slate-800/90 dark:hover:bg-[#191d33] text-slate-100 transition-all text-left shadow-sm hover:shadow-md hover:shadow-cyan-500/10 hover:-translate-y-0.5 cursor-pointer flex items-center justify-between group"
                   >
                     <span className="flex items-center gap-2.5 min-w-0">
-                      <span className="text-indigo-500 dark:text-cyan-400 text-sm group-hover:scale-110 transition-transform">
+                      <span className="text-cyan-400 text-sm group-hover:scale-110 transition-transform shrink-0">
                         💬
                       </span>
-                      <span className="truncate">{suggestion}</span>
+                      <span className="truncate text-slate-200 group-hover:text-white font-medium">{suggestion}</span>
                     </span>
-                    <span className="text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-cyan-400 text-xs shrink-0 ml-2 font-medium">
+                    <span className="text-cyan-400/90 group-hover:text-cyan-300 text-xs shrink-0 ml-2 font-semibold">
                       {language === "en" ? "Send →" : "Gửi →"}
                     </span>
                   </button>
