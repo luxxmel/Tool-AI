@@ -955,6 +955,7 @@ Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồ
         "X-Conversation-Id": finalConvId,
         "X-AI-Model-Id": selectedAI?.modeId || "fast",
         "X-AI-Model": encodeURIComponent(selectedAI?.name || "Biết Tuốt AI"),
+        "Access-Control-Expose-Headers": "X-Conversation-Id, X-Remaining-Credits, X-AI-Model, X-AI-Model-Id",
       },
     });
   } catch (error) {

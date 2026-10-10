@@ -61,7 +61,18 @@ export default function HomeChatView({
   const { language, t } = useLanguage();
   const { showAlert, showConfirm } = usePopup();
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (typeof window !== "undefined" && propConversationId) {
+      try {
+        const cached = localStorage.getItem(`omni_chat_msgs_${propConversationId}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch {}
+    }
+    return [];
+  });
   const [inputValue, setInputValue] = useState("");
   const [attachedImages, setAttachedImages] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -84,7 +95,20 @@ export default function HomeChatView({
   const [conversationId, setConversationId] = useState<string | null>(
     propConversationId || null
   );
-  const [conversationTitle, setConversationTitle] = useState<string>("Đoạn chat mới");
+  const [conversationTitle, setConversationTitle] = useState<string>(() => {
+    if (typeof window !== "undefined" && propConversationId) {
+      try {
+        const uid = user?.id || user?.email || activeUserId;
+        const stored = uid ? localStorage.getItem(`omni_recent_convs_${uid}`) : null;
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const found = Array.isArray(parsed) ? parsed.find((c: any) => c && c.id === propConversationId) : null;
+          if (found && found.title) return found.title;
+        }
+      } catch {}
+    }
+    return "Đoạn chat mới";
+  });
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   // State công cụ nhanh được chọn (Dạng ẩn placeholder, không chèn chữ cứng vào khung chat)
@@ -181,12 +205,14 @@ export default function HomeChatView({
           return res.json();
         })
         .then((data) => {
-          if (data && Array.isArray(data.messages) && data.messages.length > 0) {
-            setMessages(data.messages);
+          if (data) {
             if (data.title) setConversationTitle(data.title);
-            try {
-              localStorage.setItem(`omni_chat_msgs_${propConversationId}`, JSON.stringify(data.messages));
-            } catch {}
+            if (Array.isArray(data.messages) && data.messages.length > 0) {
+              setMessages(data.messages);
+              try {
+                localStorage.setItem(`omni_chat_msgs_${propConversationId}`, JSON.stringify(data.messages));
+              } catch {}
+            }
           }
         })
         .catch((err) => console.error("Lỗi khi tải cuộc trò chuyện:", err))
@@ -645,17 +671,30 @@ export default function HomeChatView({
         const chunk = decoder.decode(value, { stream: true });
         accumulated += chunk;
 
+        const targetConvId = convIdHeader || conversationId || currentConvIdRef.current;
         setMessages((prev) => {
           const updated = prev.map((msg) =>
             msg.id === aiMsgId ? { ...msg, content: accumulated } : msg
           );
-          if (convIdHeader) {
+          if (targetConvId) {
             try {
-              localStorage.setItem(`omni_chat_msgs_${convIdHeader}`, JSON.stringify(updated));
+              localStorage.setItem(`omni_chat_msgs_${targetConvId}`, JSON.stringify(updated));
             } catch {}
           }
           return updated;
         });
+      }
+
+      // Đảm bảo lưu trạng thái cuối cùng khi kết thúc stream
+      const finalSaveConvId = convIdHeader || conversationId || currentConvIdRef.current;
+      if (finalSaveConvId) {
+        try {
+          const finalMessages = [
+            ...newHistory.filter((m) => m.id !== aiMsgId),
+            { id: aiMsgId, role: "assistant", content: accumulated } as ChatMessage,
+          ];
+          localStorage.setItem(`omni_chat_msgs_${finalSaveConvId}`, JSON.stringify(finalMessages));
+        } catch {}
       }
 
       soundManager.playReceiveSound();

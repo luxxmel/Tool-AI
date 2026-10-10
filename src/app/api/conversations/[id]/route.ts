@@ -11,6 +11,7 @@ export async function GET(
   try {
     const { id } = await context.params;
 
+    // Hỗ trợ tìm kiếm theo ID trực tiếp
     const conversation = await prisma.conversation.findUnique({
       where: { id },
       include: {
@@ -37,12 +38,15 @@ export async function GET(
       bot: conversation.bot,
       updatedAt: conversation.updatedAt,
       messages: conversation.messages.map((m) => {
-        const parsed = parseMessageImages(m.content);
+        const parsed = parseMessageImages(m.content || "");
+        const senderStr = (m.sender || "").toUpperCase();
+        const role = senderStr === "USER" ? "user" : "assistant";
+        const content = parsed.text || m.content || "";
         return {
           id: m.id,
-          role: m.sender.toLowerCase() === "user" ? "user" : "assistant",
-          content: parsed.text || (parsed.images.length > 0 ? "" : m.content),
-          images: parsed.images,
+          role,
+          content,
+          images: parsed.images || [],
           createdAt: m.createdAt,
         };
       }),
