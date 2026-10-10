@@ -457,31 +457,33 @@ export default function AppSidebar({
 
                 <div
                   onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                  className="min-w-0 flex-1 cursor-pointer"
+                  className="min-w-0 flex-1 cursor-pointer pr-1"
                   title="Xem tùy chọn tài khoản"
                 >
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate hover:text-indigo-400 transition-colors">
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-400 transition-colors block truncate" title={user.displayName}>
                       {user.displayName}
                     </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsRechargeOpen(true);
+                      }}
+                      className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 whitespace-nowrap hover:opacity-80 transition-opacity cursor-pointer text-left"
+                      title="Bấm để nạp thêm Credits"
+                    >
+                      <span>🪙</span>
+                      <span>{user.role === "ADMIN" ? (language === "en" ? "∞ Unlimited" : "∞ Vô hạn") : `${user.credits ?? 10} Credits`}</span>
+                    </button>
                     {user.role === "ADMIN" && (
-                      <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-500 dark:text-amber-400 font-bold border border-amber-500/30 uppercase tracking-wider leading-none">
+                      <span className="shrink-0 text-[8.5px] px-1.5 py-0.2 rounded-md bg-amber-500/15 text-amber-500 dark:text-amber-400 font-bold border border-amber-500/30 uppercase tracking-wider leading-none">
                         ADMIN
                       </span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsRechargeOpen(true);
-                    }}
-                    className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-0.5 whitespace-nowrap hover:opacity-80 transition-opacity cursor-pointer text-left"
-                    title="Bấm để nạp thêm Credits"
-                  >
-                    <span>🪙</span>
-                    <span>{user.role === "ADMIN" ? (language === "en" ? "∞ Unlimited" : "∞ Vô hạn") : `${user.credits ?? 10} Credits`}</span>
-                  </button>
                 </div>
 
                 {/* Actions: Theme/Wallpaper & Logout */}
