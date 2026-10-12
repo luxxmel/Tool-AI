@@ -172,33 +172,47 @@ function generatePersonaFallback(
       `3. **Lời khuyên của Thầy:** "Tâm an vạn sự an". Hãy chú trọng chăm sóc sức khỏe và vun đắp các mối quan hệ chân thành xung quanh nhé thí chủ.`;
   }
 
-  // 7. Tarot (Bản luận giải tâm lý & trực giác chuyên sâu 4 tầng)
+  // 7. Tarot (Bản luận giải tâm lý & trực giác chuyên sâu theo biểu tượng lá bài)
   if (botPrompt.includes("Tarot") || botName.includes("Tarot")) {
+    // Trích xuất các lá bài nếu người dùng gửi trải bài có lá bài cụ thể
+    const cardMatches = [...userMessage.matchAll(/Lá \[(.*?)\] \((Lá Xuôi|Lá Ngược|Reversed|Upright)[^)]*\)/gi)];
+    let cardAnalysisSection = "";
+
+    if (cardMatches.length > 0) {
+      cardAnalysisSection = `### 🎴 2. GIẢI MÃ CHI TIẾT TỪNG LÁ BÀI TRONG QUẺ\n\n` +
+        cardMatches.map((m, idx) => {
+          const cardName = m[1];
+          const state = m[2];
+          return `✨ **Lá ${idx + 1}: ${cardName} (${state})**\n` +
+            `- **Ý nghĩa biểu tượng:** Mang tần số ${state.includes("Ngược") ? "cảnh báo năng lượng bị nghẽn, cần cẩn trọng nội soi bản thân" : "năng lượng khai mở thuận dòng, phát huy tối đa sức mạnh nội tại"}.\n` +
+            `- **Tác động thực tế:** Phản ánh trực tiếp những băn khoăn bạn đang gặp phải, nhắc nhở bạn giữ vững lý trí và thấu cảm sâu sắc thay vì phản ứng cảm tính.`;
+        }).join("\n\n") + "\n\n---\n\n";
+    } else {
+      cardAnalysisSection = `### 🎴 2. PHÂN TÍCH ĐA TẦNG Ý NGHĨA TRẢI BÀI\n\n` +
+        `✨ **Khía cạnh 1: Nguồn gốc & Năng lượng nền tảng (Gốc rễ vấn đề)**\n` +
+        `- **Tầng biểu tượng:** Bạn đang mang theo những trải nghiệm, kỳ vọng và cả những vết hằn cảm xúc từ giai đoạn trước bước vào hoàn cảnh hiện tại.\n` +
+        `- **Tâm lý thực tế:** Có những rào cản vô hình xuất phát từ nỗi sợ bị tổn thương hoặc sợ mất kiểm soát, khiến bạn có xu hướng chần chừ hoặc suy nghĩ quá nhiều.\n\n` +
+        `🌿 **Khía cạnh 2: Hiện trạng thực tế & Thử thách cần vượt qua**\n` +
+        `- **Tầng biểu tượng:** Năng lượng của sự thức tỉnh và chữa lành đang chảy mạnh mẽ trong bạn. Thời điểm này đòi hỏi sự chân thành tuyệt đối với chính mình.\n` +
+        `- **Tâm lý thực tế:** Bạn có thể đang cảm thấy có sự xung đột giữa lý trí và cảm xúc, muốn tiến tới nhưng lại e ngại rủi ro.\n\n` +
+        `🌟 **Khía cạnh 3: Hướng phát triển & Xu hướng tương lai**\n` +
+        `- **Tầng biểu tượng:** Ánh sáng của sự minh bạch, thấu hiểu và thuận dòng tự nhiên đang dần mở ra.\n` +
+        `- **Tâm lý thực tế:** Khi bạn buông bỏ gánh nặng nghi ngờ và chủ động kết nối chân thành, mọi nút thắt sẽ tự động tìm được lối thoát êm đẹp.\n\n---\n\n`;
+    }
+
     return `🔮 **BẢN LUẬN GIẢI TAROT TRỰC GIÁC & TÂM LÝ CHUYÊN SÂU TỪ READER LUNA**\n\n` +
       `---\n\n` +
-      `### 🌿 1. TẦN SỐ NĂNG LƯỢNG CHỦ ĐẠO & KẾT NỐI VŨ TRỤ\n` +
-      `Chào bạn, khi bạn mở trải bài này với tâm tư hướng về câu hỏi của mình, Vũ Trụ phản chiếu một dòng năng lượng đang có sự chuyển dịch rất lớn bên trong bạn. Trạng thái chông chênh hay những câu hỏi chưa có lời đáp ở hiện tại thực chất là hồi chuông đánh thức trực giác của bạn, nhắc nhở bạn đã đến lúc nhìn nhận sâu sắc vào bản chất vấn đề thay vì để những nỗi lo mơ hồ chi phối.\n\n` +
+      `### 🌿 1. TẦN SỐ NĂNG LƯỢNG CHỦ ĐẠO & BỐI CẢNH\n` +
+      `Chào bạn, khi bạn mở trải bài này với tâm tư hướng về câu hỏi của mình, các lá bài phản chiếu một dòng năng lượng đang có sự chuyển dịch rất lớn bên trong bạn. Trạng thái chông chênh hay những câu hỏi chưa có lời đáp ở hiện tại thực chất là hồi chuông đánh thức trực giác của bạn, nhắc nhở bạn đã đến lúc nhìn nhận sâu sắc vào bản chất vấn đề thay vì để những nỗi lo mơ hồ chi phối.\n\n` +
       `---\n\n` +
-      `### 🎴 2. PHÂN TÍCH ĐA TẦNG Ý NGHĨA TRẢI BÀI\n\n` +
-      `✨ **Khía cạnh 1: Nguồn gốc & Năng lượng nền tảng (Gốc rễ vấn đề)**\n` +
-      `- **Tầng biểu tượng:** Bạn đang mang theo những trải nghiệm, kỳ vọng và cả những vết hằn cảm xúc từ giai đoạn trước bước vào hoàn cảnh hiện tại.\n` +
-      `- **Tâm lý thực tế:** Có những rào cản vô hình xuất phát từ nỗi sợ bị tổn thương hoặc sợ mất kiểm soát, khiến bạn có xu hướng chần chừ hoặc suy nghĩ quá nhiều.\n` +
-      `- **Thông điệp:** Hãy học cách chấp nhận những gì đã qua như những bài học trưởng thành vô giá.\n\n` +
-      `🌿 **Khía cạnh 2: Hiện trạng thực tế & Thử thách cần vượt qua**\n` +
-      `- **Tầng biểu tượng:** Năng lượng của sự thức tỉnh và chữa lành đang chảy mạnh mẽ trong bạn. Thời điểm này đòi hỏi sự chân thành tuyệt đối với chính mình.\n` +
-      `- **Tâm lý thực tế:** Bạn có thể đang cảm thấy có sự xung đột giữa lý trí và cảm xúc, muốn tiến tới nhưng lại e ngại rủi ro.\n` +
-      `- **Thông điệp:** Đừng vội vàng đưa ra quyết định dựa trên cảm xúc nhất thời; hãy dành cho mình khoảng lặng để lắng nghe tiếng nói bên trong.\n\n` +
-      `🌟 **Khía cạnh 3: Hướng phát triển & Xu hướng tương lai**\n` +
-      `- **Tầng biểu tượng:** Ánh sáng của sự minh bạch, thấu hiểu và thuận dòng tự nhiên đang dần mở ra.\n` +
-      `- **Tâm lý thực tế:** Khi bạn buông bỏ gánh nặng nghi ngờ và chủ động kết nối chân thành, mọi nút thắt sẽ tự động tìm được lối thoát êm đẹp.\n\n` +
-      `---\n\n` +
+      cardAnalysisSection +
       `### 🧩 3. BỨC TRANH TỔNG HỢP & NÚT THẮT CẦN THÁO GỠ\n` +
-      `Sợi dây liên kết giữa các nguồn năng lượng cho thấy bạn là người có trái tim nhạy cảm và trực giác phong phú. Nút thắt lớn nhất của bạn không nằm ở ngoại cảnh, mà nằm ở sự dũng cảm tin tưởng vào giá trị của bản thân. Khi bạn trao cho mình sự bao dung và bình an, mọi mối quan hệ và con đường phía trước sẽ trở nên sáng tỏ.\n\n` +
+      `Sợi dây liên kết giữa các nguồn năng lượng cho thấy nút thắt lớn nhất của bạn không nằm hoàn toàn ở ngoại cảnh, mà nằm ở sự dũng cảm đối diện với sự thật và tin tưởng vào giá trị của bản thân. Khi bạn trao cho mình sự bao dung và bình an, mọi mối quan hệ và con đường phía trước sẽ trở nên sáng tỏ.\n\n` +
       `---\n\n` +
       `### 🌟 4. HÀNH ĐỘNG THỰC TẾ & LỜI NHẮN NHỦ TỪ VŨ TRỤ\n` +
       `1. **Lắng nghe nội tâm:** Dành 10-15 phút tĩnh lặng mỗi ngày để kết nối với cảm xúc chân thật nhất của bạn.\n` +
-      `2. **Giao tiếp chân thành:** Dũng cảm bày tỏ suy nghĩ rõ ràng, tôn trọng ranh giới cảm xúc của bản thân và đối phương.\n` +
-      `3. **Vững tin bước tiếp:** Tin tưởng vào hành trình của mình — bạn đang đi đúng hướng cần đi để trở thành phiên bản tốt đẹp nhất! ✨`;
+      `2. **Giao tiếp chân thành & Đặt ranh giới:** Dũng cảm bày tỏ suy nghĩ rõ ràng, tôn trọng ranh giới cảm xúc của bản thân và đối phương.\n` +
+      `3. **Hành động dứt khoát:** Đừng để sự trì hoãn làm mòn đi cơ hội — khi bạn sẵn sàng thay đổi, Vũ Trụ sẽ đồng hành cùng bạn! ✨`;
   }
 
   // 8. Toán
@@ -635,6 +649,22 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
 2. NGUYÊN TẮC TỪ CHÍNH TÁC VỤ NGOÀI LUỒNG: Nếu người dùng hỏi bạn các câu hỏi kiến thức kỹ thuật, giải toán, viết code, tư vấn tài chính, viết bài SEO, làm bài tập hay các tác vụ công việc chuyên môn ngoài luồng:
    - Hãy khéo léo và dịu dàng từ chối.
    - Trả lời bằng phong cách ấm áp: "Góc Chữa Lành luôn ở đây để lắng nghe và ôm ấp những nỗi niềm, tâm sự và cảm xúc của bạn. Đối với các câu hỏi về chuyên môn hay kiến thức, bạn hãy chuyển sang trò chuyện với Trợ lý AI Chuyên sâu nhé! Bây giờ, hôm nay của bạn thế nào, có điều gì làm bạn phiền lòng không?"`;
+      }
+
+      // Quy tắc đặc biệt cho Tarot Reader: Luận giải đúng nghĩa, đúng vị trí, chuẩn biểu tượng Rider-Waite, tránh nước đôi
+      if (botId === "tarot-reader" || (bot.name && bot.name.includes("Tarot"))) {
+        effectiveSystemPrompt += `
+
+[QUY TẮC BẮT BUỘC DÀNH CHO TAROT READER CHUYÊN NGHIỆP]:
+1. CHUẨN XÁC NGHĨA BIỂU TƯỢNG VÀ VỊ TRÍ:
+   - Khi luận giải một quẻ trải bài, PHẢI nêu rõ tên lá bài, trạng thái Xuôi (Upright) hay Ngược (Reversed) và giải thích chính xác ý nghĩa theo vị trí của lá bài đó trong trải bài (Quá khứ, Hiện tại, Thách thức, Nỗi sợ, Tương lai, Đối phương, Lời khuyên...).
+   - Tuyệt đối không phán đoán chung chung, không nói những câu sáo rỗng vô thưởng vô phạt. Hãy đưa ra nhận định cụ thể dựa trên năng lượng của lá bài.
+   - Phân biệt rõ Major Arcana (bước ngoặt lớn, bài học tâm linh) và Minor Arcana (tình huống cụ thể hàng ngày: Wands - hành động, Cups - cảm xúc, Swords - lý trí & mâu thuẫn, Pentacles - tiền bạc & thực tế).
+2. TƯ DUY TÂM LÝ CHIỀU SÂU & THÁO GỠ NÚT THẮT:
+   - Nhìn thẳng vào bản chất vấn đề, nỗi sợ hoặc rào cản tâm lý của đương sự.
+   - Nếu là lá bài cảnh báo thử thách (The Tower, 3 of Swords, 10 of Swords, 5 of Pentacles...), không hù dọa nhưng cũng không né tránh, hãy chỉ rõ nguyên nhân và bài học cần rút ra.
+3. HÀNH ĐỘNG CỤ THỂ (ACTIONABLE ADVICE):
+   - Luôn chốt lại bằng 2-3 hành động thực tế mà người hỏi có thể thực hiện ngay trong đời thực để chuyển hóa năng lượng tiêu cực thành tích cực.`;
       }
 
       // Quy tắc đặc biệt cho nhân vật nhập vai / truyện / người yêu / trợ lý: Tập trung đối thoại sâu sắc & cuốn hút

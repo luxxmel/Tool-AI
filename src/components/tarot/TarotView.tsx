@@ -39,6 +39,7 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
   const [partnerName, setPartnerName] = useState('');
   const [relationshipType, setRelationshipType] = useState('Người yêu');
   const [storyContext, setStoryContext] = useState('');
+  const [userQuestion, setUserQuestion] = useState('');
 
   const [deck, setDeck] = useState<TarotCard[]>(TAROT_CARDS);
   const [pickedCards, setPickedCards] = useState<SelectedCardItem[]>([]);
@@ -298,36 +299,40 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
         .join('\n');
 
       const partnerContextStr = partnerName || storyContext
-        ? `\nThông tin đối phương / Bối cảnh: Tên: "${partnerName || 'Đối phương'}", Mối quan hệ: "${relationshipType}", Diễn biến: "${storyContext || 'Chưa rõ'}"`
+        ? `\n- Bối cảnh quan hệ/đối phương: Tên/Biệt danh: "${partnerName || 'Đối phương'}", Mối quan hệ: "${relationshipType}", Diễn biến: "${storyContext || 'Chưa rõ'}"`
+        : '';
+      const userQuestionStr = userQuestion?.trim()
+        ? `\n- Câu hỏi trăn trở trọng tâm của người hỏi: "${userQuestion.trim()}"`
         : '';
 
-      const prompt = `Bạn là Luna - Master Tarot Reader & Chuyên Gia Phân Tích Tâm Lý Thấu Cảm Đỉnh Cao (chuẩn phong cách bói toán chính xác Tatca.AI).
+      const prompt = `Bạn là Luna - Master Tarot Reader & Nhà Thực Hành Tâm Lý Học Trực Giác Chiều Sâu hàng đầu.
 
-Chủ đề trải bài: "${selectedTopic.title}"
-Kiểu trải: "${selectedSpread.title}" (${selectedSpread.subtitle})${partnerContextStr}
+THÔNG TIN QUẺ TRẢI BÀI TAROT:
+- Chủ đề: "${selectedTopic.title}" (${selectedTopic.description})
+- Kiểu trải bài: "${selectedSpread.title}" (${selectedSpread.subtitle})${userQuestionStr}${partnerContextStr}
 
-Danh sách ${currentPicked.length} lá bài vừa linh ứng rút được:
+DANH SÁCH ${currentPicked.length} LÁ BÀI RÚT ĐƯỢC CHÍNH XÁC THEO TỪNG VỊ TRÍ:
 ${cardDetails}
 
-QUY TẮC LUẬN GIẢI CHUẨN XÁC VÀ TÂM LÝ CHUYÊN SÂU (Viết dài, ít nhất 1000 từ):
+QUY TẮC LUẬN GIẢI CHUẨN XÁC, CHÂN THỰC & BÁM SÁT THỰC TẾ (Viết sâu sắc, mạch lạc, chi tiết, văn phong ấm áp nhưng thẳng thắn):
 
-1. **MỞ ĐẦU CHỮA LÀNH & KẾT NỐI NĂNG LƯỢNG**:
-   - Nhìn thẳng vào năng lượng chủ đạo hiện tại của người hỏi.
-   - Nếu có thông tin đối phương (${partnerName || 'đối phương'}), phân tích tần số kết nối giữa 2 người (đang nồng thắm, giữ khoảng cách, tổn thương ẩn ngầm hay áp lực từ bên ngoài).
+1. **🌿 TẦN SỐ NĂNG LƯỢNG CHỦ ĐẠO & BỐI CẢNH HIỆN TẠI**:
+   - Nhìn thẳng vào thông điệp trung tâm của toàn bộ quẻ bài (chủ đề ${selectedTopic.title}${userQuestion ? `, giải quyết câu hỏi: "${userQuestion}"` : ''}).
+   - Tần số năng lượng hiện thời đang thuận dòng hay bị ách tắc? Nguyên tố nào chiếm ưu thế (Lửa/Nước/Khí/Đất) và nói lên điều gì?
 
-2. **LUẬN GIẢI CHI TIẾT THEO TỪNG VỊ TRÍ KHÍA CẠNH (${currentPicked.length} LÁ BÀI)**:
-   Với mỗi lá bài, giải mã theo 3 tầng nghĩa:
-   - **Tầng 1 (Hình ảnh & Biểu tượng lá bài)**: Ý nghĩa lá xuôi/ngược, sự tương tác nguyên tố (Thủy/Hỏa/Khí/Thổ).
-   - **Tầng 2 (Diễn biến Tâm lý thực tế)**: Nỗi sợ hãi giấu kín, rào cản hành vi, mong muốn chưa nói ra.
-   - **Tầng 3 (Tác động thực tế)**: Chuyện gì sẽ diễn ra trong thời gian tới.
+2. **🎴 LUẬN GIẢI CHI TIẾT TỪNG LÁ BÀI THEO ĐÚNG VỊ TRÍ (${currentPicked.length} LÁ BÀI)**:
+   Với mỗi lá bài trong danh sách trên:
+   - **Tên lá & Trạng thái**: Nêu rõ lá Xuôi (Upright) hay Lá Ngược (Reversed), Bộ Ẩn chính (Major) hay Ẩn phụ (Minor).
+   - **Biểu tượng cốt lõi & Tương tác vị trí**: Giải mã tại sao lá bài này lại xuất hiện ở vị trí [Tên vị trí], ý nghĩa của lá bài phản ánh đúng tình cảnh thực tế của người hỏi ra sao.
+   - **Tâm lý & Diễn biến thực tế**: Đào sâu vào tâm lý, nỗi sợ giấu kín hoặc những tác động khách quan bên ngoài đang diễn ra.
 
-3. **BỨC TRANH TỔNG THỂ & THÁO GỠ NÚT THẮT**:
-   - Phân tích sợi dây liên kết giữa các lá bài (Lá bài nào là chìa khóa chính để tháo gỡ vấn đề).
-   - Đưa ra góc nhìn sự thật không tô hồng nhưng cực kỳ đồng cảm và khai sáng.
+3. **🧩 BỨC TRANH TỔNG HỢP & NÚT THẮT CỐT LÕI**:
+   - Chỉ rõ sợi dây liên kết giữa các lá bài: Nguyên nhân bắt nguồn từ đâu, đang dẫn đến hệ quả gì.
+   - Vạch trần "điểm mù" hoặc nút thắt lớn nhất mà người hỏi có thể chưa nhận ra (không né tránh, không nói nước đôi hay tô hồng giả tạo).
 
-4. **ĐỊNH HƯỚNG THỰC CHUYÊN & CHÂM NGÔN VŨ TRỤ**:
-   - 3 Hành động cụ thể người hỏi cần làm ngay hôm nay.
-   - Lời nhắn nhủ chữa lành sâu sắc nhất từ Vũ Trụ.`;
+4. **✨ LỜI KHUYÊN HÀNH ĐỘNG THỰC TẾ & THÔNG ĐIỆP CHỮA LÀNH TỪ VŨ TRỤ**:
+   - 3 Hành động cụ thể, rõ ràng người hỏi NÊN và KHÔNG NÊN làm ngay trong đời thực để chuyển hóa hoàn cảnh.
+   - Một thông điệp chữa lành, trao quyền và tiếp thêm niềm tin nội tại.`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -881,11 +886,20 @@ Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần 
       {/* STEP 4: DRAW STEP (MATCHING SCREENSHOT 3 EXACTLY) */}
       {step === 'draw' && (
         <div className="space-y-8 text-center animate-fadeIn bg-[#0d0e15] border border-purple-950/60 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
-          {/* Top Mystic Guidance */}
-          <div className="text-center space-y-1">
+          {/* Top Mystic Guidance & Custom Question Input */}
+          <div className="text-center space-y-2.5 max-w-lg mx-auto">
             <p className="text-xs md:text-sm font-semibold text-amber-300 flex items-center justify-center gap-2">
-              <span>🌙</span> Hít thở sâu, tập trung vào chủ đề đã chọn rồi chạm để bốc lá đầu tiên.
+              <span>🌙</span> Hít thở sâu, tập trung vào câu hỏi của bạn rồi chạm để bốc bài.
             </p>
+            <div className="relative">
+              <input
+                type="text"
+                value={userQuestion}
+                onChange={(e) => setUserQuestion(e.target.value)}
+                placeholder="Nhập câu hỏi hoặc băn khoăn cụ thể của bạn (VD: Có nên quay lại với người cũ? Công việc sắp tới thế nào?)..."
+                className="w-full bg-slate-900/90 border border-purple-500/40 focus:border-amber-400 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none transition-all shadow-inner text-center"
+              />
+            </div>
           </div>
 
           {/* SLOTS DISPLAY AT TOP MATCHING SCREENSHOT 3 */}
