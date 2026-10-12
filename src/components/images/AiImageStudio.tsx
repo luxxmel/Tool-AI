@@ -547,36 +547,6 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
               {gallery.length}/4 {language === "en" ? "saved (max 4)" : "đã lưu (tối đa 4)"}
             </span>
           </div>
-
-          {/* Style Filters (Only shown when there are saved images) */}
-          {gallery.length > 0 && (
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full scrollbar-none">
-              <button
-                onClick={() => setSelectedFilter("all")}
-                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                  selectedFilter === "all"
-                    ? "bg-indigo-600 text-white shadow-xs"
-                    : "bg-slate-100 dark:bg-[#131522] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {language === "en" ? "All" : "Tất cả"}
-              </button>
-              {STYLES.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedFilter(s.id)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
-                    selectedFilter === s.id
-                      ? "bg-indigo-600 text-white shadow-xs"
-                      : "bg-slate-100 dark:bg-[#131522] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                  }`}
-                >
-                  <span>{s.icon}</span>
-                  <span>{(language === "en" && s.labelEn ? s.labelEn : s.label).split(" ")[0]}</span>
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Empty State when no recent images have been created yet */}
@@ -593,20 +563,6 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
                 ? "Describe your creative idea above and click Generate. Your 4 most recent artworks will be saved and displayed right here!"
                 : "Hãy nhập mô tả ý tưởng ở phía trên rồi bấm tạo ảnh. Tối đa 4 tác phẩm bạn tạo gần nhất sẽ tự động được lưu và hiển thị tại đây!"}
             </p>
-          </div>
-        ) : gallery.length > 0 && filteredGallery.length === 0 && !isGenerating ? (
-          <div className="w-full py-12 px-6 rounded-3xl bg-slate-50/80 dark:bg-[#0c0e17]/80 border border-slate-200 dark:border-indigo-950/80 flex flex-col items-center justify-center text-center">
-            <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">
-              {language === "en"
-                ? "No creations match this style among your 4 recent images."
-                : "Không có tác phẩm nào thuộc phong cách này trong 4 ảnh gần đây."}
-            </p>
-            <button
-              onClick={() => setSelectedFilter("all")}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors cursor-pointer"
-            >
-              {language === "en" ? "View all recent images" : "Xem tất cả ảnh gần đây"}
-            </button>
           </div>
         ) : (
           /* Gallery Grid */
