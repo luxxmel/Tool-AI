@@ -81,10 +81,22 @@ export default function SidebarConversationsList({
         }
       } catch {}
 
-      // Hợp nhất serverConvs và localConvs không bị lặp ID, sắp xếp theo thời gian mới nhất
+      // Đọc danh sách các ID người dùng đã xóa
+      let deletedIds = new Set<string>();
+      try {
+        const deletedRaw = localStorage.getItem(`omni_deleted_conv_ids_${uid}`);
+        if (deletedRaw) {
+          const parsed = JSON.parse(deletedRaw);
+          if (Array.isArray(parsed)) {
+            deletedIds = new Set(parsed);
+          }
+        }
+      } catch {}
+
+      // Hợp nhất serverConvs và localConvs không bị lặp ID, loại bỏ triệt để các ID đã xóa
       const map = new Map<string, ConversationSummary>();
       [...serverConvs, ...localConvs].forEach((item) => {
-        if (item && item.id) {
+        if (item && item.id && !deletedIds.has(item.id)) {
           const existing = map.get(item.id);
           if (!existing || new Date(item.updatedAt) > new Date(existing.updatedAt)) {
             map.set(item.id, item);
@@ -138,16 +150,59 @@ export default function SidebarConversationsList({
     const ok = await showConfirm("Bạn có chắc chắn muốn xóa đoạn chat này không?", "Xác nhận xóa đoạn chat");
     if (!ok) return;
 
-    try {
-      const res = await fetch(`/api/conversations/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setConversations((prev) => prev.filter((c) => c.id !== id));
-        if (activeConversationId === id) {
-          onNewChat();
+    const uid = user?.id || user?.email || activeUserId;
+
+    // 1. Cập nhật ngay lập tức UI local state
+    setConversations((prev) => prev.filter((c) => c.id !== id));
+
+    // 2. Xóa triệt để khỏi localStorage để reload trang không bao giờ bị hiện lại
+    if (uid) {
+      try {
+        const storageKey = `omni_recent_convs_${uid}`;
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          const list = JSON.parse(stored);
+          if (Array.isArray(list)) {
+            const updated = list.filter((c: any) => c && c.id !== id);
+            localStorage.setItem(storageKey, JSON.stringify(updated));
+          }
         }
+        // Xóa các tin nhắn cache của đoạn chat này nếu có
+        localStorage.removeItem(`omni_chat_msgs_${id}`);
+
+        // Lưu vào danh sách các ID đã xóa để fetchConversations không hồi sinh lại
+        const deletedKey = `omni_deleted_conv_ids_${uid}`;
+        const deletedRaw = localStorage.getItem(deletedKey);
+        const deletedList: string[] = deletedRaw ? JSON.parse(deletedRaw) : [];
+        if (!deletedList.includes(id)) {
+          deletedList.push(id);
+          localStorage.setItem(deletedKey, JSON.stringify(deletedList.slice(-200)));
+        }
+
+        // Nếu là đoạn chat Tarot / Chiêm tinh / Tử vi / Bát tự đặc thù thì dọn dẹp thêm
+        if (id.startsWith("tarot-")) {
+          const tHistory = localStorage.getItem(`omni_tarot_history_${uid}`);
+          if (tHistory) {
+            const parsed = JSON.parse(tHistory);
+            if (Array.isArray(parsed)) {
+              localStorage.setItem(`omni_tarot_history_${uid}`, JSON.stringify(parsed.filter((item: any) => item.id !== id)));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Lỗi khi xóa cache local của đoạn chat:", err);
       }
+    }
+
+    if (activeConversationId === id) {
+      onNewChat();
+    }
+
+    // 3. Gửi yêu cầu xóa lên Server Database (nếu đoạn chat đã lưu trong DB)
+    try {
+      await fetch(`/api/conversations/${id}`, { method: "DELETE" });
     } catch (err) {
-      console.error("Lỗi khi xóa cuộc trò chuyện:", err);
+      console.error("Lỗi khi xóa cuộc trò chuyện trên server:", err);
     }
   };
 
