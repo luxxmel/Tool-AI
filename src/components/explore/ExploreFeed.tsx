@@ -13,62 +13,7 @@ interface ExploreFeedProps {
 }
 
 // ─── DATA SỰ KIỆN & THÔNG BÁO (Admin chỉnh tại đây) ────────────────────────
-const ANNOUNCEMENTS = [
-  {
-    id: 1,
-    type: "new_feature" as const,
-    emoji: "✨",
-    tag: "Tính năng mới",
-    tagEn: "New Feature",
-    tagColor: "from-violet-600 to-indigo-600",
-    title: "Ra mắt TTS Neural tiếng Việt chuẩn phim!",
-    titleEn: "Cinema-Grade Neural TTS Voice is Live!",
-    desc: "Giọng đọc AI Neural cực kỳ tự nhiên, hỗ trợ 3 giọng: Tổng tài, Nữ truyền cảm, Nữ ngọt ngào. Thử ngay trong khung chat!",
-    descEn: "Ultra-natural AI Neural voice reader with 3 expressive tones. Try it out right in the chat room!",
-    cta: "Thử ngay →",
-    ctaEn: "Try Now →",
-    ctaHref: "#",
-    bg: "from-violet-950/80 via-indigo-950/80 to-slate-950/90",
-    accent: "border-violet-500/40",
-    image: "https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=400&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 2,
-    type: "event" as const,
-    emoji: "🎉",
-    tag: "Sự kiện tháng 10",
-    tagEn: "October Event",
-    tagColor: "from-rose-600 to-orange-500",
-    title: "Thử thách Prompt AI — Giải thưởng 500K VND!",
-    titleEn: "AI Prompt Contest — Win 500K VND Prizes!",
-    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ Biết Tuốt AI.",
-    descEn: "Participate in the most creative AI prompt contest. Top submissions will be featured on homepage with rewards.",
-    cta: "Đăng bài dự thi →",
-    ctaEn: "Submit Entry →",
-    ctaHref: "#",
-    bg: "from-rose-950/80 via-orange-950/70 to-slate-950/90",
-    accent: "border-rose-500/40",
-    image: "https://images.unsplash.com/photo-1549740425-5e9ed4d8cd34?w=400&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 3,
-    type: "tip" as const,
-    emoji: "💡",
-    tag: "Mẹo hay",
-    tagEn: "Pro Tip",
-    tagColor: "from-amber-500 to-yellow-500",
-    title: "Dùng Magic Wand ✨ để nâng cấp prompt của bạn",
-    titleEn: "Use Magic Wand ✨ to Supercharge Your Prompts",
-    desc: "Chức năng Magic Wand tự động cải thiện câu hỏi của bạn thành prompt chuyên nghiệp, giúp AI hiểu đúng ý hơn. Thử trong khung chat bây giờ!",
-    descEn: "Magic Wand automatically refines your query into a professional prompt for higher AI precision. Try it in chat now!",
-    cta: "Xem hướng dẫn →",
-    ctaEn: "Learn More →",
-    ctaHref: "#",
-    bg: "from-amber-950/70 via-yellow-950/60 to-slate-950/90",
-    accent: "border-amber-500/40",
-    image: "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=400&auto=format&fit=crop&q=80",
-  },
-];
+const ANNOUNCEMENTS: any[] = [];
 
 // ─── TOP CONTRIBUTORS TYPE ───────────────────────────────────────────────────
 export interface ContributorItem {
@@ -597,8 +542,8 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   });
 
   const activeAnnouncements = announcementsList.length > 0 ? announcementsList : ANNOUNCEMENTS;
-  const safeIdx = bannerIdx % activeAnnouncements.length;
-  const announcement = activeAnnouncements[safeIdx] || activeAnnouncements[0];
+  const safeIdx = activeAnnouncements.length > 0 ? bannerIdx % activeAnnouncements.length : 0;
+  const announcement = activeAnnouncements.length > 0 ? (activeAnnouncements[safeIdx] || activeAnnouncements[0]) : null;
   const bannerTag = (language === "en" ? announcement?.tagEn : announcement?.tag) || announcement?.tag || "Thông báo";
   const bannerTitle = (language === "en" ? announcement?.titleEn : announcement?.title) || announcement?.title || "";
   const bannerDesc = (language === "en" ? announcement?.descEn : announcement?.desc) || announcement?.desc || "";

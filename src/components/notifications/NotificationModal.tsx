@@ -22,62 +22,7 @@ export interface AnnouncementItem {
   image?: string;
 }
 
-export const SYSTEM_ANNOUNCEMENTS: AnnouncementItem[] = [
-  {
-    id: 1,
-    type: "new_feature",
-    emoji: "✨",
-    tag: "Tính năng mới",
-    tagEn: "New Feature",
-    tagColor: "from-violet-600 to-indigo-600",
-    title: "Ra mắt TTS Neural tiếng Việt chuẩn phim!",
-    titleEn: "Cinema-Grade Neural TTS Voice is Live!",
-    desc: "Giọng đọc AI Neural cực kỳ tự nhiên, hỗ trợ 3 giọng: Tổng tài, Nữ truyền cảm, Nữ ngọt ngào. Thử ngay trong khung chat!",
-    descEn: "Ultra-natural AI Neural voice reader with 3 expressive tones. Try it out right in the chat room!",
-    cta: "Thử ngay →",
-    ctaEn: "Try Now →",
-    ctaHref: "#",
-    bg: "from-violet-950/80 via-indigo-950/80 to-slate-950/90",
-    accent: "border-violet-500/40",
-    image: "https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=400&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 2,
-    type: "event",
-    emoji: "🎉",
-    tag: "Sự kiện tháng 10",
-    tagEn: "October Event",
-    tagColor: "from-rose-600 to-orange-500",
-    title: "Thử thách Prompt AI — Giải thưởng 500K VND!",
-    titleEn: "AI Prompt Contest — Win 500K VND Prizes!",
-    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ Biết Tuốt AI.",
-    descEn: "Participate in the most creative AI prompt contest. Top submissions will be featured on homepage with rewards.",
-    cta: "Đăng bài dự thi →",
-    ctaEn: "Submit Entry →",
-    ctaHref: "#",
-    bg: "from-rose-950/80 via-orange-950/70 to-slate-950/90",
-    accent: "border-rose-500/40",
-    image: "https://images.unsplash.com/photo-1549740425-5e9ed4d8cd34?w=400&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 3,
-    type: "tip",
-    emoji: "💡",
-    tag: "Mẹo hay",
-    tagEn: "Pro Tip",
-    tagColor: "from-amber-500 to-yellow-500",
-    title: "Dùng Magic Wand ✨ để nâng cấp prompt của bạn",
-    titleEn: "Use Magic Wand ✨ to Supercharge Your Prompts",
-    desc: "Chức năng Magic Wand tự động cải thiện câu hỏi của bạn thành prompt chuyên nghiệp, giúp AI hiểu đúng ý hơn. Thử trong khung chat bây giờ!",
-    descEn: "Magic Wand automatically refines your query into a professional prompt for higher AI precision. Try it in chat now!",
-    cta: "Xem hướng dẫn →",
-    ctaEn: "Learn More →",
-    ctaHref: "#",
-    bg: "from-amber-950/70 via-yellow-950/60 to-slate-950/90",
-    accent: "border-amber-500/40",
-    image: "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=400&auto=format&fit=crop&q=80",
-  },
-];
+export const SYSTEM_ANNOUNCEMENTS: AnnouncementItem[] = [];
 
 interface NotificationModalProps {
   isOpen: boolean;
@@ -93,10 +38,10 @@ export default function NotificationModal({
   announcements: propAnnouncements,
 }: NotificationModalProps) {
   const { language } = useLanguage();
-  const [items, setItems] = React.useState<any[]>(propAnnouncements || SYSTEM_ANNOUNCEMENTS);
+  const [items, setItems] = React.useState<any[]>(propAnnouncements || []);
 
   React.useEffect(() => {
-    if (propAnnouncements && propAnnouncements.length > 0) {
+    if (propAnnouncements) {
       setItems(propAnnouncements);
       return;
     }
@@ -107,7 +52,7 @@ export default function NotificationModal({
         const res = await fetch("/api/announcements");
         if (res.ok) {
           const data = await res.json();
-          if (data.announcements && Array.isArray(data.announcements) && data.announcements.length > 0) {
+          if (data.announcements && Array.isArray(data.announcements)) {
             setItems(data.announcements);
           }
         }
@@ -168,50 +113,66 @@ export default function NotificationModal({
 
         {/* List of Announcements */}
         <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 scrollbar-thin">
-          {announcements.map((item) => {
-            const tag = language === "en" ? item.tagEn || item.tag : item.tag;
-            const title = language === "en" ? item.titleEn || item.title : item.title;
-            const desc = language === "en" ? item.descEn || item.desc : item.desc;
-            const cta = language === "en" ? item.ctaEn || item.cta : item.cta;
+          {announcements.length === 0 ? (
+            <div className="py-12 px-4 text-center flex flex-col items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-[#181a28] flex items-center justify-center text-2xl mb-3 text-slate-400">
+                📭
+              </div>
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">
+                {language === "en" ? "No announcements yet" : "Chưa có thông báo nào"}
+              </p>
+              <p className="text-xs text-slate-400 max-w-xs">
+                {language === "en"
+                  ? "Stay tuned! Any system updates or events will appear right here."
+                  : "Các thông báo và sự kiện mới từ hệ thống sẽ xuất hiện tại đây khi được đăng tải."}
+              </p>
+            </div>
+          ) : (
+            announcements.map((item) => {
+              const tag = language === "en" ? item.tagEn || item.tag : item.tag;
+              const title = language === "en" ? item.titleEn || item.title : item.title;
+              const desc = language === "en" ? item.descEn || item.desc : item.desc;
+              const cta = language === "en" ? item.ctaEn || item.cta : item.cta;
 
-            return (
-              <div
-                key={item.id}
-                className="p-4 rounded-2xl bg-slate-50/80 dark:bg-[#181a27] border border-slate-200/80 dark:border-slate-800 hover:border-indigo-500/40 transition-all space-y-2.5"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{item.emoji}</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-cyan-400 border border-indigo-500/20">
-                      {tag}
-                    </span>
+              return (
+                <div
+                  key={item.id}
+                  className="p-4 rounded-2xl bg-slate-50/80 dark:bg-[#181a27] border border-slate-200/80 dark:border-slate-800 hover:border-indigo-500/40 transition-all space-y-2.5"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{item.emoji}</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-cyan-400 border border-indigo-500/20">
+                        {tag}
+                      </span>
+                    </div>
+                    {item.type === "new_feature" && (
+                      <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 border border-amber-500/30">
+                        NEW
+                      </span>
+                    )}
                   </div>
-                  {item.type === "new_feature" && (
-                    <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 border border-amber-500/30">
-                      NEW
-                    </span>
+
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mb-1 leading-snug">
+                      {title}
+                    </h4>
+                    <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {desc}
+                    </p>
+                  </div>
+
+                  {cta && (
+                    <div className="pt-1 flex justify-end">
+                      <span className="text-[11px] font-bold text-indigo-600 dark:text-cyan-400 hover:underline cursor-pointer">
+                        {cta}
+                      </span>
+                    </div>
                   )}
                 </div>
-
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mb-1 leading-snug">
-                    {title}
-                  </h4>
-                  <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    {desc}
-                  </p>
-                </div>
-
-                {cta && (
-                  <div className="pt-1 flex justify-end">
-                    <span className="text-[11px] font-bold text-indigo-600 dark:text-cyan-400 hover:underline cursor-pointer">
-                      {cta}
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
 
         {/* Footer */}

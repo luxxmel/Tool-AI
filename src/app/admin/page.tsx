@@ -12,36 +12,8 @@ import { TRENDING_CHARACTERS, CATEGORIZED_ASSISTANTS } from "@/data/aiData";
 const USERS_STORAGE_KEY = "omni_cms_users_list";
 const POSTS_STORAGE_KEY = "omni_explore_posts_list";
 
-// ─── ANNOUNCEMENTS (mirrored from ExploreFeed.tsx) ───────────────────────────
-const ANNOUNCEMENTS_DATA = [
-  {
-    id: 1,
-    type: "new_feature" as const,
-    emoji: "✨",
-    tag: "Tính năng mới",
-    title: "Ra mắt TTS Neural tiếng Việt chuẩn phim!",
-    desc: "Giọng đọc AI Neural cực kỳ tự nhiên, hỗ trợ 3 giọng: Tổng tài, Nữ truyền cảm, Nữ ngọt ngào. Thử ngay trong khung chat!",
-    cta: "Thử ngay →",
-  },
-  {
-    id: 2,
-    type: "event" as const,
-    emoji: "🎉",
-    tag: "Sự kiện tháng 10",
-    title: "Thử thách Prompt AI — Giải thưởng 500K VND!",
-    desc: "Tham gia cuộc thi tạo prompt sáng tạo nhất trong tháng 10. Bài tốt nhất được ghim trang chủ và nhận thưởng từ đội ngũ Biết Tuốt AI.",
-    cta: "Đăng bài dự thi →",
-  },
-  {
-    id: 3,
-    type: "tip" as const,
-    emoji: "💡",
-    tag: "Mẹo hay",
-    title: "Dùng Magic Wand ✨ để nâng cấp prompt của bạn",
-    desc: "Chức năng Magic Wand tự động cải thiện câu hỏi của bạn thành prompt chuyên nghiệp, giúp AI hiểu đúng ý hơn. Thử trong khung chat bây giờ!",
-    cta: "Xem hướng dẫn →",
-  },
-];
+// ─── ANNOUNCEMENTS ────────────────────────────────────────────────────────────
+const ANNOUNCEMENTS_DATA: any[] = [];
 
 // ─── Quick compose state type ─────────────────────────────────────────────────
 interface ComposeForm {
