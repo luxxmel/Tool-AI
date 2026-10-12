@@ -1326,42 +1326,6 @@ export default function BotChatPage() {
               </div>
             )}
 
-            {/* Suggested Prompts based on Bot's Personality - Hiển thị 100% toàn bộ câu hỏi gợi ý */}
-            <div className="w-full max-w-2xl mx-auto">
-              <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-cyan-400 mb-2.5 text-center flex items-center justify-center gap-1.5">
-                <span>💡</span>
-                <span>{language === "en" ? "Suggested questions to start:" : "Gợi ý câu hỏi bắt đầu trò chuyện:"}</span>
-              </p>
-              <div className="flex flex-col gap-2.5 text-left w-full">
-                {((bot.suggestedPrompts && bot.suggestedPrompts.length > 0
-                  ? bot.suggestedPrompts
-                  : ALL_ASSISTANTS_MAP[botId]?.suggestedPrompts) || [
-                  language === "en" ? `Hello ${bot.name}, how can you help me today?` : `Xin chào ${bot.name}, bạn có thể giúp gì cho tôi?`,
-                  language === "en" ? "Introduce yourself and your specialty" : "Hãy giới thiệu về bản thân và phong cách của bạn",
-                  language === "en" ? "Give me a useful tip for today" : "Cho tôi một lời khuyên hữu ích hôm nay",
-                ]).map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSendMessage(undefined, suggestion)}
-                    className="w-full text-xs sm:text-sm p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#121524] border border-indigo-200 dark:border-cyan-500/40 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-slate-50 dark:hover:bg-[#191d33] text-slate-800 dark:text-slate-100 transition-all text-left shadow-xs hover:shadow-md hover:shadow-cyan-500/15 hover:-translate-y-0.5 cursor-pointer flex items-center justify-between gap-3 group"
-                  >
-                    <span className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className="text-indigo-500 dark:text-cyan-400 text-sm group-hover:scale-110 transition-transform shrink-0">
-                        💬
-                      </span>
-                      <span className="text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-white font-medium whitespace-normal break-words leading-relaxed text-xs sm:text-sm">
-                        {suggestion}
-                      </span>
-                    </span>
-                    <span className="text-indigo-600 dark:text-cyan-400 group-hover:text-indigo-700 dark:group-hover:text-cyan-300 text-xs shrink-0 font-bold whitespace-nowrap flex items-center gap-1">
-                      <span>{language === "en" ? "Send" : "Gửi"}</span>
-                      <span>→</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         ) : (
           messages.map((msg) => {
