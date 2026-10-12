@@ -53,24 +53,44 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
 
   const relationshipOptions = ['Người yêu', 'Crush', 'Bạn bè', 'Gia đình', 'Đồng nghiệp', 'Người cũ'];
 
-  // History state matching tatca.ai layout
-  const [historyList, setHistoryList] = useState<TarotHistoryItem[]>([
-    {
-      id: 'h1',
-      topicTitle: 'Tình cảm',
-      dateStr: '3 ngày trước',
-      cards: [
-        { card: TAROT_CARDS.find(c => c.id === 'queen_of_cups') || TAROT_CARDS[0], isReversed: true, positionLabel: 'Bạn' },
-        { card: TAROT_CARDS.find(c => c.id === 'eight_of_pentacles') || TAROT_CARDS[1], isReversed: true, positionLabel: 'Người ấy' },
-        { card: TAROT_CARDS.find(c => c.id === 'chariot') || TAROT_CARDS[2], isReversed: true, positionLabel: 'Kết nối' },
-        { card: TAROT_CARDS.find(c => c.id === 'five_of_wands') || TAROT_CARDS[3], isReversed: true, positionLabel: 'Đang giữ' },
-        { card: TAROT_CARDS.find(c => c.id === 'six_of_swords') || TAROT_CARDS[4], isReversed: true, positionLabel: 'Cọ xát' },
-        { card: TAROT_CARDS.find(c => c.id === 'star') || TAROT_CARDS[5], isReversed: false, positionLabel: 'Lời khuyên' },
-        { card: TAROT_CARDS.find(c => c.id === 'sun') || TAROT_CARDS[6], isReversed: false, positionLabel: 'Hướng đi' },
-      ],
-      readingText: 'Dường như bạn đang mang theo rất nhiều cảm xúc chông chênh vào mối quan hệ này...'
+  // History state matching tatca.ai layout (Lưu bền vững vào localStorage)
+  const [historyList, setHistoryList] = useState<TarotHistoryItem[]>([]);
+
+  // Tải lịch sử Tarot từ localStorage khi mở trang
+  React.useEffect(() => {
+    try {
+      const uid = user?.id || user?.email || 'guest';
+      const saved = localStorage.getItem(`omni_tarot_history_${uid}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setHistoryList(parsed);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Lỗi đọc lịch sử Tarot:", e);
     }
-  ]);
+
+    // Mẫu mặc định nếu chưa có lịch sử
+    setHistoryList([
+      {
+        id: 'h-default',
+        topicTitle: 'Tình cảm',
+        dateStr: 'Gần đây',
+        cards: [
+          { card: TAROT_CARDS.find(c => c.id === 'queen_of_cups') || TAROT_CARDS[0], isReversed: true, positionLabel: 'Bạn' },
+          { card: TAROT_CARDS.find(c => c.id === 'eight_of_pentacles') || TAROT_CARDS[1], isReversed: true, positionLabel: 'Người ấy' },
+          { card: TAROT_CARDS.find(c => c.id === 'chariot') || TAROT_CARDS[2], isReversed: true, positionLabel: 'Kết nối' },
+          { card: TAROT_CARDS.find(c => c.id === 'five_of_wands') || TAROT_CARDS[3], isReversed: true, positionLabel: 'Đang giữ' },
+          { card: TAROT_CARDS.find(c => c.id === 'six_of_swords') || TAROT_CARDS[4], isReversed: true, positionLabel: 'Cọ xát' },
+          { card: TAROT_CARDS.find(c => c.id === 'star') || TAROT_CARDS[5], isReversed: false, positionLabel: 'Lời khuyên' },
+          { card: TAROT_CARDS.find(c => c.id === 'sun') || TAROT_CARDS[6], isReversed: false, positionLabel: 'Hướng đi' },
+        ],
+        readingText: 'Dường như bạn đang mang theo rất nhiều cảm xúc chông chênh vào mối quan hệ này...'
+      }
+    ]);
+  }, [user?.id, user?.email]);
 
   // Sound Effects Generator for Tarot Interactions
   const playMagicSound = (type: 'shuffle' | 'pick' | 'reveal') => {
@@ -358,16 +378,56 @@ QUY TẮC LUẬN GIẢI CHUẨN XÁC VÀ TÂM LÝ CHUYÊN SÂU (Viết dài, ít
           setReadingText(textAcc);
         }
 
-        setHistoryList(prev => [
-          {
-            id: `h-${Date.now()}`,
-            topicTitle: selectedTopic.title,
-            dateStr: 'Vừa xong',
-            cards: currentPicked,
-            readingText: textAcc
-          },
-          ...prev
-        ]);
+        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN');
+        const newItem: TarotHistoryItem = {
+          id: `tarot-${Date.now()}`,
+          topicTitle: selectedTopic.title,
+          dateStr: nowStr,
+          cards: currentPicked,
+          readingText: textAcc
+        };
+
+        setHistoryList(prev => {
+          const updated = [newItem, ...prev.filter(item => item.id !== 'h-default')];
+          try {
+            const uid = user?.id || user?.email || 'guest';
+            localStorage.setItem(`omni_tarot_history_${uid}`, JSON.stringify(updated.slice(0, 30)));
+          } catch {}
+          return updated;
+        });
+
+        // Đồng bộ thêm vào danh sách lịch sử chung (sidebar) để người dùng thấy ngay
+        try {
+          const uid = user?.id || user?.email;
+          if (uid) {
+            const convSummary = {
+              id: newItem.id,
+              title: `🔮 Tarot: ${selectedTopic.title} (${currentPicked.length} lá)`,
+              updatedAt: new Date().toISOString()
+            };
+            const recentKey = `omni_recent_convs_${uid}`;
+            const existingRaw = localStorage.getItem(recentKey);
+            let existingList = existingRaw ? JSON.parse(existingRaw) : [];
+            existingList = [convSummary, ...existingList.filter((c: any) => c.id !== newItem.id)];
+            localStorage.setItem(recentKey, JSON.stringify(existingList.slice(0, 30)));
+            // Lưu nội dung tin nhắn để mở lại
+            const msgs = [
+              {
+                id: `msg-user-${Date.now()}`,
+                role: 'user',
+                content: `🔮 Bói Tarot chủ đề: ${selectedTopic.title} - Kiểu trải: ${selectedSpread.title}`,
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: `msg-ai-${Date.now()}`,
+                role: 'assistant',
+                content: textAcc,
+                createdAt: new Date().toISOString()
+              }
+            ];
+            localStorage.setItem(`omni_chat_msgs_${newItem.id}`, JSON.stringify(msgs));
+          }
+        } catch {}
       }
     } catch (err) {
       console.error('Tarot error:', err);
@@ -409,6 +469,24 @@ Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần 
 ✨ *"Khi bạn vững tâm bước đi trên con đường của chính mình, cả vũ trụ sẽ hợp lực để soi sáng từng bước tiến của bạn."*`;
 
       setReadingText(richFallbackText);
+
+      // Lưu bản dự phòng vào lịch sử
+      const nowStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN');
+      const fallbackItem: TarotHistoryItem = {
+        id: `tarot-${Date.now()}`,
+        topicTitle: selectedTopic.title,
+        dateStr: nowStr,
+        cards: currentPicked,
+        readingText: richFallbackText
+      };
+      setHistoryList(prev => {
+        const updated = [fallbackItem, ...prev.filter(item => item.id !== 'h-default')];
+        try {
+          const uid = user?.id || user?.email || 'guest';
+          localStorage.setItem(`omni_tarot_history_${uid}`, JSON.stringify(updated.slice(0, 30)));
+        } catch {}
+        return updated;
+      });
     } finally {
       setIsReadingLoading(false);
     }

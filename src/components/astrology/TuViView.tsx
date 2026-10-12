@@ -17,6 +17,16 @@ interface TuViPalace {
   element: string;
 }
 
+interface TuViHistoryItem {
+  id: string;
+  name: string;
+  dateStr: string;
+  solarDate: string;
+  menhNguHanh: string;
+  chartData: any;
+  readingText: string;
+}
+
 export default function TuViView({ onOpenLoginModal }: { onOpenLoginModal?: () => void }) {
   const { user, updateUserCredits } = useAuth();
   const [showRechargeModal, setShowRechargeModal] = useState(false);
@@ -45,6 +55,19 @@ export default function TuViView({ onOpenLoginModal }: { onOpenLoginModal?: () =
 
   const [readingText, setReadingText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [historyList, setHistoryList] = useState<TuViHistoryItem[]>([]);
+
+  // Tải lịch sử xem Tử Vi từ localStorage
+  React.useEffect(() => {
+    try {
+      const uid = user?.id || user?.email || 'guest';
+      const saved = localStorage.getItem(`omni_tuvi_history_${uid}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setHistoryList(parsed);
+      }
+    } catch {}
+  }, [user?.id, user?.email]);
 
   const handleGenerateChart = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,15 +196,69 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
+      let textAcc = '';
       if (reader) {
         let done = false;
-        let textAcc = '';
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
           textAcc += decoder.decode(value || new Uint8Array(), { stream: true });
           setReadingText(textAcc);
         }
+      }
+
+      if (textAcc.trim() && fullChart) {
+        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN');
+        const newItem: TuViHistoryItem = {
+          id: `tuvi-${Date.now()}`,
+          name: fullName,
+          dateStr: nowStr,
+          solarDate: `${birthDay}/${birthMonth}/${birthYear} ${birthHour.toString().padStart(2, '0')}:${birthMinute.toString().padStart(2, '0')}`,
+          menhNguHanh: fullChart.menhNguHanh,
+          chartData: fullChart,
+          readingText: textAcc
+        };
+
+        setHistoryList(prev => {
+          const updated = [newItem, ...prev.filter(item => item.id !== newItem.id)];
+          try {
+            const uid = user?.id || user?.email || 'guest';
+            localStorage.setItem(`omni_tuvi_history_${uid}`, JSON.stringify(updated.slice(0, 30)));
+          } catch {}
+          return updated;
+        });
+
+        // Đồng bộ vào sidebar lịch sử
+        try {
+          const uid = user?.id || user?.email;
+          if (uid) {
+            const convSummary = {
+              id: newItem.id,
+              title: `🌙 Tử Vi: ${fullName} (${fullChart.menhNguHanh})`,
+              updatedAt: new Date().toISOString()
+            };
+            const recentKey = `omni_recent_convs_${uid}`;
+            const existingRaw = localStorage.getItem(recentKey);
+            let existingList = existingRaw ? JSON.parse(existingRaw) : [];
+            existingList = [convSummary, ...existingList.filter((c: any) => c.id !== newItem.id)];
+            localStorage.setItem(recentKey, JSON.stringify(existingList.slice(0, 30)));
+            const msgs = [
+              {
+                id: `msg-user-${Date.now()}`,
+                role: 'user',
+                content: `🌙 Lập lá số Tử Vi cho ${fullName}, sinh ngày ${newItem.solarDate}`,
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: `msg-ai-${Date.now()}`,
+                role: 'assistant',
+                content: textAcc,
+                createdAt: new Date().toISOString()
+              }
+            ];
+            localStorage.setItem(`omni_chat_msgs_${newItem.id}`, JSON.stringify(msgs));
+          }
+        } catch {}
       }
     } catch (err) {
       console.error(err);
@@ -344,6 +421,44 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
           </button>
         </div>
       </form>
+
+      {/* Lịch sử lá số Tử Vi đã xem */}
+      {historyList.length > 0 && !chartData && (
+        <div className="mb-8 space-y-3">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span>📜</span> Lá số Tử Vi đã xem gần đây ({historyList.length})
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {historyList.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  setFullName(item.name);
+                  setChartData(item.chartData);
+                  setReadingText(item.readingText);
+                }}
+                className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all cursor-pointer flex flex-col justify-between group shadow-md"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-bold text-sm text-indigo-300 group-hover:text-cyan-300 transition-colors">
+                      {item.name}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-400 border border-indigo-800/50">
+                      {item.menhNguHanh}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400">Sinh: {item.solarDate}</p>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500">
+                  <span>{item.dateStr}</span>
+                  <span className="text-indigo-400 group-hover:translate-x-0.5 transition-transform">Xem lại →</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Result Section */}
       {chartData && (
