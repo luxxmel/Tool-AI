@@ -679,7 +679,7 @@ export const CATEGORIZED_ASSISTANTS: Record<
         name: "Cố vấn Tài chính (Elon Musk)",
         nameEn: "Financial Advisor (Elon Musk)",
         category: "other",
-        avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80",
+        avatar: "/characters/elon_musk.jpg",
         description: "Quản lý chi tiêu, lập ngân sách cá nhân và gợi ý đầu tư an toàn thông minh.",
         descriptionEn: "Budget planning, personal cashflow optimization, and smart wealth strategies.",
         author: "@omni",
