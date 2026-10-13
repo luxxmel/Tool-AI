@@ -183,43 +183,47 @@ export default function AppSidebar({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          {/* Daily Gift Button */}
           <button
             onClick={handleDailyCheckin}
-            className="p-1.5 rounded-lg text-amber-500 hover:bg-amber-500/10 relative cursor-pointer"
+            className="h-8 px-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-500 dark:text-amber-400 flex items-center gap-1 text-xs font-bold transition-all cursor-pointer active:scale-95 shadow-xs"
             title="Điểm danh nhận quà"
           >
             <span className="text-sm">🎁</span>
+            <span className="hidden xs:inline text-[10px] font-black uppercase text-amber-500">Quà</span>
           </button>
 
+          {/* Notifications Button */}
           <button
             onClick={() => setIsNotificationOpen(true)}
-            className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 relative cursor-pointer"
+            className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white relative flex items-center justify-center transition-all cursor-pointer border border-slate-200/80 dark:border-slate-700/60 active:scale-95"
             title="Thông báo hệ thống"
           >
             <span className="text-sm">🔔</span>
             {hasUnreadNotifications && (
               <>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
               </>
             )}
           </button>
 
+          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer border border-slate-200/80 dark:border-slate-700/60 active:scale-95 text-xs"
             title={theme === "dark" ? t("sidebar.light_mode") : t("sidebar.dark_mode")}
           >
-            {theme === "dark" ? "☀️" : "🌙"}
+            <span>{theme === "dark" ? "☀️" : "🌙"}</span>
           </button>
 
           {isAuthenticated ? (
-            <img src={user?.avatar} alt="User" className="w-7 h-7 rounded-full border border-slate-300 dark:border-slate-700" />
+            <img src={user?.avatar} alt="User" className="w-8 h-8 rounded-xl border border-slate-300 dark:border-slate-700 object-cover" />
           ) : (
             <button
               onClick={onOpenLoginModal}
-              className="text-xs bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold px-3 py-1 rounded-full shadow-xs shadow-indigo-500/30"
+              className="text-xs bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold px-3 py-1.5 rounded-xl shadow-md shadow-indigo-500/25 active:scale-95 transition-all"
             >
               {t("sidebar.login")}
             </button>
@@ -251,13 +255,13 @@ export default function AppSidebar({
               </span>
             </Link>
 
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               {/* Collapse button for desktop */}
               {onToggleCollapse && (
                 <button
                   type="button"
                   onClick={onToggleCollapse}
-                  className="hidden lg:flex w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer items-center justify-center border border-slate-200 dark:border-slate-700 shrink-0"
+                  className="hidden lg:flex w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
                   title={t("sidebar.collapse")}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -270,24 +274,25 @@ export default function AppSidebar({
               <button
                 type="button"
                 onClick={handleDailyCheckin}
-                className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 text-amber-500 flex items-center justify-center text-xs transition-all cursor-pointer shrink-0 shadow-2xs hover:scale-105 active:scale-95"
-                title="Điểm danh nhận +2 Credits mỗi ngày"
+                className="h-8 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-500 dark:text-amber-400 flex items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer shrink-0 shadow-xs hover:scale-102 active:scale-95"
+                title="Điểm danh nhận quà mỗi ngày"
               >
-                <span>🎁</span>
+                <span className="text-sm">🎁</span>
+                <span className="text-[10px] font-black uppercase text-amber-500">Quà</span>
               </button>
 
               {/* Notification Popup Trigger */}
               <button
                 type="button"
                 onClick={() => setIsNotificationOpen(true)}
-                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer relative flex items-center justify-center border border-slate-200 dark:border-slate-700 shrink-0"
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer relative flex items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
                 title="Xem thông báo hệ thống"
               >
                 <span className="text-xs">🔔</span>
                 {hasUnreadNotifications && (
                   <>
-                    <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
-                    <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full" />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
                   </>
                 )}
               </button>
@@ -296,7 +301,7 @@ export default function AppSidebar({
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 border border-amber-200/80 dark:border-slate-700 transition-all cursor-pointer flex items-center justify-center text-xs shadow-2xs shrink-0"
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700/60 transition-all cursor-pointer flex items-center justify-center text-xs shadow-xs shrink-0 active:scale-95"
                 title={theme === "dark" ? t("sidebar.light_mode") : t("sidebar.dark_mode")}
               >
                 <span>{theme === "dark" ? "☀️" : "🌙"}</span>
@@ -405,12 +410,12 @@ export default function AppSidebar({
                   }
                   setIsMobileOpen(false);
                 }}
-                className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-md shadow-indigo-600/20 active:scale-98 group"
+                className="w-full py-2.5 sm:py-3 px-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:from-indigo-500 hover:via-violet-500 hover:to-cyan-400 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-md shadow-indigo-600/30 hover:shadow-indigo-600/40 active:scale-97 group border border-white/10"
               >
-                <span className="text-base leading-none font-black text-cyan-200 group-hover:scale-125 transition-transform">
+                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-sm leading-none font-black text-white group-hover:rotate-90 transition-transform">
                   +
                 </span>
-                <span>{language === "en" ? "New Chat" : "Tạo đoạn chat mới"}</span>
+                <span className="tracking-wide">{language === "en" ? "New Chat" : "Tạo đoạn chat mới"}</span>
               </button>
             </div>
           </nav>

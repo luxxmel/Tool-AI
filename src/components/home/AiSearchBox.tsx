@@ -519,18 +519,18 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
           </div>
 
           {/* Right: Voice Input & Send Button */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={toggleSpeechRecognition}
-              className={`p-2 rounded-lg transition-colors cursor-pointer ${
+              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                 isListening
-                  ? "text-cyan-500 bg-cyan-500/10 animate-pulse"
-                  : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60"
+                  ? "text-cyan-400 bg-cyan-500/20 border border-cyan-400 animate-pulse"
+                  : "text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 active:scale-95"
               }`}
               title={language === "en" ? "Voice input" : "Nhập bằng giọng nói"}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
               </svg>
             </button>
@@ -540,14 +540,14 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               type="button"
               onClick={() => handleSubmit()}
               disabled={!prompt.trim() && attachedImages.length === 0}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 ${
                 prompt.trim() || attachedImages.length > 0
-                  ? "bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white shadow-lg shadow-indigo-600/30 scale-100 cursor-pointer"
-                  : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-60"
+                  ? "bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white shadow-lg shadow-indigo-600/35 hover:shadow-indigo-600/50 scale-100 cursor-pointer border border-white/20"
+                  : "bg-slate-200/80 dark:bg-slate-800/80 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-50"
               }`}
               title={language === "en" ? "Send query" : "Gửi câu hỏi"}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
