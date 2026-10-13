@@ -12,9 +12,13 @@ const FALLBACK_TROLLLLM_KEY = Buffer.from(
   "base64"
 ).toString("utf8");
 
-const GEMINI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY || FALLBACK_GEMINI_KEY;
-const TROLLLLM_KEY = process.env.TROLLLLM_API_KEY || FALLBACK_TROLLLLM_KEY;
-const TROLLLLM_URL = process.env.TROLLLLM_BASE_URL || "https://chat.trollllm.xyz/v1";
+const rawGemini = (process.env.GOOGLE_GENERATIVE_AI_API_KEY || FALLBACK_GEMINI_KEY || "").trim().replace(/^["']|["']$/g, "");
+const rawTrollKey = (process.env.TROLLLLM_API_KEY || FALLBACK_TROLLLLM_KEY || "").trim().replace(/^["']|["']$/g, "");
+const rawTrollUrl = (process.env.TROLLLLM_BASE_URL || "https://chat.trollllm.xyz/v1").trim().replace(/^["']|["']$/g, "");
+
+const GEMINI_API_KEY = rawGemini;
+const TROLLLLM_KEY = rawTrollKey;
+const TROLLLLM_URL = rawTrollUrl;
 
 // Google Generative AI Provider linh hoạt
 export const googleAI = createGoogleGenerativeAI({

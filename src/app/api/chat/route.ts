@@ -667,6 +667,38 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
    - Luôn chốt lại bằng 2-3 hành động thực tế mà người hỏi có thể thực hiện ngay trong đời thực để chuyển hóa năng lượng tiêu cực thành tích cực.`;
       }
 
+      // Quy tắc đặc biệt cho Gia sư Giải Toán & Luyện thi:
+      if (botId === "math-solver" || botId === "exam-prep" || (bot.name && bot.name.includes("Toán"))) {
+        effectiveSystemPrompt += `
+
+[QUY TẮC BẮT BUỘC DÀNH CHO GIA SƯ TOÁN HỌC & GIẢI ĐỀ]:
+1. TRẢ LỜI ĐÚNG TRỌNG TÂM CÂU HỎI / ĐỀ BÀI: Đi thẳng vào giải quyết bài toán, không trả lời lan man hoặc chung chung.
+2. NẾU CÓ HÌNH ẢNH ĐÍNH KÈM (ĐỀ TOÁN, BÀI TẬP, PHƯƠNG TRÌNH, HÌNH VẼ):
+   - Đọc kỹ từng chữ số, biểu thức, hình vẽ hình học hoặc đồ thị trong hình ảnh người dùng gửi.
+   - Trích dẫn rõ đề bài bạn nhận diện được: "Đề bài: ...".
+   - Giải chi tiết từng bước (Step-by-step) với lập luận toán học chặt chẽ.
+   - Sử dụng công thức LaTeX chuẩn ($...$ hoặc $$...$$) để hiển thị công thức toán rõ ràng, đẹp mắt.
+   - Nêu rõ công thức cốt lõi áp dụng, mẹo bấm máy tính Casio 580VNX/880BTG nếu có, và đóng khung đáp án cuối cùng.`;
+      }
+
+      // Quy tắc đặc biệt cho Gia sư Vật Lý:
+      if (botId === "physics-solver" || (bot.name && bot.name.includes("Vật Lý"))) {
+        effectiveSystemPrompt += `
+
+[QUY TẮC BẮT BUỘC DÀNH CHO GIA SƯ VẬT LÝ]:
+1. Nếu có hình ảnh bài tập / mạch điện / sơ đồ lực: Đọc và giải thích hiện tượng vật lý, phân tích dữ kiện cho trước.
+2. Đổi đơn vị chuẩn SI, áp dụng định luật chính xác và tính ra kết quả cụ thể.`;
+      }
+
+      // Quy tắc đặc biệt cho Giảng Viên Tiếng Anh:
+      if (botId === "english-teacher" || (bot.name && bot.name.includes("Tiếng Anh"))) {
+        effectiveSystemPrompt += `
+
+[QUY TẮC BẮT BUỘC DÀNH CHO GIẢNG VIÊN TIẾNG ANH]:
+1. Nếu người dùng gửi ảnh bài tập tiếng Anh: Đọc kỹ câu hỏi, chỉ ra đáp án đúng kèm giải thích ngữ pháp/từ vựng chi tiết.
+2. Sửa lỗi chính tả, ngữ pháp và cung cấp phiên âm IPA chuẩn.`;
+      }
+
       // Quy tắc đặc biệt cho nhân vật nhập vai / truyện / người yêu / trợ lý: Tập trung đối thoại sâu sắc & cuốn hút
       if (
         isVipStoryChar ||
@@ -738,9 +770,16 @@ ${projectObj.systemPrompt}`;
     }
 
     // 4.5. Kiểm tra phát hiện yêu cầu Tạo hình mới hoặc Sửa hình theo yêu cầu
+    // Chỉ kích hoạt chế độ ảnh nếu:
+    // 1) Là bot Họa Sĩ AI (ai-artist)
+    // 2) Hoặc người dùng yêu cầu vẽ/sửa ảnh rõ ràng
     let activeReferenceImage = userImages.length > 0 ? userImages[0] : undefined;
 
-    if (!activeReferenceImage && Array.isArray(messages)) {
+    // Chỉ tìm ảnh cũ trong lịch sử nếu người dùng rõ ràng đang yêu cầu sửa/chỉnh lại ảnh
+    const lowerUserPrompt = (userPromptText || "").toLowerCase();
+    const hasExplicitFollowUpEdit = /\b(?:thêm\s+\d+|thêm\s+1\s+cái|giống\s+\d+\s+cái|còn lại|sửa\s+lại|chỉnh\s+lại|vẽ\s+thêm|thêm\s+hình\s+tròn|thêm\s+vòng\s+tròn|đổi\s+màu|xóa\s+bớt|bỏ\s+bớt|vào\s+ảnh|cho\s+ảnh|trong\s+ảnh|tấm\s+hình\s+này|ảnh\s+này|hình\s+này)\b/i.test(lowerUserPrompt);
+
+    if (!activeReferenceImage && hasExplicitFollowUpEdit && Array.isArray(messages)) {
       for (let i = messages.length - 1; i >= 0; i--) {
         const m = messages[i];
         if (Array.isArray(m.images) && m.images.length > 0) {
@@ -759,7 +798,7 @@ ${projectObj.systemPrompt}`;
 
     const imageReq = detectImageRequest(
       userPromptText,
-      activeReferenceImage ? [activeReferenceImage] : userImages,
+      userImages.length > 0 ? userImages : (activeReferenceImage ? [activeReferenceImage] : []),
       botId
     );
 

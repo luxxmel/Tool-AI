@@ -19,7 +19,7 @@ const { execSync } = require('child_process');
     const sha = await git.commit({
       fs,
       dir: '.',
-      message: 'fix: optimize mobile typography font cascade and load full Vietnamese weights',
+      message: 'fix: enable multimodal vision for assistant bots, prevent false image generation on Q&A/math, and sanitize API keys',
       author: {
         name: 'Biet Tuot AI Agent',
         email: 'agent@biettuot.ai'

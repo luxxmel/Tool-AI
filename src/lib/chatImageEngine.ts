@@ -55,9 +55,9 @@ export function detectImageRequest(
 
   // TRƯỜNG HỢP 1: CÓ ĐÍNH KÈM HÌNH ẢNH (Image-to-Image / Sửa hình theo yêu cầu)
   if (images.length > 0) {
-    // Nếu người dùng hỏi rõ ràng để giải bài tập, đọc chữ hoặc phân tích nội dung thông thường
+    // 1.1. Các từ khóa hỏi đáp, học tập, giải bài, phân tích, OCR, đọc chữ -> 100% là chat hỏi đáp / vision, KHÔNG ĐƯỢC TẠO/SỬA ẢNH
     const isQnAPattern =
-      /\b(?:giải bài|đây là con gì|đây là cái gì|đây là đâu|trong ảnh có gì|phân tích|đọc chữ|dịch chữ|trích xuất chữ|ocr|chữ gì đây)\b/i.test(
+      /\b(?:giải|giải bài|giải đề|giải toán|giải giúp|toán|lý|hóa|văn|sử|địa|tiếng anh|bài tập|đề thi|đáp án|câu này|câu mấy|đáp số|bài này|bài số|trang|đây là con gì|đây là cái gì|đây là đâu|trong ảnh có gì|phân tích|đọc chữ|dịch chữ|trích xuất chữ|ocr|chữ gì đây|cho hỏi|hỏi|hướng dẫn|chỉ em|chỉ mình|xem giúp|nhìn xem|nội dung|tóm tắt|đọc giúp|thầy ơi|cô ơi|bot ơi)\b/i.test(
         lower
       );
 
@@ -65,27 +65,39 @@ export function detectImageRequest(
       return { isImageRequest: false, cleanPrompt: trimmed };
     }
 
-    // Các từ khóa chỉ ý định chỉnh sửa / biến đổi / làm mới hình ảnh
-    const editKeywords =
-      /\b(?:sửa|chỉnh|chỉnh sửa|biến|chuyển|đổi|thay đổi|thêm|bớt|vẽ lại|vẽ thêm|phong cách|biến đổi|tạo lại|hoạt hình|anime|cyberpunk|3d|chibi|sơn dầu|màu nước|tranh|ghép|xóa|tô|thay nền|đổi màu|edit|modify|transform|change|convert|redraw|filter|style|giống|tương tự|như ảnh|theo ảnh|thành|còn lại|vòng tròn|hình tròn|khung)\b/i;
+    // 1.2. Nếu là các bot học tập, tài chính, bác sĩ, viết lách, code, v.v... mặc định phân tích ảnh chứ không sửa ảnh (trừ khi là Họa Sĩ AI hoặc có lệnh vẽ/sửa rõ ràng)
+    const isNonArtBot =
+      botId &&
+      [
+        "math-solver",
+        "exam-prep",
+        "physics-solver",
+        "english-teacher",
+        "doc-assistant",
+        "tech-lead",
+        "career-guide",
+        "health-advice",
+        "finance-advisor",
+        "mindmap-creator",
+        "ai-detector",
+        "goc-chua-lanh",
+        "healing-companion",
+      ].includes(botId);
 
-    const isEditIntent =
-      editKeywords.test(lower) ||
-      botId === "ai-artist" ||
-      lower.includes("ảnh này") ||
-      lower.includes("hình này") ||
-      lower.includes("ảnh thẻ") ||
-      lower.includes("vest") ||
-      lower.includes("giống 100%") ||
-      trimmed.length < 50; // Nếu gửi kèm ảnh, mặc định phân loại là sửa/biến đổi từ ảnh gốc
+    // Chỉ khi có từ khóa yêu cầu chỉnh sửa/vẽ ảnh thật sự rõ ràng:
+    const explicitEditKeywords =
+      /\b(?:sửa ảnh|chỉnh ảnh|sửa hình|chỉnh hình|vẽ lại ảnh|vẽ lại hình|thay nền|đổi nền|xóa phông|ghép ảnh|ghép mặt|tô màu ảnh|biến ảnh thành|chuyển ảnh sang|chuyển sang anime|phong cách anime|chuyển thành hoạt hình|sang tranh sơn dầu|chuyển sang 3d|vẽ thêm vào ảnh|tạo ảnh thẻ|ảnh thẻ vest|thay áo vest)\b/i;
 
-    if (isEditIntent || images.length > 0) {
+    if (!isNonArtBot && (botId === "ai-artist" || explicitEditKeywords.test(lower))) {
       return {
         isImageRequest: true,
         type: "edit",
         cleanPrompt: trimmed || "Chỉnh sửa hình ảnh này theo phong cách nghệ thuật ấn tượng",
       };
     }
+
+    // Mặc định: Gửi ảnh là để AI quan sát và trả lời câu hỏi!
+    return { isImageRequest: false, cleanPrompt: trimmed };
   }
 
   // TRƯỜNG HỢP 2: KHÔNG CÓ ẢNH ĐÍNH KÈM NHƯNG CÓ Ý ĐỊNH SỬA / THÊM VÀO ẢNH TRƯỚC ĐÓ
