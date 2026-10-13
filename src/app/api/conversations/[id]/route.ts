@@ -89,7 +89,7 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/conversations/[id] - Xóa cuộc trò chuyện
+// DELETE /api/conversations/[id] - Xóa vĩnh viễn cuộc trò chuyện trong Database
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -97,15 +97,29 @@ export async function DELETE(
   try {
     const { id } = await context.params;
 
-    await prisma.conversation.delete({
+    if (!id) {
+      return NextResponse.json({ error: "Thiếu ID cuộc trò chuyện" }, { status: 400 });
+    }
+
+    // 1. Xóa toàn bộ tin nhắn liên quan trước (đảm bảo sạch database)
+    try {
+      await prisma.message.deleteMany({
+        where: { conversationId: id },
+      });
+    } catch (e) {
+      console.warn("Lỗi khi xóa message của conversation:", e);
+    }
+
+    // 2. Xóa cuộc trò chuyện khỏi bảng Conversation
+    await prisma.conversation.deleteMany({
       where: { id },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: "Đã xóa vĩnh viễn cuộc trò chuyện khỏi database" });
   } catch (error) {
     console.error("Lỗi khi xóa cuộc trò chuyện:", error);
     return NextResponse.json(
-      { error: "Lỗi khi xóa cuộc trò chuyện" },
+      { error: "Lỗi khi xóa cuộc trò chuyện khỏi cơ sở dữ liệu" },
       { status: 500 }
     );
   }
