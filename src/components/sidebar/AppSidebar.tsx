@@ -11,6 +11,7 @@ import UserMenuPopup from "./UserMenuPopup";
 import UserSettingsModal, { SettingsTab } from "@/components/user/UserSettingsModal";
 import RechargeModal from "@/components/payment/RechargeModal";
 import NotificationModal from "@/components/notifications/NotificationModal";
+import DailyCheckinModal from "@/components/checkin/DailyCheckinModal";
 import SidebarConversationsList from "./SidebarConversationsList";
 import { usePopup } from "@/context/PopupContext";
 
@@ -56,6 +57,7 @@ export default function AppSidebar({
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("account");
   const [isRechargeOpen, setIsRechargeOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("omni_notifications_read") !== "true";
@@ -64,62 +66,12 @@ export default function AppSidebar({
   });
   const { showAlert } = usePopup();
 
-  const handleDailyCheckin = async () => {
+  const handleDailyCheckin = () => {
     if (!isAuthenticated || !user) {
       onOpenLoginModal();
       return;
     }
-
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const todayKey = `biettuot_checkin_${user.id}_${todayStr}`;
-    const streakKey = `biettuot_checkin_streak_${user.id}`;
-    const lastDateKey = `biettuot_checkin_lastdate_${user.id}`;
-
-    if (typeof window !== "undefined" && localStorage.getItem(todayKey)) {
-      const currentStreak = Number(localStorage.getItem(streakKey) || 1);
-      showAlert(`Hôm nay bạn đã điểm danh rồi (Chuỗi ${currentStreak} ngày)! Hãy quay lại vào ngày mai để nhận thêm nhé 🎁`, "Đã nhận quà hôm nay", "info");
-      return;
-    }
-
-    // Tính toán chuỗi ngày liên tiếp
-    let currentStreak = 0;
-    if (typeof window !== "undefined") {
-      const lastDate = localStorage.getItem(lastDateKey);
-      const savedStreak = Number(localStorage.getItem(streakKey) || 0);
-      if (lastDate) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().slice(0, 10);
-        if (lastDate === yesterdayStr) {
-          currentStreak = savedStreak; // Điểm danh liên tiếp
-        } else {
-          currentStreak = 0; // Đứt chuỗi, bắt đầu lại từ ngày 1
-        }
-      }
-    }
-
-    try {
-      const res = await fetch("/api/user/checkin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, streak: currentStreak }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        localStorage.setItem(todayKey, "true");
-        localStorage.setItem(lastDateKey, todayStr);
-        localStorage.setItem(streakKey, String(data.streak || currentStreak + 1));
-        showAlert(
-          `🎉 ${data.message}\n🎁 Nhận ngay: +${data.rewardCredits} Credits.\n🪙 Số dư mới: ${data.newCredits} Credits.`,
-          "Điểm danh thành công!",
-          "success"
-        );
-      } else {
-        showAlert(data.error || "Không thể điểm danh lúc này.", "Thông báo", "warning");
-      }
-    } catch {
-      showAlert("Lỗi kết nối máy chủ khi điểm danh.", "Lỗi");
-    }
+    setIsCheckinModalOpen(true);
   };
 
   // Chỉ hiển thị các tính năng/tab Quản trị cho tài khoản Admin
@@ -232,6 +184,14 @@ export default function AppSidebar({
         </div>
 
         <div className="flex items-center gap-1.5">
+          <button
+            onClick={handleDailyCheckin}
+            className="p-1.5 rounded-lg text-amber-500 hover:bg-amber-500/10 relative cursor-pointer"
+            title="Điểm danh nhận quà"
+          >
+            <span className="text-sm">🎁</span>
+          </button>
+
           <button
             onClick={() => setIsNotificationOpen(true)}
             className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 relative cursor-pointer"
@@ -644,6 +604,13 @@ export default function AppSidebar({
             localStorage.setItem("omni_notifications_read", "true");
           }
         }}
+      />
+
+      {/* 7-Days Daily Check-in Rewards Modal */}
+      <DailyCheckinModal
+        isOpen={isCheckinModalOpen}
+        onClose={() => setIsCheckinModalOpen(false)}
+        onOpenLoginModal={onOpenLoginModal}
       />
     </>
   );
