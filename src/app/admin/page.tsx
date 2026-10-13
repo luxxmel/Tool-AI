@@ -67,8 +67,8 @@ export default function AdminCmsPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { showAlert, showConfirm, showError } = usePopup();
 
-  // Admin Tab: "revenue" | "users" | "admins" | "posts" | "credits" | "announcements" | "bots" | "support"
-  const [adminTab, setAdminTab] = useState<"revenue" | "users" | "admins" | "posts" | "credits" | "announcements" | "bots" | "support">("revenue");
+  // Admin Tab: "revenue" | "users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support"
+  const [adminTab, setAdminTab] = useState<"revenue" | "users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support">("revenue");
 
   // Revenue State
   const [revenueData, setRevenueData] = useState<{
@@ -768,7 +768,8 @@ export default function AdminCmsPage() {
                 { key: "credits", label: "💰 Credits", count: null, color: "amber" },
                 { key: "announcements", label: "🔔 Thông báo", count: null, color: "yellow" },
                 { key: "support", label: "💬 Hỗ trợ", count: supportTickets.length, color: "cyan" },
-                { key: "bots", label: "🤖 Nhân vật", count: allBots.length, color: "violet" },
+                { key: "characters", label: "🎭 Nhân vật truyện", count: botsCharCount, color: "rose" },
+                { key: "assistants", label: "🤖 Trợ lý AI", count: botsAssistantCount, color: "violet" },
               ] as const
             ).map(({ key, label, count, color }) => {
               const active = adminTab === key;
@@ -2750,80 +2751,193 @@ export default function AdminCmsPage() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            TAB 5: BOTS / CHARACTERS
+            TAB 5: NHÂN VẬT TRUYỆN (CHARACTERS)
         ══════════════════════════════════════════════════════════════════════ */}
-        {adminTab === "bots" && (
+        {adminTab === "characters" && (
           <>
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Tổng Bot / Nhân vật</div>
-                <div className="text-3xl font-black text-violet-600 dark:text-violet-400 font-mono">{allBots.length}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Bao gồm cả trợ lý và nhân vật</div>
-              </div>
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Nhân vật (Characters)</div>
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Tổng Nhân vật truyện</div>
                 <div className="text-3xl font-black text-rose-500 font-mono">{botsCharCount}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Roleplay & sáng tạo</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Nhân vật nhập vai & cốt truyện</div>
               </div>
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
-                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Trợ lý (Assistants)</div>
-                <div className="text-3xl font-black text-indigo-500 font-mono">{botsAssistantCount}</div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Học tập, công việc & giải trí</div>
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Thể loại thịnh hành</div>
+                <div className="text-3xl font-black text-amber-500 font-mono">Anime / Cổ trang</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Đầy đủ artwork anime & avatar</div>
+              </div>
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Tương tác người dùng</div>
+                <div className="text-3xl font-black text-emerald-500 font-mono">100% Hoạt động</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Đồng bộ trang chat /[botId]</div>
               </div>
             </div>
 
-            {/* Bot Grid */}
+            {/* Character Grid */}
             <div>
-              <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">
-                🤖 Danh sách tất cả Bot & Nhân vật
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {allBots.map((bot) => (
-                  <div
-                    key={bot.id}
-                    className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all"
-                  >
-                    {/* Avatar */}
-                    <div className="h-32 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 overflow-hidden">
-                      <img
-                        src={bot.avatar}
-                        alt={bot.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).src =
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=6366f1&color=fff&size=200`;
-                        }}
-                      />
-                    </div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>🎭</span>
+                  <span>Danh sách Nhân vật truyện ({botsCharCount})</span>
+                </h2>
+                <Link
+                  href="/?tab=characters"
+                  target="_blank"
+                  className="text-xs font-semibold text-rose-500 hover:underline flex items-center gap-1"
+                >
+                  Xem ngoài trang chủ ↗
+                </Link>
+              </div>
 
-                    {/* Info */}
-                    <div className="p-3">
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <span
-                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                            bot.category === "character"
-                              ? "bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400"
-                              : "bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400"
-                          }`}
-                        >
-                          {bot.category === "character" ? "Nhân vật" : "Trợ lý"}
-                        </span>
-                        {bot.badge && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 truncate max-w-[80px]">
-                            {bot.badge}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {allBots
+                  .filter((b) => b.category === "character")
+                  .map((bot) => (
+                    <div
+                      key={bot.id}
+                      className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col"
+                    >
+                      {/* Avatar Poster */}
+                      <div className="aspect-[3/3.8] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 overflow-hidden relative">
+                        <img
+                          src={bot.avatar}
+                          alt={bot.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src =
+                              `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=f43f5e&color=fff&size=200`;
+                          }}
+                        />
+                        <div className="absolute top-2 left-2">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20">
+                            {bot.badge || "Nhân vật"}
                           </span>
-                        )}
+                        </div>
                       </div>
-                      <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-2 mb-1">
-                        {bot.name}
-                      </h3>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2">
-                        {bot.description}
-                      </p>
+
+                      {/* Info */}
+                      <div className="p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 mb-1">
+                            {bot.name}
+                          </h3>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2 italic mb-2">
+                            {bot.description}
+                          </p>
+                        </div>
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
+                          <span className="font-mono text-slate-400 truncate max-w-[100px]">{bot.id}</span>
+                          <Link
+                            href={`/chat/${bot.id}`}
+                            target="_blank"
+                            className="text-rose-500 font-semibold hover:underline"
+                          >
+                            Chat ↗
+                          </Link>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            TAB 6: TRỢ LÝ AI (ASSISTANTS)
+        ══════════════════════════════════════════════════════════════════════ */}
+        {adminTab === "assistants" && (
+          <>
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Tổng Trợ lý AI</div>
+                <div className="text-3xl font-black text-indigo-500 font-mono">{botsAssistantCount}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Trợ lý công việc, code, dịch thuật</div>
+              </div>
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Phân loại danh mục</div>
+                <div className="text-3xl font-black text-violet-500 font-mono">10+ Lĩnh vực</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Lập trình, Marketing, Học tập...</div>
+              </div>
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Trạng thái</div>
+                <div className="text-3xl font-black text-emerald-500 font-mono">Sẵn sàng</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Tích hợp AI Prompt chuyên sâu</div>
+              </div>
+            </div>
+
+            {/* Assistant Grid */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>🤖</span>
+                  <span>Danh sách Trợ lý AI ({botsAssistantCount})</span>
+                </h2>
+                <Link
+                  href="/"
+                  target="_blank"
+                  className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                >
+                  Xem danh mục trợ lý ↗
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {allBots
+                  .filter((b) => b.category === "assistant")
+                  .map((bot) => (
+                    <div
+                      key={bot.id}
+                      className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col"
+                    >
+                      {/* Avatar */}
+                      <div className="h-28 bg-gradient-to-br from-indigo-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden flex items-center justify-center p-3">
+                        <img
+                          src={bot.avatar}
+                          alt={bot.name}
+                          className="w-16 h-16 rounded-2xl object-cover shadow-sm border border-slate-200 dark:border-slate-700"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src =
+                              `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=6366f1&color=fff&size=200`;
+                          }}
+                        />
+                      </div>
+
+                      {/* Info */}
+                      <div className="p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+                              Trợ lý
+                            </span>
+                            {bot.badge && (
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 truncate max-w-[90px]">
+                                {bot.badge}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 mb-1">
+                            {bot.name}
+                          </h3>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2 mb-2">
+                            {bot.description}
+                          </p>
+                        </div>
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
+                          <span className="font-mono text-slate-400 truncate max-w-[100px]">{bot.id}</span>
+                          <Link
+                            href={`/chat/${bot.id}`}
+                            target="_blank"
+                            className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
+                          >
+                            Chat ↗
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
               </div>
             </div>
           </>
