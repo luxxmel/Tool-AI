@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
@@ -19,12 +19,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin", "latin-ext"],
 });
 
-// Font hỗ trợ tiếng Việt đầy đủ
+// Font hỗ trợ tiếng Việt đầy đủ với mọi cấp độ đậm nhạt
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam",
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh",
