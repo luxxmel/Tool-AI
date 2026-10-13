@@ -1028,6 +1028,16 @@ Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần 
             </div>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => {
+                  navigator.clipboard.writeText(readingText);
+                  alert("Đã sao chép toàn bộ lời giải bài Tarot!");
+                }}
+                className="text-xs text-purple-300 hover:text-white bg-purple-950/60 hover:bg-purple-900/80 px-3 py-2 rounded-xl border border-purple-500/50 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm font-semibold"
+                title="Sao chép toàn bộ nội dung luận giải"
+              >
+                <span>📋 Sao chép</span>
+              </button>
+              <button
                 onClick={handleAddExtraCard}
                 className="text-xs text-amber-300 hover:text-white bg-amber-950/60 hover:bg-amber-900/80 px-3.5 py-2 rounded-xl border border-amber-500/50 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm font-semibold"
               >

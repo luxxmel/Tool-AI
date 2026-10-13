@@ -250,6 +250,42 @@ export default function HomeChatView({
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
 
+  const handleExportMarkdown = (content: string, title?: string) => {
+    const filename = `${(title || "chat-biettuot").replace(/[^\w\s-]/gi, "").trim().replace(/\s+/g, "-") || "chat"}.md`;
+    const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportWord = (content: string, title?: string) => {
+    const filename = `${(title || "chat-biettuot").replace(/[^\w\s-]/gi, "").trim().replace(/\s+/g, "-") || "chat"}.doc`;
+    const htmlContent = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>${title || "Biết Tuốt AI"}</title></head>
+      <body style="font-family:Arial, sans-serif; line-height:1.6; padding:20px;">
+        <h2>Biết Tuốt AI — Trích xuất câu trả lời</h2>
+        <hr/>
+        <div style="white-space: pre-wrap;">${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+      </body>
+      </html>
+    `;
+    const blob = new Blob([htmlContent], { type: "application/msword;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     return () => {
       stopVietnameseTTS();
@@ -1190,6 +1226,24 @@ export default function HomeChatView({
                               </div>
                             )}
                           </div>
+
+                          {/* Export buttons */}
+                          <button
+                            type="button"
+                            onClick={() => handleExportMarkdown(m.content, conversationTitle)}
+                            className="px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer text-[11px] font-medium"
+                            title="Tải văn bản dạng Markdown (.md)"
+                          >
+                            <span>📥 .md</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleExportWord(m.content, conversationTitle)}
+                            className="px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer text-[11px] font-medium"
+                            title="Tải văn bản dạng Word (.doc)"
+                          >
+                            <span>📄 .doc</span>
+                          </button>
 
                           {/* Regenerate Button (on last message) */}
                           {m.id === messages[messages.length - 1]?.id && !isTyping && (

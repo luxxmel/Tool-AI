@@ -32,6 +32,7 @@
   "/api/tools/process/route": "/api/tools/process",
   "/api/trending-questions/route": "/api/trending-questions",
   "/api/tts/route": "/api/tts",
+  "/api/user/checkin/route": "/api/user/checkin",
   "/api/user/credits/route": "/api/user/credits",
   "/api/users/[userId]/route": "/api/users/[userId]",
   "/api/users/route": "/api/users",

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
@@ -54,7 +54,19 @@ export default function SidebarConversationsList({
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredConversations = useMemo(() => {
+    if (!searchQuery.trim()) return conversations;
+    const q = searchQuery.toLowerCase().trim();
+    return conversations.filter((c) => (c.title || "").toLowerCase().includes(q));
+  }, [conversations, searchQuery]);
+
+  const filteredProjects = useMemo(() => {
+    if (!searchQuery.trim()) return projects;
+    const q = searchQuery.toLowerCase().trim();
+    return projects.filter((p) => (p.name || "").toLowerCase().includes(q));
+  }, [projects, searchQuery]);
 
   const fetchConversations = async () => {
     const uid = user?.id || user?.email;
@@ -285,20 +297,43 @@ export default function SidebarConversationsList({
         )}
       </div>
 
+      {/* Search Input Bar */}
+      <div className="relative mb-2 px-1">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={activeTab === "chats" ? "Tìm kiếm đoạn chat..." : "Tìm dự án..."}
+          className="w-full px-2.5 py-1.5 pl-7 text-[11px] rounded-xl bg-slate-100 dark:bg-[#121422] border border-slate-200 dark:border-indigo-950/60 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+        />
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none">
+          🔍
+        </span>
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 hover:text-slate-200"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
       {/* List content */}
       <div className="flex-1 overflow-y-auto space-y-0.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800 max-h-[190px]">
         {activeTab === "chats" ? (
           /* CHATS LIST */
-          isLoading && (conversations?.length || 0) === 0 ? (
+          isLoading && (filteredConversations?.length || 0) === 0 ? (
             <div className="p-3 text-center text-[11px] text-slate-400">
               {t("sidebar.loading_chats")}
             </div>
-          ) : (conversations?.length || 0) === 0 ? (
+          ) : (filteredConversations?.length || 0) === 0 ? (
             <div className="p-3 text-center text-[11px] text-slate-400">
-              {t("sidebar.no_conversations")}
+              {searchQuery ? "Không tìm thấy đoạn chat nào" : t("sidebar.no_conversations")}
             </div>
           ) : (
-            (conversations || []).map((conv) => {
+            filteredConversations.map((conv) => {
               const isActive = activeConversationId === conv.id;
               return (
                 <div
@@ -335,25 +370,27 @@ export default function SidebarConversationsList({
           )
         ) : (
           /* PROJECTS LIST */
-          (projects?.length || 0) === 0 ? (
+          (filteredProjects?.length || 0) === 0 ? (
             <div className="p-3 text-center text-[11px] text-slate-400">
-              <p>{t("sidebar.no_projects")}</p>
-              <button
-                type="button"
-                onClick={() => {
-                  if (onOpenCreateProject) {
-                    onOpenCreateProject();
-                  } else {
-                    setIsCreateProjectOpen(true);
-                  }
-                }}
-                className="mt-1.5 text-indigo-500 dark:text-cyan-400 font-bold hover:underline cursor-pointer"
-              >
-                {t("sidebar.create_first_project")}
-              </button>
+              <p>{searchQuery ? "Không tìm thấy dự án nào" : t("sidebar.no_projects")}</p>
+              {!searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onOpenCreateProject) {
+                      onOpenCreateProject();
+                    } else {
+                      setIsCreateProjectOpen(true);
+                    }
+                  }}
+                  className="mt-1.5 text-indigo-500 dark:text-cyan-400 font-bold hover:underline cursor-pointer"
+                >
+                  {t("sidebar.create_first_project")}
+                </button>
+              )}
             </div>
           ) : (
-            (projects || []).map((proj) => {
+            filteredProjects.map((proj) => {
               const isActive = activeProjectId === proj.id;
               return (
                 <div

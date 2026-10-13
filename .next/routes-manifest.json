@@ -330,6 +330,12 @@
       "namedRegex": "^/api/tts(?:/)?$"
     },
     {
+      "page": "/api/user/checkin",
+      "regex": "^/api/user/checkin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/user/checkin(?:/)?$"
+    },
+    {
       "page": "/api/user/credits",
       "regex": "^/api/user/credits(?:/)?$",
       "routeKeys": {},

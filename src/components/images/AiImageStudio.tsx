@@ -272,6 +272,42 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // 9. Chia sẻ tác phẩm thẳng lên Cộng Đồng Khám Phá (Explore Feed)
+  const handleShareToExplore = async (img: GeneratedImage) => {
+    if (!user) {
+      onOpenLoginModal?.();
+      return;
+    }
+    const ok = await showConfirm(
+      "Bạn có muốn chia sẻ tác phẩm nghệ thuật này lên mục Khám Phá Cộng Đồng để mọi người cùng chiêm ngưỡng không?",
+      "Chia sẻ tác phẩm"
+    );
+    if (!ok) return;
+
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: `Tác phẩm AI: ${img.prompt.slice(0, 45)}...`,
+          content: `Prompt sáng tạo: "${img.prompt}"\nPhong cách: ${img.style || "Tự do"}\nTỷ lệ: ${img.aspectRatio}`,
+          category: "art",
+          categoryLabel: "Nghệ thuật AI",
+          image: img.url,
+          authorId: user.id,
+        }),
+      });
+      if (res.ok) {
+        showAlert("Đã chia sẻ thành công lên Cộng Đồng Khám Phá! 🎉", "Tuyệt vời", "success");
+      } else {
+        const d = await res.json();
+        showAlert(d.error || "Không thể chia sẻ lúc này", "Lỗi", "warning");
+      }
+    } catch {
+      showAlert("Lỗi kết nối khi chia sẻ bài viết", "Lỗi");
+    }
+  };
+
   // Lọc tác phẩm
   const filteredGallery =
     selectedFilter === "all"
@@ -689,14 +725,32 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
                   <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/80 text-[11px]">
                     <span className="text-slate-400">{item.createdAt}</span>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => handleReusePrompt(item)}
+                        className="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-600 dark:text-cyan-300 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                        title="Tái sử dụng prompt để biến tấu"
+                      >
+                        <span>✨ Remix</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleShareToExplore(item)}
+                        className="px-2 py-1 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 hover:bg-cyan-100 text-cyan-600 dark:text-cyan-300 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                        title="Chia sẻ tác phẩm lên Cộng đồng Khám phá"
+                      >
+                        <span>🌍 Đăng</span>
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => handleCopy(item.id, item.prompt)}
                         className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#181a28] hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <span>{copiedId === item.id ? "✓" : "📋"}</span>
-                        <span>{copiedId === item.id ? (language === "en" ? "Copied" : "Đã chép") : (language === "en" ? "Copy Prompt" : "Sao chép Prompt")}</span>
+                        <span>{copiedId === item.id ? (language === "en" ? "Copied" : "Đã chép") : (language === "en" ? "Copy" : "Sao chép")}</span>
                       </button>
                     </div>
                   </div>

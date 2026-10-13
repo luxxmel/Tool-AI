@@ -12,6 +12,7 @@ import UserSettingsModal, { SettingsTab } from "@/components/user/UserSettingsMo
 import RechargeModal from "@/components/payment/RechargeModal";
 import NotificationModal from "@/components/notifications/NotificationModal";
 import SidebarConversationsList from "./SidebarConversationsList";
+import { usePopup } from "@/context/PopupContext";
 
 interface AppSidebarProps {
   currentTab: string;
@@ -61,6 +62,37 @@ export default function AppSidebar({
     }
     return true;
   });
+  const { showAlert } = usePopup();
+
+  const handleDailyCheckin = async () => {
+    if (!isAuthenticated || !user) {
+      onOpenLoginModal();
+      return;
+    }
+
+    const todayKey = `biettuot_checkin_${user.id}_${new Date().toISOString().slice(0, 10)}`;
+    if (typeof window !== "undefined" && localStorage.getItem(todayKey)) {
+      showAlert("Hôm nay bạn đã nhận thưởng điểm danh rồi! Hãy quay lại vào ngày mai nhé 🎁", "Đã nhận quà", "info");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/user/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        localStorage.setItem(todayKey, "true");
+        showAlert(`🎉 ${data.message} Số dư mới: ${data.newCredits} Credits.`, "Điểm danh thành công!", "success");
+      } else {
+        showAlert(data.error || "Không thể điểm danh lúc này.", "Thông báo", "warning");
+      }
+    } catch {
+      showAlert("Lỗi kết nối máy chủ khi điểm danh.", "Lỗi");
+    }
+  };
 
   // Chỉ hiển thị các tính năng/tab Quản trị cho tài khoản Admin
   const isAdmin = Boolean(isAuthenticated && user && (user.role?.toLowerCase() === "admin"));
@@ -245,6 +277,16 @@ export default function AppSidebar({
                   </svg>
                 </button>
               )}
+
+              {/* Daily Check-in Button */}
+              <button
+                type="button"
+                onClick={handleDailyCheckin}
+                className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 text-amber-500 flex items-center justify-center text-xs transition-all cursor-pointer shrink-0 shadow-2xs hover:scale-105 active:scale-95"
+                title="Điểm danh nhận +2 Credits mỗi ngày"
+              >
+                <span>🎁</span>
+              </button>
 
               {/* Notification Popup Trigger */}
               <button
