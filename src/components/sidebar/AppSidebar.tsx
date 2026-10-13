@@ -70,22 +70,50 @@ export default function AppSidebar({
       return;
     }
 
-    const todayKey = `biettuot_checkin_${user.id}_${new Date().toISOString().slice(0, 10)}`;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayKey = `biettuot_checkin_${user.id}_${todayStr}`;
+    const streakKey = `biettuot_checkin_streak_${user.id}`;
+    const lastDateKey = `biettuot_checkin_lastdate_${user.id}`;
+
     if (typeof window !== "undefined" && localStorage.getItem(todayKey)) {
-      showAlert("Hôm nay bạn đã nhận thưởng điểm danh rồi! Hãy quay lại vào ngày mai nhé 🎁", "Đã nhận quà", "info");
+      const currentStreak = Number(localStorage.getItem(streakKey) || 1);
+      showAlert(`Hôm nay bạn đã điểm danh rồi (Chuỗi ${currentStreak} ngày)! Hãy quay lại vào ngày mai để nhận thêm nhé 🎁`, "Đã nhận quà hôm nay", "info");
       return;
+    }
+
+    // Tính toán chuỗi ngày liên tiếp
+    let currentStreak = 0;
+    if (typeof window !== "undefined") {
+      const lastDate = localStorage.getItem(lastDateKey);
+      const savedStreak = Number(localStorage.getItem(streakKey) || 0);
+      if (lastDate) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().slice(0, 10);
+        if (lastDate === yesterdayStr) {
+          currentStreak = savedStreak; // Điểm danh liên tiếp
+        } else {
+          currentStreak = 0; // Đứt chuỗi, bắt đầu lại từ ngày 1
+        }
+      }
     }
 
     try {
       const res = await fetch("/api/user/checkin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ userId: user.id, streak: currentStreak }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
         localStorage.setItem(todayKey, "true");
-        showAlert(`🎉 ${data.message} Số dư mới: ${data.newCredits} Credits.`, "Điểm danh thành công!", "success");
+        localStorage.setItem(lastDateKey, todayStr);
+        localStorage.setItem(streakKey, String(data.streak || currentStreak + 1));
+        showAlert(
+          `🎉 ${data.message}\n🎁 Nhận ngay: +${data.rewardCredits} Credits.\n🪙 Số dư mới: ${data.newCredits} Credits.`,
+          "Điểm danh thành công!",
+          "success"
+        );
       } else {
         showAlert(data.error || "Không thể điểm danh lúc này.", "Thông báo", "warning");
       }
