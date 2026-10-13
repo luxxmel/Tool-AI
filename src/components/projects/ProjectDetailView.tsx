@@ -149,7 +149,7 @@ export default function ProjectDetailView({
           <span>Các đoạn chat thuộc dự án</span>
         </h2>
 
-        {!project.conversations || project.conversations.length === 0 ? (
+        {!Array.isArray(project.conversations) || project.conversations.length === 0 ? (
           <div className="p-8 text-center rounded-3xl bg-white/70 dark:bg-[#0c0e17]/70 border border-slate-200 dark:border-indigo-950/60">
             <p className="text-xs text-slate-500 mb-3">
               Chưa có đoạn chat nào trong dự án này.

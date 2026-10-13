@@ -39,7 +39,7 @@ export default function MyStoriesView() {
         const res = await fetch(`/api/users/${user.id}`);
         if (res.ok) {
           const data = await res.json();
-          if (data.conversations) {
+          if (Array.isArray(data.conversations)) {
             const mapped: StoryItem[] = data.conversations.map((c: any) => ({
               id: c.id,
               botId: c.botId,
@@ -56,6 +56,8 @@ export default function MyStoriesView() {
               ),
             }));
             setStories(mapped);
+          } else {
+            setStories([]);
           }
         }
       } catch (err) {
