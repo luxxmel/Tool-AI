@@ -60,7 +60,7 @@ CHỈ DẪN DỰ \xc1N CHO AI:
 ${a.systemPrompt}
 
 [CHỈ DẪN CHUNG CỦA TRỢ L\xdd]:
-${J}`)}"en"===r?J+=`
+${J}`)}if("en"===r?J+=`
 
 [STRICT LANGUAGE REQUIREMENT - ENGLISH ONLY]:
 The user interface language is currently set to ENGLISH.
@@ -68,7 +68,10 @@ You MUST provide your entire response in fluent, natural ENGLISH.
 Never reply in Vietnamese, even if previous messages or character prompts were written in Vietnamese. All dialogues, narrative descriptions, instructions, roleplay, and responses must be in English.`:J+=`
 
 [CHỈ DẪN NG\xd4N NGỮ]:
-Ng\xf4n ngữ hiển thị của hệ thống l\xe0 TIẾNG VIỆT. H\xe3y phản hồi ho\xe0n to\xe0n bằng tiếng Việt tự nhi\xean, lịch thiệp v\xe0 chuẩn mực.`;let K=F;if(G.length>0){let a=G.map(a=>`![H\xecnh ảnh đ\xednh k\xe8m](${a})`).join("\n\n");K=F?`${a}
+Ng\xf4n ngữ hiển thị của hệ thống l\xe0 TIẾNG VIỆT. H\xe3y phản hồi ho\xe0n to\xe0n bằng tiếng Việt tự nhi\xean, lịch thiệp v\xe0 chuẩn mực.`,D)try{let a=await f.z.project.findUnique({where:{id:D}});a?.systemPrompt&&(J+=`
+
+[CHỈ DẪN CHUY\xcaN BIỆT D\xc0NH RI\xcaNG CHO DỰ \xc1N "${a.name}"]:
+${a.systemPrompt}`)}catch{}let K=F;if(G.length>0){let a=G.map(a=>`![H\xecnh ảnh đ\xednh k\xe8m](${a})`).join("\n\n");K=F?`${a}
 
 ${F}`:a}try{await f.z.message.create({data:{conversationId:C,sender:"USER",content:K}}),await f.z.conversation.update({where:{id:C},data:{updatedAt:new Date}})}catch(a){console.warn("Lỗi khi lưu tin nhắn người d\xf9ng v\xe0o DB:",a)}let L=G.length>0?G[0]:void 0;if(!L&&Array.isArray(m))for(let a=m.length-1;a>=0;a--){let b=m[a];if(Array.isArray(b.images)&&b.images.length>0){L=b.images[b.images.length-1];break}if("string"==typeof b.content){let a=b.content.match(/(?:\/uploads\/[^\s\)\"]+|data:image\/[^\s\)\"]+|https?:\/\/[^\s\)\"]+\.(?:png|jpe?g|webp|gif))/i);if(a){L=a[0];break}}}let M=(0,j.A)(F,L?[L]:G,d);if(M.isImageRequest)try{console.log(`[Chat Image Engine] K\xedch hoạt chế độ: ${M.type} | Prompt: "${M.cleanPrompt}" | HasRef: ${!!L}`);let a=await (0,j.b)({prompt:M.cleanPrompt,referenceImage:L,botName:B.name,botId:d}),b=n(a.markdownContent),c=new TextEncoder,e=C;f.z.message.create({data:{conversationId:e,sender:"ASSISTANT",content:b}}).catch(()=>{});let g=new ReadableStream({async start(a){for(let d=0;d<b.length;d+=20){let e=b.slice(d,d+20);a.enqueue(c.encode(e)),await new Promise(a=>setTimeout(a,4))}a.close()}});return new Response(g,{headers:{"Content-Type":"text/plain; charset=utf-8","X-Remaining-Credits":String(w?999999:A.credits),"X-Conversation-Id":e,"X-AI-Model-Id":"creative","X-AI-Model":encodeURIComponent(B.name||"Họa Sĩ AI"),"X-Generated-Image":encodeURIComponent(a.imageUrl)}})}catch(a){console.error("Lỗi khi xử l\xfd tạo/sửa h\xecnh ảnh trong chat:",a)}let N={hasExtractedContent:!1,enrichedPrompt:F,extractedItems:[]};/https?:\/\/[^\s]+/i.test(F)&&(N=await (0,l.C)(F,d)).hasExtractedContent&&(J+=`
 

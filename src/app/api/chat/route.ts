@@ -700,6 +700,19 @@ Never reply in Vietnamese, even if previous messages or character prompts were w
 Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồi hoàn toàn bằng tiếng Việt tự nhiên, lịch thiệp và chuẩn mực.`;
     }
 
+    // Nếu cuộc trò chuyện thuộc về một Dự án, tích hợp chỉ dẫn chuyên biệt của Dự án
+    if (targetProjectId) {
+      try {
+        const projectObj = await prisma.project.findUnique({
+          where: { id: targetProjectId },
+        });
+        if (projectObj?.systemPrompt) {
+          effectiveSystemPrompt += `\n\n[CHỈ DẪN CHUYÊN BIỆT DÀNH RIÊNG CHO DỰ ÁN "${projectObj.name}"]:
+${projectObj.systemPrompt}`;
+        }
+      } catch {}
+    }
+
     // Định dạng nội dung lưu vào DB: kèm markdown ảnh để xem lại lịch sử
     let dbContent = userPromptText;
     if (userImages.length > 0) {

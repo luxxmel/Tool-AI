@@ -676,6 +676,7 @@ export default function HomeChatView({
               botId: targetBotId,
               botName: selectedAssistant?.name || "Biết Tuốt AI",
               botAvatar: selectedAssistant?.avatar,
+              projectId: projectId || undefined,
               messagesCount: newHistory.length,
               updatedAt: new Date().toISOString(),
             };

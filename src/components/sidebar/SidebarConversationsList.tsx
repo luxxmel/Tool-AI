@@ -22,7 +22,7 @@ export interface ProjectSummary {
   description?: string;
   icon: string;
   color: string;
-  conversations: { id: string }[];
+  conversations: { id: string; title?: string }[];
 }
 
 interface SidebarConversationsListProps {
@@ -56,6 +56,15 @@ export default function SidebarConversationsList({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedProjectIds, setExpandedProjectIds] = useState<Record<string, boolean>>({});
+
+  const toggleExpandProject = (e: React.MouseEvent, projId: string) => {
+    e.stopPropagation();
+    setExpandedProjectIds((prev) => ({
+      ...prev,
+      [projId]: !prev[projId],
+    }));
+  };
 
   const filteredConversations = useMemo(() => {
     if (!searchQuery.trim()) return conversations;
@@ -106,10 +115,10 @@ export default function SidebarConversationsList({
         }
       } catch {}
 
-      // Hợp nhất serverConvs và localConvs không bị lặp ID, loại bỏ triệt để các ID đã xóa
+      // Hợp nhất serverConvs và localConvs không bị lặp ID, loại bỏ triệt để các ID đã xóa hoặc thuộc về dự án riêng
       const map = new Map<string, ConversationSummary>();
-      [...serverConvs, ...localConvs].forEach((item) => {
-        if (item && item.id && !deletedIds.has(item.id)) {
+      [...serverConvs, ...localConvs].forEach((item: any) => {
+        if (item && item.id && !deletedIds.has(item.id) && !item.projectId) {
           const existing = map.get(item.id);
           if (!existing || new Date(item.updatedAt) > new Date(existing.updatedAt)) {
             map.set(item.id, item);
@@ -393,41 +402,90 @@ export default function SidebarConversationsList({
           ) : (
             filteredProjects.map((proj) => {
               const isActive = activeProjectId === proj.id;
+              const isExpanded = expandedProjectIds[proj.id] || isActive;
+              const projConvs = Array.isArray(proj.conversations) ? proj.conversations : [];
+
               return (
-                <div
-                  key={proj.id}
-                  onClick={() => onSelectProject?.(proj.id)}
-                  onMouseEnter={() => setHoveredId(proj.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <span className="text-sm shrink-0">{proj.icon || "📁"}</span>
-                    <span className="truncate text-left font-medium">{proj.name}</span>
+                <div key={proj.id} className="space-y-1">
+                  <div
+                    onClick={() => onSelectProject?.(proj.id)}
+                    onMouseEnter={() => setHoveredId(proj.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                    className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="text-sm shrink-0">{proj.icon || "📁"}</span>
+                      <span className="truncate text-left font-medium">{proj.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0 ml-1">
+                      {projConvs.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={(e) => toggleExpandProject(e, proj.id)}
+                          className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                          title={isExpanded ? "Thu gọn" : "Xem các đoạn chat"}
+                        >
+                          <svg
+                            className={`w-3 h-3 transform transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      )}
+
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
+                        {projConvs.length}
+                      </span>
+
+                      {hoveredId === proj.id && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteProject(e, proj.id)}
+                          title={t("sidebar.delete_project")}
+                          className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0 ml-1">
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
-                      {proj.conversations?.length || 0}
-                    </span>
-
-                    {hoveredId === proj.id && (
-                      <button
-                        type="button"
-                        onClick={(e) => handleDeleteProject(e, proj.id)}
-                        title={t("sidebar.delete_project")}
-                        className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
+                  {/* Danh sách các đoạn chat con thuộc dự án */}
+                  {isExpanded && projConvs.length > 0 && (
+                    <div className="pl-4 pr-1 py-0.5 space-y-0.5 border-l-2 border-indigo-200/60 dark:border-indigo-900/60 ml-3.5">
+                      {projConvs.map((conv) => {
+                        const isConvActive = activeConversationId === conv.id;
+                        return (
+                          <div
+                            key={conv.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectConversation(conv.id);
+                            }}
+                            className={`w-full flex items-center justify-between px-2 py-1 rounded-lg text-[11px] transition-all cursor-pointer ${
+                              isConvActive
+                                ? "bg-indigo-100/80 dark:bg-indigo-900/50 text-indigo-700 dark:text-cyan-300 font-semibold"
+                                : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                            }`}
+                          >
+                            <span className="truncate text-left flex-1">
+                              💬 {conv.title || "Đoạn chat dự án"}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })
