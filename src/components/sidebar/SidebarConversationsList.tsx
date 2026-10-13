@@ -54,6 +54,7 @@ export default function SidebarConversationsList({
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredConversations = useMemo(() => {
