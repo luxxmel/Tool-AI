@@ -60,7 +60,7 @@ export default function NotificationToast() {
   if (!toast) return null;
 
   return (
-    <div className="fixed top-5 right-5 z-[9999] max-w-sm w-full bg-white dark:bg-[#151722] border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-4 flex items-start gap-3 animate-in slide-in-from-top-4 fade-in duration-300">
+    <div className="fixed bottom-5 right-5 z-[9999] max-w-sm w-full bg-white dark:bg-[#151722] border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-4 flex items-start gap-3 animate-in slide-in-from-bottom-4 fade-in duration-300">
       <div className="w-10 h-10 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-cyan-400 flex items-center justify-center text-xl shrink-0">
         {toast.emoji}
       </div>
