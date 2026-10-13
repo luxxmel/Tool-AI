@@ -180,6 +180,12 @@
       "namedRegex": "^/api/admin/credits(?:/)?$"
     },
     {
+      "page": "/api/admin/revenue",
+      "regex": "^/api/admin/revenue(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/revenue(?:/)?$"
+    },
+    {
       "page": "/api/announcements",
       "regex": "^/api/announcements(?:/)?$",
       "routeKeys": {},

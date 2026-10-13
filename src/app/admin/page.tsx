@@ -67,8 +67,38 @@ export default function AdminCmsPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { showAlert, showConfirm, showError } = usePopup();
 
-  // Admin Tab: "users" | "admins" | "posts" | "credits" | "announcements" | "bots" | "support"
-  const [adminTab, setAdminTab] = useState<"users" | "admins" | "posts" | "credits" | "announcements" | "bots" | "support">("users");
+  // Admin Tab: "revenue" | "users" | "admins" | "posts" | "credits" | "announcements" | "bots" | "support"
+  const [adminTab, setAdminTab] = useState<"revenue" | "users" | "admins" | "posts" | "credits" | "announcements" | "bots" | "support">("revenue");
+
+  // Revenue State
+  const [revenueData, setRevenueData] = useState<{
+    summary: {
+      totalRevenue: number;
+      totalOrders: number;
+      todayRevenue: number;
+      todayOrdersCount: number;
+      thisMonthRevenue: number;
+      thisMonthOrdersCount: number;
+      thisYearRevenue: number;
+      thisYearOrdersCount: number;
+    };
+    dailyStats: Array<{ revenue: number; count: number; date: string }>;
+    monthlyStats: Array<{ revenue: number; count: number; month: string }>;
+    yearlyStats: Array<{ revenue: number; count: number; year: string }>;
+    recentOrders: Array<{
+      id: string;
+      orderCode: number;
+      amount: number;
+      credits: number;
+      packageName: string;
+      paymentMethod: string;
+      transactionId: string | null;
+      createdAt: string;
+      user: { id: string; name: string | null; email: string; avatar: string | null };
+    }>;
+  } | null>(null);
+  const [isRevenueLoading, setIsRevenueLoading] = useState(false);
+  const [revenuePeriodFilter, setRevenuePeriodFilter] = useState<"all" | "daily" | "monthly" | "yearly">("all");
 
   // Users State
   const [users, setUsers] = useState<CmsUser[]>([]);
@@ -282,12 +312,29 @@ export default function AdminCmsPage() {
     }
   };
 
+  const fetchRevenue = useCallback(async () => {
+    if (!user) return;
+    setIsRevenueLoading(true);
+    try {
+      const res = await fetch(`/api/admin/revenue?adminId=${user.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setRevenueData(data);
+      }
+    } catch (err) {
+      console.error("Lỗi khi tải dữ liệu doanh thu:", err);
+    } finally {
+      setIsRevenueLoading(false);
+    }
+  }, [user]);
+
   useEffect(() => {
     fetchUsers();
     fetchPosts();
     fetchSupportTickets();
     fetchAnnouncements();
-  }, [fetchSupportTickets, fetchAnnouncements]);
+    fetchRevenue();
+  }, [fetchSupportTickets, fetchAnnouncements, fetchRevenue]);
 
   useEffect(() => {
     if (adminTab === "support") {
@@ -296,7 +343,10 @@ export default function AdminCmsPage() {
     if (adminTab === "announcements") {
       fetchAnnouncements();
     }
-  }, [adminTab, fetchSupportTickets, fetchAnnouncements]);
+    if (adminTab === "revenue") {
+      fetchRevenue();
+    }
+  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchRevenue]);
 
   // ── Credit toast helper ─────────────────────────────────────────────────────
   const showToast = useCallback((msg: string) => {
@@ -711,22 +761,24 @@ export default function AdminCmsPage() {
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/90 p-1 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-[calc(100vw-230px)] sm:max-w-none scrollbar-none">
             {(
               [
+                { key: "revenue", label: "📊 Doanh thu", count: null, color: "emerald" },
                 { key: "users", label: "👥 Người dùng", count: totalMembers, color: "indigo" },
                 { key: "admins", label: "🛡️ Quản trị viên", count: totalAdmins, color: "purple" },
                 { key: "posts", label: "📝 Bài viết", count: totalPosts, color: "rose" },
-                { key: "credits", label: "💰 Credits", count: null, color: "emerald" },
-                { key: "announcements", label: "🔔 Thông báo", count: null, color: "amber" },
+                { key: "credits", label: "💰 Credits", count: null, color: "amber" },
+                { key: "announcements", label: "🔔 Thông báo", count: null, color: "yellow" },
                 { key: "support", label: "💬 Hỗ trợ", count: supportTickets.length, color: "cyan" },
                 { key: "bots", label: "🤖 Nhân vật", count: allBots.length, color: "violet" },
               ] as const
             ).map(({ key, label, count, color }) => {
               const active = adminTab === key;
               const colorMap: Record<string, string> = {
+                emerald: "text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm",
                 indigo: "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm",
                 purple: "text-purple-600 dark:text-purple-400 bg-white dark:bg-slate-800 shadow-sm",
                 rose: "text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-800 shadow-sm",
-                emerald: "text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm",
                 amber: "text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm",
+                yellow: "text-yellow-600 dark:text-yellow-400 bg-white dark:bg-slate-800 shadow-sm",
                 cyan: "text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-800 shadow-sm",
                 violet: "text-violet-600 dark:text-violet-400 bg-white dark:bg-slate-800 shadow-sm",
               };
@@ -783,6 +835,350 @@ export default function AdminCmsPage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 space-y-8">
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            TAB 0: REVENUE MANAGEMENT (DOANH THU THEO NGÀY, THÁNG, NĂM)
+        ══════════════════════════════════════════════════════════════════════ */}
+        {adminTab === "revenue" && (
+          <div className="space-y-6">
+            {/* Header + Action */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>📊 Thống kê Doanh thu Hệ thống</span>
+                </h1>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Theo dõi biến động dòng tiền thanh toán tự động qua PayOS (VietQR, Thẻ) theo Ngày, Tháng, Năm
+                </p>
+              </div>
+
+              <button
+                onClick={fetchRevenue}
+                disabled={isRevenueLoading}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer w-fit"
+              >
+                <span>{isRevenueLoading ? "🔄 Đang tải..." : "🔄 Cập nhật số liệu"}</span>
+              </button>
+            </div>
+
+            {/* 4 Cards Thống Kê Tổng Quan */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Hôm nay */}
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    Hôm nay
+                  </span>
+                  <span className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">
+                    📅
+                  </span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                  {(revenueData?.summary.todayRevenue || 0).toLocaleString("vi-VN")} ₫
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <strong>{revenueData?.summary.todayOrdersCount || 0}</strong> đơn hàng thành công
+                </div>
+              </div>
+
+              {/* Tháng này */}
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    Tháng này
+                  </span>
+                  <span className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm font-bold">
+                    🗓️
+                  </span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-indigo-600 dark:text-indigo-400 font-mono">
+                  {(revenueData?.summary.thisMonthRevenue || 0).toLocaleString("vi-VN")} ₫
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <strong>{revenueData?.summary.thisMonthOrdersCount || 0}</strong> đơn hàng thành công
+                </div>
+              </div>
+
+              {/* Năm này */}
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    Năm nay
+                  </span>
+                  <span className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm font-bold">
+                    📈
+                  </span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 font-mono">
+                  {(revenueData?.summary.thisYearRevenue || 0).toLocaleString("vi-VN")} ₫
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <strong>{revenueData?.summary.thisYearOrdersCount || 0}</strong> đơn hàng thành công
+                </div>
+              </div>
+
+              {/* Toàn thời gian */}
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    Tổng tích lũy
+                  </span>
+                  <span className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm font-bold">
+                    💎
+                  </span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 font-mono">
+                  {(revenueData?.summary.totalRevenue || 0).toLocaleString("vi-VN")} ₫
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Tổng <strong>{revenueData?.summary.totalOrders || 0}</strong> giao dịch đã thanh toán
+                </div>
+              </div>
+            </div>
+
+            {/* Chi tiết theo Ngày / Tháng / Năm */}
+            <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>📉 Phân tích doanh thu định kỳ</span>
+                </h3>
+
+                {/* Filter nút bấm */}
+                <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl">
+                  <button
+                    onClick={() => setRevenuePeriodFilter("all")}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      revenuePeriodFilter === "all"
+                        ? "bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    Tất cả
+                  </button>
+                  <button
+                    onClick={() => setRevenuePeriodFilter("daily")}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      revenuePeriodFilter === "daily"
+                        ? "bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    Theo ngày
+                  </button>
+                  <button
+                    onClick={() => setRevenuePeriodFilter("monthly")}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      revenuePeriodFilter === "monthly"
+                        ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    Theo tháng
+                  </button>
+                  <button
+                    onClick={() => setRevenuePeriodFilter("yearly")}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      revenuePeriodFilter === "yearly"
+                        ? "bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    Theo năm
+                  </button>
+                </div>
+              </div>
+
+              {/* Bảng phân tích chi tiết */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Theo ngày */}
+                {(revenuePeriodFilter === "all" || revenuePeriodFilter === "daily") && (
+                  <div className={`space-y-3 ${revenuePeriodFilter === "daily" ? "md:col-span-3" : ""}`}>
+                    <div className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                      <span>📅 Theo ngày gần nhất</span>
+                      <span className="text-[10px] text-slate-400 font-normal">
+                        {revenueData?.dailyStats.length || 0} ngày có phát sinh
+                      </span>
+                    </div>
+                    <div className="max-h-72 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+                      {(!revenueData?.dailyStats || revenueData.dailyStats.length === 0) ? (
+                        <p className="text-xs text-slate-400 italic py-4 text-center">Chưa có giao dịch theo ngày</p>
+                      ) : (
+                        revenueData.dailyStats.map((d) => (
+                          <div
+                            key={d.date}
+                            className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 text-xs"
+                          >
+                            <div>
+                              <div className="font-semibold text-slate-800 dark:text-slate-200">{d.date}</div>
+                              <div className="text-[10px] text-slate-400">{d.count} giao dịch</div>
+                            </div>
+                            <div className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                              +{d.revenue.toLocaleString("vi-VN")} ₫
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Theo tháng */}
+                {(revenuePeriodFilter === "all" || revenuePeriodFilter === "monthly") && (
+                  <div className={`space-y-3 ${revenuePeriodFilter === "monthly" ? "md:col-span-3" : ""}`}>
+                    <div className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                      <span>🗓️ Theo từng tháng</span>
+                      <span className="text-[10px] text-slate-400 font-normal">
+                        {revenueData?.monthlyStats.length || 0} tháng có doanh thu
+                      </span>
+                    </div>
+                    <div className="max-h-72 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+                      {(!revenueData?.monthlyStats || revenueData.monthlyStats.length === 0) ? (
+                        <p className="text-xs text-slate-400 italic py-4 text-center">Chưa có giao dịch theo tháng</p>
+                      ) : (
+                        revenueData.monthlyStats.map((m) => (
+                          <div
+                            key={m.month}
+                            className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 text-xs"
+                          >
+                            <div>
+                              <div className="font-semibold text-slate-800 dark:text-slate-200">Tháng {m.month}</div>
+                              <div className="text-[10px] text-slate-400">{m.count} giao dịch</div>
+                            </div>
+                            <div className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                              +{m.revenue.toLocaleString("vi-VN")} ₫
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Theo năm */}
+                {(revenuePeriodFilter === "all" || revenuePeriodFilter === "yearly") && (
+                  <div className={`space-y-3 ${revenuePeriodFilter === "yearly" ? "md:col-span-3" : ""}`}>
+                    <div className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                      <span>📈 Theo từng năm</span>
+                      <span className="text-[10px] text-slate-400 font-normal">
+                        {revenueData?.yearlyStats.length || 0} năm hoạt động
+                      </span>
+                    </div>
+                    <div className="max-h-72 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+                      {(!revenueData?.yearlyStats || revenueData.yearlyStats.length === 0) ? (
+                        <p className="text-xs text-slate-400 italic py-4 text-center">Chưa có giao dịch theo năm</p>
+                      ) : (
+                        revenueData.yearlyStats.map((y) => (
+                          <div
+                            key={y.year}
+                            className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 text-xs"
+                          >
+                            <div>
+                              <div className="font-semibold text-slate-800 dark:text-slate-200">Năm {y.year}</div>
+                              <div className="text-[10px] text-slate-400">{y.count} giao dịch</div>
+                            </div>
+                            <div className="font-mono font-bold text-purple-600 dark:text-purple-400">
+                              +{y.revenue.toLocaleString("vi-VN")} ₫
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Bảng Danh Sách Giao Dịch Đã Thanh Toán Gần Nhất */}
+            <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden">
+              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>🧾 Lịch sử giao dịch thanh toán thành công</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Ghi nhận trực tiếp khi khách hàng quét VietQR hoặc thanh toán PayOS
+                  </p>
+                </div>
+                <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+                  {revenueData?.recentOrders.length || 0} đơn gần nhất
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50/80 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 uppercase font-semibold border-b border-slate-100 dark:border-slate-800">
+                    <tr>
+                      <th className="py-3 px-4">Mã Đơn</th>
+                      <th className="py-3 px-4">Khách hàng</th>
+                      <th className="py-3 px-4">Gói nạp</th>
+                      <th className="py-3 px-4">Số tiền</th>
+                      <th className="py-3 px-4">Credits</th>
+                      <th className="py-3 px-4">Cổng</th>
+                      <th className="py-3 px-4">Thời gian</th>
+                      <th className="py-3 px-4 text-center">Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                    {(!revenueData?.recentOrders || revenueData.recentOrders.length === 0) ? (
+                      <tr>
+                        <td colSpan={8} className="py-8 text-center text-slate-400 italic">
+                          Chưa có đơn hàng thanh toán thành công nào trong hệ thống.
+                        </td>
+                      </tr>
+                    ) : (
+                      revenueData.recentOrders.map((order) => (
+                        <tr key={order.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                            #{order.orderCode}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center shrink-0 overflow-hidden">
+                                {order.user.avatar ? (
+                                  <img src={order.user.avatar} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  order.user.email.slice(0, 2).toUpperCase()
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-slate-800 dark:text-slate-200 truncate">
+                                  {order.user.name || order.user.email.split("@")[0]}
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate max-w-[150px]">
+                                  {order.user.email}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 font-medium text-slate-700 dark:text-slate-300">
+                            {order.packageName}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            +{order.amount.toLocaleString("vi-VN")} ₫
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-semibold text-amber-500">
+                            +{order.credits.toLocaleString()} 🪙
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-500 uppercase text-[10px] font-mono">
+                            {order.paymentMethod}
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400">
+                            {new Date(order.createdAt).toLocaleString("vi-VN")}
+                          </td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+                              ✓ Đã thanh toán
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ══════════════════════════════════════════════════════════════════════
             TAB 1: USERS MANAGEMENT (THÀNH VIÊN & VIP - TÁCH BIỆT ADMIN)
