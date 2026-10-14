@@ -20,55 +20,65 @@ export async function GET(
       },
     });
 
-    if (!bot) {
-      const { ALL_ASSISTANTS_MAP } = await import("@/data/aiData");
-      const staticBot = ALL_ASSISTANTS_MAP[botId];
-      if (staticBot) {
-        bot = await prisma.bot.upsert({
-          where: { id: botId },
-          update: {
-            name: staticBot.name,
-            avatar: staticBot.avatar,
-            description: staticBot.description,
-            systemPrompt: staticBot.systemPrompt || staticBot.description,
-          },
-          create: {
-            id: staticBot.id,
-            name: staticBot.name,
-            avatar: staticBot.avatar,
-            description: staticBot.description,
-            systemPrompt: staticBot.systemPrompt || staticBot.description,
-          },
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-            description: true,
-            systemPrompt: true,
-            createdAt: true,
-          },
-        });
+    const { ALL_ASSISTANTS_MAP } = await import("@/data/aiData");
+    const staticBot = ALL_ASSISTANTS_MAP[botId];
+
+    if (staticBot) {
+      // Tự động đồng bộ chuẩn xác từ ALL_ASSISTANTS_MAP vào DB nếu DB đang chứa thông tin cũ
+      if (
+        !bot ||
+        bot.name !== staticBot.name ||
+        bot.systemPrompt !== (staticBot.systemPrompt || staticBot.description) ||
+        bot.avatar !== staticBot.avatar
+      ) {
+        try {
+          bot = await prisma.bot.upsert({
+            where: { id: botId },
+            update: {
+              name: staticBot.name,
+              avatar: staticBot.avatar,
+              description: staticBot.description,
+              systemPrompt: staticBot.systemPrompt || staticBot.description,
+            },
+            create: {
+              id: staticBot.id,
+              name: staticBot.name,
+              avatar: staticBot.avatar,
+              description: staticBot.description,
+              systemPrompt: staticBot.systemPrompt || staticBot.description,
+            },
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+              description: true,
+              systemPrompt: true,
+              createdAt: true,
+            },
+          });
+        } catch {}
       }
     }
 
-    if (!bot) {
+    if (!bot && !staticBot) {
       return NextResponse.json(
         { error: `Không tìm thấy thông tin bot: ${botId}` },
         { status: 404 }
       );
     }
 
-    const { ALL_ASSISTANTS_MAP } = await import("@/data/aiData");
-    const staticBot = ALL_ASSISTANTS_MAP[botId];
-
     return NextResponse.json({
-      ...bot,
+      ...(bot || {}),
+      name: staticBot?.name || bot?.name,
+      avatar: staticBot?.avatar || bot?.avatar,
+      description: staticBot?.description || bot?.description,
+      systemPrompt: staticBot?.systemPrompt || bot?.systemPrompt,
       badge: staticBot?.badge || "Trợ lý AI",
       personality: staticBot?.personality || "",
       tagline: staticBot?.tagline || "",
-      greeting: staticBot?.greeting || `Xin chào! Tôi là ${bot.name}. Tôi có thể giúp gì cho bạn hôm nay?`,
+      greeting: staticBot?.greeting || `Xin chào! Tôi là ${staticBot?.name || bot?.name}. Tôi có thể giúp gì cho bạn hôm nay?`,
       suggestedPrompts: staticBot?.suggestedPrompts || [
-        `Xin chào ${bot.name}, bạn có thể giúp gì cho tôi?`,
+        `Xin chào ${staticBot?.name || bot?.name}, bạn có thể giúp gì cho tôi?`,
         "Hãy giới thiệu về bản thân và phong cách của bạn",
         "Cho tôi một lời khuyên hữu ích hôm nay",
       ],

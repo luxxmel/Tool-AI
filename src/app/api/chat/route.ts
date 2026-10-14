@@ -42,6 +42,19 @@ function sanitizeBrandLeaks(text: string): string {
     .replace(/Omni\s*AI/gi, "Biết Tuốt AI");
 }
 
+// Hàm làm sạch đặc quyền theo nhân vật (chặn đứng hallucination danh tính)
+function sanitizeBotPersonaLeaks(text: string, botId: string): string {
+  if (!text) return text;
+  let result = sanitizeBrandLeaks(text);
+  if (botId === "finance-advisor" || botId.includes("finance")) {
+    result = result
+      .replace(/(?:Tôi là|Mình là)\s+(?:\*\*)?Warren(?:\s+Buffett)?(?:\*\*)?/gi, "Tôi là Elon Musk")
+      .replace(/Warren\s+Buffett/gi, "Elon Musk")
+      .replace(/\bWarren\b/gi, "Elon Musk");
+  }
+  return result;
+}
+
 // Hàm sinh câu trả lời Persona sống động theo đúng tính cách bot khi chưa có API Key hoặc LLM lỗi
 function generatePersonaFallback(
   botName: string,
@@ -365,15 +378,16 @@ function generatePersonaFallback(
       `✨ **3. Lời khuyên vũ trụ:** Mọi cuộc gặp gỡ và thử thách đều mang một bài học linh hồn giúp bạn trưởng thành và hạnh phúc hơn.`;
   }
 
-  // 22. Cố vấn Tài chính · Warren
-  if (botName.includes("Tài chính") || botPrompt.includes("Warren") || botName.includes("Warren")) {
-    return `Chào bạn, Warren - Cố vấn Tài chính cá nhân đây! Về vấn đề "${userMessage}":\n\n` +
-      `📊 **1. Nguyên tắc vàng:** "Đừng bao giờ để mất tiền, và đừng chi tiêu nhiều hơn số tiền bạn làm ra."\n\n` +
-      `💰 **2. Phân bổ ngân sách theo công thức 50/30/20:**\n` +
-      `- **50% Thiết yếu:** Tiền nhà, ăn uống, hóa đơn sinh hoạt cơ bản.\n` +
-      `- **30% Linh hoạt:** Học tập, giải trí lành mạnh, giao tiếp xã hội.\n` +
-      `- **20% Tích sản & Quỹ khẩn cấp:** Xây dựng quỹ dự phòng 3-6 tháng trước khi nghĩ đến đầu tư sinh lời.\n\n` +
-      `💡 Hãy kỷ luật ghi chép dòng tiền mỗi ngày để làm chủ tự do tài chính bạn nhé!`;
+  // 22. Cố vấn Tài chính · Elon Musk
+  if (botName.includes("Tài chính") || botPrompt.includes("Elon Musk") || botName.includes("Elon") || botPrompt.includes("First Principles")) {
+    return `Chào bạn, tôi là Elon Musk – Cố vấn Tài chính và Chiến lược Đầu tư của bạn! Về vấn đề "${userMessage}":\n\n` +
+      `🚀 **1. Tư duy theo Nguyên lý Đầu tiên (First Principles):**\n` +
+      `Bóc tách bài toán tài chính về các sự thật cốt lõi nhất, không sao chép lối mòn của đám đông. Tập trung vào việc gia tăng giá trị thực và loại bỏ triệt để các chi phí vô bổ.\n\n` +
+      `📊 **2. Tối ưu hóa dòng tiền và phân bổ vốn:**\n` +
+      `- **Dòng tiền chủ động:** Giữ vững nguồn thu nhập cốt lõi và tái đầu tư vào kỹ năng chuyên sâu.\n` +
+      `- **Quỹ an toàn & Linh hoạt:** Dự phòng thanh khoản để chủ động nắm bắt cơ hội khi thị trường biến động.\n` +
+      `- **Đầu tư vào giá trị dài hạn:** Tập trung vào các công nghệ tương lai và tài sản có tiềm năng tăng trưởng đột phá, tránh các bẫy đầu cơ ngắn hạn.\n\n` +
+      `💡 Khi điều gì đó đủ quan trọng, bạn hãy kiên định thực hiện nó ngay cả khi hoàn cảnh khó khăn nhất!`;
   }
 
   // 23. Phim & Sách
@@ -510,10 +524,17 @@ export async function POST(request: NextRequest) {
       });
     } catch {}
 
-    if (!bot || !bot.systemPrompt) {
-      const { ALL_ASSISTANTS_MAP } = await import("@/data/aiData");
-      const staticBot = ALL_ASSISTANTS_MAP[botId];
-      if (staticBot) {
+    const { ALL_ASSISTANTS_MAP } = await import("@/data/aiData");
+    const staticBot = ALL_ASSISTANTS_MAP[botId];
+
+    if (staticBot) {
+      // Nếu có định nghĩa chuẩn trong code, luôn ưu tiên định nghĩa chuẩn và cập nhật DB nếu lệch
+      if (
+        !bot ||
+        !bot.systemPrompt ||
+        bot.name !== staticBot.name ||
+        bot.systemPrompt !== (staticBot.systemPrompt || staticBot.description)
+      ) {
         try {
           bot = await prisma.bot.upsert({
             where: { id: botId },
@@ -532,25 +553,24 @@ export async function POST(request: NextRequest) {
             },
           });
         } catch {}
-
-        if (!bot || !bot.systemPrompt) {
-          bot = {
-            id: staticBot.id,
-            name: staticBot.name,
-            avatar: staticBot.avatar,
-            description: staticBot.description,
-            systemPrompt: staticBot.systemPrompt || staticBot.description,
-          };
-        }
-      } else {
-        bot = {
-          id: botId,
-          name: "Biết Tuốt AI",
-          avatar: "/icons/icon-192x192.png",
-          description: "Trợ lý trí tuệ nhân tạo toàn năng",
-          systemPrompt: "Bạn là Biết Tuốt AI, trợ lý trí tuệ nhân tạo toàn năng độc quyền của nền tảng Biết Tuốt AI.",
-        };
       }
+
+      bot = {
+        ...(bot || {}),
+        id: staticBot.id,
+        name: staticBot.name,
+        avatar: staticBot.avatar,
+        description: staticBot.description,
+        systemPrompt: staticBot.systemPrompt || staticBot.description,
+      };
+    } else if (!bot || !bot.systemPrompt) {
+      bot = {
+        id: botId,
+        name: "Biết Tuốt AI",
+        avatar: "/icons/icon-192x192.png",
+        description: "Trợ lý trí tuệ nhân tạo toàn năng",
+        systemPrompt: "Bạn là Biết Tuốt AI, trợ lý trí tuệ nhân tạo toàn năng độc quyền của nền tảng Biết Tuốt AI.",
+      };
     }
 
     // 4. Tìm hoặc tạo Conversation
@@ -700,6 +720,16 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
 [QUY TẮC BẮT BUỘC DÀNH CHO GIẢNG VIÊN TIẾNG ANH]:
 1. Nếu người dùng gửi ảnh bài tập tiếng Anh: Đọc kỹ câu hỏi, chỉ ra đáp án đúng kèm giải thích ngữ pháp/từ vựng chi tiết.
 2. Sửa lỗi chính tả, ngữ pháp và cung cấp phiên âm IPA chuẩn.`;
+      }
+
+      // Quy tắc đặc biệt cho Cố Vấn Tài Chính - Elon Musk:
+      if (botId === "finance-advisor" || (bot.name && bot.name.includes("Tài chính"))) {
+        effectiveSystemPrompt += `
+
+[QUY TẮC BẮT BUỘC DÀNH CHO CỐ VẤN TÀI CHÍNH - ELON MUSK]:
+1. ĐỊNH DANH 100% LÀ ELON MUSK: Bạn là Elon Musk, doanh nhân công nghệ, nhà sáng lập Tesla, SpaceX, xAI và là Cố vấn Tài chính Chiến lược. TUYỆT ĐỐI KHÔNG BAO GIỜ tự xưng là Warren, Warren Buffett hay bất kỳ ai khác.
+2. PHONG CÁCH TƯ DUY NGUYÊN LÝ ĐẦU TIÊN (FIRST PRINCIPLES): Bóc tách bài toán tài chính về các yếu tố cơ bản nhất, thẳng thắn, quyết đoán, thực chiến, không rập khuôn sáo rỗng.
+3. TẬP TRUNG TỐI ƯU HÓA DÒNG TIỀN & ĐẦU TƯ CÔNG NGHỆ DÀI HẠN: Cắt giảm chi phí lãng phí, tập trung tạo ra giá trị đột phá.`;
       }
 
       // Quy tắc đặc biệt cho nhân vật nhập vai / truyện / người yêu / trợ lý: Tập trung đối thoại sâu sắc & cuốn hút
@@ -974,7 +1004,7 @@ ${projectObj.systemPrompt}`;
               if (chunk) {
                 hasSentAnyChunk = true;
                 accumulatedText += chunk;
-                controller.enqueue(textEncoder.encode(sanitizeBrandLeaks(chunk)));
+                controller.enqueue(textEncoder.encode(sanitizeBotPersonaLeaks(chunk, botId)));
               }
             }
 
@@ -990,14 +1020,15 @@ ${projectObj.systemPrompt}`;
         // Nếu tất cả AI models đều lỗi (502, rate limit, mạng chậm, type validation...) hoặc chưa gửi được chunk nào
         if (!hasSentAnyChunk || !accumulatedText.trim()) {
           console.log(`[Persona Fallback] Kích hoạt câu trả lời độc bản cho bot: ${bot.name}`);
-          const fallbackText = sanitizeBrandLeaks(
+          const fallbackText = sanitizeBotPersonaLeaks(
             generatePersonaFallback(
               bot.name,
               effectiveSystemPrompt,
               userPromptText,
               urlEnrichment.extractedItems,
               language
-            )
+            ),
+            botId
           );
           accumulatedText = fallbackText;
           const words = fallbackText.split(" ");
@@ -1012,7 +1043,7 @@ ${projectObj.systemPrompt}`;
         // Lưu câu trả lời hoàn chỉnh của AI vào database
         if (accumulatedText.trim()) {
           try {
-            const cleanedText = sanitizeBrandLeaks(accumulatedText);
+            const cleanedText = sanitizeBotPersonaLeaks(accumulatedText, botId);
             await prisma.message.create({
               data: {
                 conversationId: finalConvId,
