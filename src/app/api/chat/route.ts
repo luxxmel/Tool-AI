@@ -677,7 +677,9 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
    - Đọc kỹ từng chữ số, biểu thức, hình vẽ hình học hoặc đồ thị trong hình ảnh người dùng gửi.
    - Trích dẫn rõ đề bài bạn nhận diện được: "Đề bài: ...".
    - Giải chi tiết từng bước (Step-by-step) với lập luận toán học chặt chẽ.
-   - Sử dụng công thức LaTeX chuẩn ($...$ cho công thức nằm trong dòng và $$...$$ cho công thức riêng một dòng) để hệ thống tự động render biểu thức toán học sắc nét.
+   - ĐẶC BIỆT VỀ KÝ HIỆU PHÉP TÍNH (TUYỆT ĐỐI TUÂN THỦ): 
+     * Dùng TRỰC TIẾP các ký hiệu phép toán thông thường, quen thuộc của người Việt như: dấu cộng (+), dấu trừ (-), dấu nhân (*) hoặc (x), dấu chia (:) hoặc (/) (ví dụ: viết 6 : 2 * (1 + 2) hoặc 6 / 2 * 3 = 9).
+     * TUYỆT ĐỐI KHÔNG dùng các mã LaTeX như \\div, \\times, \\cdot trong các phép tính số học cơ bản vì khiến người đọc khó nhìn và rối mắt.
    - QUY TẮC ĐỊNH DẠNG: Tuyệt đối không để dấu chấm đầu dòng rỗng (như '•' đứng riêng một dòng). Viết trực tiếp: "**Bước 1:** ...", "**Bước 2:** ...".
    - Nêu rõ công thức cốt lõi áp dụng, mẹo bấm máy tính Casio 580VNX/880BTG nếu có, và đóng khung đáp án cuối cùng.`;
       }

@@ -284,10 +284,22 @@ function MarkdownRenderer({ content, hideActionNotes = false }: MarkdownRenderer
     let txt = displayContent;
     // 1. Loại bỏ các gạch đầu dòng bullet rỗng đứng riêng một mình (như '•\n' hoặc '* \n' hoặc '- \n')
     txt = txt.replace(/^([*•\-]\s*)$/gm, "");
-    // 2. Chuyển đổi các dạng \( ... \) và \[ ... \] thành $...$ và $$...$$ nếu có
+    
+    // 2. Chuyển đổi trực tiếp các ký hiệu khó nhìn như \div, \times thành dấu chia (:) và dấu nhân (x) thân thiện
+    txt = txt.replace(/\\div/g, ":");
+    txt = txt.replace(/\\times/g, "x");
+    txt = txt.replace(/\\cdot/g, "·");
+
+    // 3. Nếu biểu thức số học đơn giản bị kẹp trong $$...$$ hoặc $...$ khiến khó đọc, gỡ bỏ để hiện số tự nhiên
+    // Ví dụ: $$6 : 2(1 + 2) = ?$$ -> 6 : 2(1 + 2) = ?
+    txt = txt.replace(/\$\$([0-9a-zA-Z\s:+\-*\/().=?!]+)\$\$/g, "**$1**");
+    txt = txt.replace(/\$([0-9a-zA-Z\s:+\-*\/().=?!]+)\$/g, "$1");
+
+    // 4. Chuyển đổi các dạng \( ... \) và \[ ... \] thành $...$ và $$...$$ cho các công thức cao cấp (tích phân, ma trận)
     txt = txt.replace(/\\\(([\s\S]*?)\\\)/g, "$$$1$$");
     txt = txt.replace(/\\\[([\s\S]*?)\\\]/g, "$$$$$$1$$$$");
-    // 3. Xóa các dòng trống thừa lặp lại
+
+    // 5. Xóa các dòng trống thừa lặp lại
     txt = txt.replace(/\n{3,}/g, "\n\n");
     return txt;
   }, [displayContent]);
