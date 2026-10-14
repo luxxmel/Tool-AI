@@ -720,17 +720,43 @@ export default function BotChatPage() {
     setIsLoading(false);
   };
 
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isUserNearBottomRef = useRef<boolean>(true);
 
-  // Cuộn xuống tin nhắn mới nhất
-  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
-    messagesEndRef.current?.scrollIntoView({ behavior });
+  // Cuộn thông minh: Khi gửi tin nhắn mới, cuộn sao cho tin nhắn người dùng và câu trả lời AI đều nhìn thấy được
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth", force: boolean = false) => {
+    if (force || isUserNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior, block: "end" });
+    }
+  };
+
+  const scrollToTurn = (msgId?: string) => {
+    if (msgId) {
+      const el = document.getElementById(msgId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  };
+
+  // Lắng nghe thao tác scroll của người dùng để tránh tự động cuộn mất tin nhắn nếu người dùng đang đọc ở trên
+  const handleScroll = () => {
+    if (!chatContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    // Nếu khoảng cách đến đáy <= 150px thì tính là đang ở đáy
+    isUserNearBottomRef.current = scrollHeight - scrollTop - clientHeight <= 150;
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Chỉ cuộn nếu người dùng đang ở gần đáy để tránh kéo giật mất tin nhắn của họ
+    if (isUserNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [messages, isLoading]);
 
   // 1. Tải thông tin Bot và Credit của User
@@ -899,6 +925,11 @@ export default function BotChatPage() {
       ...prev,
       { id: aiMsgId, role: "assistant", content: "" },
     ]);
+
+    // Cuộn ngay đến tin nhắn người dùng vừa gửi để người dùng thấy rõ ràng
+    setTimeout(() => {
+      scrollToTurn(userMsgId);
+    }, 50);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -1262,7 +1293,11 @@ export default function BotChatPage() {
       </header>
 
       {/* 2. Danh Sách Tin Nhắn */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 sm:px-6 sm:py-5 space-y-4 max-w-4xl w-full mx-auto pb-8 scrollbar-thin">
+      <div
+        ref={chatContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto px-3 py-3 sm:px-6 sm:py-5 space-y-4 max-w-4xl w-full mx-auto pb-8 scrollbar-thin scroll-smooth"
+      >
         {messages.length === 0 ? (
           <div className="min-h-full flex flex-col items-center justify-center text-center py-2 px-1 sm:py-4 max-w-3xl mx-auto animate-in fade-in duration-300">
             {/* Top Info Compact Card */}
@@ -1333,7 +1368,8 @@ export default function BotChatPage() {
             return (
               <div
                 key={msg.id}
-                className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"} items-start`}
+                id={msg.id}
+                className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"} items-start transition-all`}
               >
                 {/* Avatar của Assistant */}
                 {!isUser && (
@@ -1411,7 +1447,7 @@ export default function BotChatPage() {
 
                     {isUser ? (
                       <div>
-                        <div>{msg.content}</div>
+                        <div className="whitespace-pre-wrap break-words">{msg.content}</div>
                         {!isLoading && (
                           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1.5 mt-1.5 pt-1 border-t border-white/20">
                             <button
