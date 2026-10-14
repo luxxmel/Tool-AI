@@ -67,8 +67,8 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   const [topContributors, setTopContributors] = useState<ContributorItem[]>([]);
   const [isContributorsLoading, setIsContributorsLoading] = useState(true);
 
-  // Trending questions state
-  interface TrendingQuestion { text: string; count: number; }
+  // Trending questions / hot posts state
+  interface TrendingQuestion { text: string; count: number; postId?: string; }
   const [trendingQuestions, setTrendingQuestions] = useState<TrendingQuestion[]>([]);
   const [isTrendingLoading, setIsTrendingLoading] = useState(true);
   const [trendingPeriod, setTrendingPeriod] = useState<"24h" | "7d">("24h");
@@ -675,6 +675,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 return (
                   <article
                     key={post.id}
+                    id={`post-${post.id}`}
                     className="group bg-white/90 dark:bg-[#0d0f18]/90 backdrop-blur-md border border-slate-200/90 dark:border-indigo-950/60 rounded-3xl p-5 shadow-xs hover:border-indigo-400/50 dark:hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300"
                   >
                     {/* Author row */}
@@ -1093,14 +1094,14 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
             </button>
           </div>
 
-          {/* Câu hỏi Hot nhất hôm nay */}
+          {/* Bài viết Hot nhất (Nhiều cảm xúc nhất) */}
           <div className="bg-white dark:bg-[#0d0f18] border border-slate-200 dark:border-indigo-950/60 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                🔥 <span>{t("explore.hot_questions", "Câu hỏi hot hôm nay")}</span>
+                🔥 <span>{t("explore.hot_posts", "Bài viết hot nhất")}</span>
               </h3>
-              <span className="text-[10px] text-slate-400 font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">
-                {trendingPeriod === "7d" ? t("explore.7days", "7 ngày") : t("explore.today", "Hôm nay")}
+              <span className="text-[10px] text-amber-500 dark:text-amber-400 font-bold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
+                ❤️ Cảm xúc
               </span>
             </div>
 
@@ -1116,12 +1117,12 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
               </div>
             ) : trendingEmpty || trendingQuestions.length === 0 ? (
               <div className="text-center py-4">
-                <p className="text-2xl mb-1">💬</p>
+                <p className="text-2xl mb-1">📝</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500">
-                  {t("explore.no_questions", "Chưa có câu hỏi nào hôm nay")}
+                  {t("explore.no_hot_posts", "Chưa có bài viết hot")}
                 </p>
                 <p className="text-[10px] text-slate-300 dark:text-slate-600 mt-0.5">
-                  {t("explore.start_chat_hint", "Bắt đầu chat để xuất hiện tại đây!")}
+                  {t("explore.start_post_hint", "Đăng bài để xuất hiện tại đây!")}
                 </p>
               </div>
             ) : (
@@ -1129,16 +1130,26 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                 {trendingQuestions.map((q, idx) => (
                   <div
                     key={idx}
-                    className="flex items-start gap-2 w-full px-2.5 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors group"
+                    className="flex items-start gap-2 w-full px-2.5 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-colors group cursor-pointer"
+                    onClick={() => {
+                      if (q.postId) {
+                        const el = document.getElementById(`post-${q.postId}`);
+                        if (el) {
+                          el.scrollIntoView({ behavior: "smooth", block: "center" });
+                          el.classList.add("ring-2", "ring-indigo-500");
+                          setTimeout(() => el.classList.remove("ring-2", "ring-indigo-500"), 2000);
+                        }
+                      }
+                    }}
                   >
-                    <span className="text-[10px] font-bold text-slate-400 mt-0.5 w-4 flex-shrink-0">
-                      {idx + 1}.
+                    <span className="text-[10px] font-black text-slate-400 mt-0.5 w-4 flex-shrink-0">
+                      {idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`}
                     </span>
-                    <span className="text-xs text-slate-700 dark:text-slate-300 flex-1 line-clamp-2 leading-relaxed">
+                    <span className="text-xs font-medium text-slate-700 dark:text-slate-300 flex-1 line-clamp-2 leading-relaxed group-hover:text-indigo-500 dark:group-hover:text-cyan-400 transition-colors">
                       {q.text}
                     </span>
-                    <span className="text-[10px] text-orange-500 dark:text-orange-400 font-bold bg-orange-50 dark:bg-orange-900/20 px-1.5 py-0.5 rounded-full flex-shrink-0">
-                      {q.count}x
+                    <span className="text-[10px] text-rose-500 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/30 border border-rose-500/20 px-1.5 py-0.5 rounded-full flex-shrink-0 flex items-center gap-0.5">
+                      ❤️ {q.count}
                     </span>
                   </div>
                 ))}

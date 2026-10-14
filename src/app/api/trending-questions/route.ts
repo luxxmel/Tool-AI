@@ -3,78 +3,84 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Lấy câu hỏi của user trong 24 giờ qua
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-    const messages = await prisma.message.findMany({
+    // 1. Lấy các bài viết (Post) được thả nhiều cảm xúc nhất
+    const posts = await prisma.post.findMany({
       where: {
-        sender: "USER",
-        createdAt: { gte: since },
+        status: "published",
       },
-      select: {
-        content: true,
+      include: {
+        _count: {
+          select: {
+            reactions: true,
+            comments: true,
+          },
+        },
+        reactions: {
+          select: {
+            type: true,
+          },
+        },
       },
+      take: 50,
     });
 
-    // Nếu không có đủ câu hỏi trong 24h thì mở rộng sang 7 ngày
-    const messagesSource =
-      messages.length >= 10
-        ? messages
-        : await prisma.message.findMany({
-            where: {
-              sender: "USER",
-              createdAt: {
-                gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-              },
-            },
-            select: { content: true },
-            orderBy: { createdAt: "desc" },
-            take: 200,
-          });
+    if (posts.length > 0) {
+      // Tính tổng điểm cảm xúc (hoặc số lượt thả reactions)
+      const rankedPosts = posts
+        .map((p) => {
+          const reactionCount = p._count.reactions || p.reactions.length || 0;
+          const totalScore = reactionCount + (p.likes || 0);
+          return {
+            id: p.id,
+            text: p.title || p.content.slice(0, 80),
+            count: totalScore,
+            category: p.categoryLabel || p.category,
+            postId: p.id,
+          };
+        })
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 6);
 
-    // Đếm tần suất xuất hiện của từng câu hỏi (sau khi chuẩn hóa)
+      return NextResponse.json({
+        questions: rankedPosts.map((p) => ({
+          text: p.text,
+          count: p.count,
+          postId: p.postId,
+        })),
+        isEmpty: false,
+        period: "hot",
+      });
+    }
+
+    // 2. Fallback: Nếu chưa có bài viết nào, lấy câu hỏi của user trong các cuộc hội thoại
+    const messages = await prisma.message.findMany({
+      where: { sender: "USER" },
+      select: { content: true },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
     const freq: Record<string, { text: string; count: number }> = {};
-
-    for (const msg of messagesSource) {
+    for (const msg of messages) {
       const raw = msg.content.trim();
-      // Bỏ câu quá ngắn (< 10 ký tự) hoặc quá dài (> 200 ký tự)
       if (raw.length < 10 || raw.length > 200) continue;
-      // Lọc bỏ câu lệnh hệ thống
       if (raw.startsWith("[") || raw.startsWith("{")) continue;
-
-      // Chuẩn hóa: lowercase, bỏ dấu câu cuối
-      const key = raw
-        .toLowerCase()
-        .replace(/[?!.,;:…]+$/, "")
-        .trim();
-
-      if (!freq[key]) {
-        freq[key] = { text: raw, count: 0 };
-      }
+      const key = raw.toLowerCase().replace(/[?!.,;:…]+$/, "").trim();
+      if (!freq[key]) freq[key] = { text: raw, count: 0 };
       freq[key].count++;
     }
 
-    // Sắp xếp theo tần suất và lấy top 6
     const sorted = Object.values(freq)
       .sort((a, b) => b.count - a.count)
       .slice(0, 6);
-
-    // Nếu DB chưa đủ dữ liệu, trả fallback questions
-    if (sorted.length < 3) {
-      return NextResponse.json({
-        questions: [],
-        isEmpty: true,
-        period: "7d",
-      });
-    }
 
     return NextResponse.json({
       questions: sorted.map((q) => ({
         text: q.text,
         count: q.count,
       })),
-      isEmpty: false,
-      period: messages.length >= 10 ? "24h" : "7d",
+      isEmpty: sorted.length === 0,
+      period: "24h",
     });
   } catch (err) {
     console.error("[trending-questions]", err);
