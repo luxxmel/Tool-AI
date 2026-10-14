@@ -73,8 +73,14 @@ export default function CreateProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-[#0c0e17] border border-indigo-950/80 rounded-3xl p-6 shadow-2xl shadow-indigo-950/40 text-white">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200 cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg bg-[#0c0e17] border border-indigo-950/80 rounded-3xl p-6 shadow-2xl shadow-indigo-950/40 text-white cursor-default"
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 mb-5">
           <div className="flex items-center gap-2.5">

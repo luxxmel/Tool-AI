@@ -70,9 +70,15 @@ export default function AssistantsFlyout({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-250">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-250 cursor-pointer"
+    >
       {/* Outer Cyber Glow Container */}
-      <div className="w-full max-w-5xl h-[88vh] max-h-[88vh] bg-[#070913]/98 border border-indigo-500/30 rounded-3xl shadow-[0_0_50px_rgba(99,102,241,0.3)] flex flex-col overflow-hidden text-slate-100 relative">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-5xl h-[88vh] max-h-[88vh] bg-[#070913]/98 border border-indigo-500/30 rounded-3xl shadow-[0_0_50px_rgba(99,102,241,0.3)] flex flex-col overflow-hidden text-slate-100 relative cursor-default"
+      >
         
         {/* Ambient Glows */}
         <div className="absolute -top-32 -left-32 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />

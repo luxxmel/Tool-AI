@@ -179,8 +179,14 @@ export default function ChatResponseModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl bg-[#0c0e17]/95 border border-indigo-950/80 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-950/40 flex flex-col h-[600px] max-h-[90vh] transition-colors">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200 cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-2xl bg-[#0c0e17]/95 border border-indigo-950/80 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-950/40 flex flex-col h-[600px] max-h-[90vh] transition-colors cursor-default"
+      >
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-800/80 bg-[#0e101a] flex items-center justify-between">
           <div className="flex items-center gap-3">
