@@ -261,23 +261,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (
     emailOrUsername: string,
-    _password?: string
+    password?: string
   ): Promise<{ success: boolean; error?: string }> => {
     if (!emailOrUsername.trim()) {
-      return { success: false, error: "Vui lòng nhập email" };
+      return { success: false, error: "Vui lòng nhập email hoặc tên đăng nhập" };
     }
 
     try {
       const cleanInput = emailOrUsername.trim();
-      const email = cleanInput.includes("@")
-        ? cleanInput.toLowerCase()
-        : `${cleanInput.toLowerCase()}@biettuot.io`;
 
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
+          email: cleanInput,
+          password: password || undefined,
           name: cleanInput.split("@")[0],
         }),
       });

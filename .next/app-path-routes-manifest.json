@@ -11,6 +11,8 @@
   "/api/auth/google/callback/route": "/api/auth/google/callback",
   "/api/auth/google/route": "/api/auth/google",
   "/api/auth/login/route": "/api/auth/login",
+  "/api/auth/register/route": "/api/auth/register",
+  "/api/auth/send-otp/route": "/api/auth/send-otp",
   "/api/bots/[botId]/route": "/api/bots/[botId]",
   "/api/chat/history/[botId]/route": "/api/chat/history/[botId]",
   "/api/chat/route": "/api/chat",
@@ -48,6 +50,7 @@
   "/page": "/",
   "/privacy/page": "/privacy",
   "/profile/page": "/profile",
+  "/register/page": "/register",
   "/terms/page": "/terms",
   "/typing/page": "/typing"
 }

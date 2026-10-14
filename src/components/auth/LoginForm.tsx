@@ -332,6 +332,19 @@ export default function LoginForm({ onSuccess, onClose }: LoginFormProps) {
           <span className="hidden sm:inline">Facebook</span>
         </button>
       </div>
+
+      {/* --- LIÊN KẾT ĐĂNG KÝ TÀI KHOẢN MỚI --- */}
+      <div className="mt-5 pt-3.5 border-t border-slate-800/80 text-center text-xs text-slate-400">
+        <span>Chưa có tài khoản? </span>
+        <a
+          href="/register"
+          onClick={() => onClose?.()}
+          className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors ml-1 inline-flex items-center gap-0.5"
+        >
+          <span>Đăng ký ngay</span>
+          <span>→</span>
+        </a>
+      </div>
     </div>
   );
 }

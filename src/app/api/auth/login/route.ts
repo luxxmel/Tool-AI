@@ -1,53 +1,77 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, name } = body;
+    const { email, password, name } = body;
 
     if (!email) {
       return NextResponse.json(
-        { error: "Vui lòng nhập địa chỉ email hoặc tên tài khoản" },
+        { error: "Vui lòng nhập địa chỉ email hoặc tên đăng nhập" },
         { status: 400 }
       );
     }
 
     const rawInput = email.trim();
-    const cleanEmail = rawInput.includes("@")
+    const isEmailFormat = rawInput.includes("@");
+    const cleanEmail = isEmailFormat
       ? rawInput.toLowerCase()
       : `${rawInput.toLowerCase()}@biettuot.io`;
-    const cleanName = name?.trim() || rawInput.split("@")[0];
+    const cleanUsername = rawInput.toLowerCase();
     const isRootAdmin = cleanEmail === "hoanglinhcntti@gmail.com";
 
-    let user: any = null;
-    try {
-      user = await prisma.user.upsert({
-        where: { email: cleanEmail },
-        update: {
-          name: cleanName,
-          ...(isRootAdmin ? { role: "ADMIN", credits: 999999 } : {}),
-        },
-        create: {
-          email: cleanEmail,
-          name: cleanName,
-          avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
-          credits: isRootAdmin ? 999999 : 20,
-          role: isRootAdmin ? "ADMIN" : "USER",
-          status: "active",
-        },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          avatar: true,
-          credits: true,
-          role: true,
-          status: true,
-        },
-      });
-    } catch (dbErr) {
-      console.warn("Lỗi lưu DB login (dùng session user):", dbErr);
+    // 1. Tìm user trong database bằng email HOẶC username
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: cleanEmail },
+          { username: cleanUsername },
+        ],
+      },
+    });
+
+    // 2. Nếu người dùng có mật khẩu trong DB, kiểm tra mật khẩu
+    if (user && user.password) {
+      if (!password) {
+        return NextResponse.json(
+          { error: "Tài khoản này đã thiết lập mật khẩu. Vui lòng nhập mật khẩu để đăng nhập!" },
+          { status: 400 }
+        );
+      }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return NextResponse.json(
+          { error: "Mật khẩu không chính xác!" },
+          { status: 401 }
+        );
+      }
+    } else if (!user) {
+      // Nếu chưa có tài khoản và là đăng nhập nhanh (không có mật khẩu)
+      if (password) {
+        return NextResponse.json(
+          { error: "Tài khoản hoặc email này chưa được đăng ký. Vui lòng chọn Đăng ký!" },
+          { status: 404 }
+        );
+      }
+      // Đăng nhập nhanh tự tạo tài khoản
+      const cleanName = name?.trim() || rawInput.split("@")[0];
+      try {
+        user = await prisma.user.create({
+          data: {
+            email: cleanEmail,
+            username: isEmailFormat ? cleanEmail.split("@")[0] : cleanUsername,
+            name: cleanName,
+            avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
+            credits: isRootAdmin ? 999999 : 20,
+            role: isRootAdmin ? "ADMIN" : "USER",
+            status: "active",
+          },
+        });
+      } catch (dbErr) {
+        console.warn("Lỗi lưu DB login:", dbErr);
+      }
     }
 
     if (user && user.status === "banned" && !isRootAdmin) {
@@ -60,27 +84,38 @@ export async function POST(request: NextRequest) {
     const finalUser = user || {
       id: isRootAdmin ? "cmuchyzaf0000tar86bsjbasb" : cleanEmail,
       email: cleanEmail,
-      name: cleanName,
+      username: isEmailFormat ? cleanEmail.split("@")[0] : cleanUsername,
+      name: name?.trim() || rawInput.split("@")[0],
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`,
       credits: isRootAdmin ? 999999 : 20,
       role: isRootAdmin ? "ADMIN" : "USER",
       status: "active",
     };
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       user: {
         id: finalUser.id,
         email: finalUser.email,
-        username: finalUser.email.split("@")[0],
+        username: (finalUser as any).username || finalUser.email.split("@")[0],
         displayName: finalUser.name || finalUser.email.split("@")[0],
         avatar: finalUser.avatar,
         credits: finalUser.role === "ADMIN" ? 999999 : finalUser.credits,
         role: finalUser.role,
+        isVip: finalUser.role === "VIP" || finalUser.role === "ADMIN",
       },
     });
+
+    response.cookies.set("tool_ai_auth_user", encodeURIComponent(JSON.stringify(finalUser)), {
+      path: "/",
+      maxAge: 30 * 24 * 60 * 60,
+      httpOnly: false,
+      sameSite: "lax",
+    });
+
+    return response;
   } catch (error) {
-    console.error("Lỗi đăng nhập email:", error);
+    console.error("Lỗi đăng nhập:", error);
     return NextResponse.json(
       { error: "Đã xảy ra lỗi hệ thống khi đăng nhập" },
       { status: 500 }
