@@ -231,9 +231,18 @@ export default function AppSidebar({
         </div>
       </div>
 
+      {/* Backdrop overlay for mobile */}
+      {isMobileOpen && (
+        <div
+          onClick={() => setIsMobileOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-55 transition-opacity duration-300"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Main Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white/95 dark:bg-[#090a10]/95 backdrop-blur-xl border-r border-slate-200/80 dark:border-indigo-950/50 flex flex-col justify-between p-3.5 transition-all duration-300 ${
+        className={`fixed top-0 bottom-0 left-0 z-60 w-64 bg-white dark:bg-[#090a10] backdrop-blur-2xl border-r border-slate-200/80 dark:border-indigo-950/50 flex flex-col justify-between p-3.5 transition-all duration-300 ease-in-out ${
           isMobileOpen
             ? "translate-x-0 shadow-2xl"
             : isCollapsed
@@ -242,9 +251,13 @@ export default function AppSidebar({
         }`}
       >
         <div>
-          {/* Brand Logo & Theme Toggle */}
+          {/* Brand Logo & Controls */}
           <div className="flex items-center justify-between px-1 py-2 mb-2 gap-1 min-w-0">
-            <Link href="/" className="flex items-center gap-1.5 group cursor-pointer min-w-0 flex-1">
+            <Link
+              href="/"
+              onClick={() => setIsMobileOpen(false)}
+              className="flex items-center gap-1.5 group cursor-pointer min-w-0 flex-1"
+            >
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
@@ -256,6 +269,18 @@ export default function AppSidebar({
             </Link>
 
             <div className="flex items-center gap-1.5 shrink-0">
+              {/* Close button on mobile */}
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(false)}
+                className="lg:hidden w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer flex items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
+                title="Đóng menu"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
               {/* Collapse button for desktop */}
               {onToggleCollapse && (
                 <button
@@ -270,11 +295,11 @@ export default function AppSidebar({
                 </button>
               )}
 
-              {/* Daily Check-in Button */}
+              {/* Daily Check-in Button (Desktop) */}
               <button
                 type="button"
                 onClick={handleDailyCheckin}
-                className="h-8 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-500 dark:text-amber-400 flex items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer shrink-0 shadow-xs hover:scale-102 active:scale-95"
+                className="hidden lg:flex h-8 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-500 dark:text-amber-400 items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer shrink-0 shadow-xs hover:scale-102 active:scale-95"
                 title="Điểm danh nhận quà mỗi ngày"
               >
                 <span className="text-sm">🎁</span>

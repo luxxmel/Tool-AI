@@ -19,7 +19,7 @@ const { execSync } = require('child_process');
     const sha = await git.commit({
       fs,
       dir: '.',
-      message: 'fix: enable multimodal vision for assistant bots, prevent false image generation on Q&A/math, and sanitize API keys',
+      message: 'fix: resolve mobile sidebar header overlap and add backdrop with close button',
       author: {
         name: 'Biet Tuot AI Agent',
         email: 'agent@biettuot.ai'
