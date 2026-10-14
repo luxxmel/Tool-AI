@@ -22,13 +22,13 @@ interface DayReward {
 }
 
 const SEVEN_DAYS_REWARDS: DayReward[] = [
-  { day: 1, credits: 1, label: "Ngày 1", icon: "🪙", badge: "Khởi đầu" },
-  { day: 2, credits: 2, label: "Ngày 2", icon: "✨", badge: "Liên tiếp" },
-  { day: 3, credits: 3, label: "Ngày 3", icon: "⚡", badge: "Bứt phá" },
-  { day: 4, credits: 4, label: "Ngày 4", icon: "🦋", badge: "Cộng hưởng" },
-  { day: 5, credits: 5, label: "Ngày 5", icon: "💎", badge: "Kim cương" },
-  { day: 6, credits: 6, label: "Ngày 6", icon: "🔥", badge: "Bùng nổ" },
-  { day: 7, credits: 7, label: "Ngày 7", icon: "👑", badge: "ĐẠI THƯỞNG VIP", isBigReward: true },
+  { day: 1, credits: 1, label: "Ngày 1", icon: "🪙", badge: "1 Xu Vàng" },
+  { day: 2, credits: 2, label: "Ngày 2", icon: "🪙", badge: "2 Xu Vàng" },
+  { day: 3, credits: 3, label: "Ngày 3", icon: "💰", badge: "Túi Tiền Nhỏ" },
+  { day: 4, credits: 4, label: "Ngày 4", icon: "💰", badge: "Túi Tiền Vàng" },
+  { day: 5, credits: 5, label: "Ngày 5", icon: "💎", badge: "Bảo Ngọc" },
+  { day: 6, credits: 6, label: "Ngày 6", icon: "🪙", badge: "Đống Xu Vàng" },
+  { day: 7, credits: 7, label: "Ngày 7", icon: "🏆", badge: "ĐẠI THƯỞNG VIP", isBigReward: true },
 ];
 
 export default function DailyCheckinModal({
@@ -235,9 +235,43 @@ export default function DailyCheckinModal({
                     ) : null}
                   </div>
 
-                  {/* Icon */}
-                  <div className="my-2 text-2xl sm:text-3xl filter drop-shadow-md transition-transform group-hover:scale-110">
-                    {item.icon}
+                  {/* Visual Coin / Reward Icon */}
+                  <div className="my-2 flex items-center justify-center transition-transform group-hover:scale-110">
+                    {item.day === 1 && (
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 p-0.5 shadow-md shadow-amber-500/30 flex items-center justify-center ring-2 ring-amber-400/30">
+                        <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-amber-950 font-black text-xs shadow-inner border border-yellow-200">
+                          🪙
+                        </div>
+                      </div>
+                    )}
+                    {item.day === 2 && (
+                      <div className="w-10 h-10 relative flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 p-0.5 shadow-md shadow-amber-500/30 flex items-center justify-center ring-1 ring-amber-400/40">
+                          <span className="text-sm">🪙</span>
+                        </div>
+                        <span className="absolute -top-1 -right-1 text-xs">✨</span>
+                      </div>
+                    )}
+                    {item.day === 3 && (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600/30 via-amber-500/20 to-yellow-500/30 p-1 flex items-center justify-center border border-amber-500/40 shadow-md shadow-amber-500/20">
+                        <span className="text-2xl filter drop-shadow">💰</span>
+                      </div>
+                    )}
+                    {item.day === 4 && (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500/30 via-yellow-400/30 to-amber-600/30 p-1 flex items-center justify-center border border-amber-400/50 shadow-md shadow-amber-500/30">
+                        <span className="text-2xl filter drop-shadow">💰</span>
+                      </div>
+                    )}
+                    {item.day === 5 && (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/30 via-blue-500/20 to-indigo-500/30 p-1 flex items-center justify-center border border-cyan-400/50 shadow-md shadow-cyan-500/30">
+                        <span className="text-2xl filter drop-shadow">💎</span>
+                      </div>
+                    )}
+                    {item.day === 6 && (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500/40 via-yellow-300/30 to-rose-500/30 p-1 flex items-center justify-center border border-amber-300/60 shadow-lg shadow-amber-500/40">
+                        <span className="text-2xl filter drop-shadow">🪙</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Reward Credits */}
@@ -280,8 +314,11 @@ export default function DailyCheckinModal({
 
                 {/* Big Reward Visual Container */}
                 <div className="my-3 relative flex items-center justify-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-rose-500/20 border border-amber-400/30 flex items-center justify-center text-4xl shadow-inner">
-                    👑
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500/30 via-yellow-400/20 to-amber-600/30 border border-amber-400/50 flex flex-col items-center justify-center text-3xl shadow-[0_0_20px_rgba(245,158,11,0.25)] relative">
+                    <span className="filter drop-shadow-md">🏆</span>
+                    <span className="text-[10px] absolute -bottom-1 px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 font-black">
+                      KHO BÁU
+                    </span>
                   </div>
                   {isDay7Today && (
                     <div className="absolute inset-0 rounded-2xl bg-amber-400/20 animate-ping pointer-events-none" />
