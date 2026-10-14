@@ -16,7 +16,7 @@ const YESCALE_BASE_URL =
   process.env.YESCALE_BASE_URL || "https://api.yescale.io";
 
 const YESCALE_MODEL =
-  process.env.YESCALE_IMAGE_MODEL || "gemini-2.5-flash-image[nano-banana]";
+  process.env.YESCALE_IMAGE_MODEL || "nano-banana-2";
 
 interface YescaleGenerateParams {
   prompt: string;
@@ -33,6 +33,7 @@ export async function generateImageViaYescale({
 
   const config: Record<string, any> = {
     aspect_ratio: aspectRatio || "1:1",
+    size: "1K",
   };
 
   if (referenceImage && typeof referenceImage === "string") {
@@ -47,7 +48,7 @@ export async function generateImageViaYescale({
 
   try {
     const apiKey = getYescaleApiKey();
-    console.log(`[Yescale Gemini 2.5] Gửi task sinh ảnh với model ${YESCALE_MODEL}...`);
+    console.log(`[Yescale AI Image] Gửi task sinh ảnh với model ${YESCALE_MODEL}...`);
     const submitRes = await fetch(submitUrl, {
       method: "POST",
       headers: {

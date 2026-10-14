@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       enhancedPrompt = prompt.trim();
     }
 
-    // 3. Sinh ảnh trực tiếp qua Yescale Gemini 2.5 Flash Image Engine (gemini-2.5-flash-image[nano-banana])
+    // 3. Sinh ảnh trực tiếp qua Yescale AI Image Engine (nano-banana-2 HD)
     let imageUrl = "";
     try {
       imageUrl = await generateImageViaYescale({
@@ -98,10 +98,14 @@ export async function POST(request: NextRequest) {
         aspectRatio,
         referenceImage: referenceImage || null,
       });
+      // Nếu là ảnh có URL ngoại bộ, đưa qua proxy nội bộ để xóa watermark và nén tối ưu
+      if (imageUrl && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
+        imageUrl = `/api/images/proxy?url=${encodeURIComponent(imageUrl)}&width=${ASPECT_RATIO_DIMS[aspectRatio]?.width || 1024}&height=${ASPECT_RATIO_DIMS[aspectRatio]?.height || 1024}`;
+      }
     } catch (yescaleErr: any) {
-      console.error("Lỗi khi sinh ảnh từ Yescale Gemini:", yescaleErr);
+      console.error("Lỗi khi sinh ảnh từ Yescale:", yescaleErr);
       return NextResponse.json(
-        { error: yescaleErr?.message || "Không thể sinh ảnh từ Gemini Yescale, vui lòng thử lại!" },
+        { error: yescaleErr?.message || "Không thể sinh ảnh, vui lòng thử lại!" },
         { status: 500 }
       );
     }

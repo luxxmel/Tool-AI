@@ -19,7 +19,7 @@ const { execSync } = require('child_process');
     const sha = await git.commit({
       fs,
       dir: '.',
-      message: 'fix: resolve mobile sidebar header overlap and add backdrop with close button',
+      message: 'fix: upgrade Yescale model to nano-banana-2 with size 1K and auto watermark crop removal',
       author: {
         name: 'Biet Tuot AI Agent',
         email: 'agent@biettuot.ai'

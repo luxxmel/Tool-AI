@@ -99,9 +99,21 @@ export async function GET(request: NextRequest) {
           const imgRes = await fetch(yescaleUrl, { signal: AbortSignal.timeout(15000) });
           if (imgRes.ok) {
             const buf = Buffer.from(await imgRes.arrayBuffer());
-            finalBuffer = await sharp(buf)
-              .jpeg({ quality: 96, mozjpeg: true })
-              .toBuffer();
+            const meta = await sharp(buf).metadata();
+            const w = meta.width || width;
+            const h = meta.height || height;
+            // Nếu ảnh đến từ pollinations fallback, cắt bỏ watermark dưới cùng
+            if (yescaleUrl.includes("pollinations.ai") && h > 100) {
+              finalBuffer = await sharp(buf)
+                .extract({ left: 0, top: 0, width: w, height: Math.max(50, h - 45) })
+                .resize(w, h)
+                .jpeg({ quality: 96, mozjpeg: true })
+                .toBuffer();
+            } else {
+              finalBuffer = await sharp(buf)
+                .jpeg({ quality: 96, mozjpeg: true })
+                .toBuffer();
+            }
             finalContentType = "image/jpeg";
           }
         }
