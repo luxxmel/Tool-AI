@@ -54,6 +54,8 @@ export const user = {
       row = db.prepare("SELECT * FROM User WHERE id = ?").get(where.id);
     } else if (where?.email) {
       row = db.prepare("SELECT * FROM User WHERE lower(email) = lower(?)").get(where.email.trim());
+    } else if (where?.username) {
+      row = db.prepare("SELECT * FROM User WHERE lower(username) = lower(?)").get(where.username.trim());
     }
     if (!row) return null;
     return this._format(row, include, select);
@@ -69,6 +71,10 @@ export const user = {
         }
         if (cond.email) {
           const found = await this.findUnique({ where: { email: cond.email }, select, include });
+          if (found) return found;
+        }
+        if (cond.username) {
+          const found = await this.findUnique({ where: { username: cond.username }, select, include });
           if (found) return found;
         }
       }
@@ -117,10 +123,13 @@ export const user = {
     const db = getDb();
     const id = data.id || createId();
     const now = Date.now();
-    const row = {
+    const row: any = {
       id,
       email: data.email.toLowerCase().trim(),
+      username: data.username ? data.username.toLowerCase().trim() : (data.email ? data.email.split("@")[0] : null),
       name: data.name || data.email.split("@")[0],
+      password: data.password || null,
+      emailVerified: data.emailVerified ? toTimestamp(data.emailVerified) : null,
       avatar: data.avatar || null,
       role: data.role || "USER",
       status: data.status || "active",
@@ -925,6 +934,65 @@ export const paymentOrder = {
   }
 };
 
+// ==================== EMAIL VERIFICATION ====================
+export const emailVerification = {
+  async findFirst({ where }: any = {}) {
+    const db = getDb();
+    let sql = "SELECT * FROM EmailVerification";
+    const conds: string[] = [];
+    const params: any[] = [];
+
+    if (where?.email) {
+      conds.push("lower(email) = lower(?)");
+      params.push(where.email.trim());
+    }
+    if (where?.otp) {
+      conds.push("otp = ?");
+      params.push(where.otp.trim());
+    }
+
+    if (conds.length) sql += " WHERE " + conds.join(" AND ");
+    sql += " ORDER BY createdAt DESC LIMIT 1";
+
+    const row = db.prepare(sql).get(...params);
+    if (!row) return null;
+    return {
+      ...row,
+      expiresAt: toDate(row.expiresAt),
+      createdAt: toDate(row.createdAt),
+    };
+  },
+
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const row = {
+      id,
+      email: data.email.toLowerCase().trim(),
+      otp: data.otp,
+      expiresAt: toTimestamp(data.expiresAt),
+      createdAt: toTimestamp(data.createdAt || Date.now()),
+    };
+
+    const cols = Object.keys(row);
+    const placeholders = cols.map(() => "?").join(", ");
+    db.prepare(`INSERT INTO EmailVerification (${cols.map(c => `"${c}"`).join(", ")}) VALUES (${placeholders})`)
+      .run(...cols.map(c => (row as any)[c]));
+
+    return this.findFirst({ where: { email: data.email, otp: data.otp } });
+  },
+
+  async deleteMany({ where }: any = {}) {
+    const db = getDb();
+    if (where?.email) {
+      db.prepare("DELETE FROM EmailVerification WHERE lower(email) = lower(?)").run(where.email.trim());
+    } else {
+      db.prepare("DELETE FROM EmailVerification").run();
+    }
+    return { count: 1 };
+  },
+};
+
 // ==================== TRANSACTION HELPER ====================
 export async function $transaction(arg: any) {
   if (typeof arg === "function") {
@@ -938,6 +1006,7 @@ export async function $transaction(arg: any) {
       comment,
       postReaction,
       paymentOrder,
+      emailVerification,
     });
   }
   if (Array.isArray(arg)) {
@@ -956,5 +1025,6 @@ export const sqliteClient = {
   comment,
   postReaction,
   paymentOrder,
+  emailVerification,
   $transaction,
 };
