@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 export interface MarkdownRendererProps {
   content: string;
@@ -276,6 +278,20 @@ function MarkdownRenderer({ content, hideActionNotes = false }: MarkdownRenderer
   const isHidingNotes = hideActionNotes && hasNotes && !showFullNotes;
   const displayContent = isHidingNotes ? dialogue : content;
 
+  // Tiền xử lý nội dung để chuẩn hóa dấu ngoặc LaTeX và bullet rỗng
+  const formattedContent = React.useMemo(() => {
+    if (!displayContent) return "";
+    let txt = displayContent;
+    // 1. Loại bỏ các gạch đầu dòng bullet rỗng đứng riêng một mình (như '•\n' hoặc '* \n' hoặc '- \n')
+    txt = txt.replace(/^([*•\-]\s*)$/gm, "");
+    // 2. Chuyển đổi các dạng \( ... \) và \[ ... \] thành $...$ và $$...$$ nếu có
+    txt = txt.replace(/\\\(([\s\S]*?)\\\)/g, "$$$1$$");
+    txt = txt.replace(/\\\[([\s\S]*?)\\\]/g, "$$$$$$1$$$$");
+    // 3. Xóa các dòng trống thừa lặp lại
+    txt = txt.replace(/\n{3,}/g, "\n\n");
+    return txt;
+  }, [displayContent]);
+
   const handleCopyCode = (codeText: string, blockId: string) => {
     navigator.clipboard.writeText(codeText);
     setCopiedCode(blockId);
@@ -286,7 +302,8 @@ function MarkdownRenderer({ content, hideActionNotes = false }: MarkdownRenderer
     <div className="space-y-2">
       <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-3 text-slate-800 dark:text-slate-100">
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeKatex]}
         components={{
           h1: ({ children }) => (
             <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-4 mb-2 pb-1 border-b border-slate-200 dark:border-indigo-950/80">
@@ -322,9 +339,11 @@ function MarkdownRenderer({ content, hideActionNotes = false }: MarkdownRenderer
               {children}
             </ol>
           ),
-          li: ({ children }) => (
-            <li className="leading-relaxed">{children}</li>
-          ),
+          li: ({ children }) => {
+            // Không render thẻ li nếu không có nội dung thực chất
+            if (!children) return null;
+            return <li className="leading-relaxed">{children}</li>;
+          },
           blockquote: ({ children }) => (
             <blockquote className="border-l-4 border-indigo-500/60 pl-3.5 py-1 my-2.5 italic text-slate-600 dark:text-slate-400 bg-indigo-50/40 dark:bg-indigo-950/20 rounded-r-xl">
               {children}
@@ -388,7 +407,7 @@ function MarkdownRenderer({ content, hideActionNotes = false }: MarkdownRenderer
           img: ({ src, alt }: any) => <ChatImageCard src={src} alt={alt} />,
         }}
       >
-        {displayContent}
+        {formattedContent}
       </ReactMarkdown>
       </div>
 

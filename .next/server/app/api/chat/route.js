@@ -58,7 +58,8 @@ ${I}
    - Đọc kỹ từng chữ số, biểu thức, h\xecnh vẽ h\xecnh học hoặc đồ thị trong h\xecnh ảnh người d\xf9ng gửi.
    - Tr\xedch dẫn r\xf5 đề b\xe0i bạn nhận diện được: "Đề b\xe0i: ...".
    - Giải chi tiết từng bước (Step-by-step) với lập luận to\xe1n học chặt chẽ.
-   - Sử dụng c\xf4ng thức LaTeX chuẩn ($...$ hoặc $$...$$) để hiển thị c\xf4ng thức to\xe1n r\xf5 r\xe0ng, đẹp mắt.
+   - Sử dụng c\xf4ng thức LaTeX chuẩn ($...$ cho c\xf4ng thức nằm trong d\xf2ng v\xe0 $$...$$ cho c\xf4ng thức ri\xeang một d\xf2ng) để hệ thống tự động render biểu thức to\xe1n học sắc n\xe9t.
+   - QUY TẮC ĐỊNH DẠNG: Tuyệt đối kh\xf4ng để dấu chấm đầu d\xf2ng rỗng (như '•' đứng ri\xeang một d\xf2ng). Viết trực tiếp: "**Bước 1:** ...", "**Bước 2:** ...".
    - N\xeau r\xf5 c\xf4ng thức cốt l\xf5i \xe1p dụng, mẹo bấm m\xe1y t\xednh Casio 580VNX/880BTG nếu c\xf3, v\xe0 đ\xf3ng khung đ\xe1p \xe1n cuối c\xf9ng.`),("physics-solver"===d||B.name&&B.name.includes("Vật L\xfd"))&&(J+=`
 
 [QUY TẮC BẮT BUỘC D\xc0NH CHO GIA SƯ VẬT L\xdd]:
