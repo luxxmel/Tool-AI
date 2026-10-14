@@ -252,11 +252,11 @@ export default function AppSidebar({
       >
         <div>
           {/* Brand Logo & Controls */}
-          <div className="flex items-center justify-between px-1 py-2 mb-2 gap-1 min-w-0">
+          <div className="flex items-center justify-between px-1 py-1.5 mb-2 gap-2 min-w-0">
             <Link
               href="/"
               onClick={() => setIsMobileOpen(false)}
-              className="flex items-center gap-1.5 group cursor-pointer min-w-0 flex-1"
+              className="flex items-center gap-2 group cursor-pointer min-w-0 flex-1 truncate"
             >
               <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -268,12 +268,12 @@ export default function AppSidebar({
               </span>
             </Link>
 
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
               {/* Close button on mobile */}
               <button
                 type="button"
                 onClick={() => setIsMobileOpen(false)}
-                className="lg:hidden w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer flex items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
+                className="lg:hidden w-7.5 h-7.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer flex items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
                 title="Đóng menu"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -286,7 +286,7 @@ export default function AppSidebar({
                 <button
                   type="button"
                   onClick={onToggleCollapse}
-                  className="hidden lg:flex w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
+                  className="hidden lg:flex w-7.5 h-7.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
                   title={t("sidebar.collapse")}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -294,44 +294,47 @@ export default function AppSidebar({
                   </svg>
                 </button>
               )}
-
-              {/* Daily Check-in Button (Desktop) */}
-              <button
-                type="button"
-                onClick={handleDailyCheckin}
-                className="hidden lg:flex h-8 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-500 dark:text-amber-400 items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer shrink-0 shadow-xs hover:scale-102 active:scale-95"
-                title="Điểm danh nhận quà mỗi ngày"
-              >
-                <span className="text-sm">🎁</span>
-                <span className="text-[10px] font-black uppercase text-amber-500">Quà</span>
-              </button>
-
-              {/* Notification Popup Trigger */}
-              <button
-                type="button"
-                onClick={() => setIsNotificationOpen(true)}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer relative flex items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
-                title="Xem thông báo hệ thống"
-              >
-                <span className="text-xs">🔔</span>
-                {hasUnreadNotifications && (
-                  <>
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
-                  </>
-                )}
-              </button>
-
-              {/* Quick Theme Toggle Button */}
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700/60 transition-all cursor-pointer flex items-center justify-center text-xs shadow-xs shrink-0 active:scale-95"
-                title={theme === "dark" ? t("sidebar.light_mode") : t("sidebar.dark_mode")}
-              >
-                <span>{theme === "dark" ? "☀️" : "🌙"}</span>
-              </button>
             </div>
+          </div>
+
+          {/* Quick Action Toolbar (Quà, Thông báo, Đổi theme) */}
+          <div className="flex items-center justify-between gap-1.5 px-2 py-1.5 mb-3 bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800/80 rounded-xl">
+            {/* Daily Check-in Button */}
+            <button
+              type="button"
+              onClick={handleDailyCheckin}
+              className="flex-1 h-7.5 px-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1.5 text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+              title="Điểm danh nhận quà mỗi ngày"
+            >
+              <span className="text-xs">🎁</span>
+              <span className="text-[11px] font-black uppercase tracking-wide">Điểm danh</span>
+            </button>
+
+            {/* Notification Popup Trigger */}
+            <button
+              type="button"
+              onClick={() => setIsNotificationOpen(true)}
+              className="w-7.5 h-7.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer relative flex items-center justify-center border border-slate-200/80 dark:border-slate-700/60 shrink-0 active:scale-95 shadow-xs"
+              title="Xem thông báo hệ thống"
+            >
+              <span className="text-xs">🔔</span>
+              {hasUnreadNotifications && (
+                <>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full" />
+                </>
+              )}
+            </button>
+
+            {/* Quick Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="w-7.5 h-7.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200/80 dark:border-slate-700/60 transition-all cursor-pointer flex items-center justify-center text-xs shadow-xs shrink-0 active:scale-95"
+              title={theme === "dark" ? t("sidebar.light_mode") : t("sidebar.dark_mode")}
+            >
+              <span>{theme === "dark" ? "☀️" : "🌙"}</span>
+            </button>
           </div>
 
           {/* Nav List */}
