@@ -249,7 +249,7 @@ export default function RegisterPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="VD: linh_hoang99"
+                placeholder="Nhập tên đăng nhập..."
                 required
                 className="w-full px-4 py-2.5 bg-[#131520] border border-slate-800 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono"
               />
