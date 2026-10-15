@@ -90,6 +90,9 @@ export default function CreatePostModal({
           categoryLabel: categoryLabels[category],
           image: imageUrl.trim() || imagePreview || null,
           authorId: user?.id,
+          authorEmail: user?.email,
+          authorName: user?.displayName || user?.username,
+          authorAvatar: user?.avatar,
         }),
       });
 

@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             name: true,
+            username: true,
             email: true,
             avatar: true,
             role: true,
@@ -125,14 +126,14 @@ export async function GET(request: NextRequest) {
           year: "numeric",
         }),
         author: {
-          id: post.author.id,
-          name: post.author.name || "Người dùng ẩn danh",
-          username: post.author.email.split("@")[0],
+          id: post.author?.id || post.authorId,
+          name: post.author?.name || (post.author?.email ? post.author.email.split("@")[0] : "Thành viên"),
+          username: post.author?.username || (post.author?.email ? post.author.email.split("@")[0] : "user"),
           avatar:
-            post.author.avatar ||
-            `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(post.author.email)}`,
-          isVip: post.author.role === "VIP" || post.author.role === "ADMIN",
-          role: post.author.role,
+            post.author?.avatar ||
+            `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(post.author?.email || post.authorId)}`,
+          isVip: post.author?.role === "VIP" || post.author?.role === "ADMIN",
+          role: post.author?.role || "USER",
         },
       };
     });
@@ -150,7 +151,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, category, categoryLabel, image, authorId } = body;
+    const { title, content, category, categoryLabel, image } = body;
+    let authorId = body.authorId;
+    let authorEmail = body.authorEmail;
+    let authorName = body.authorName;
+    let authorAvatar = body.authorAvatar;
+
+    // Cookie fallback nếu thiếu thông tin author
+    if (!authorId || !authorEmail) {
+      const cookieAuth = request.cookies.get("tool_ai_auth_user");
+      if (cookieAuth?.value) {
+        try {
+          const cookieUser = JSON.parse(decodeURIComponent(cookieAuth.value));
+          if (!authorId && cookieUser?.id) authorId = cookieUser.id;
+          if (!authorEmail && cookieUser?.email) authorEmail = cookieUser.email;
+          if (!authorName && (cookieUser?.displayName || cookieUser?.name || cookieUser?.username)) {
+            authorName = cookieUser?.displayName || cookieUser?.name || cookieUser?.username;
+          }
+          if (!authorAvatar && cookieUser?.avatar) authorAvatar = cookieUser.avatar;
+        } catch {}
+      }
+    }
 
     if (!title || !content) {
       return NextResponse.json(
@@ -160,7 +181,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Đảm bảo author tồn tại trong cơ sở dữ liệu máy chủ
-    const authorUser = await ensureUser(authorId);
+    const authorUser = await ensureUser(authorId, authorEmail, authorName);
     if (!authorUser) {
       return NextResponse.json({ error: "Author not found" }, { status: 404 });
     }
@@ -171,13 +192,14 @@ export async function POST(request: NextRequest) {
       const syncedUser = await prisma.user.upsert({
         where: { email: authorUser.email },
         update: {
-          name: authorUser.name,
-          avatar: authorUser.avatar,
+          name: authorName || authorUser.name,
+          avatar: authorAvatar || authorUser.avatar,
         },
         create: {
           email: authorUser.email,
-          name: authorUser.name,
-          avatar: authorUser.avatar,
+          username: authorUser.email ? authorUser.email.split("@")[0] : undefined,
+          name: authorName || authorUser.name,
+          avatar: authorAvatar || authorUser.avatar,
           role: authorUser.role,
           credits: authorUser.credits,
         },
@@ -237,9 +259,9 @@ export async function POST(request: NextRequest) {
         createdAt: "Vừa xong",
         author: {
           id: newPost.author?.id || validAuthorId,
-          name: newPost.author?.name || authorUser.name || "Người dùng",
-          username: (newPost.author?.email || authorUser.email || "user@omni").split("@")[0],
-          avatar: newPost.author?.avatar || authorUser.avatar,
+          name: authorName || newPost.author?.name || authorUser.name || "Người dùng",
+          username: (authorEmail || newPost.author?.email || authorUser.email || "user@biettuot.io").split("@")[0],
+          avatar: authorAvatar || newPost.author?.avatar || authorUser.avatar,
           isVip: newPost.author?.role === "VIP" || newPost.author?.role === "ADMIN" || authorUser.role === "ADMIN",
           role: newPost.author?.role || authorUser.role || "USER",
         },
