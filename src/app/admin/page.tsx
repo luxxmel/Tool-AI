@@ -2892,47 +2892,53 @@ export default function AdminCmsPage() {
                       key={bot.id}
                       className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col"
                     >
-                      {/* Avatar - Hiển thị ảnh đầy đặn, sắc nét */}
-                      <div className="aspect-[16/10] bg-slate-100 dark:bg-[#151722] overflow-hidden relative">
-                        <img
-                          src={bot.avatar}
-                          alt={bot.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src =
-                              `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=6366f1&color=fff&size=200`;
-                          }}
-                        />
-                      </div>
-
-                      {/* Info */}
-                      <div className="p-3 flex-1 flex flex-col justify-between">
+                      {/* Card Content with elegant avatar and badge */}
+                      <div className="p-4 flex-1 flex flex-col justify-between">
                         <div>
-                          <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
-                              Trợ lý
-                            </span>
-                            {bot.badge && (
-                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 truncate max-w-[90px]">
-                                {bot.badge}
+                          {/* Top: Avatar + Badges */}
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-indigo-500/30 dark:border-indigo-500/40 shrink-0 bg-slate-100 dark:bg-slate-800 shadow-sm">
+                              <img
+                                src={bot.avatar}
+                                alt={bot.name}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLImageElement).src =
+                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=6366f1&color=fff&size=200`;
+                                }}
+                              />
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-cyan-400 border border-indigo-200 dark:border-indigo-800/60">
+                                Trợ lý AI
                               </span>
-                            )}
+                              {bot.badge && (
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 truncate max-w-[100px]">
+                                  {bot.badge}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 mb-1">
+
+                          {/* Title & Description */}
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1 mb-1 group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors">
                             {bot.name}
                           </h3>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2 mb-2">
+                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed mb-3">
                             {bot.description}
                           </p>
                         </div>
-                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
-                          <span className="font-mono text-slate-400 truncate max-w-[100px]">{bot.id}</span>
+
+                        {/* Bottom Action Footer */}
+                        <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                          <span className="font-mono text-[11px] text-slate-400 truncate max-w-[100px]">{bot.id}</span>
                           <Link
                             href={`/chat/${bot.id}`}
                             target="_blank"
-                            className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
+                            className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-cyan-400 font-bold transition-all flex items-center gap-1"
                           >
-                            Chat ↗
+                            <span>Chat</span>
+                            <span>↗</span>
                           </Link>
                         </div>
                       </div>
