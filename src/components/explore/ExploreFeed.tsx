@@ -1094,14 +1094,14 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
             </button>
           </div>
 
-          {/* Bảng xếp hạng Top 5 Bài viết nhiều cảm xúc nhất */}
+          {/* Bảng xếp hạng Top 5 Bài viết thu hút nhất */}
           <div className="bg-white dark:bg-[#0d0f18] border border-slate-200 dark:border-indigo-950/60 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                🔥 <span>Top 5 bài viết nhiều cảm xúc</span>
+                🔥 <span>Top 5 bài viết thu hút nhất</span>
               </h3>
               <span className="text-[10px] text-amber-500 dark:text-amber-400 font-bold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-                ❤️ BXH Cảm xúc
+                ✨ Thu hút
               </span>
             </div>
 
