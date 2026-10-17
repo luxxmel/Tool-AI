@@ -8,6 +8,124 @@ export function createId(): string {
 
 let dbInstance: any = null;
 
+function initSchema(db: any) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS "Bot" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "name" TEXT NOT NULL,
+      "avatar" TEXT NOT NULL,
+      "description" TEXT,
+      "systemPrompt" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "User" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "email" TEXT NOT NULL,
+      "username" TEXT,
+      "name" TEXT,
+      "password" TEXT,
+      "emailVerified" DATETIME,
+      "avatar" TEXT,
+      "role" TEXT NOT NULL DEFAULT 'USER',
+      "status" TEXT NOT NULL DEFAULT 'active',
+      "credits" INTEGER NOT NULL DEFAULT 10,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
+    CREATE UNIQUE INDEX IF NOT EXISTS "User_username_key" ON "User"("username");
+
+    CREATE TABLE IF NOT EXISTS "EmailVerification" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "email" TEXT NOT NULL,
+      "otp" TEXT NOT NULL,
+      "expiresAt" DATETIME NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS "EmailVerification_email_idx" ON "EmailVerification"("email");
+
+    CREATE TABLE IF NOT EXISTS "Conversation" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "userId" TEXT NOT NULL,
+      "botId" TEXT NOT NULL,
+      "projectId" TEXT,
+      "title" TEXT DEFAULT 'Cuộc trò chuyện mới',
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "Message" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "conversationId" TEXT NOT NULL,
+      "sender" TEXT NOT NULL,
+      "content" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "Project" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "userId" TEXT NOT NULL,
+      "name" TEXT NOT NULL,
+      "description" TEXT,
+      "systemPrompt" TEXT,
+      "icon" TEXT NOT NULL DEFAULT '📁',
+      "color" TEXT NOT NULL DEFAULT 'indigo',
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "Post" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "authorId" TEXT NOT NULL,
+      "title" TEXT NOT NULL,
+      "content" TEXT NOT NULL,
+      "category" TEXT NOT NULL DEFAULT 'prompt',
+      "categoryLabel" TEXT NOT NULL DEFAULT 'Prompt AI',
+      "image" TEXT,
+      "likes" INTEGER NOT NULL DEFAULT 0,
+      "commentsCount" INTEGER NOT NULL DEFAULT 0,
+      "status" TEXT NOT NULL DEFAULT 'published',
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "Comment" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "postId" TEXT NOT NULL,
+      "userId" TEXT NOT NULL,
+      "content" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "PostReaction" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "postId" TEXT NOT NULL,
+      "userId" TEXT NOT NULL,
+      "type" TEXT NOT NULL DEFAULT 'like',
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS "PaymentOrder" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "orderCode" INTEGER NOT NULL,
+      "userId" TEXT NOT NULL,
+      "amount" INTEGER NOT NULL,
+      "credits" INTEGER NOT NULL,
+      "packageName" TEXT,
+      "status" TEXT NOT NULL DEFAULT 'PENDING',
+      "paymentMethod" TEXT NOT NULL DEFAULT 'payos_vietqr',
+      "payosPaymentLinkId" TEXT,
+      "transactionId" TEXT,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
 function getDb() {
   if (dbInstance) return dbInstance;
 
@@ -24,6 +142,10 @@ function getDb() {
     dbInstance = new DatabaseSync(dbPath);
     dbInstance.exec("PRAGMA journal_mode = WAL;");
     dbInstance.exec("PRAGMA foreign_keys = ON;");
+    
+    // Tự động khởi tạo cấu trúc bảng nếu database mới hoặc thiếu bảng
+    initSchema(dbInstance);
+
     return dbInstance;
   } catch (err) {
     console.error("[SQLiteDb] Lỗi khởi tạo node:sqlite:", err);
