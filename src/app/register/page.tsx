@@ -89,6 +89,7 @@ export default function RegisterPage() {
       }
 
       setStep("otp");
+      setOtp(""); // Đảm bảo ô nhập luôn trống để người dùng tự nhập từ email
       startCountdown();
       setSuccessMsg(`Mã xác thực 6 chữ số đã được gửi tới email ${cleanEmail}. Vui lòng kiểm tra hộp thư (cả mục Spam/Rác nếu chưa thấy)!`);
     } catch (err) {
@@ -123,6 +124,7 @@ export default function RegisterPage() {
       }
 
       startCountdown();
+      setOtp("");
       setSuccessMsg("Đã gửi lại mã xác thực mới vào email của bạn!");
     } catch {
       setError("Lỗi kết nối máy chủ khi gửi lại mã");
