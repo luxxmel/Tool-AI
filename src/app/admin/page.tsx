@@ -2798,12 +2798,12 @@ export default function AdminCmsPage() {
                       key={bot.id}
                       className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col"
                     >
-                      {/* Avatar Poster - Hiển thị trọn vẹn 100% hình ảnh không bị cắt */}
-                      <div className="aspect-[3/4] bg-slate-900/90 dark:bg-[#0c0d14] overflow-hidden relative flex items-center justify-center p-1.5">
+                      {/* Avatar Poster - Hiển thị ảnh đầy đặn, đẹp mắt */}
+                      <div className="aspect-[3/4] bg-slate-100 dark:bg-[#151722] overflow-hidden relative">
                         <img
                           src={bot.avatar}
                           alt={bot.name}
-                          className="w-full h-full object-contain rounded-xl hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             (e.currentTarget as HTMLImageElement).src =
                               `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=f43f5e&color=fff&size=200`;
@@ -2892,12 +2892,12 @@ export default function AdminCmsPage() {
                       key={bot.id}
                       className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col"
                     >
-                      {/* Avatar - Hiển thị trọn vẹn 100% hình ảnh không bị cắt */}
-                      <div className="aspect-[4/3] bg-slate-900/90 dark:bg-[#0c0d14] overflow-hidden flex items-center justify-center p-2.5">
+                      {/* Avatar - Hiển thị ảnh đầy đặn, sắc nét */}
+                      <div className="aspect-[16/10] bg-slate-100 dark:bg-[#151722] overflow-hidden relative">
                         <img
                           src={bot.avatar}
                           alt={bot.name}
-                          className="w-full h-full object-contain rounded-xl hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             (e.currentTarget as HTMLImageElement).src =
                               `https://ui-avatars.com/api/?name=${encodeURIComponent(bot.name)}&background=6366f1&color=fff&size=200`;
