@@ -64,6 +64,8 @@ function HomeContent() {
   useEffect(() => {
     if (tabQuery && tabQuery !== currentTab) {
       setCurrentTab(tabQuery);
+      setIsCreatingProject(false);
+      setActiveProjectId(null);
       if (tabQuery === "home") {
         setIsChatOpen(false);
       }
@@ -200,6 +202,8 @@ function HomeContent() {
 
   const handleSelectTab = (tab: string) => {
     setCurrentTab(tab);
+    setIsCreatingProject(false);
+    setActiveProjectId(null);
     if (tab === "home") {
       handleNewChat();
       router.push("/");
