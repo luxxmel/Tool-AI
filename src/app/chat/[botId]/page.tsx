@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import MarkdownRenderer from "@/components/chat/MarkdownRenderer";
@@ -494,7 +494,10 @@ interface ChatMessage {
 export default function BotChatPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const botId = params?.botId as string;
+  const initialUrlPrompt = searchParams?.get("prompt") || searchParams?.get("q") || "";
+  const initialPromptSentRef = useRef<boolean>(false);
 
   const { user, updateUserCredits } = useAuth();
   const activeUserId = user?.id || user?.email || null;
@@ -737,7 +740,8 @@ export default function BotChatPage() {
     if (msgId) {
       const el = document.getElementById(msgId);
       if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Cuộn để bong bóng câu hỏi của User nằm ngay dưới header, không bị che khuất
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
         return;
       }
     }
@@ -748,13 +752,13 @@ export default function BotChatPage() {
   const handleScroll = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-    // Nếu khoảng cách đến đáy <= 150px thì tính là đang ở đáy
-    isUserNearBottomRef.current = scrollHeight - scrollTop - clientHeight <= 150;
+    // Nếu khoảng cách đến đáy <= 100px thì tính là đang chủ động theo dõi ở đáy
+    isUserNearBottomRef.current = scrollHeight - scrollTop - clientHeight <= 100;
   };
 
   useEffect(() => {
-    // Chỉ cuộn nếu người dùng đang ở gần đáy để tránh kéo giật mất tin nhắn của họ
-    if (isUserNearBottomRef.current) {
+    // Chỉ tự động cuộn nếu người dùng đang ở sát đáy, tránh kéo trôi mất câu hỏi vừa gửi
+    if (isUserNearBottomRef.current && !isLoading) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [messages, isLoading]);
@@ -832,6 +836,14 @@ export default function BotChatPage() {
       isMounted = false;
     };
   }, [botId, activeUserId]);
+
+  // Tự động gửi câu hỏi nếu có tham số URL (?prompt=... hoặc ?q=...)
+  useEffect(() => {
+    if (initialUrlPrompt && !botLoading && !initialPromptSentRef.current) {
+      initialPromptSentRef.current = true;
+      handleSendMessage(undefined, initialUrlPrompt);
+    }
+  }, [initialUrlPrompt, botLoading]);
 
   const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const imgs = await extractImagesFromClipboard(e);
@@ -1361,6 +1373,31 @@ export default function BotChatPage() {
               </div>
             )}
 
+            {/* Suggested Prompts Cards - Bấm vào sẽ tự động gửi câu hỏi của người dùng */}
+            {bot.suggestedPrompts && bot.suggestedPrompts.length > 0 && (
+              <div className="w-full max-w-2xl mx-auto mt-2 text-left">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
+                  <span>💡</span>
+                  <span>{language === "en" ? "Suggested Questions / Prompts:" : "Gợi ý câu hỏi bắt đầu trò chuyện:"}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {bot.suggestedPrompts.map((promptText, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSendMessage(undefined, promptText)}
+                      className="p-3 rounded-2xl bg-white/80 dark:bg-[#121422]/90 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 border border-slate-200 dark:border-indigo-900/50 hover:border-indigo-400 dark:hover:border-cyan-400 transition-all text-left shadow-2xs hover:shadow-md group cursor-pointer flex items-start gap-2.5 active:scale-98"
+                    >
+                      <span className="text-base shrink-0 group-hover:scale-110 transition-transform">👉</span>
+                      <span className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium leading-snug group-hover:text-indigo-600 dark:group-hover:text-cyan-300">
+                        {promptText}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
         ) : (
           messages.map((msg) => {
@@ -1447,9 +1484,21 @@ export default function BotChatPage() {
 
                     {isUser ? (
                       <div>
-                        <div className="whitespace-pre-wrap break-words">{msg.content}</div>
+                        {/* Header của User Message để luôn nhận diện rõ ràng đoạn tin nhắn của bạn */}
+                        <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-white/20 text-[11px] font-bold text-white/90">
+                          <span className="flex items-center gap-1">
+                            <span>👤</span>
+                            <span>{user?.displayName || "Bạn"}</span>
+                          </span>
+                          <span className="text-[10px] font-medium text-white/75 bg-white/20 px-1.5 py-0.2 rounded-md">
+                            {language === "en" ? "Question" : "Câu hỏi"}
+                          </span>
+                        </div>
+                        <div className="whitespace-pre-wrap break-words text-sm sm:text-base font-medium text-white leading-relaxed select-text">
+                          {msg.content}
+                        </div>
                         {!isLoading && (
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1.5 mt-1.5 pt-1 border-t border-white/20">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1.5 mt-2 pt-1 border-t border-white/20">
                             <button
                               type="button"
                               onClick={() => handleStartEdit(msg)}

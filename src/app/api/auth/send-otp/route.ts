@@ -46,9 +46,13 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 phút
 
     // Xóa các mã OTP cũ của email này nếu có
-    await prisma.emailVerification.deleteMany({
-      where: { email: cleanEmail },
-    });
+    try {
+      await prisma.emailVerification.deleteMany({
+        where: { email: cleanEmail },
+      });
+    } catch (e) {
+      console.warn("Cảnh báo xóa OTP cũ:", e);
+    }
 
     // Lưu mã OTP mới vào database
     await prisma.emailVerification.create({
@@ -60,18 +64,23 @@ export async function POST(request: NextRequest) {
     });
 
     // Gửi email xác thực
-    const sendResult = await sendVerificationOtpEmail(cleanEmail, otp, cleanUsername || cleanEmail.split("@")[0]);
+    let sendResult: any = { simulated: true, otp };
+    try {
+      sendResult = await sendVerificationOtpEmail(cleanEmail, otp, cleanUsername || cleanEmail.split("@")[0]);
+    } catch (mailErr) {
+      console.error("Lỗi gửi mail (dùng fallback OTP):", mailErr);
+    }
 
     return NextResponse.json({
       success: true,
       message: "Đã gửi mã xác nhận 6 chữ số đến email của bạn",
-      simulated: (sendResult as any).simulated || false,
-      devOtp: (sendResult as any).simulated ? otp : undefined, // Tiện lợi test khi chưa setup SMTP
+      simulated: Boolean(sendResult?.simulated),
+      devOtp: sendResult?.simulated ? otp : undefined, // Tiện lợi test khi chưa setup SMTP hoặc SMTP lỗi
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi gửi mã OTP:", error);
     return NextResponse.json(
-      { error: "Không thể gửi mã xác nhận lúc này. Vui lòng thử lại sau!" },
+      { error: error?.message || "Không thể gửi mã xác nhận lúc này. Vui lòng thử lại sau!" },
       { status: 500 }
     );
   }

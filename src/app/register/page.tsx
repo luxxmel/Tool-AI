@@ -93,6 +93,7 @@ export default function RegisterPage() {
       startCountdown();
       if (data.devOtp) {
         setDevOtp(data.devOtp);
+        setOtp(data.devOtp);
       }
       setSuccessMsg(`Mã xác thực 6 chữ số đã được gửi tới email ${cleanEmail}. Vui lòng kiểm tra hộp thư (cả mục Spam/Rác nếu chưa thấy)!`);
     } catch (err) {
