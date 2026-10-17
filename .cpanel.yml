@@ -2,6 +2,7 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/cuacongn/biettuot.io.vn/
-    - /bin/cp -R * $DEPLOYPATH
+    - /bin/rsync -av --exclude='prisma/*.db*' --exclude='.env' . $DEPLOYPATH || /bin/cp -Rn * $DEPLOYPATH
     - /bin/mkdir -p $DEPLOYPATH/tmp
     - /bin/touch $DEPLOYPATH/tmp/restart.txt
+
