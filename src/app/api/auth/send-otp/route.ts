@@ -74,8 +74,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Đã gửi mã xác nhận 6 chữ số đến email của bạn",
-      simulated: Boolean(sendResult?.simulated),
-      devOtp: sendResult?.simulated ? otp : undefined, // Tiện lợi test khi chưa setup SMTP hoặc SMTP lỗi
     });
   } catch (error: any) {
     console.error("Lỗi khi gửi mã OTP:", error);

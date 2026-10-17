@@ -22,7 +22,6 @@ export default function RegisterPage() {
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const [devOtp, setDevOtp] = useState<string | null>(null);
 
   // Bắt đầu đếm ngược gửi lại mã OTP (60s)
   const startCountdown = () => {
@@ -91,10 +90,6 @@ export default function RegisterPage() {
 
       setStep("otp");
       startCountdown();
-      if (data.devOtp) {
-        setDevOtp(data.devOtp);
-        setOtp(data.devOtp);
-      }
       setSuccessMsg(`Mã xác thực 6 chữ số đã được gửi tới email ${cleanEmail}. Vui lòng kiểm tra hộp thư (cả mục Spam/Rác nếu chưa thấy)!`);
     } catch (err) {
       console.error("Lỗi gửi OTP:", err);
@@ -128,7 +123,6 @@ export default function RegisterPage() {
       }
 
       startCountdown();
-      if (data.devOtp) setDevOtp(data.devOtp);
       setSuccessMsg("Đã gửi lại mã xác thực mới vào email của bạn!");
     } catch {
       setError("Lỗi kết nối máy chủ khi gửi lại mã");
@@ -221,20 +215,6 @@ export default function RegisterPage() {
           <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-start gap-2 animate-in fade-in duration-150">
             <span className="shrink-0 text-sm">✅</span>
             <span>{successMsg}</span>
-          </div>
-        )}
-
-        {/* Helper hiển thị OTP mô phỏng nếu chưa config SMTP server thực tế */}
-        {devOtp && (
-          <div className="mb-4 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs flex items-center justify-between">
-            <span>⚡ Mã xác nhận thử nghiệm: <strong>{devOtp}</strong></span>
-            <button
-              type="button"
-              onClick={() => setOtp(devOtp)}
-              className="px-2 py-0.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-200 text-[10px] font-bold cursor-pointer transition-colors"
-            >
-              Điền nhanh
-            </button>
           </div>
         )}
 
