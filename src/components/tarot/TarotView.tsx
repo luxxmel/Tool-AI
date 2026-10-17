@@ -60,11 +60,15 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
   // Tải lịch sử Tarot từ localStorage khi mở trang
   React.useEffect(() => {
     try {
-      const uid = user?.id || user?.email || 'guest';
+      const uid = user?.id || user?.email;
+      if (!uid) {
+        setHistoryList([]);
+        return;
+      }
       const saved = localStorage.getItem(`omni_tarot_history_${uid}`);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           setHistoryList(parsed);
           return;
         }
@@ -73,24 +77,8 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
       console.warn("Lỗi đọc lịch sử Tarot:", e);
     }
 
-    // Mẫu mặc định nếu chưa có lịch sử
-    setHistoryList([
-      {
-        id: 'h-default',
-        topicTitle: 'Tình cảm',
-        dateStr: 'Gần đây',
-        cards: [
-          { card: TAROT_CARDS.find(c => c.id === 'queen_of_cups') || TAROT_CARDS[0], isReversed: true, positionLabel: 'Bạn' },
-          { card: TAROT_CARDS.find(c => c.id === 'eight_of_pentacles') || TAROT_CARDS[1], isReversed: true, positionLabel: 'Người ấy' },
-          { card: TAROT_CARDS.find(c => c.id === 'chariot') || TAROT_CARDS[2], isReversed: true, positionLabel: 'Kết nối' },
-          { card: TAROT_CARDS.find(c => c.id === 'five_of_wands') || TAROT_CARDS[3], isReversed: true, positionLabel: 'Đang giữ' },
-          { card: TAROT_CARDS.find(c => c.id === 'six_of_swords') || TAROT_CARDS[4], isReversed: true, positionLabel: 'Cọ xát' },
-          { card: TAROT_CARDS.find(c => c.id === 'star') || TAROT_CARDS[5], isReversed: false, positionLabel: 'Lời khuyên' },
-          { card: TAROT_CARDS.find(c => c.id === 'sun') || TAROT_CARDS[6], isReversed: false, positionLabel: 'Hướng đi' },
-        ],
-        readingText: 'Dường như bạn đang mang theo rất nhiều cảm xúc chông chênh vào mối quan hệ này...'
-      }
-    ]);
+    // Nếu người dùng mới chưa từng trải bài thì để mảng rỗng, không gán lịch sử mẫu của tài khoản khác
+    setHistoryList([]);
   }, [user?.id, user?.email]);
 
   // Sound Effects Generator for Tarot Interactions
@@ -662,41 +650,43 @@ Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần 
             ))}
           </div>
 
-          {/* LƯỢT TRẢI CỦA BẠN (History Section) */}
-          <div className="space-y-3 pt-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Lượt trải của bạn
-            </h3>
-            <div className="space-y-3">
-              {historyList.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    setSelectedTopic(TAROT_TOPICS.find(t => t.title.toLowerCase().includes(item.topicTitle.toLowerCase())) || TAROT_TOPICS[0]);
-                    setPickedCards(item.cards);
-                    setReadingText(item.readingText);
-                    setStep('reading');
-                  }}
-                  className="bg-[#12131c] border border-slate-800/80 hover:border-purple-500/50 rounded-2xl p-3.5 flex items-center justify-between cursor-pointer transition-all hover:bg-slate-900/60"
-                >
-                  <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
-                    <div className="flex -space-x-2 shrink-0">
-                      {item.cards.slice(0, 7).map((c, i) => (
-                        <div key={i} className={`w-7 h-11 rounded border border-amber-400/60 overflow-hidden shadow ${c.isReversed ? 'rotate-180' : ''}`}>
-                          <img src={c.card.image} alt={c.card.name} className="w-full h-full object-cover" />
-                        </div>
-                      ))}
+          {/* LƯỢT TRẢI CỦA BẠN (History Section - chỉ hiển thị khi có lịch sử thực của tài khoản này) */}
+          {historyList.length > 0 && (
+            <div className="space-y-3 pt-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                Lượt trải của bạn
+              </h3>
+              <div className="space-y-3">
+                {historyList.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedTopic(TAROT_TOPICS.find(t => t.title.toLowerCase().includes(item.topicTitle.toLowerCase())) || TAROT_TOPICS[0]);
+                      setPickedCards(item.cards);
+                      setReadingText(item.readingText);
+                      setStep('reading');
+                    }}
+                    className="bg-[#12131c] border border-slate-800/80 hover:border-purple-500/50 rounded-2xl p-3.5 flex items-center justify-between cursor-pointer transition-all hover:bg-slate-900/60"
+                  >
+                    <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+                      <div className="flex -space-x-2 shrink-0">
+                        {item.cards.slice(0, 7).map((c, i) => (
+                          <div key={i} className={`w-7 h-11 rounded border border-amber-400/60 overflow-hidden shadow ${c.isReversed ? 'rotate-180' : ''}`}>
+                            <img src={c.card.image} alt={c.card.name} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-200">{item.topicTitle}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">{item.dateStr}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-sm text-slate-200">{item.topicTitle}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">{item.dateStr}</p>
-                    </div>
+                    <span className="text-slate-400 text-lg ml-2">›</span>
                   </div>
-                  <span className="text-slate-400 text-lg ml-2">›</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 
