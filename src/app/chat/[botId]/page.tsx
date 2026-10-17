@@ -564,18 +564,35 @@ export default function BotChatPage() {
       return;
     }
     const botName = (bot?.name || "").toLowerCase();
+    const bid = (botId as string || "").toLowerCase();
     const isTongTai =
-      ["char-tong-tai", "char-co-da-than", "char-tieu-viem"].includes(botId as string) ||
+      bid.includes("tong-tai") ||
+      bid.includes("co-da-than") ||
+      bid.includes("tieu-viem") ||
+      bid.includes("thac-bat-da") ||
+      bid.includes("bui-chi-dien") ||
+      bid.includes("giang-da") ||
+      bid.includes("tham-da-han") ||
+      bid.includes("mo-dung-ta") ||
+      bid.includes("du-ma-hai") ||
+      bid.includes("ho-nguyet-bach") ||
+      botName.includes("thác bạt") ||
+      botName.includes("chiến thần") ||
+      botName.includes("công tử") ||
+      botName.includes("bạn trai") ||
       botName.includes("tổng tài") ||
       botName.includes("lục cận phong") ||
       botName.includes("thiếu gia") ||
       botName.includes("tiên tôn") ||
       botName.includes("cố dạ thần") ||
       botName.includes("tiêu viêm") ||
-      botName.includes("nam chính");
+      botName.includes("nam chính") ||
+      botName.includes("thần y") ||
+      botName.includes("sát thủ") ||
+      botName.includes("hồ ly");
     const isMale = isTongTai || ["alex", "master-zen"].includes(botId as string);
     const defaultVoice = isTongTai || isMale ? "tong_tai" : "female";
-    const voice = forcedVoice || selectedVoice || defaultVoice;
+    const voice = forcedVoice || defaultVoice;
 
     setSpeakingMsgId(msgId);
     playVietnameseTTS(msgId, text, {
@@ -1372,32 +1389,6 @@ export default function BotChatPage() {
                 </p>
               </div>
             )}
-
-            {/* Suggested Prompts Cards - Bấm vào sẽ tự động gửi câu hỏi của người dùng */}
-            {bot.suggestedPrompts && bot.suggestedPrompts.length > 0 && (
-              <div className="w-full max-w-2xl mx-auto mt-2 text-left">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
-                  <span>💡</span>
-                  <span>{language === "en" ? "Suggested Questions / Prompts:" : "Gợi ý câu hỏi bắt đầu trò chuyện:"}</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {bot.suggestedPrompts.map((promptText, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleSendMessage(undefined, promptText)}
-                      className="p-3 rounded-2xl bg-white/80 dark:bg-[#121422]/90 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 border border-slate-200 dark:border-indigo-900/50 hover:border-indigo-400 dark:hover:border-cyan-400 transition-all text-left shadow-2xs hover:shadow-md group cursor-pointer flex items-start gap-2.5 active:scale-98"
-                    >
-                      <span className="text-base shrink-0 group-hover:scale-110 transition-transform">👉</span>
-                      <span className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium leading-snug group-hover:text-indigo-600 dark:group-hover:text-cyan-300">
-                        {promptText}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
           </div>
         ) : (
           messages.map((msg) => {
