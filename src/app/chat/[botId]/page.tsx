@@ -1138,6 +1138,10 @@ export default function BotChatPage() {
     );
   }
 
+  const isCharacter =
+    (botId as string || "").startsWith("char-") ||
+    bot?.category === "entertainment";
+
   return (
     <div
       className={`flex flex-col h-screen ${
@@ -1148,13 +1152,22 @@ export default function BotChatPage() {
       {/* 1. Header Trợ Lý & Credit */}
       <header className="min-h-16 h-auto py-2.5 px-4 sm:px-6 bg-white/80 dark:bg-[#111218]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-3 min-w-0 flex-1 mr-3">
-          <Link
-            href="/"
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+          <button
+            type="button"
+            onClick={() => {
+              if (isCharacter) {
+                router.push("/?tab=characters");
+              } else if (typeof window !== "undefined" && window.history.length > 1) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
             title="Quay lại"
           >
             ←
-          </Link>
+          </button>
 
           <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 bg-slate-100 dark:bg-slate-800">
             <img
