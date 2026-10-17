@@ -248,72 +248,13 @@ export default function SidebarConversationsList({
 
   return (
     <div className="flex flex-col flex-1 min-h-0 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 mt-2">
-      {/* Segmented Tab: Đoạn chat vs Dự án */}
-      <div className="flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-[#131522] border border-slate-200 dark:border-indigo-950/60 mb-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab("chats")}
-          className={`flex-1 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-            activeTab === "chats"
-              ? "bg-white dark:bg-[#1e2133] text-indigo-600 dark:text-cyan-300 shadow-xs"
-              : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
-          }`}
-        >
-          {t("sidebar.chats")}
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("projects")}
-          className={`flex-1 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-            activeTab === "projects"
-              ? "bg-white dark:bg-[#1e2133] text-indigo-600 dark:text-cyan-300 shadow-xs"
-              : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
-          }`}
-        >
-          {t("sidebar.projects")} ({(projects?.length || 0)})
-        </button>
-      </div>
-
-      {/* Header action button */}
-      <div className="flex items-center justify-between px-1 pb-1.5">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {activeTab === "chats" ? t("sidebar.recent") : t("sidebar.projects_list")}
-        </span>
-
-        {activeTab === "chats" ? (
-          <button
-            type="button"
-            onClick={onNewChat}
-            title={t("sidebar.new_chat")}
-            className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-[11px] flex items-center gap-1 font-bold"
-          >
-            <span>{t("sidebar.new")}</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              if (onOpenCreateProject) {
-                onOpenCreateProject();
-              } else {
-                setIsCreateProjectOpen(true);
-              }
-            }}
-            title={t("sidebar.create_project")}
-            className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-[11px] flex items-center gap-1 font-bold"
-          >
-            <span>{t("sidebar.create_project")}</span>
-          </button>
-        )}
-      </div>
-
-      {/* Search Input Bar */}
+      {/* Search Input Bar (ChatGPT style) */}
       <div className="relative mb-2 px-1">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={activeTab === "chats" ? "Tìm kiếm đoạn chat..." : "Tìm dự án..."}
+          placeholder="Tìm đoạn chat hoặc dự án..."
           className="w-full px-2.5 py-1.5 pl-7 text-[11px] rounded-xl bg-slate-100 dark:bg-[#121422] border border-slate-200 dark:border-indigo-950/60 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
         />
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none">
@@ -330,86 +271,154 @@ export default function SidebarConversationsList({
         )}
       </div>
 
-      {/* List content */}
-      <div className="flex-1 overflow-y-auto space-y-0.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800 max-h-[190px]">
-        {activeTab === "chats" ? (
-          /* CHATS LIST */
-          isLoading && (filteredConversations?.length || 0) === 0 ? (
-            <div className="p-3 text-center text-[11px] text-slate-400">
-              {t("sidebar.loading_chats")}
-            </div>
-          ) : (filteredConversations?.length || 0) === 0 ? (
-            <div className="p-3 text-center text-[11px] text-slate-400">
-              {searchQuery ? "Không tìm thấy đoạn chat nào" : t("sidebar.no_conversations")}
-            </div>
-          ) : (
-            filteredConversations.map((conv) => {
-              const isActive = activeConversationId === conv.id;
-              return (
-                <div
-                  key={conv.id}
-                  onClick={() => onSelectConversation(conv.id)}
-                  onMouseEnter={() => setHoveredId(conv.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <span className="text-xs shrink-0 opacity-70">💬</span>
-                    <span className="truncate text-left">{conv.title}</span>
-                  </div>
+      {/* Main Scrollable Content: Projects Section (Top) + Recent Chats (Bottom) */}
+      <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800 max-h-[360px]">
+        
+        {/* ─── PHẦN 1: DỰ ÁN (PROJECTS - ChatGPT style) ─── */}
+        <div>
+          <div className="flex items-center justify-between px-1.5 pb-1">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>📁</span>
+              <span>Dự án</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                if (onOpenCreateProject) {
+                  onOpenCreateProject();
+                } else {
+                  setIsCreateProjectOpen(true);
+                }
+              }}
+              title="Tạo dự án mới"
+              className="text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 text-xs font-bold p-0.5 rounded transition-colors flex items-center gap-0.5 cursor-pointer"
+            >
+              <span>+</span>
+              <span className="text-[10px]">Tạo mới</span>
+            </button>
+          </div>
 
-                  {hoveredId === conv.id && (
-                    <button
-                      type="button"
-                      onClick={(e) => handleDeleteConversation(e, conv.id)}
-                      title={t("sidebar.delete_chat")}
-                      className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors shrink-0 ml-1"
+          <div className="space-y-0.5">
+            {filteredProjects.length === 0 ? (
+              <div className="px-2 py-1.5 text-[11px] text-slate-500 italic">
+                Chưa có dự án nào
+              </div>
+            ) : (
+              filteredProjects.map((proj) => {
+                const isActive = activeProjectId === proj.id;
+                const isExpanded = expandedProjectIds[proj.id] || isActive;
+                const projConvs = Array.isArray(proj.conversations) ? proj.conversations : [];
+
+                return (
+                  <div key={proj.id} className="space-y-0.5">
+                    <div
+                      onClick={() => onSelectProject?.(proj.id)}
+                      onMouseEnter={() => setHoveredId(proj.id)}
+                      onMouseLeave={() => setHoveredId(null)}
+                      className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
+                        isActive
+                          ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
+                          : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
+                      }`}
                     >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              );
-            })
-          )
-        ) : (
-          /* PROJECTS LIST */
-          (filteredProjects?.length || 0) === 0 ? (
-            <div className="p-3 text-center text-[11px] text-slate-400">
-              <p>{searchQuery ? "Không tìm thấy dự án nào" : t("sidebar.no_projects")}</p>
-              {!searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenCreateProject) {
-                      onOpenCreateProject();
-                    } else {
-                      setIsCreateProjectOpen(true);
-                    }
-                  }}
-                  className="mt-1.5 text-indigo-500 dark:text-cyan-400 font-bold hover:underline cursor-pointer"
-                >
-                  {t("sidebar.create_first_project")}
-                </button>
-              )}
-            </div>
-          ) : (
-            filteredProjects.map((proj) => {
-              const isActive = activeProjectId === proj.id;
-              const isExpanded = expandedProjectIds[proj.id] || isActive;
-              const projConvs = Array.isArray(proj.conversations) ? proj.conversations : [];
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="text-xs shrink-0 text-slate-400">📁</span>
+                        <span className="truncate text-left font-medium">{proj.name}</span>
+                      </div>
 
-              return (
-                <div key={proj.id} className="space-y-1">
+                      <div className="flex items-center gap-1 shrink-0 ml-1">
+                        {projConvs.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={(e) => toggleExpandProject(e, proj.id)}
+                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                            title={isExpanded ? "Thu gọn" : "Xem các đoạn chat"}
+                          >
+                            <svg
+                              className={`w-3 h-3 transform transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        )}
+
+                        {hoveredId === proj.id && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeleteProject(e, proj.id)}
+                            title="Xóa dự án"
+                            className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Danh sách các đoạn chat con thuộc thư mục dự án (Tree indent giống ChatGPT) */}
+                    {isExpanded && projConvs.length > 0 && (
+                      <div className="pl-3.5 pr-1 py-0.5 space-y-0.5 border-l-2 border-indigo-200/60 dark:border-slate-800 ml-3">
+                        {projConvs.map((conv) => {
+                          const isConvActive = activeConversationId === conv.id;
+                          return (
+                            <div
+                              key={conv.id}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectConversation(conv.id);
+                              }}
+                              className={`w-full flex items-center justify-between px-2 py-1 rounded-lg text-[11px] transition-all cursor-pointer ${
+                                isConvActive
+                                  ? "bg-indigo-100/80 dark:bg-indigo-900/50 text-indigo-700 dark:text-cyan-300 font-semibold"
+                                  : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                              }`}
+                            >
+                              <span className="truncate text-left flex-1">
+                                {conv.title || "Đoạn chat dự án"}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* ─── PHẦN 2: CÁC ĐOẠN CHAT GẦN ĐÂY (RECENT CHATS) ─── */}
+        <div>
+          <div className="flex items-center justify-between px-1.5 pb-1">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>💬</span>
+              <span>Đoạn chat gần đây</span>
+            </span>
+          </div>
+
+          <div className="space-y-0.5">
+            {isLoading && filteredConversations.length === 0 ? (
+              <div className="px-2 py-1.5 text-[11px] text-slate-500 italic">
+                Đang tải đoạn chat...
+              </div>
+            ) : filteredConversations.length === 0 ? (
+              <div className="px-2 py-1.5 text-[11px] text-slate-500 italic">
+                Chưa có đoạn chat nào
+              </div>
+            ) : (
+              filteredConversations.map((conv) => {
+                const isActive = activeConversationId === conv.id;
+                return (
                   <div
-                    onClick={() => onSelectProject?.(proj.id)}
-                    onMouseEnter={() => setHoveredId(proj.id)}
+                    key={conv.id}
+                    onClick={() => onSelectConversation(conv.id)}
+                    onMouseEnter={() => setHoveredId(conv.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
                       isActive
@@ -418,79 +427,28 @@ export default function SidebarConversationsList({
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="text-sm shrink-0">{proj.icon || "📁"}</span>
-                      <span className="truncate text-left font-medium">{proj.name}</span>
+                      <span className="truncate text-left">{conv.title}</span>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0 ml-1">
-                      {projConvs.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={(e) => toggleExpandProject(e, proj.id)}
-                          className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-                          title={isExpanded ? "Thu gọn" : "Xem các đoạn chat"}
-                        >
-                          <svg
-                            className={`w-3 h-3 transform transition-transform ${isExpanded ? "rotate-90" : ""}`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      )}
-
-                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
-                        {projConvs.length}
-                      </span>
-
-                      {hoveredId === proj.id && (
-                        <button
-                          type="button"
-                          onClick={(e) => handleDeleteProject(e, proj.id)}
-                          title={t("sidebar.delete_project")}
-                          className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                        >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
+                    {hoveredId === conv.id && (
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteConversation(e, conv.id)}
+                        title={t("sidebar.delete_chat")}
+                        className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors shrink-0 ml-1"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
+                );
+              })
+            )}
+          </div>
+        </div>
 
-                  {/* Danh sách các đoạn chat con thuộc dự án */}
-                  {isExpanded && projConvs.length > 0 && (
-                    <div className="pl-4 pr-1 py-0.5 space-y-0.5 border-l-2 border-indigo-200/60 dark:border-indigo-900/60 ml-3.5">
-                      {projConvs.map((conv) => {
-                        const isConvActive = activeConversationId === conv.id;
-                        return (
-                          <div
-                            key={conv.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelectConversation(conv.id);
-                            }}
-                            className={`w-full flex items-center justify-between px-2 py-1 rounded-lg text-[11px] transition-all cursor-pointer ${
-                              isConvActive
-                                ? "bg-indigo-100/80 dark:bg-indigo-900/50 text-indigo-700 dark:text-cyan-300 font-semibold"
-                                : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                            }`}
-                          >
-                            <span className="truncate text-left flex-1">
-                              💬 {conv.title || "Đoạn chat dự án"}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )
-        )}
       </div>
 
       {/* Modal Tạo Dự Án Mới */}

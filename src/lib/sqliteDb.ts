@@ -605,8 +605,18 @@ export const project = {
     let sql = "SELECT * FROM Project";
     const params: any[] = [];
     if (where.userId) {
-      sql += " WHERE userId = ?";
-      params.push(where.userId);
+      if (typeof where.userId === "object" && Array.isArray(where.userId.in)) {
+        if (where.userId.in.length > 0) {
+          const placeholders = where.userId.in.map(() => "?").join(", ");
+          sql += ` WHERE userId IN (${placeholders})`;
+          params.push(...where.userId.in);
+        } else {
+          return [];
+        }
+      } else {
+        sql += " WHERE userId = ?";
+        params.push(where.userId);
+      }
     }
     sql += " ORDER BY updatedAt DESC";
     const rows = db.prepare(sql).all(...params);
@@ -664,13 +674,22 @@ export const project = {
   },
 
   _format(row: any, include: any) {
+    const db = getDb();
     const res: any = {
       ...row,
       createdAt: toDate(row.createdAt),
       updatedAt: toDate(row.updatedAt),
     };
     if (include?.conversations) {
-      res.conversations = conversation.findMany({ where: { projectId: row.id } });
+      try {
+        const convRows = db.prepare("SELECT id, title, updatedAt FROM Conversation WHERE projectId = ? ORDER BY updatedAt DESC").all(row.id);
+        res.conversations = convRows.map((c: any) => ({
+          ...c,
+          updatedAt: toDate(c.updatedAt),
+        }));
+      } catch {
+        res.conversations = [];
+      }
     }
     return res;
   }
