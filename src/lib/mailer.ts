@@ -6,14 +6,19 @@ import nodemailer from "nodemailer";
  * 2. Nếu chưa cấu hình, transporter sẽ log OTP ra console và trả về true để không làm gián đoạn trải nghiệm người dùng.
  */
 export async function sendVerificationOtpEmail(toEmail: string, otp: string, username: string) {
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT || 587);
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const port = Number(process.env.SMTP_PORT || 465);
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM || `"Biết Tuốt AI" <no-reply@biettuot.io.vn>`;
+  // Chuẩn hóa tên người gửi cho Gmail
+  const senderEmail = user || "biettuot.io.vn@gmail.com";
+  const from = {
+    name: "Biết Tuốt AI",
+    address: senderEmail,
+  };
 
   // Kiểm tra nếu có cấu hình SMTP thực tế
-  if (host && user && pass) {
+  if (user && pass) {
     try {
       const transporter = nodemailer.createTransport({
         host,
