@@ -4,6 +4,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import RechargeModal from "@/components/payment/RechargeModal";
 import MarkdownRenderer from "@/components/chat/MarkdownRenderer";
+import {
+  extractImagesFromClipboard,
+  extractImagesFromFileList,
+  extractImagesFromDrop,
+} from "@/lib/imageUtils";
 
 interface MathHistoryItem {
   id: string;
@@ -32,6 +37,7 @@ export default function MathSolverView({ onOpenLoginModal }: MathSolverViewProps
 
   // AI Math Solver State
   const [mathPrompt, setMathPrompt] = useState<string>("");
+  const [attachedImages, setAttachedImages] = useState<string[]>([]);
   const [mathSubject, setMathSubject] = useState<string>("all");
   const [isSolving, setIsSolving] = useState<boolean>(false);
   const [currentSolution, setCurrentSolution] = useState<string>("");
@@ -39,6 +45,33 @@ export default function MathSolverView({ onOpenLoginModal }: MathSolverViewProps
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const solutionEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Xử lý dán ảnh từ clipboard (Ctrl + V / Chụp màn hình)
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const imgs = await extractImagesFromClipboard(e);
+    if (imgs.length > 0) {
+      setAttachedImages((prev) => [...prev, ...imgs]);
+    }
+  };
+
+  // Xử lý chọn ảnh từ máy (file input)
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imgs = await extractImagesFromFileList(e.target.files);
+    if (imgs.length > 0) {
+      setAttachedImages((prev) => [...prev, ...imgs]);
+    }
+    if (e.target) e.target.value = "";
+  };
+
+  // Xử lý kéo thả ảnh
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    const imgs = await extractImagesFromDrop(e);
+    if (imgs.length > 0) {
+      setAttachedImages((prev) => [...prev, ...imgs]);
+    }
+  };
 
   // Tải lịch sử từ localStorage
   useEffect(() => {
@@ -200,7 +233,7 @@ export default function MathSolverView({ onOpenLoginModal }: MathSolverViewProps
   // AI Math Solver Request
   const handleSolveAI = async (overridePrompt?: string) => {
     const query = (overridePrompt || mathPrompt).trim();
-    if (!query) return;
+    if (!query && attachedImages.length === 0) return;
 
     if (!user) {
       onOpenLoginModal?.();
@@ -229,21 +262,27 @@ export default function MathSolverView({ onOpenLoginModal }: MathSolverViewProps
         : "[TOÁN HỌC CHUNG]";
 
     const systemPrompt = `Bạn là Trợ Lý Gia Sư Giải Toán Chuyên Nghiệp của Biết Tuốt AI (Biettuot.io Math Engine).
-Nhiệm vụ của bạn là giải bài toán dưới đây với độ chính xác tuyệt đối 100%, trình bày cực kỳ chi tiết, dễ hiểu từng bước:
-1. Đọc và phân tích đề bài (Tóm tắt dữ kiện, tìm điều kiện xác định).
+Nhiệm vụ của bạn là giải bài toán (trong văn bản hoặc trích xuất từ hình ảnh đề bài đính kèm) với độ chính xác tuyệt đối 100%, trình bày cực kỳ chi tiết, dễ hiểu từng bước:
+1. Đọc và chép lại đề bài từ hình ảnh hoặc văn bản, phân tích dữ kiện và tìm điều kiện xác định.
 2. Trình bày lời giải từng bước rõ ràng (Step-by-step). Sử dụng công thức toán chuẩn LaTeX ($...$ cho inline và $$...$$ cho dòng riêng).
 3. Đưa ra Kết quả cuối cùng (Được đóng khung hoặc in đậm).
 4. Nhận xét, lưu ý các lỗi sai thường gặp của học sinh hoặc các cách giải nhanh/mẹo trắc nghiệm (nếu có).
 
 Chủ đề: ${subjectPrefix}
-Đề bài: ${query}`;
+Đề bài yêu cầu: ${query || "Hãy đọc đề bài toán trong bức ảnh đính kèm và giải chi tiết từng bước."}`;
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{ role: "user", content: systemPrompt }],
+          messages: [
+            {
+              role: "user",
+              content: systemPrompt,
+              images: attachedImages,
+            },
+          ],
           model: "gemini-2.5-flash",
           stream: false,
         }),
@@ -644,15 +683,80 @@ Chủ đề: ${subjectPrefix}
               </select>
             </div>
 
-            {/* Textarea */}
-            <div className="relative">
+            {/* Textarea & Image Paste/Drop Area */}
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#07080f] p-3 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 transition-all"
+            >
+              {/* Attached Images Previews */}
+              {attachedImages.length > 0 && (
+                <div className="flex flex-wrap gap-2.5 mb-3 p-1">
+                  {attachedImages.map((img, idx) => (
+                    <div
+                      key={idx}
+                      className="relative group w-20 h-20 rounded-xl overflow-hidden border border-cyan-500/40 bg-black/40 shadow-md"
+                    >
+                      <img
+                        src={img}
+                        alt="Đề bài toán đính kèm"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setAttachedImages((prev) => prev.filter((_, i) => i !== idx))
+                        }
+                        className="absolute top-1 right-1 w-5 h-5 bg-rose-500/90 text-white rounded-full flex items-center justify-center text-xs font-black shadow-md opacity-90 hover:opacity-100 hover:scale-110 transition-all cursor-pointer"
+                        title="Xóa ảnh"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <textarea
                 value={mathPrompt}
                 onChange={(e) => setMathPrompt(e.target.value)}
-                placeholder="Ví dụ: Giải phương trình 2x² - 5x + 2 = 0 hoặc Tìm nguyên hàm của f(x) = x * sin(x)..."
-                rows={4}
-                className="w-full bg-slate-50 dark:bg-[#07080f] border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-hidden transition-all resize-none"
+                onPaste={handlePaste}
+                placeholder="Nhập đề bài hoặc CHỤP ĐỀ TOÁN RỒI PASTE (Ctrl + V) trực tiếp vào đây..."
+                rows={3}
+                className="w-full bg-transparent border-none p-0 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-hidden transition-all resize-none"
               />
+
+              {/* Bottom toolbar inside input area: Upload image & tips */}
+              <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-200/60 dark:border-slate-800/80">
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 text-xs font-bold transition-all cursor-pointer active:scale-95 shadow-xs"
+                    title="Tải ảnh đề bài từ máy tính/điện thoại"
+                  >
+                    <span>📷</span>
+                    <span>Tải ảnh / Chụp đề</span>
+                  </button>
+                  <span className="text-[11px] text-slate-400 hidden sm:inline">
+                    (Hoặc bấm <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono text-[10px]">Ctrl+V</kbd> để dán ảnh chụp)
+                  </span>
+                </div>
+
+                {attachedImages.length > 0 && (
+                  <span className="text-[11px] text-emerald-500 font-bold">
+                    ✓ Đã đính kèm {attachedImages.length} ảnh
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Quick Templates / Gợi ý mẫu */}
@@ -683,9 +787,9 @@ Chủ đề: ${subjectPrefix}
 
               <button
                 onClick={() => handleSolveAI()}
-                disabled={isSolving || !mathPrompt.trim()}
+                disabled={isSolving || (!mathPrompt.trim() && attachedImages.length === 0)}
                 className={`px-5 py-2.5 rounded-2xl font-bold text-sm text-white flex items-center gap-2 shadow-lg transition-all cursor-pointer ${
-                  isSolving || !mathPrompt.trim()
+                  isSolving || (!mathPrompt.trim() && attachedImages.length === 0)
                     ? "bg-slate-400 dark:bg-slate-800 opacity-60 cursor-not-allowed"
                     : "bg-gradient-to-r from-cyan-600 via-teal-500 to-indigo-600 hover:opacity-95 shadow-cyan-500/25 active:scale-95"
                 }`}
