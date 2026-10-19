@@ -687,57 +687,58 @@ export default function AiToolsStudio() {
 
   return (
     <div className="w-full max-w-[1280px] mx-auto flex flex-col pb-24 px-3 sm:px-6">
-      {/* ── HERO BANNER: STUDIO SÁNG TẠO & DOANH NGHIỆP ── */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 border border-indigo-500/30 p-5 sm:p-7 mb-8 shadow-2xl shadow-indigo-950/50 text-white">
-        {/* Glow lights behind */}
-        <div className="absolute -top-24 -right-12 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-12 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+      {/* ── HERO BANNER: STUDIO SÁNG TẠO & DOANH NGHIỆP (COMPACT & SLEEK) ── */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 border border-indigo-500/30 px-4 py-3.5 sm:px-6 sm:py-4 mb-6 shadow-xl text-white">
+        {/* Glow subtle lights */}
+        <div className="absolute -top-16 -right-10 w-60 h-60 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-10 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-          <div className="flex items-center gap-4 min-w-0">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-3xl shadow-xl shadow-indigo-500/30 ring-2 ring-white/20 shrink-0 transform hover:scale-105 transition-transform">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3.5">
+          {/* Left: Icon & Title */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-xl shadow-md shadow-indigo-500/30 ring-1 ring-white/20 shrink-0">
               ⚡
             </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white whitespace-normal">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-white truncate">
                   {language === "en" ? "Creative & Business AI Studio" : "Studio Sáng Tạo & Doanh Nghiệp"}
                 </h1>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black tracking-wider uppercase shadow-xs shrink-0">
-                  PRO SUITE
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black tracking-wider uppercase shrink-0">
+                  PRO
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+              <p className="text-[11px] sm:text-xs text-slate-300 truncate">
                 {language === "en"
-                  ? "Top-tier AI engines engineered for Content Creators, Sellers, Marketers & Entrepreneurs."
-                  : "Hệ thống AI chuyên sâu tối ưu cho Content Creator, Nhà bán hàng Shopee/TikTok & Marketer."}
+                  ? "AI suite for Content Creators, Sellers, Marketers & Copywriters"
+                  : "Bộ công cụ AI chuyên sâu cho Content Creator, Nhà bán hàng & Marketer"}
               </p>
             </div>
           </div>
 
           {/* Right Action: Credits & Filter tabs */}
-          <div className="flex flex-wrap items-center gap-3 self-start xl:self-auto shrink-0">
+          <div className="flex items-center flex-wrap gap-2.5 shrink-0 self-end md:self-auto">
             {/* User Credits Status */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-inner">
-              <span className="text-xs text-slate-300 font-medium">Credits:</span>
-              <span className="text-xs sm:text-sm font-black text-amber-400 flex items-center gap-1 font-mono">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-xs">
+              <span className="text-slate-300 text-[11px]">Credits:</span>
+              <span className="font-bold text-amber-400 flex items-center gap-1 font-mono text-xs">
                 🪙 {user ? (user.role === "ADMIN" ? (language === "en" ? "Unlimited" : "Vô hạn") : (user.credits ?? 0)) : 0}
               </span>
               <button
                 onClick={() => setIsRechargeOpen(true)}
-                className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:opacity-90 text-white text-[11px] font-bold shadow-xs transition-all cursor-pointer ml-1 active:scale-95"
+                className="px-2 py-0.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:opacity-90 text-white text-[10px] font-bold shadow-xs transition-all cursor-pointer ml-0.5 active:scale-95"
               >
-                {language === "en" ? "+ Recharge" : "+ Nạp"}
+                {language === "en" ? "+ Add" : "+ Nạp"}
               </button>
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-black/40 backdrop-blur-md border border-white/10">
               <button
                 onClick={() => setActiveCategory("pro")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeCategory === "pro"
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xs"
                     : "text-slate-400 hover:text-white"
                 }`}
               >
@@ -745,9 +746,9 @@ export default function AiToolsStudio() {
               </button>
               <button
                 onClick={() => setActiveCategory("utility")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeCategory === "utility"
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xs"
                     : "text-slate-400 hover:text-white"
                 }`}
               >
@@ -755,9 +756,9 @@ export default function AiToolsStudio() {
               </button>
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeCategory === "all"
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xs"
                     : "text-slate-400 hover:text-white"
                 }`}
               >
@@ -769,7 +770,13 @@ export default function AiToolsStudio() {
       </div>
 
       {/* ── TOOLS GRID: HIỂN THỊ ĐẸP MẮT (LƯỚI ĐỀU 6 CỘT / 3 CỘT / 2 CỘT) ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+      <div className={`grid gap-3 mb-6 ${
+        activeCategory === "pro"
+          ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+          : activeCategory === "utility"
+          ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4"
+          : "grid-cols-2 sm:grid-cols-3 md:grid-cols-5"
+      }`}>
         {filteredTools.map((tool) => {
           const isActive = activeTool === tool.id;
           const toolName = language === "en" && tool.nameEn ? tool.nameEn : tool.name;
