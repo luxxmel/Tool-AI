@@ -688,37 +688,37 @@ export default function AiToolsStudio() {
   return (
     <div className="w-full max-w-[1280px] mx-auto flex flex-col pb-24 px-3 sm:px-6">
       {/* ── HERO BANNER: STUDIO SÁNG TẠO & DOANH NGHIỆP ── */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 border border-indigo-500/30 p-6 sm:p-8 mb-8 shadow-2xl shadow-indigo-950/50 text-white">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 border border-indigo-500/30 p-5 sm:p-7 mb-8 shadow-2xl shadow-indigo-950/50 text-white">
         {/* Glow lights behind */}
         <div className="absolute -top-24 -right-12 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-12 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex items-start sm:items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-3xl shadow-xl shadow-indigo-500/30 ring-2 ring-white/20 shrink-0 transform hover:scale-105 transition-transform">
+        <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-3xl shadow-xl shadow-indigo-500/30 ring-2 ring-white/20 shrink-0 transform hover:scale-105 transition-transform">
               ⚡
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white whitespace-normal">
                   {language === "en" ? "Creative & Business AI Studio" : "Studio Sáng Tạo & Doanh Nghiệp"}
                 </h1>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black tracking-wider uppercase shadow-xs">
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black tracking-wider uppercase shadow-xs shrink-0">
                   PRO SUITE
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
                 {language === "en"
                   ? "Top-tier AI engines engineered for Content Creators, Sellers, Marketers & Entrepreneurs."
-                  : "Hệ thống AI chuyên sâu tối ưu cho Content Creator, Nhà bán hàng Shopee/TikTok & Copywriter hàng đầu."}
+                  : "Hệ thống AI chuyên sâu tối ưu cho Content Creator, Nhà bán hàng Shopee/TikTok & Marketer."}
               </p>
             </div>
           </div>
 
           {/* Right Action: Credits & Filter tabs */}
-          <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto shrink-0">
+          <div className="flex flex-wrap items-center gap-3 self-start xl:self-auto shrink-0">
             {/* User Credits Status */}
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-inner">
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-inner">
               <span className="text-xs text-slate-300 font-medium">Credits:</span>
               <span className="text-xs sm:text-sm font-black text-amber-400 flex items-center gap-1 font-mono">
                 🪙 {user ? (user.role === "ADMIN" ? (language === "en" ? "Unlimited" : "Vô hạn") : (user.credits ?? 0)) : 0}
@@ -735,17 +735,17 @@ export default function AiToolsStudio() {
             <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
               <button
                 onClick={() => setActiveCategory("pro")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeCategory === "pro"
                     ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
                     : "text-slate-400 hover:text-white"
                 }`}
               >
-                {language === "en" ? "⭐ Pro Suite (6)" : "⭐ Chuyên Nghiệp (6)"}
+                {language === "en" ? "⭐ Pro (6)" : "⭐ Chuyên Nghiệp (6)"}
               </button>
               <button
                 onClick={() => setActiveCategory("utility")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeCategory === "utility"
                     ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
                     : "text-slate-400 hover:text-white"
@@ -755,7 +755,7 @@ export default function AiToolsStudio() {
               </button>
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeCategory === "all"
                     ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
                     : "text-slate-400 hover:text-white"
@@ -768,8 +768,8 @@ export default function AiToolsStudio() {
         </div>
       </div>
 
-      {/* ── TOOLS GRID: 10 THẺ CÔNG CỤ HIỆN ĐẠI ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 mb-8">
+      {/* ── TOOLS GRID: HIỂN THỊ ĐẸP MẮT (LƯỚI ĐỀU 6 CỘT / 3 CỘT / 2 CỘT) ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
         {filteredTools.map((tool) => {
           const isActive = activeTool === tool.id;
           const toolName = language === "en" && tool.nameEn ? tool.nameEn : tool.name;
@@ -779,25 +779,25 @@ export default function AiToolsStudio() {
             <button
               key={tool.id}
               onClick={() => setActiveTool(tool.id)}
-              className={`p-4 rounded-3xl border text-left transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
+              className={`p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
                 isActive
-                  ? "bg-gradient-to-b from-indigo-50/90 via-white to-indigo-50/50 dark:from-[#181a2e] dark:via-[#131525] dark:to-[#0f1120] border-indigo-500 dark:border-indigo-500 shadow-xl shadow-indigo-500/15 ring-2 ring-indigo-500/30 transform -translate-y-1"
-                  : "bg-white/90 dark:bg-[#0c0e18]/80 hover:bg-white dark:hover:bg-[#121424] border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-400/60 dark:hover:border-indigo-700/60 shadow-xs hover:shadow-lg transition-all"
+                  ? "bg-gradient-to-b from-indigo-50/90 via-white to-indigo-50/50 dark:from-[#181a2e] dark:via-[#131525] dark:to-[#0f1120] border-indigo-500 dark:border-indigo-500 shadow-xl shadow-indigo-500/15 ring-2 ring-indigo-500/30 transform -translate-y-0.5"
+                  : "bg-white/90 dark:bg-[#0c0e18]/80 hover:bg-white dark:hover:bg-[#121424] border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-400/60 dark:hover:border-indigo-700/60 shadow-xs hover:shadow-md transition-all"
               }`}
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2">
                   <div
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl transition-all duration-300 ${
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all duration-200 ${
                       isActive
-                        ? "bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white shadow-md shadow-indigo-500/30 scale-110"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 group-hover:scale-105"
+                        ? "bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white shadow-md shadow-indigo-500/30 scale-105"
+                        : "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 group-hover:scale-105"
                     }`}
                   >
                     {tool.icon}
                   </div>
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                       tool.category === "pro"
                         ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-mono"
                         : "bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono"
@@ -807,7 +807,7 @@ export default function AiToolsStudio() {
                   </span>
                 </div>
 
-                <span className={`block text-xs sm:text-sm font-extrabold leading-tight mb-1.5 transition-colors ${
+                <span className={`block text-xs font-bold leading-tight mb-1 transition-colors ${
                   isActive ? "text-indigo-600 dark:text-cyan-400" : "text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-400"
                 }`}>
                   {toolName}
@@ -819,9 +819,9 @@ export default function AiToolsStudio() {
               </div>
 
               {/* Status pill bottom */}
-              <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] font-semibold">
+              <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] font-semibold">
                 <span className={isActive ? "text-indigo-600 dark:text-cyan-400 font-bold" : "text-slate-400"}>
-                  {isActive ? (language === "en" ? "● Active Tool" : "● Đang chọn") : (language === "en" ? "Select" : "Mở công cụ")}
+                  {isActive ? (language === "en" ? "● Active" : "● Đang chọn") : (language === "en" ? "Open" : "Mở")}
                 </span>
                 <span className="text-slate-400 group-hover:translate-x-1 transition-transform">→</span>
               </div>
