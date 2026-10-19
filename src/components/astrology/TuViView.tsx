@@ -7,6 +7,7 @@ import { Solar, Lunar } from 'lunar-javascript';
 import { translateGanZhi, MENH_NGU_HANH, CUNG_CHUC_TU_VI, CHINH_TINH, PHU_TINH_TOT, PHU_TINH_XAU } from '@/data/astrologyData';
 import { useAuth } from '@/context/AuthContext';
 import RechargeModal from '@/components/payment/RechargeModal';
+import { downloadTextReading, printReadingPdf } from '@/lib/exportReading';
 
 interface TuViPalace {
   name: string;
@@ -515,16 +516,54 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
 
           {/* Luận Giải Chi Tiết AI */}
           <div className="bg-white/95 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
-            <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <span className="text-2xl">🔮</span>
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-                  Lời Luận Giải Chi Tiết Của Đại Sư Tử Vi
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Phân tích mệnh vận, tam hợp chiếu, công danh, duyên nợ và hóa giải xung sát
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl">🔮</span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                    Lời Luận Giải Chi Tiết Của Đại Sư Tử Vi
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Phân tích mệnh vận, tam hợp chiếu, công danh, duyên nợ và hóa giải xung sát
+                  </p>
+                </div>
               </div>
+
+              {readingText && (
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => printReadingPdf({
+                      title: "Lá Số Tử Vi Đẩu Số Toàn Thư",
+                      subjectName: fullName || "Đương Số",
+                      category: "Tử Vi Đẩu Số",
+                      dateInfo: chartData ? `${chartData.solarStr} (Âm lịch: ${chartData.lunarStr})` : undefined,
+                      content: readingText,
+                    })}
+                    className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-cyan-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                    title="In hoặc lưu thành file PDF"
+                  >
+                    <span>🖨️</span>
+                    <span>Xuất PDF</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => downloadTextReading({
+                      title: "Lá Số Tử Vi Đẩu Số Toàn Thư",
+                      subjectName: fullName || "Đương Số",
+                      category: "Tử Vi Đẩu Số",
+                      dateInfo: chartData ? `${chartData.solarStr} (Âm lịch: ${chartData.lunarStr})` : undefined,
+                      content: readingText,
+                    })}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                    title="Tải văn bản bài luận giải về máy (.txt)"
+                  >
+                    <span>📥</span>
+                    <span>Tải TXT</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {readingText ? (
