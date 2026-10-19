@@ -141,6 +141,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
 
   // Edit post state
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editCategory, setEditCategory] = useState<string>("prompt");
@@ -833,9 +834,31 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                         </h2>
 
                         {/* Content */}
-                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line mb-3 font-normal line-clamp-4">
-                          {post.content}
-                        </p>
+                        <div className="mb-3">
+                          <p
+                            className={`text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line font-normal transition-all ${
+                              expandedPosts[post.id] ? "" : "line-clamp-4"
+                            }`}
+                          >
+                            {post.content}
+                          </p>
+                          {post.content && (post.content.length > 200 || post.content.split("\n").length > 4) && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedPosts((prev) => ({
+                                  ...prev,
+                                  [post.id]: !prev[post.id],
+                                }));
+                              }}
+                              className="mt-1.5 text-xs font-bold text-indigo-500 hover:text-indigo-400 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <span>{expandedPosts[post.id] ? (language === "en" ? "Show less" : "Thu gọn") : (language === "en" ? "See more" : "Xem thêm")}</span>
+                              <span>{expandedPosts[post.id] ? "▲" : "▼"}</span>
+                            </button>
+                          )}
+                        </div>
                       </>
                     )}
 
