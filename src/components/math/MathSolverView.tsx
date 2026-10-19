@@ -407,20 +407,20 @@ Chủ đề: ${subjectPrefix}
           </div>
 
           {/* Calculator Screen / Display */}
-          <div className="w-full bg-slate-100 dark:bg-[#07080f] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5 mb-4 text-right flex flex-col justify-end min-h-[95px] select-text">
-            <div className="text-xs text-slate-400 font-mono tracking-wider min-h-[16px] truncate">
+          <div className="w-full bg-slate-900 dark:bg-[#060812] border border-cyan-500/30 rounded-2xl p-4 mb-4 text-right flex flex-col justify-end min-h-[105px] select-text shadow-inner">
+            <div className="text-xs text-slate-400 font-mono tracking-wider min-h-[18px] truncate">
               {calcPrev}
             </div>
-            <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-cyan-400 tracking-tight break-all mt-1">
+            <div className="text-2xl sm:text-3xl font-black font-mono text-cyan-300 dark:text-cyan-400 tracking-tight break-all mt-1">
               {calcInput || "0"}
             </div>
           </div>
 
           {/* Quick Action: Gửi biểu thức sang AI */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3.5">
             <button
               onClick={handleTransferToAI}
-              className="flex-1 py-1.5 px-3 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+              className="flex-1 py-2 px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-500 dark:text-cyan-400 border border-cyan-500/40 text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 shadow-sm"
               title="Chuyển số này sang ô AI để phân tích / giải phương trình"
             >
               <span>🪄</span>
@@ -431,7 +431,7 @@ Chủ đề: ${subjectPrefix}
                 navigator.clipboard.writeText(calcInput);
                 alert("Đã sao chép kết quả!");
               }}
-              className="py-1.5 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors cursor-pointer"
+              className="py-2 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer border border-slate-300 dark:border-slate-700/80"
               title="Sao chép kết quả"
             >
               📋 Copy
@@ -443,31 +443,31 @@ Chủ đề: ${subjectPrefix}
             {/* Row 1: Memory & Clear */}
             <button
               onClick={() => handleCalcClick("MC")}
-              className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-2.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60 cursor-pointer shadow-xs transition-colors"
             >
               MC
             </button>
             <button
               onClick={() => handleCalcClick("MR")}
-              className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-2.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60 cursor-pointer shadow-xs transition-colors"
             >
               MR
             </button>
             <button
               onClick={() => handleCalcClick("M+")}
-              className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-2.5 rounded-xl text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60 cursor-pointer shadow-xs transition-colors"
             >
               M+
             </button>
             <button
               onClick={() => handleCalcClick("DEL")}
-              className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 cursor-pointer"
+              className="p-2.5 rounded-xl text-xs font-black bg-amber-500/20 text-amber-500 dark:text-amber-400 hover:bg-amber-500/30 border border-amber-500/40 cursor-pointer shadow-xs transition-colors"
             >
               ⌫
             </button>
             <button
               onClick={() => handleCalcClick("C")}
-              className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 cursor-pointer"
+              className="p-2.5 rounded-xl text-xs font-black bg-rose-500/20 text-rose-500 dark:text-rose-400 hover:bg-rose-500/30 border border-rose-500/40 cursor-pointer shadow-xs transition-colors"
             >
               AC
             </button>
@@ -477,93 +477,93 @@ Chủ đề: ${subjectPrefix}
               <>
                 <button
                   onClick={() => handleCalcClick("sin(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   sin
                 </button>
                 <button
                   onClick={() => handleCalcClick("cos(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   cos
                 </button>
                 <button
                   onClick={() => handleCalcClick("tan(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   tan
                 </button>
                 <button
                   onClick={() => handleCalcClick("π")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   π
                 </button>
                 <button
                   onClick={() => handleCalcClick("^")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   xʸ
                 </button>
 
                 <button
                   onClick={() => handleCalcClick("asin(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-[11px] font-mono font-bold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-[11px] font-mono font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   sin⁻¹
                 </button>
                 <button
                   onClick={() => handleCalcClick("acos(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-[11px] font-mono font-bold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-[11px] font-mono font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   cos⁻¹
                 </button>
                 <button
                   onClick={() => handleCalcClick("atan(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-[11px] font-mono font-bold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-[11px] font-mono font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   tan⁻¹
                 </button>
                 <button
                   onClick={() => handleCalcClick("sqrt(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   √x
                 </button>
                 <button
                   onClick={() => handleCalcClick("log(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   log
                 </button>
 
                 <button
                   onClick={() => handleCalcClick("(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-black bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60 cursor-pointer shadow-xs transition-colors"
                 >
                   (
                 </button>
                 <button
                   onClick={() => handleCalcClick(")")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-black bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60 cursor-pointer shadow-xs transition-colors"
                 >
                   )
                 </button>
                 <button
                   onClick={() => handleCalcClick("ln(")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   ln
                 </button>
                 <button
                   onClick={() => handleCalcClick("e")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   e
                 </button>
                 <button
                   onClick={() => handleCalcClick("%")}
-                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800/80 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer"
+                  className="p-2 sm:p-2.5 rounded-xl text-xs font-mono font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 border border-cyan-500/30 cursor-pointer shadow-xs transition-colors"
                 >
                   %
                 </button>
@@ -575,20 +575,20 @@ Chủ đề: ${subjectPrefix}
               <button
                 key={num}
                 onClick={() => handleCalcClick(num)}
-                className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-slate-100 dark:bg-[#151828] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#1e2238] border border-slate-300 dark:border-slate-700/80 shadow-xs transition-colors cursor-pointer"
               >
                 {num}
               </button>
             ))}
             <button
               onClick={() => handleCalcClick("÷")}
-              className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 shadow-xs cursor-pointer transition-colors"
             >
               ÷
             </button>
             <button
               onClick={() => handleCalcClick("+/-")}
-              className="p-3 sm:p-3.5 rounded-2xl text-sm font-bold bg-slate-100 dark:bg-slate-900 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-sm font-black bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700/60 cursor-pointer shadow-xs transition-colors"
             >
               ±
             </button>
@@ -597,20 +597,20 @@ Chủ đề: ${subjectPrefix}
               <button
                 key={num}
                 onClick={() => handleCalcClick(num)}
-                className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-slate-100 dark:bg-[#151828] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#1e2238] border border-slate-300 dark:border-slate-700/80 shadow-xs transition-colors cursor-pointer"
               >
                 {num}
               </button>
             ))}
             <button
               onClick={() => handleCalcClick("×")}
-              className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 shadow-xs cursor-pointer transition-colors"
             >
               ×
             </button>
             <button
               onClick={() => handleCalcClick(".")}
-              className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-slate-100 dark:bg-[#151828] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#1e2238] border border-slate-300 dark:border-slate-700/80 cursor-pointer shadow-xs transition-colors"
             >
               .
             </button>
@@ -619,20 +619,20 @@ Chủ đề: ${subjectPrefix}
               <button
                 key={num}
                 onClick={() => handleCalcClick(num)}
-                className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-slate-100 dark:bg-[#151828] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#1e2238] border border-slate-300 dark:border-slate-700/80 shadow-xs transition-colors cursor-pointer"
               >
                 {num}
               </button>
             ))}
             <button
               onClick={() => handleCalcClick("-")}
-              className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 shadow-xs cursor-pointer transition-colors"
             >
               −
             </button>
             <button
               onClick={() => handleCalcClick("+")}
-              className="p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/20 cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-base font-black bg-indigo-500/15 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/25 border border-indigo-500/30 shadow-xs cursor-pointer transition-colors"
             >
               +
             </button>
@@ -640,13 +640,13 @@ Chủ đề: ${subjectPrefix}
             {/* Zero & Equal */}
             <button
               onClick={() => handleCalcClick("0")}
-              className="col-span-2 p-3 sm:p-3.5 rounded-2xl text-base font-bold bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="col-span-2 p-3 sm:p-3.5 rounded-2xl text-base font-black bg-slate-100 dark:bg-[#151828] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#1e2238] border border-slate-300 dark:border-slate-700/80 shadow-xs transition-colors cursor-pointer"
             >
               0
             </button>
             <button
               onClick={() => handleCalcClick("00")}
-              className="p-3 sm:p-3.5 rounded-2xl text-sm font-bold bg-slate-100 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="p-3 sm:p-3.5 rounded-2xl text-sm font-black bg-slate-100 dark:bg-[#151828] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#1e2238] border border-slate-300 dark:border-slate-700/80 shadow-xs transition-colors cursor-pointer"
             >
               00
             </button>

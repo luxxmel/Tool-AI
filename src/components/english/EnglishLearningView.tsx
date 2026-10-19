@@ -273,25 +273,25 @@ ${newLogs.map((l) => `${l.role === "ai" ? "Tutor" : "Student"}: ${l.text}`).join
                       <div
                         key={unit.id}
                         onClick={() => isUnlocked && handleOpenLesson(unit)}
-                        className={`relative rounded-2xl p-4 sm:p-5 border transition-all duration-300 flex flex-col justify-between ${
+                        className={`relative rounded-3xl p-5 border transition-all duration-300 flex flex-col justify-between ${
                           isDone
-                            ? "bg-emerald-500/5 dark:bg-emerald-950/20 border-emerald-500/40 shadow-emerald-500/10 shadow-lg"
+                            ? "bg-emerald-500/10 dark:bg-emerald-950/30 border-emerald-500/50 shadow-emerald-500/10 shadow-lg hover:border-emerald-500"
                             : isUnlocked
-                            ? "bg-slate-50 hover:bg-slate-100 dark:bg-[#121422] dark:hover:bg-[#181a2e] border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 cursor-pointer shadow-md hover:-translate-y-1"
-                            : "bg-slate-100/60 dark:bg-slate-900/40 border-slate-200/50 dark:border-slate-800/40 opacity-60 cursor-not-allowed"
+                            ? "bg-white dark:bg-[#121526] hover:bg-slate-50 dark:hover:bg-[#181d33] border-slate-300 dark:border-slate-700/80 hover:border-emerald-500 hover:shadow-xl cursor-pointer hover:-translate-y-1 shadow-sm"
+                            : "bg-slate-100/80 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/40 opacity-50 cursor-not-allowed"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-2xl shadow-md">
+                        <div className="flex items-start justify-between gap-3 mb-3.5">
+                          <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700/90 border border-slate-300 dark:border-slate-600/60 flex items-center justify-center text-2xl shadow-sm">
                             {unit.icon}
                           </div>
                           <div>
                             {isDone ? (
-                              <span className="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-md">
+                              <span className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-md shadow-emerald-500/30 ring-2 ring-emerald-400/40">
                                 ✓
                               </span>
                             ) : isUnlocked ? (
-                              <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                              <span className="text-[11px] font-black px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 shadow-xs">
                                 +{unit.points} XP
                               </span>
                             ) : (
@@ -301,17 +301,17 @@ ${newLogs.map((l) => `${l.role === "ai" ? "Tutor" : "Student"}: ${l.text}`).join
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-black text-slate-900 dark:text-white leading-tight line-clamp-1">
+                          <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-snug line-clamp-1">
                             {unit.title}
                           </h3>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 line-clamp-2 leading-relaxed">
                             {unit.description}
                           </p>
                         </div>
 
-                        <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                        <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
                           <span>⏱ {unit.duration}</span>
-                          <span className="text-emerald-500 font-bold">
+                          <span className={isDone ? "text-emerald-500 font-black" : isUnlocked ? "text-indigo-500 dark:text-indigo-400 font-black" : "text-slate-400"}>
                             {isDone ? "Học lại →" : isUnlocked ? "Bắt đầu →" : "Đã khóa"}
                           </span>
                         </div>
