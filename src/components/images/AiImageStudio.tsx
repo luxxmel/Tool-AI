@@ -84,14 +84,27 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
 
   // Key lưu trữ localStorage tách biệt theo từng tài khoản (nếu chưa đăng nhập thì dùng guest)
   const currentUserId = user?.id || "guest";
-  const galleryStorageKey = `omni_ai_gallery_${currentUserId}`;
+  const galleryStorageKey = `omni_ai_gallery_v2_${currentUserId}`;
 
   // 1. Tải ảnh từ localStorage khi mount hoặc khi tài khoản thay đổi (chỉ lưu tối đa 4 ảnh của tài khoản đó)
   useEffect(() => {
     try {
-      // Dọn dẹp key dùng chung cũ nếu còn tồn tại
       if (typeof window !== "undefined") {
+        // Xóa sạch toàn bộ key dùng chung cũ và guest cũ để không ai còn thấy ảnh cũ nữa
         localStorage.removeItem("omni_ai_gallery");
+        localStorage.removeItem("omni_ai_gallery_guest");
+        // Xóa sạch các key phiên bản cũ
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("omni_ai_gallery_") && !k.startsWith("omni_ai_gallery_v2_")) {
+            localStorage.removeItem(k);
+          }
+        }
+      }
+
+      if (!user?.id) {
+        setGallery([]);
+        return;
       }
 
       const saved = localStorage.getItem(galleryStorageKey);
@@ -110,10 +123,11 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
       console.error("Lỗi khi đọc gallery từ localStorage:", e);
       setGallery([]);
     }
-  }, [galleryStorageKey]);
+  }, [galleryStorageKey, user?.id]);
 
   // 2. Lưu gallery vào localStorage theo tài khoản khi có thay đổi (chỉ lưu tối đa 4 tấm gần nhất của người dùng)
   const saveGallery = (newGallery: GeneratedImage[]) => {
+    if (!user?.id) return;
     const trimmed = newGallery
       .filter((item) => item && !item.id.startsWith("img-sample-"))
       .slice(0, 4);
