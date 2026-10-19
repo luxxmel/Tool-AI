@@ -621,17 +621,6 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
               {gallery.length}/4 {language === "en" ? "saved (max 4)" : "đã lưu (tối đa 4)"}
             </span>
           </div>
-
-          {gallery.length > 0 && (
-            <button
-              type="button"
-              onClick={handleClearAll}
-              className="text-xs text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-1.5 rounded-xl border border-rose-500/20 transition-all cursor-pointer flex items-center gap-1.5 font-medium"
-            >
-              <span>🗑️</span>
-              <span>{language === "en" ? "Clear all (this account)" : "Xóa tất cả (tài khoản này)"}</span>
-            </button>
-          )}
         </div>
 
         {/* Empty State when no recent images have been created yet */}
