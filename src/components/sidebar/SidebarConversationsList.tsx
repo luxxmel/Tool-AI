@@ -272,7 +272,7 @@ export default function SidebarConversationsList({
       </div>
 
       {/* Main Scrollable Content: Projects Section (Top) + Recent Chats (Bottom) */}
-      <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800 max-h-[360px]">
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-3.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800">
         
         {/* ─── PHẦN 1: DỰ ÁN (PROJECTS - ChatGPT style) ─── */}
         <div>
