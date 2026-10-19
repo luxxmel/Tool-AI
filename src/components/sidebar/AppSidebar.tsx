@@ -219,7 +219,20 @@ export default function AppSidebar({
           </button>
 
           {isAuthenticated ? (
-            <img src={user?.avatar} alt="User" className="w-8 h-8 rounded-xl border border-slate-300 dark:border-slate-700 object-cover" />
+            <button
+              onClick={() => onSelectTab("profile")}
+              className="rounded-xl overflow-hidden cursor-pointer hover:ring-2 hover:ring-indigo-500 transition-all active:scale-95 focus:outline-hidden"
+              title="Trang cá nhân"
+            >
+              <img
+                src={user?.avatar}
+                alt={user?.displayName || "User"}
+                className="w-8 h-8 rounded-xl border border-slate-300 dark:border-slate-700 object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user?.displayName || "user")}`;
+                }}
+              />
+            </button>
           ) : (
             <button
               onClick={onOpenLoginModal}
