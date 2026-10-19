@@ -131,6 +131,9 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
   // Reactions state
   const [activeReactionPicker, setActiveReactionPicker] = useState<string | null>(null);
 
+  // Lightbox / Image preview state
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+
   // Comments state
   const [openComments, setOpenComments] = useState<Record<string, boolean>>({});
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
@@ -864,13 +867,21 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
 
                     {/* Attached image */}
                     {post.image && (
-                      <div className="mb-3 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 max-h-[320px] bg-slate-100 dark:bg-slate-900">
+                      <div
+                        onClick={() => setPreviewImageUrl(post.image!)}
+                        className="mb-3.5 rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-slate-950/40 flex items-center justify-center cursor-pointer group/img relative"
+                        title={language === "en" ? "Click to view full image" : "Bấm để xem ảnh kích thước đầy đủ"}
+                      >
                         <img
                           src={post.image}
                           alt={post.title}
-                          className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500"
+                          className="w-full max-h-[620px] object-contain transition-transform duration-300 group-hover/img:scale-[1.01]"
                           loading="lazy"
                         />
+                        <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-black/60 backdrop-blur-md text-[10px] text-white font-medium opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center gap-1">
+                          <span>🔍</span>
+                          <span>{language === "en" ? "View full" : "Xem kích thước gốc"}</span>
+                        </div>
                       </div>
                     )}
 
@@ -1319,6 +1330,31 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-100/95 text-white dark:text-slate-900 font-bold text-xs shadow-2xl backdrop-blur-md flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200 border border-white/20 dark:border-slate-800">
           <span className="text-base">✨</span>
           <span>{shareToast}</span>
+        </div>
+      )}
+
+      {/* Lightbox / Xem ảnh phóng to toàn màn hình */}
+      {previewImageUrl && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-200"
+          onClick={() => setPreviewImageUrl(null)}
+        >
+          <div className="relative max-w-5xl max-h-[92vh] flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setPreviewImageUrl(null)}
+              className="absolute -top-12 right-0 px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-bold cursor-pointer transition-colors flex items-center gap-1.5"
+            >
+              <span>✕</span>
+              <span>{language === "en" ? "Close" : "Đóng"}</span>
+            </button>
+            <img
+              src={previewImageUrl}
+              alt="Enlarged view"
+              className="max-w-full max-h-[88vh] rounded-2xl object-contain shadow-2xl border border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </div>
       )}
     </div>
