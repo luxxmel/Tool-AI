@@ -123,6 +123,21 @@ function initSchema(db: any) {
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS "GeneratedImage" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "userId" TEXT NOT NULL,
+      "url" TEXT NOT NULL,
+      "prompt" TEXT NOT NULL,
+      "enhancedPrompt" TEXT,
+      "style" TEXT NOT NULL DEFAULT 'ai-natural',
+      "styleLabel" TEXT NOT NULL DEFAULT 'Tạo bởi Biết Tuốt AI',
+      "aspectRatio" TEXT NOT NULL DEFAULT '1:1',
+      "referenceImage" TEXT,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS "GeneratedImage_userId_idx" ON "GeneratedImage"("userId");
   `);
 }
 
@@ -1134,6 +1149,87 @@ export const emailVerification = {
   },
 };
 
+// ==================== GENERATED IMAGE ====================
+export const generatedImage = {
+  async findMany({ where, orderBy, take }: any = {}) {
+    const db = getDb();
+    let sql = "SELECT * FROM GeneratedImage";
+    const conds: string[] = [];
+    const params: any[] = [];
+
+    if (where?.userId) {
+      conds.push("userId = ?");
+      params.push(where.userId);
+    }
+
+    if (conds.length) sql += " WHERE " + conds.join(" AND ");
+
+    if (orderBy?.createdAt === "desc") {
+      sql += " ORDER BY createdAt DESC";
+    } else {
+      sql += " ORDER BY createdAt ASC";
+    }
+
+    if (take) {
+      sql += ` LIMIT ${Number(take)}`;
+    }
+
+    const rows = db.prepare(sql).all(...params);
+    return rows.map((r: any) => ({
+      ...r,
+      createdAt: toDate(r.createdAt),
+      updatedAt: toDate(r.updatedAt),
+    }));
+  },
+
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const row = {
+      id,
+      userId: data.userId,
+      url: data.url,
+      prompt: data.prompt,
+      enhancedPrompt: data.enhancedPrompt || null,
+      style: data.style || "ai-natural",
+      styleLabel: data.styleLabel || "Tạo bởi Biết Tuốt AI",
+      aspectRatio: data.aspectRatio || "1:1",
+      referenceImage: data.referenceImage || null,
+      createdAt: toTimestamp(data.createdAt || Date.now()),
+      updatedAt: toTimestamp(data.updatedAt || Date.now()),
+    };
+
+    const cols = Object.keys(row);
+    const placeholders = cols.map(() => "?").join(", ");
+    db.prepare(`INSERT INTO GeneratedImage (${cols.map(c => `"${c}"`).join(", ")}) VALUES (${placeholders})`)
+      .run(...cols.map(c => (row as any)[c]));
+
+    return {
+      ...row,
+      createdAt: toDate(row.createdAt),
+      updatedAt: toDate(row.updatedAt),
+    };
+  },
+
+  async delete({ where }: any) {
+    const db = getDb();
+    if (where?.id) {
+      db.prepare("DELETE FROM GeneratedImage WHERE id = ?").run(where.id);
+    }
+    return { id: where?.id };
+  },
+
+  async deleteMany({ where }: any = {}) {
+    const db = getDb();
+    if (where?.userId) {
+      db.prepare("DELETE FROM GeneratedImage WHERE userId = ?").run(where.userId);
+    } else {
+      db.prepare("DELETE FROM GeneratedImage").run();
+    }
+    return { count: 1 };
+  },
+};
+
 // ==================== TRANSACTION HELPER ====================
 export async function $transaction(arg: any) {
   if (typeof arg === "function") {
@@ -1148,6 +1244,7 @@ export async function $transaction(arg: any) {
       postReaction,
       paymentOrder,
       emailVerification,
+      generatedImage,
     });
   }
   if (Array.isArray(arg)) {
@@ -1167,5 +1264,7 @@ export const sqliteClient = {
   postReaction,
   paymentOrder,
   emailVerification,
+  generatedImage,
   $transaction,
 };
+

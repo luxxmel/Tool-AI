@@ -19,6 +19,7 @@
   "/api/conversations/[id]/route": "/api/conversations/[id]",
   "/api/conversations/route": "/api/conversations",
   "/api/diag/route": "/api/diag",
+  "/api/images/history/route": "/api/images/history",
   "/api/payment/check-status/route": "/api/payment/check-status",
   "/api/payment/confirm-order/route": "/api/payment/confirm-order",
   "/api/payment/create-order/route": "/api/payment/create-order",

@@ -276,6 +276,12 @@
       "namedRegex": "^/api/images/generate(?:/)?$"
     },
     {
+      "page": "/api/images/history",
+      "regex": "^/api/images/history(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/images/history(?:/)?$"
+    },
+    {
       "page": "/api/images/proxy",
       "regex": "^/api/images/proxy(?:/)?$",
       "routeKeys": {},

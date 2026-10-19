@@ -110,8 +110,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let savedRecordId = `img-${Date.now()}`;
+    if (userId) {
+      try {
+        const saved = await prisma.generatedImage.create({
+          data: {
+            userId,
+            url: imageUrl,
+            prompt: prompt.trim(),
+            enhancedPrompt,
+            style: "ai-natural",
+            styleLabel: "Tạo bởi Biết Tuốt AI",
+            aspectRatio,
+            referenceImage: referenceImage || null,
+          },
+        });
+        if (saved?.id) savedRecordId = saved.id;
+      } catch (dbErr) {
+        console.warn("[Generate] Lỗi lưu ảnh vào CSDL:", dbErr);
+      }
+    }
+
     return NextResponse.json({
-      id: `img-${Date.now()}`,
+      id: savedRecordId,
       url: imageUrl,
       prompt: prompt.trim(),
       enhancedPrompt,

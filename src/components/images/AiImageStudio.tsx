@@ -86,14 +86,13 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
   const currentUserId = user?.id || "guest";
   const galleryStorageKey = `omni_ai_gallery_v2_${currentUserId}`;
 
-  // 1. Tải ảnh từ localStorage khi mount hoặc khi tài khoản thay đổi (chỉ lưu tối đa 4 ảnh của tài khoản đó)
+  // 1. Tải ảnh từ Server Database theo tài khoản khi mount hoặc khi tài khoản thay đổi (lưu 4 ảnh gần nhất)
   useEffect(() => {
     try {
       if (typeof window !== "undefined") {
         // Xóa sạch toàn bộ key dùng chung cũ và guest cũ để không ai còn thấy ảnh cũ nữa
         localStorage.removeItem("omni_ai_gallery");
         localStorage.removeItem("omni_ai_gallery_guest");
-        // Xóa sạch các key phiên bản cũ
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
           if (k && k.startsWith("omni_ai_gallery_") && !k.startsWith("omni_ai_gallery_v2_")) {
@@ -107,25 +106,45 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
         return;
       }
 
+      // 1.1 Tải trước từ localStorage để hiển thị tức thì (0ms)
       const saved = localStorage.getItem(galleryStorageKey);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          const userOnly = parsed
-            .filter((item: any) => item && typeof item.id === "string" && !item.id.startsWith("img-sample-"))
-            .slice(0, 4);
-          setGallery(userOnly);
-          return;
-        }
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setGallery(parsed.slice(0, 4));
+          }
+        } catch {}
       }
-      setGallery([]);
+
+      // 1.2 Tải đồng bộ chính thức từ Database máy chủ
+      fetch(`/api/images/history?userId=${encodeURIComponent(user.id)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && Array.isArray(data.images)) {
+            const formatted: GeneratedImage[] = data.images.map((item: any) => ({
+              id: item.id,
+              url: item.url,
+              prompt: item.prompt,
+              enhancedPrompt: item.enhancedPrompt || undefined,
+              style: item.style || "ai-natural",
+              styleLabel: item.styleLabel || "Tạo bởi Biết Tuốt AI",
+              aspectRatio: item.aspectRatio || "1:1",
+              referenceImage: item.referenceImage || null,
+              createdAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString("vi-VN") : "Vừa xong",
+            }));
+            setGallery(formatted);
+            localStorage.setItem(galleryStorageKey, JSON.stringify(formatted));
+          }
+        })
+        .catch((err) => console.warn("Lỗi đồng bộ ảnh từ server:", err));
     } catch (e) {
-      console.error("Lỗi khi đọc gallery từ localStorage:", e);
+      console.error("Lỗi khi đọc gallery:", e);
       setGallery([]);
     }
   }, [galleryStorageKey, user?.id]);
 
-  // 2. Lưu gallery vào localStorage theo tài khoản khi có thay đổi (chỉ lưu tối đa 4 tấm gần nhất của người dùng)
+  // 2. Lưu gallery vào localStorage theo tài khoản
   const saveGallery = (newGallery: GeneratedImage[]) => {
     if (!user?.id) return;
     const trimmed = newGallery
@@ -294,6 +313,11 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
     saveGallery(updated);
     if (activeModalImage?.id === id) {
       setActiveModalImage(null);
+    }
+    if (user?.id) {
+      fetch(`/api/images/history?id=${encodeURIComponent(id)}&userId=${encodeURIComponent(user.id)}`, {
+        method: "DELETE",
+      }).catch((e) => console.warn("Lỗi xóa ảnh trên server:", e));
     }
   };
 
@@ -693,6 +717,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
                     src={item.url}
                     alt={item.prompt}
                     loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       const target = e.currentTarget;
                       target.src =
