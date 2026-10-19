@@ -262,9 +262,9 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                 </svg>
               ),
               circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
-              dot: null,
-              tab: "home",
-              prompt: language === "en" ? "Please solve this math problem step-by-step: " : "Hãy giúp tôi giải bài toán sau từng bước chi tiết: ",
+              dot: "bg-cyan-400 shadow-[0_0_6px_#22d3ee]",
+              tab: "toan",
+              prompt: "",
             },
             {
               id: "english",

@@ -24,6 +24,7 @@ import TarotView from "@/components/tarot/TarotView";
 import TuViView from "@/components/astrology/TuViView";
 import ChiemTinhView from "@/components/astrology/ChiemTinhView";
 import BatTuView from "@/components/astrology/BatTuView";
+import MathSolverView from "@/components/math/MathSolverView";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import {
   FEATURED_ASSISTANTS,
@@ -312,6 +313,8 @@ function HomeContent() {
             <ChiemTinhView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : currentTab === "battu" ? (
             <BatTuView onOpenLoginModal={() => setShowLoginModal(true)} />
+          ) : currentTab === "toan" ? (
+            <MathSolverView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : isChatOpen ? (
             /* Direct In-Page Chat (ChatGPT Style) */
             <HomeChatView
