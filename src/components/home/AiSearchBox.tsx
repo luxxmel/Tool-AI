@@ -274,10 +274,10 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               ),
-              circleStyle: "bg-violet-500/10 text-violet-500 dark:bg-violet-950/60 dark:text-violet-400 border border-violet-500/30 shadow-[0_0_12px_rgba(139,92,246,0.2)]",
-              dot: null,
-              tab: "home",
-              prompt: language === "en" ? "Please act as an English conversational tutor: " : "Hãy đóng vai gia sư tiếng Anh luyện giao tiếp với tôi: ",
+              circleStyle: "bg-emerald-500/10 text-emerald-500 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]",
+              dot: "bg-emerald-400 shadow-[0_0_6px_#34d399]",
+              tab: "english",
+              prompt: "",
             },
             {
               id: "writer",
