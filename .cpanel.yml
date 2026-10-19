@@ -2,7 +2,12 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/cuacongn/biettuot.io.vn/
-    - /bin/rsync -av --exclude='prisma/*.db*' --exclude='.env' . $DEPLOYPATH || /bin/cp -Rn * $DEPLOYPATH
+    - /bin/mkdir -p $DEPLOYPATH/prisma
+    - /bin/mkdir -p /home/cuacongn/db_backup
+    - if [ -f $DEPLOYPATH/prisma/dev.db ]; then /bin/cp $DEPLOYPATH/prisma/dev.db* /home/cuacongn/db_backup/ 2>/dev/null || true; fi
+    - /bin/rsync -av --exclude='prisma/*.db*' --exclude='prisma/dev.db*' --exclude='.env' . $DEPLOYPATH
+    - if [ ! -f $DEPLOYPATH/prisma/dev.db ] && [ -f /home/cuacongn/db_backup/dev.db ]; then /bin/cp /home/cuacongn/db_backup/dev.db* $DEPLOYPATH/prisma/ 2>/dev/null || true; fi
     - /bin/mkdir -p $DEPLOYPATH/tmp
     - /bin/touch $DEPLOYPATH/tmp/restart.txt
+
 
