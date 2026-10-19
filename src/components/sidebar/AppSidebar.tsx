@@ -124,8 +124,8 @@ export default function AppSidebar({
       href: "/?tab=healing",
       badge: "Free",
       icon: (
-        <svg className="w-5 h-5 text-rose-500 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        <svg className="w-5 h-5 text-rose-500 fill-rose-500 drop-shadow-[0_1px_4px_rgba(244,63,94,0.4)]" viewBox="0 0 24 24" stroke="currentColor" fill="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       ),
     },
@@ -405,7 +405,7 @@ export default function AppSidebar({
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className={isActive ? "text-indigo-600 dark:text-cyan-400" : "text-slate-400"}>
+                    <span className={item.id === "healing" ? "text-rose-500 shrink-0" : isActive ? "text-indigo-600 dark:text-cyan-400 shrink-0" : "text-slate-400 shrink-0"}>
                       {item.icon}
                     </span>
                     <span>{item.label}</span>

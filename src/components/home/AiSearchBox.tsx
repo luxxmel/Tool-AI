@@ -193,8 +193,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <rect width="10" height="15" x="12" y="4" rx="2" transform="rotate(12 17 11)" />
                 </svg>
               ),
-              circleStyle: "bg-indigo-500/10 text-indigo-500 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.2)]",
-              dot: "bg-indigo-500 shadow-[0_0_6px_#6366f1]",
+              circleStyle: "bg-gradient-to-tr from-purple-500/15 to-indigo-500/20 text-purple-600 dark:text-purple-400 border border-purple-300 dark:border-purple-500/40 shadow-xs shadow-purple-500/15",
+              dot: "bg-purple-500 shadow-[0_0_6px_#a855f7]",
               tab: "tarot",
               prompt: "",
             },
@@ -208,7 +208,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 6h-4" />
                 </svg>
               ),
-              circleStyle: "bg-violet-500/10 text-violet-500 dark:bg-violet-950/60 dark:text-violet-400 border border-violet-500/30 shadow-[0_0_12px_rgba(139,92,246,0.2)]",
+              circleStyle: "bg-gradient-to-tr from-violet-500/15 to-fuchsia-500/20 text-violet-600 dark:text-violet-400 border border-violet-300 dark:border-violet-500/40 shadow-xs shadow-violet-500/15",
               dot: "bg-violet-500 shadow-[0_0_6px_#8b5cf6]",
               tab: "tuvi",
               prompt: "",
@@ -223,8 +223,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <circle cx="19" cy="5" r="1.5" fill="currentColor" />
                 </svg>
               ),
-              circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
-              dot: "bg-cyan-400 shadow-[0_0_6px_#22d3ee]",
+              circleStyle: "bg-gradient-to-tr from-sky-500/15 to-blue-500/20 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-xs shadow-sky-500/15",
+              dot: "bg-sky-400 shadow-[0_0_6px_#38bdf8]",
               tab: "chiemtinh",
               prompt: "",
             },
@@ -239,8 +239,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M16 3v18" />
                 </svg>
               ),
-              circleStyle: "bg-indigo-500/10 text-indigo-500 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.2)]",
-              dot: "bg-indigo-400 shadow-[0_0_6px_#818cf8]",
+              circleStyle: "bg-gradient-to-tr from-amber-500/15 to-orange-500/20 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-500/40 shadow-xs shadow-amber-500/15",
+              dot: "bg-amber-500 shadow-[0_0_6px_#f59e0b]",
               tab: "battu",
               prompt: "",
             },
@@ -261,8 +261,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M8 18h.01" />
                 </svg>
               ),
-              circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
-              dot: "bg-cyan-400 shadow-[0_0_6px_#22d3ee]",
+              circleStyle: "bg-gradient-to-tr from-cyan-500/15 to-teal-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40 shadow-xs shadow-cyan-500/15",
+              dot: "bg-cyan-500 shadow-[0_0_6px_#06b6d4]",
               tab: "toan",
               prompt: "",
             },
@@ -274,8 +274,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               ),
-              circleStyle: "bg-emerald-500/10 text-emerald-500 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]",
-              dot: "bg-emerald-400 shadow-[0_0_6px_#34d399]",
+              circleStyle: "bg-gradient-to-tr from-emerald-500/15 to-green-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-xs shadow-emerald-500/15",
+              dot: "bg-emerald-500 shadow-[0_0_6px_#10b981]",
               tab: "english",
               prompt: "",
             },
@@ -287,7 +287,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                 </svg>
               ),
-              circleStyle: "bg-indigo-500/10 text-indigo-500 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.2)]",
+              circleStyle: "bg-gradient-to-tr from-pink-500/15 to-rose-500/20 text-pink-600 dark:text-pink-400 border border-pink-300 dark:border-pink-500/40 shadow-xs shadow-pink-500/15",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Please help me write an engaging piece about: " : "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
@@ -304,7 +304,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <line x1="8" x2="16" y1="12" y2="12" />
                 </svg>
               ),
-              circleStyle: "bg-cyan-500/10 text-cyan-600 dark:bg-cyan-950/60 dark:text-cyan-400 border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]",
+              circleStyle: "bg-gradient-to-tr from-blue-500/15 to-indigo-500/20 text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-500/40 shadow-xs shadow-blue-500/15",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Extract the text and translate it: " : "Hãy trích xuất nội dung văn bản và dịch sang tiếng Việt: ",
