@@ -295,7 +295,7 @@ function HomeContent() {
           ) : currentTab === "explore" ? (
             <ExploreFeed onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : currentTab === "images" ? (
-            <AiImageStudio onOpenLoginModal={() => setShowLoginModal(true)} />
+            <AiImageStudio key={user?.id || "guest"} onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : currentTab === "characters" ? (
             <CharactersDirectory />
           ) : currentTab === "healing" ? (

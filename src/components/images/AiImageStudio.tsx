@@ -82,13 +82,14 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Key lưu trữ localStorage tách biệt theo từng tài khoản
-  const galleryStorageKey = user?.id ? `omni_ai_gallery_${user.id}` : "omni_ai_gallery_guest";
+  // Key lưu trữ localStorage tách biệt theo từng tài khoản (nếu chưa đăng nhập thì dùng guest)
+  const currentUserId = user?.id || "guest";
+  const galleryStorageKey = `omni_ai_gallery_${currentUserId}`;
 
   // 1. Tải ảnh từ localStorage khi mount hoặc khi tài khoản thay đổi (chỉ lưu tối đa 4 ảnh của tài khoản đó)
   useEffect(() => {
     try {
-      // Dọn dẹp key dùng chung cũ nếu còn tồn tại để không bị dính chùm giữa các nick
+      // Dọn dẹp key dùng chung cũ nếu còn tồn tại
       if (typeof window !== "undefined") {
         localStorage.removeItem("omni_ai_gallery");
       }
@@ -101,7 +102,6 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
             .filter((item: any) => item && typeof item.id === "string" && !item.id.startsWith("img-sample-"))
             .slice(0, 4);
           setGallery(userOnly);
-          localStorage.setItem(galleryStorageKey, JSON.stringify(userOnly));
           return;
         }
       }
