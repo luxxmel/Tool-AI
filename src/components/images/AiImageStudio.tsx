@@ -88,6 +88,11 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
   // 1. Tải ảnh từ localStorage khi mount hoặc khi tài khoản thay đổi (chỉ lưu tối đa 4 ảnh của tài khoản đó)
   useEffect(() => {
     try {
+      // Dọn dẹp key dùng chung cũ nếu còn tồn tại để không bị dính chùm giữa các nick
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("omni_ai_gallery");
+      }
+
       const saved = localStorage.getItem(galleryStorageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -117,6 +122,22 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
       localStorage.setItem(galleryStorageKey, JSON.stringify(trimmed));
     } catch (e) {
       console.error("Lỗi khi lưu gallery:", e);
+    }
+  };
+
+  // Xóa toàn bộ lịch sử ảnh của tài khoản hiện tại
+  const handleClearAll = async () => {
+    if (gallery.length === 0) return;
+    const ok = await showConfirm(
+      language === "en" ? "Clear all your recent artworks in this account?" : "Bạn có chắc chắn muốn xóa tất cả 4 ảnh đã lưu của tài khoản này không?",
+      language === "en" ? "Clear Gallery" : "Xóa lịch sử ảnh"
+    );
+    if (!ok) return;
+    setGallery([]);
+    try {
+      localStorage.removeItem(galleryStorageKey);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -586,6 +607,17 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
               {gallery.length}/4 {language === "en" ? "saved (max 4)" : "đã lưu (tối đa 4)"}
             </span>
           </div>
+
+          {gallery.length > 0 && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              className="text-xs text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 px-3 py-1.5 rounded-xl border border-rose-500/20 transition-all cursor-pointer flex items-center gap-1.5 font-medium"
+            >
+              <span>🗑️</span>
+              <span>{language === "en" ? "Clear all (this account)" : "Xóa tất cả (tài khoản này)"}</span>
+            </button>
+          )}
         </div>
 
         {/* Empty State when no recent images have been created yet */}
