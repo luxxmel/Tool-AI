@@ -82,10 +82,13 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 1. Tải ảnh từ localStorage khi mount (loại bỏ ảnh mẫu cũ và chỉ giữ tối đa 4 ảnh gần nhất)
+  // Key lưu trữ localStorage tách biệt theo từng tài khoản
+  const galleryStorageKey = user?.id ? `omni_ai_gallery_${user.id}` : "omni_ai_gallery_guest";
+
+  // 1. Tải ảnh từ localStorage khi mount hoặc khi tài khoản thay đổi (chỉ lưu tối đa 4 ảnh của tài khoản đó)
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("omni_ai_gallery");
+      const saved = localStorage.getItem(galleryStorageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
@@ -93,7 +96,7 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
             .filter((item: any) => item && typeof item.id === "string" && !item.id.startsWith("img-sample-"))
             .slice(0, 4);
           setGallery(userOnly);
-          localStorage.setItem("omni_ai_gallery", JSON.stringify(userOnly));
+          localStorage.setItem(galleryStorageKey, JSON.stringify(userOnly));
           return;
         }
       }
@@ -102,16 +105,16 @@ export default function AiImageStudio({ onOpenLoginModal }: AiImageStudioProps =
       console.error("Lỗi khi đọc gallery từ localStorage:", e);
       setGallery([]);
     }
-  }, []);
+  }, [galleryStorageKey]);
 
-  // 2. Lưu gallery vào localStorage khi có thay đổi (chỉ lưu tối đa 4 tấm gần nhất của người dùng)
+  // 2. Lưu gallery vào localStorage theo tài khoản khi có thay đổi (chỉ lưu tối đa 4 tấm gần nhất của người dùng)
   const saveGallery = (newGallery: GeneratedImage[]) => {
     const trimmed = newGallery
       .filter((item) => item && !item.id.startsWith("img-sample-"))
       .slice(0, 4);
     setGallery(trimmed);
     try {
-      localStorage.setItem("omni_ai_gallery", JSON.stringify(trimmed));
+      localStorage.setItem(galleryStorageKey, JSON.stringify(trimmed));
     } catch (e) {
       console.error("Lỗi khi lưu gallery:", e);
     }
