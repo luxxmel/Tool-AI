@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { WorkspaceBackgroundProvider } from "@/context/WorkspaceBackgroundContext";
 import { PopupProvider } from "@/context/PopupContext";
 import NotificationToast from "@/components/notifications/NotificationToast";
+import CreditGiftModal from "@/components/notifications/CreditGiftModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -118,6 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <PopupProvider>
                   {children}
                   <NotificationToast />
+                  <CreditGiftModal />
                 </PopupProvider>
               </WorkspaceBackgroundProvider>
             </AuthProvider>

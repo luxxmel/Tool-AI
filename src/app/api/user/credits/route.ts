@@ -41,14 +41,23 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Nạp thêm credit cho user (Mua tùy ý hoặc Mua theo gói)
+// Nạp thêm credit cho user hoặc xác nhận đã xem thông báo quà tặng
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const userId = body.userId;
 
     if (!userId || userId === "user-demo-123" || userId.startsWith("guest_")) {
-      return NextResponse.json({ error: "Vui lòng đăng nhập để nạp credit" }, { status: 401 });
+      return NextResponse.json({ error: "Vui lòng đăng nhập" }, { status: 401 });
+    }
+
+    // Nếu người dùng xác nhận đã xem popup quà tặng
+    if (body.action === "clear_gift") {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { lastGiftNotification: null },
+      });
+      return NextResponse.json({ success: true });
     }
 
     const amount = Math.max(1, Number(body.amount) || 10);

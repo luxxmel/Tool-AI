@@ -1,16 +1,16 @@
 1:"$Sreact.fragment"
-2:I[2593,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],""]
-4:I[2398,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],"LanguageProvider"]
-5:I[4211,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],"ThemeProvider"]
-6:I[9782,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],"AuthProvider"]
-7:I[8676,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],"WorkspaceBackgroundProvider"]
-8:I[5456,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],"PopupProvider"]
+2:I[2593,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],""]
+4:I[2398,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"LanguageProvider"]
+5:I[4211,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"ThemeProvider"]
+6:I[9782,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"AuthProvider"]
+7:I[8676,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"WorkspaceBackgroundProvider"]
+8:I[5456,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"PopupProvider"]
 9:I[7121,[],""]
 a:I[7267,["8039","static/chunks/app/error-482bf3e129ee62e7.js"],"default"]
 b:I[4581,[],""]
-12:I[6719,["4219","static/chunks/app/global-error-5082e6564aeb1346.js"],"default"]
+13:I[6719,["4219","static/chunks/app/global-error-5082e6564aeb1346.js"],"default"]
 :HL["/_next/static/css/ef1b0eaa9e5d2e5d.css","style"]
-:HL["/_next/static/css/4316babaf25708fa.css","style"]
+:HL["/_next/static/css/718f07de86b35524.css","style"]
 3:T6db,
               (function() {
                 try {
@@ -48,24 +48,26 @@ b:I[4581,[],""]
                   }
                 } catch(e) {}
               })();
-            10:X
-0:{"P":null,"c":["","admin"],"q":"","i":false,"f":[[["",{"children":["admin",{"children":["__PAGE__",{},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4624],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/ef1b0eaa9e5d2e5d.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/css/4316babaf25708fa.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"vi","className":"__variable_4994ab __variable_258e5a __variable_d4ddd7 dark h-full antialiased","suppressHydrationWarning":true,"children":[["$","head",null,{"children":[["$","script",null,{"dangerouslySetInnerHTML":{"__html":"\n              (function() {\n                try {\n                  var saved = localStorage.getItem('omni_theme_mode');\n                  if (saved === 'light') {\n                    document.documentElement.classList.remove('dark');\n                  } else {\n                    document.documentElement.classList.add('dark');\n                  }\n                } catch(e) {\n                  document.documentElement.classList.add('dark');\n                }\n              })();\n            "}}],["$","$L2",null,{"id":"clean-extension-attrs","strategy":"beforeInteractive","dangerouslySetInnerHTML":{"__html":"$3"}}]]}],["$","body",null,{"className":"min-h-full flex flex-col","suppressHydrationWarning":true,"children":["$","$L4",null,{"children":["$","$L5",null,{"children":["$","$L6",null,{"children":["$","$L7",null,{"children":["$","$L8",null,{"children":[["$","$L9",null,{"parallelRouterKey":"children","error":"$a","errorStyles":[],"errorScripts":null,"template":["$","$Lb",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":"$Lc"}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],"$Ld"]}]}]}]}]}]}]]}]]}],{"children":["$Le",{"children":["$Lf",{},null,false,null]},null,false,"$10"]},null,false,null],"$L11",false]],"m":"$undefined","G":["$12",[]],"S":true,"h":null,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"jtNRgqTguxbmjLx5jMlbd"}
-13:I[8489,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-07627a30aca0873b.js"],"default"]
-14:I[1304,[],"ClientPageRoot"]
-15:I[7170,["8500","static/chunks/8500-f4d7bfbe7500f274.js","6201","static/chunks/6201-cbb11ec31b6e0030.js","3698","static/chunks/app/admin/page-9a716939ad508f4f.js"],"default"]
-18:I[484,[],"OutletBoundary"]
-19:"$Sreact.suspense"
-1b:I[484,[],"ViewportBoundary"]
-1d:I[484,[],"MetadataBoundary"]
+            11:X
+0:{"P":null,"c":["","admin"],"q":"","i":false,"f":[[["",{"children":["admin",{"children":["__PAGE__",{},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4624],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/ef1b0eaa9e5d2e5d.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/css/718f07de86b35524.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"vi","className":"__variable_4994ab __variable_258e5a __variable_d4ddd7 dark h-full antialiased","suppressHydrationWarning":true,"children":[["$","head",null,{"children":[["$","script",null,{"dangerouslySetInnerHTML":{"__html":"\n              (function() {\n                try {\n                  var saved = localStorage.getItem('omni_theme_mode');\n                  if (saved === 'light') {\n                    document.documentElement.classList.remove('dark');\n                  } else {\n                    document.documentElement.classList.add('dark');\n                  }\n                } catch(e) {\n                  document.documentElement.classList.add('dark');\n                }\n              })();\n            "}}],["$","$L2",null,{"id":"clean-extension-attrs","strategy":"beforeInteractive","dangerouslySetInnerHTML":{"__html":"$3"}}]]}],["$","body",null,{"className":"min-h-full flex flex-col","suppressHydrationWarning":true,"children":["$","$L4",null,{"children":["$","$L5",null,{"children":["$","$L6",null,{"children":["$","$L7",null,{"children":["$","$L8",null,{"children":[["$","$L9",null,{"parallelRouterKey":"children","error":"$a","errorStyles":[],"errorScripts":null,"template":["$","$Lb",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":"$Lc"}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],"$Ld","$Le"]}]}]}]}]}]}]]}]]}],{"children":["$Lf",{"children":["$L10",{},null,false,null]},null,false,"$11"]},null,false,null],"$L12",false]],"m":"$undefined","G":["$13",[]],"S":true,"h":null,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"gmD1UH028YZBKgBwviQMc"}
+14:I[8489,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"default"]
+15:I[2127,["1495","static/chunks/1495-3f9f2e408c6256bd.js","8676","static/chunks/8676-492206b7aaa20ac1.js","7177","static/chunks/app/layout-6b592564462bd91c.js"],"default"]
+16:I[1304,[],"ClientPageRoot"]
+17:I[7170,["8500","static/chunks/8500-f4d7bfbe7500f274.js","6201","static/chunks/6201-cbb11ec31b6e0030.js","3698","static/chunks/app/admin/page-9a716939ad508f4f.js"],"default"]
+1a:I[484,[],"OutletBoundary"]
+1b:"$Sreact.suspense"
+1d:I[484,[],"ViewportBoundary"]
+1f:I[484,[],"MetadataBoundary"]
 c:["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]
-d:["$","$L13",null,{}]
-e:["$","$1","c",{"children":[null,["$","$L9",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$Lb",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
-f:["$","$1","c",{"children":[["$","$L14",null,{"Component":"$15","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@16","$@17"]}}],null,["$","$L18",null,{"children":["$","$19",null,{"name":"Next.MetadataOutlet","children":"$@1a"}]}]]}]
-11:["$","$1","h",{"children":[null,["$","$L1b",null,{"children":"$L1c"}],["$","div",null,{"hidden":true,"children":["$","$L1d",null,{"children":["$","$19",null,{"name":"Next.Metadata","children":"$L1e"}]}]}],null]}]
-10:C
-16:{}
-17:"$f:props:children:0:props:serverProvidedParams:params"
-1c:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"}]]
-1f:I[6869,[],"IconMark"]
-1a:null
-1e:[["$","title","0",{"children":"Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh"}],["$","meta","1",{"name":"description","content":"Biết Tuốt AI — Nền tảng trí tuệ nhân tạo, trợ lý đa năng và giải đáp mọi thắc mắc"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?603d046c9a6fdfbb","type":"image/x-icon","sizes":"16x16"}],["$","$L1f","3",{}]]
+d:["$","$L14",null,{}]
+e:["$","$L15",null,{}]
+f:["$","$1","c",{"children":[null,["$","$L9",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$Lb",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+10:["$","$1","c",{"children":[["$","$L16",null,{"Component":"$17","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@18","$@19"]}}],null,["$","$L1a",null,{"children":["$","$1b",null,{"name":"Next.MetadataOutlet","children":"$@1c"}]}]]}]
+12:["$","$1","h",{"children":[null,["$","$L1d",null,{"children":"$L1e"}],["$","div",null,{"hidden":true,"children":["$","$L1f",null,{"children":["$","$1b",null,{"name":"Next.Metadata","children":"$L20"}]}]}],null]}]
+11:C
+18:{}
+19:"$10:props:children:0:props:serverProvidedParams:params"
+1e:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"}]]
+21:I[6869,[],"IconMark"]
+1c:null
+20:[["$","title","0",{"children":"Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh"}],["$","meta","1",{"name":"description","content":"Biết Tuốt AI — Nền tảng trí tuệ nhân tạo, trợ lý đa năng và giải đáp mọi thắc mắc"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?603d046c9a6fdfbb","type":"image/x-icon","sizes":"16x16"}],["$","$L21","3",{}]]

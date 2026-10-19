@@ -31,6 +31,7 @@ function initSchema(db: any) {
       "role" TEXT NOT NULL DEFAULT 'USER',
       "status" TEXT NOT NULL DEFAULT 'active',
       "credits" INTEGER NOT NULL DEFAULT 10,
+      "lastGiftNotification" TEXT,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
@@ -160,6 +161,11 @@ function getDb() {
     
     // Tự động khởi tạo cấu trúc bảng nếu database mới hoặc thiếu bảng
     initSchema(dbInstance);
+
+    // Migration bổ sung các cột mới nếu đã có bảng User từ trước
+    try {
+      dbInstance.exec('ALTER TABLE "User" ADD COLUMN "lastGiftNotification" TEXT;');
+    } catch {}
 
     return dbInstance;
   } catch (err) {

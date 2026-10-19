@@ -20,6 +20,7 @@ model User {
   role          String         @default("USER") // "USER" | "VIP" | "ADMIN"
   status        String         @default("active") // "active" | "banned"
   credits       Int            @default(10)
+  lastGiftNotification String?
   conversations Conversation[]
   projects      Project[]
   posts         Post[]

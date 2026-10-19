@@ -195,12 +195,28 @@ export async function POST(request: NextRequest) {
       newCredits = 999999;
     }
 
-    // 4. Cập nhật User trong Database
+    // 4. Cập nhật User trong Database và lưu thông báo quà tặng cho user
+    let giftPayload: string | null = null;
+    if (numAmount > 0) {
+      giftPayload = JSON.stringify({
+        id: `gift-${Date.now()}`,
+        amount: numAmount,
+        mode: mode,
+        newBalance: newCredits,
+        adminName: adminUser.name || "Quản trị viên",
+        timestamp: Date.now(),
+        message: mode === "set"
+          ? `Quản trị viên đã thiết lập số dư tài khoản của bạn thành ${newCredits} Credits!`
+          : `Bạn vừa được Quản trị viên tặng thêm +${numAmount} Credits vào tài khoản!`
+      });
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: targetUser.id },
       data: {
         credits: newCredits,
         ...(role ? { role } : {}),
+        ...(giftPayload ? { lastGiftNotification: giftPayload } : {}),
       },
       select: {
         id: true,
@@ -210,6 +226,7 @@ export async function POST(request: NextRequest) {
         role: true,
         status: true,
         credits: true,
+        lastGiftNotification: true,
         updatedAt: true,
       },
     });
