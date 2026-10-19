@@ -330,7 +330,7 @@ export default function AiToolsStudio() {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  // Load state from sessionStorage on mount
+  // Load state from sessionStorage on mount & populate TTS voices
   useEffect(() => {
     try {
       const storedHistory = sessionStorage.getItem("omni_tools_history");
@@ -352,7 +352,25 @@ export default function AiToolsStudio() {
     } catch (e) {
       console.error("Lỗi khi đọc lịch sử tool từ sessionStorage:", e);
     }
-  }, []);
+
+    // Nạp danh sách giọng đọc trình duyệt cho công cụ TTS
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      const updateVoices = () => {
+        const availableVoices = window.speechSynthesis.getVoices();
+        if (availableVoices && availableVoices.length > 0) {
+          setVoices(availableVoices);
+          if (!selectedVoice) {
+            // Ưu tiên chọn giọng tiếng Việt (vi) hoặc giọng mặc định
+            const viVoice = availableVoices.find((v) => v.lang.startsWith("vi") || v.name.toLowerCase().includes("vietnam"));
+            setSelectedVoice(viVoice ? viVoice.name : availableVoices[0].name);
+          }
+        }
+      };
+
+      updateVoices();
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+  }, [selectedVoice]);
 
   // Helper save result & history to sessionStorage
   const saveToolResult = (toolId: ToolType, input: string, result: string) => {
@@ -720,7 +738,7 @@ export default function AiToolsStudio() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {language === "en" ? "Chuyên Nghiệp (6)" : "Chuyên Nghiệp (6)"}
+                {language === "en" ? "Professional (6)" : "Chuyên Nghiệp (6)"}
               </button>
               <button
                 onClick={() => setActiveCategory("utility")}
@@ -730,7 +748,7 @@ export default function AiToolsStudio() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {language === "en" ? "Tiện Ích (4)" : "Tiện Ích (4)"}
+                {language === "en" ? "Utilities (4)" : "Tiện Ích (4)"}
               </button>
               <button
                 onClick={() => setActiveCategory("all")}
@@ -740,7 +758,7 @@ export default function AiToolsStudio() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {language === "en" ? "Tất Cả (10)" : "Tất Cả (10)"}
+                {language === "en" ? "All Tools (10)" : "Tất Cả (10)"}
               </button>
             </div>
           </div>
