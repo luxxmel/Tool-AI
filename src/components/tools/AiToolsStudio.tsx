@@ -686,131 +686,152 @@ export default function AiToolsStudio() {
   const activeToolMeta = TOOLS_LIST.find((t) => t.id === activeTool) || TOOLS_LIST[0];
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto flex flex-col pb-20 px-2 sm:px-4">
-      {/* Studio Header & Navigation Bar */}
-      <div className="w-full mb-8 pb-6 border-b border-slate-200/80 dark:border-slate-800/80">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-          {/* Title & Branding */}
-          <div className="flex items-center gap-4">
-            <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-600 flex items-center justify-center text-white text-2xl shadow-xl shadow-indigo-600/20 ring-1 ring-white/20 shrink-0">
+    <div className="w-full max-w-[1280px] mx-auto flex flex-col pb-24 px-3 sm:px-6">
+      {/* ── HERO BANNER: STUDIO SÁNG TẠO & DOANH NGHIỆP ── */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 border border-indigo-500/30 p-6 sm:p-8 mb-8 shadow-2xl shadow-indigo-950/50 text-white">
+        {/* Glow lights behind */}
+        <div className="absolute -top-24 -right-12 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-12 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex items-start sm:items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-3xl shadow-xl shadow-indigo-500/30 ring-2 ring-white/20 shrink-0 transform hover:scale-105 transition-transform">
               ⚡
             </div>
             <div>
-              <div className="flex items-center gap-2.5">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
                   {language === "en" ? "Creative & Business AI Studio" : "Studio Sáng Tạo & Doanh Nghiệp"}
                 </h1>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-500/10 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20 tracking-wide uppercase">
-                  PRO STUDIO
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black tracking-wider uppercase shadow-xs">
+                  PRO SUITE
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
                 {language === "en"
-                  ? "Specialized AI toolset for Content Creators, Sellers & Marketers"
-                  : "Bộ công cụ AI chuyên sâu dành cho Content Creator, Nhà bán hàng & Marketer"}
+                  ? "Top-tier AI engines engineered for Content Creators, Sellers, Marketers & Entrepreneurs."
+                  : "Hệ thống AI chuyên sâu tối ưu cho Content Creator, Nhà bán hàng Shopee/TikTok & Copywriter hàng đầu."}
               </p>
             </div>
           </div>
 
-          {/* Right Action Controls: Credits & Tabs */}
-          <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
-            {/* User Credits Status & Recharge Button */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-100/90 dark:bg-[#131525] border border-slate-200 dark:border-slate-800/90 shadow-xs">
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Credits:</span>
-              <span className="text-xs font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1">
-                ⚡ {user ? (user.role === "ADMIN" ? (language === "en" ? "Unlimited" : "Vô hạn") : (user.credits ?? 0)) : 0}
+          {/* Right Action: Credits & Filter tabs */}
+          <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto shrink-0">
+            {/* User Credits Status */}
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-inner">
+              <span className="text-xs text-slate-300 font-medium">Credits:</span>
+              <span className="text-xs sm:text-sm font-black text-amber-400 flex items-center gap-1 font-mono">
+                🪙 {user ? (user.role === "ADMIN" ? (language === "en" ? "Unlimited" : "Vô hạn") : (user.credits ?? 0)) : 0}
               </span>
               <button
                 onClick={() => setIsRechargeOpen(true)}
-                className="px-2.5 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shadow-sm transition-all cursor-pointer ml-1 active:scale-95"
+                className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:opacity-90 text-white text-[11px] font-bold shadow-xs transition-all cursor-pointer ml-1 active:scale-95"
               >
-                {language === "en" ? "+ Recharge" : "+ Nạp thêm"}
+                {language === "en" ? "+ Recharge" : "+ Nạp"}
               </button>
             </div>
 
-            {/* Category Tabs */}
-            <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-100/90 dark:bg-[#131525] border border-slate-200 dark:border-slate-800/90">
+            {/* Category Filter Pills */}
+            <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
               <button
                 onClick={() => setActiveCategory("pro")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeCategory === "pro"
-                    ? "bg-white dark:bg-[#1c1f36] text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-indigo-900/50"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
-                {language === "en" ? "Professional (6)" : "Chuyên Nghiệp (6)"}
+                {language === "en" ? "⭐ Pro Suite (6)" : "⭐ Chuyên Nghiệp (6)"}
               </button>
               <button
                 onClick={() => setActiveCategory("utility")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeCategory === "utility"
-                    ? "bg-white dark:bg-[#1c1f36] text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-indigo-900/50"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
-                {language === "en" ? "Utilities (4)" : "Tiện Ích (4)"}
+                {language === "en" ? "🛠️ Utilities (4)" : "🛠️ Tiện Ích (4)"}
               </button>
               <button
                 onClick={() => setActiveCategory("all")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeCategory === "all"
-                    ? "bg-white dark:bg-[#1c1f36] text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-indigo-900/50"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
-                {language === "en" ? "All Tools (10)" : "Tất Cả (10)"}
+                {language === "en" ? "All (10)" : "Tất Cả (10)"}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tools Grid Selection */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+      {/* ── TOOLS GRID: 10 THẺ CÔNG CỤ HIỆN ĐẠI ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 mb-8">
         {filteredTools.map((tool) => {
           const isActive = activeTool === tool.id;
           const toolName = language === "en" && tool.nameEn ? tool.nameEn : tool.name;
           const toolDesc = language === "en" && tool.descEn ? tool.descEn : tool.desc;
+
           return (
             <button
               key={tool.id}
               onClick={() => setActiveTool(tool.id)}
-              className={`p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
+              className={`p-4 rounded-3xl border text-left transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
                 isActive
-                  ? "bg-white dark:bg-[#141728] border-indigo-500 dark:border-indigo-500/80 shadow-lg shadow-indigo-500/10 ring-2 ring-indigo-500/20"
-                  : "bg-white/80 dark:bg-[#0c0e17]/80 hover:bg-white dark:hover:bg-[#131524] border-slate-200/90 dark:border-slate-800/80 text-slate-600 dark:text-slate-400 hover:border-indigo-300 dark:hover:border-indigo-800"
+                  ? "bg-gradient-to-b from-indigo-50/90 via-white to-indigo-50/50 dark:from-[#181a2e] dark:via-[#131525] dark:to-[#0f1120] border-indigo-500 dark:border-indigo-500 shadow-xl shadow-indigo-500/15 ring-2 ring-indigo-500/30 transform -translate-y-1"
+                  : "bg-white/90 dark:bg-[#0c0e18]/80 hover:bg-white dark:hover:bg-[#121424] border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-400/60 dark:hover:border-indigo-700/60 shadow-xs hover:shadow-lg transition-all"
               }`}
             >
               <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-2xl p-2 rounded-xl bg-slate-100 dark:bg-slate-800/70 group-hover:scale-105 transition-transform">
-                    {tool.icon}
-                  </span>
-                  <span
-                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                      tool.category === "pro"
-                        ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20"
-                        : "bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                <div className="flex items-center justify-between mb-3">
+                  <div
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl transition-all duration-300 ${
+                      isActive
+                        ? "bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white shadow-md shadow-indigo-500/30 scale-110"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 group-hover:scale-105"
                     }`}
                   >
-                    {tool.creditsCost} Credits
+                    {tool.icon}
+                  </div>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      tool.category === "pro"
+                        ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-mono"
+                        : "bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono"
+                    }`}
+                  >
+                    {tool.creditsCost}🪙
                   </span>
                 </div>
-                <span className="block text-xs font-bold text-slate-900 dark:text-white leading-snug">
+
+                <span className={`block text-xs sm:text-sm font-extrabold leading-tight mb-1.5 transition-colors ${
+                  isActive ? "text-indigo-600 dark:text-cyan-400" : "text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-400"
+                }`}>
                   {toolName}
+                </span>
+
+                <span className="block text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                  {toolDesc}
                 </span>
               </div>
 
-              <span className="block text-[11px] text-slate-400 dark:text-slate-500 mt-2.5 line-clamp-2 font-normal leading-relaxed">
-                {toolDesc}
-              </span>
+              {/* Status pill bottom */}
+              <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] font-semibold">
+                <span className={isActive ? "text-indigo-600 dark:text-cyan-400 font-bold" : "text-slate-400"}>
+                  {isActive ? (language === "en" ? "● Active Tool" : "● Đang chọn") : (language === "en" ? "Select" : "Mở công cụ")}
+                </span>
+                <span className="text-slate-400 group-hover:translate-x-1 transition-transform">→</span>
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* TOOL WORKBENCH CONTAINER */}
-      <div className="w-full p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#0e101c] backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 shadow-xl shadow-slate-950/5 relative overflow-hidden">
+      {/* ── TOOL WORKBENCH CONTAINER (BÀN LÀM VIỆC SÁNG TẠO) ── */}
+      <div className="w-full p-6 sm:p-9 rounded-3xl bg-white/95 dark:bg-[#0c0e18]/95 backdrop-blur-2xl border border-slate-200 dark:border-slate-800 shadow-2xl shadow-slate-950/10 relative overflow-hidden">
         {/* Animated Horizontal Loading Progress Bar */}
         {(isAnyGenerating || progress > 0) && (
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100 dark:bg-slate-800/80 overflow-hidden z-20">
@@ -822,29 +843,36 @@ export default function AiToolsStudio() {
         )}
 
         {/* Active Tool Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-slate-200/80 dark:border-slate-800/80">
-          <div className="flex items-center gap-3.5">
-            <span className="text-3xl p-3 rounded-2xl bg-indigo-50 dark:bg-[#181b2e] border border-indigo-100 dark:border-indigo-950/50 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-7 border-b border-slate-200/80 dark:border-slate-800/80">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500/10 via-violet-500/15 to-cyan-500/10 dark:from-indigo-950 dark:via-purple-950 dark:to-slate-900 border border-indigo-200 dark:border-indigo-800/50 flex items-center justify-center text-3xl shadow-sm shrink-0">
               {activeToolMeta.icon}
-            </span>
+            </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <span>{language === "en" && activeToolMeta.nameEn ? activeToolMeta.nameEn : activeToolMeta.name}</span>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-xl font-black text-slate-900 dark:text-white">
+                  {language === "en" && activeToolMeta.nameEn ? activeToolMeta.nameEn : activeToolMeta.name}
+                </h2>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-cyan-400 font-bold border border-indigo-200 dark:border-indigo-800/80">
                   {activeToolMeta.creditsCost} Credits / lượt
                 </span>
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {activeToolMeta.featureHighlight && (
+                  <span className="hidden md:inline-block text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-200 dark:border-emerald-800/50">
+                    ✨ {language === "en" && activeToolMeta.featureHighlightEn ? activeToolMeta.featureHighlightEn : activeToolMeta.featureHighlight}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {language === "en" && activeToolMeta.descEn ? activeToolMeta.descEn : activeToolMeta.desc}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
             {/* Lịch sử button */}
             <button
               onClick={() => setShowHistoryModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
             >
               <span>📜</span>
               <span>{language === "en" ? "History" : "Lịch sử công cụ"}</span>
@@ -858,11 +886,11 @@ export default function AiToolsStudio() {
             {/* Clear / New run button */}
             <button
               onClick={() => clearCurrentToolResult(activeTool)}
-              className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
               title={language === "en" ? "Clear result & start new" : "Xóa kết quả hiện tại để tạo mới"}
             >
               <span>✨</span>
-              <span>{language === "en" ? "Tạo mới" : "Tạo kết quả mới"}</span>
+              <span>{language === "en" ? "New Run" : "Làm mới"}</span>
             </button>
           </div>
         </div>
