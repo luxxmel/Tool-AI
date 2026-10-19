@@ -869,13 +869,13 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                     {post.image && (
                       <div
                         onClick={() => setPreviewImageUrl(post.image!)}
-                        className="mb-3.5 rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-slate-950/40 flex items-center justify-center cursor-pointer group/img relative"
+                        className="mb-3.5 rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 flex items-center justify-center cursor-pointer group/img relative w-full"
                         title={language === "en" ? "Click to view full image" : "Bấm để xem ảnh kích thước đầy đủ"}
                       >
                         <img
                           src={post.image}
                           alt={post.title}
-                          className="w-full max-h-[620px] object-contain transition-transform duration-300 group-hover/img:scale-[1.01]"
+                          className="w-full h-auto object-contain transition-transform duration-300 group-hover/img:scale-[1.005]"
                           loading="lazy"
                         />
                         <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-black/60 backdrop-blur-md text-[10px] text-white font-medium opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center gap-1">
