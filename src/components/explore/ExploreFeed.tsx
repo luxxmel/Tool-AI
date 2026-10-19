@@ -592,7 +592,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                     categoryNavRef.current.scrollBy({ left: -180, behavior: "smooth" });
                   }
                 }}
-                className="shrink-0 mr-1.5 w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10 text-xs"
+                className="shrink-0 mr-1.5 w-8 h-8 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-xs border border-slate-200 dark:border-slate-700/60 active:scale-95 z-10 text-xs"
                 title="Cuộn sang trái"
               >
                 ◀
@@ -627,7 +627,7 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                     categoryNavRef.current.scrollBy({ left: 180, behavior: "smooth" });
                   }
                 }}
-                className="shrink-0 ml-1.5 w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md border border-slate-700/60 active:scale-95 z-10 text-xs"
+                className="shrink-0 ml-1.5 w-8 h-8 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-xs border border-slate-200 dark:border-slate-700/60 active:scale-95 z-10 text-xs"
                 title="Cuộn sang phải"
               >
                 ▶

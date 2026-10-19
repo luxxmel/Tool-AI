@@ -15,7 +15,7 @@ export default function WorkspaceBackgroundLayer() {
       style={{
         pointerEvents: "none",
         zIndex: 0,
-        backgroundColor: isDark ? "#090a10" : "#ffffff",
+        backgroundColor: isDark ? "#090a10" : "#f8fafc",
       }}
     />
   );
