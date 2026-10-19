@@ -37,7 +37,7 @@ export default function DailyCheckinModal({
   onOpenLoginModal,
   onCheckinSuccess,
 }: DailyCheckinModalProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, updateUserCredits } = useAuth();
   const { language } = useLanguage();
   const { showAlert } = usePopup();
 
@@ -133,6 +133,11 @@ export default function DailyCheckinModal({
         setIsCheckedToday(true);
         setCurrentStreak(newStreakVal);
         setJustClaimedReward(data.rewardCredits);
+
+        // Cập nhật ngay lập tức vào AuthContext & localStorage để toàn bộ UI đổi số realtime không cần F5
+        if (typeof data.newCredits === "number") {
+          updateUserCredits(data.newCredits);
+        }
 
         if (onCheckinSuccess) {
           onCheckinSuccess(data.newCredits);
