@@ -269,21 +269,21 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-3 sm:p-6 text-slate-100 min-h-[85vh]">
+    <div className="w-full max-w-6xl mx-auto p-3 sm:p-6 text-slate-800 dark:text-slate-100 min-h-[85vh]">
       {/* Header */}
-      <div className="flex items-center justify-between pb-6 mb-6 border-b border-indigo-900/40">
+      <div className="flex items-center justify-between pb-6 mb-6 border-b border-slate-200 dark:border-indigo-900/40">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-900 via-blue-900 to-indigo-600 flex items-center justify-center text-2xl shadow-lg shadow-indigo-900/50 border border-indigo-400/30">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-indigo-700 dark:from-indigo-900 dark:via-blue-900 dark:to-indigo-600 flex items-center justify-center text-2xl shadow-lg shadow-indigo-600/20 dark:shadow-indigo-900/50 border border-indigo-400/30 text-white">
             🌙
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
               Lập Lá Số Tử Vi Đẩu Số
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 font-bold">
                 Thuật Toán Thiên Văn Cổ Học
               </span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               Lập bàn 12 cung chuẩn xác theo giờ sinh âm dương và luận giải vận hạn cuộc đời
             </p>
           </div>
@@ -291,41 +291,41 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
 
         <button
           onClick={() => setShowRechargeModal(true)}
-          className="px-4 py-1.5 rounded-full bg-slate-900/90 border border-amber-500/50 hover:border-amber-400 text-amber-400 font-bold text-xs flex items-center gap-1.5 shadow-md hover:bg-slate-800 transition-all cursor-pointer"
+          className="px-4 py-1.5 rounded-full bg-amber-50 dark:bg-slate-900/90 border border-amber-500/40 hover:border-amber-500 text-amber-600 dark:text-amber-400 font-bold text-xs flex items-center gap-1.5 shadow-xs hover:bg-amber-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
         >
           <span>🪙</span> {user?.credits ?? 0} Credits
         </button>
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleGenerateChart} className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-2xl backdrop-blur-xl mb-8">
-        <h2 className="text-base font-bold text-indigo-300 mb-4 flex items-center gap-2">
+      <form onSubmit={handleGenerateChart} className="bg-white/90 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-7 shadow-xl backdrop-blur-xl mb-8">
+        <h2 className="text-base font-bold text-indigo-600 dark:text-indigo-300 mb-4 flex items-center gap-2">
           <span>📜</span> Nhập thông tin đương số để an sao lập lá số
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Họ và Tên</label>
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Họ và Tên</label>
             <input
               type="text"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="VD: Nguyễn Văn An"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Giới Tính</label>
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Giới Tính</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setGender('nam')}
-                className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   gender === 'nam'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-950 text-slate-400 border border-slate-800 hover:border-slate-700'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-800 hover:border-blue-400'
                 }`}
               >
                 ♂️ Nam Mạng
@@ -333,10 +333,10 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
               <button
                 type="button"
                 onClick={() => setGender('nu')}
-                className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   gender === 'nu'
                     ? 'bg-pink-600 text-white shadow-md shadow-pink-600/30'
-                    : 'bg-slate-950 text-slate-400 border border-slate-800 hover:border-slate-700'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-800 hover:border-pink-400'
                 }`}
               >
                 ♀️ Nữ Mạng
@@ -345,7 +345,7 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Ngày Sinh (Dương Lịch)</label>
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Ngày Sinh (Dương Lịch)</label>
             <div className="grid grid-cols-3 gap-1.5">
               <input
                 type="number"
@@ -353,7 +353,7 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                 max="31"
                 value={birthDay}
                 onChange={(e) => setBirthDay(Number(e.target.value))}
-                className="px-2 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                className="px-2 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs text-center outline-none focus:border-indigo-500"
                 placeholder="Ngày"
               />
               <input
@@ -362,7 +362,7 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                 max="12"
                 value={birthMonth}
                 onChange={(e) => setBirthMonth(Number(e.target.value))}
-                className="px-2 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                className="px-2 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs text-center outline-none focus:border-indigo-500"
                 placeholder="Tháng"
               />
               <input
@@ -371,14 +371,14 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                 max="2030"
                 value={birthYear}
                 onChange={(e) => setBirthYear(Number(e.target.value))}
-                className="px-2 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                className="px-2 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs text-center outline-none focus:border-indigo-500"
                 placeholder="Năm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5">Giờ Sinh (Chính xác)</label>
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Giờ Sinh (Chính xác)</label>
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="number"
@@ -386,7 +386,7 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                 max="23"
                 value={birthHour}
                 onChange={(e) => setBirthHour(Number(e.target.value))}
-                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                className="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs text-center outline-none focus:border-indigo-500"
                 placeholder="Giờ (0-23)"
               />
               <input
@@ -395,7 +395,7 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                 max="59"
                 value={birthMinute}
                 onChange={(e) => setBirthMinute(Number(e.target.value))}
-                className="px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700/80 text-white text-xs text-center outline-none focus:border-indigo-500"
+                className="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs text-center outline-none focus:border-indigo-500"
                 placeholder="Phút (0-59)"
               />
             </div>
@@ -464,16 +464,16 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
       {chartData && (
         <div className="space-y-8 animate-fadeIn">
           {/* Bảng Thiên Bàn Tổng Quan */}
-          <div className="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-950 border border-indigo-500/40 rounded-2xl p-5 shadow-2xl">
-            <h3 className="text-center font-black text-amber-400 text-lg uppercase tracking-wider mb-4">
+          <div className="bg-gradient-to-br from-indigo-50 via-white to-slate-50 dark:from-indigo-950/60 dark:via-slate-900 dark:to-slate-950 border border-indigo-200 dark:border-indigo-500/40 rounded-2xl p-5 shadow-xl">
+            <h3 className="text-center font-black text-amber-600 dark:text-amber-400 text-lg uppercase tracking-wider mb-4">
               Lá Số Tử Vi — {fullName.toUpperCase()} ({gender === 'nam' ? 'Dương Nam' : 'Âm Nữ'})
             </h3>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-950/80 p-4 rounded-xl border border-slate-800 mb-6">
-              <div><span className="text-slate-400">Dương Lịch:</span> <strong className="text-white">{chartData.solarStr}</strong></div>
-              <div><span className="text-slate-400">Âm Lịch:</span> <strong className="text-cyan-300">{chartData.lunarStr}</strong></div>
-              <div><span className="text-slate-400">Bản Mệnh:</span> <strong className="text-amber-300">{chartData.menhNguHanh}</strong></div>
-              <div><span className="text-slate-400">Cung Mệnh Tại:</span> <strong className="text-indigo-300">Cung {chartData.cungMenh}</strong></div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-white dark:bg-slate-950/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 shadow-xs">
+              <div><span className="text-slate-500 dark:text-slate-400">Dương Lịch:</span> <strong className="text-slate-900 dark:text-white">{chartData.solarStr}</strong></div>
+              <div><span className="text-slate-500 dark:text-slate-400">Âm Lịch:</span> <strong className="text-indigo-600 dark:text-cyan-300">{chartData.lunarStr}</strong></div>
+              <div><span className="text-slate-500 dark:text-slate-400">Bản Mệnh:</span> <strong className="text-amber-600 dark:text-amber-300">{chartData.menhNguHanh}</strong></div>
+              <div><span className="text-slate-500 dark:text-slate-400">Cung Mệnh Tại:</span> <strong className="text-indigo-700 dark:text-indigo-300">Cung {chartData.cungMenh}</strong></div>
             </div>
 
             {/* Grid 12 Cung Địa Bàn Chuẩn Cổ Học */}
@@ -483,12 +483,12 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                   key={i}
                   className={`p-3 rounded-xl border flex flex-col justify-between min-h-[140px] transition-all ${
                     palace.name === 'Mệnh'
-                      ? 'bg-indigo-950/70 border-indigo-400/70 shadow-lg shadow-indigo-900/40 ring-1 ring-indigo-400/40'
-                      : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                      ? 'bg-indigo-50/80 dark:bg-indigo-950/70 border-indigo-400 dark:border-indigo-400/70 shadow-md shadow-indigo-500/10 dark:shadow-indigo-900/40 ring-1 ring-indigo-400/40'
+                      : 'bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
-                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-1.5 mb-1.5">
-                    <span className={`font-black text-xs ${palace.name === 'Mệnh' ? 'text-amber-400' : 'text-slate-200'}`}>
+                  <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 pb-1.5 mb-1.5">
+                    <span className={`font-black text-xs ${palace.name === 'Mệnh' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-slate-200'}`}>
                       {palace.name} ({palace.earthlyBranch})
                     </span>
                     <span className="text-[10px] text-slate-500 font-mono">{palace.element}</span>
@@ -497,16 +497,16 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
                   {/* Chính Tinh */}
                   <div className="space-y-0.5 my-1">
                     {palace.mainStars.map((ms, idx) => (
-                      <div key={idx} className="text-xs font-bold text-rose-400 flex items-center gap-1">
+                      <div key={idx} className="text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1">
                         <span>★</span> {ms}
                       </div>
                     ))}
                   </div>
 
                   {/* Phụ Tinh */}
-                  <div className="mt-2 pt-1 border-t border-slate-800/40 text-[10px] space-y-0.5">
-                    <div className="text-emerald-400 truncate">{palace.goodStars.join(', ')}</div>
-                    <div className="text-slate-400 truncate">{palace.badStars.join(', ')}</div>
+                  <div className="mt-2 pt-1 border-t border-slate-200/60 dark:border-slate-800/40 text-[10px] space-y-0.5">
+                    <div className="text-emerald-600 dark:text-emerald-400 font-semibold truncate">{palace.goodStars.join(', ')}</div>
+                    <div className="text-slate-500 dark:text-slate-400 truncate">{palace.badStars.join(', ')}</div>
                   </div>
                 </div>
               ))}
@@ -514,25 +514,25 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
           </div>
 
           {/* Luận Giải Chi Tiết AI */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
-            <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-800">
+          <div className="bg-white/95 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
+            <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-200 dark:border-slate-800">
               <span className="text-2xl">🔮</span>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-white">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
                   Lời Luận Giải Chi Tiết Của Đại Sư Tử Vi
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Phân tích mệnh vận, tam hợp chiếu, công danh, duyên nợ và hóa giải xung sát
                 </p>
               </div>
             </div>
 
             {readingText ? (
-              <div className="prose prose-invert prose-indigo max-w-none text-slate-300 text-sm leading-relaxed space-y-4">
+              <div className="prose dark:prose-invert prose-indigo max-w-none text-slate-700 dark:text-slate-300 text-sm leading-relaxed space-y-4">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{readingText}</ReactMarkdown>
               </div>
             ) : (
-              <div className="py-12 text-center text-slate-500 text-sm animate-pulse">
+              <div className="py-12 text-center text-slate-400 dark:text-slate-500 text-sm animate-pulse">
                 Đang biên soạn văn bản luận giải số mệnh chuyên sâu...
               </div>
             )}

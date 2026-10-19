@@ -22,7 +22,7 @@ export default function WorkspaceFloatingDock({}: WorkspaceFloatingDockProps) {
   const isDark = theme === "dark";
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 select-none">
+    <div className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40 select-none">
       <div className="flex items-center p-1.5 rounded-full bg-white/95 dark:bg-[#11131f]/95 backdrop-blur-xl border border-slate-200/90 dark:border-indigo-900/60 shadow-xl shadow-slate-900/10 dark:shadow-black/50 transition-all duration-300">
         {/* Nút Sáng */}
         <button

@@ -27,6 +27,7 @@ import BatTuView from "@/components/astrology/BatTuView";
 import MathSolverView from "@/components/math/MathSolverView";
 import EnglishLearningView from "@/components/english/EnglishLearningView";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
+import MobileBottomBar from "@/components/layout/MobileBottomBar";
 import {
   FEATURED_ASSISTANTS,
   TRENDING_CHARACTERS,
@@ -543,6 +544,24 @@ function HomeContent() {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         initialTab={settingsTab}
+      />
+
+      {/* Native-style Mobile Bottom Navigation Bar */}
+      <MobileBottomBar
+        currentTab={currentTab}
+        onSelectTab={(tabId) => {
+          setIsChatOpen(false);
+          setCurrentTab(tabId);
+        }}
+        onOpenNewChat={() => {
+          setActiveConversationId(null);
+          setSelectedAssistant(null);
+          setIsCreatingProject(false);
+          setChatPrompt("");
+          setChatSessionKey(`new-mobile-${Date.now()}`);
+          setIsChatOpen(true);
+        }}
+        onOpenLoginModal={() => setShowLoginModal(true)}
       />
     </div>
   );

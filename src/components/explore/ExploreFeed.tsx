@@ -1058,6 +1058,25 @@ export default function ExploreFeed({ onOpenLoginModal }: ExploreFeedProps) {
                                       <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap break-words">
                                         {comment.content}
                                       </p>
+                                      <div className="mt-1 flex items-center gap-2">
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const currentText = commentInputs[post.id] || "";
+                                            const mention = `@${comment.user.name} `;
+                                            if (!currentText.includes(mention)) {
+                                              setCommentInputs((prev) => ({
+                                                ...prev,
+                                                [post.id]: mention + currentText,
+                                              }));
+                                            }
+                                          }}
+                                          className="text-[10px] font-semibold text-slate-400 hover:text-indigo-500 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer"
+                                        >
+                                          <span>↩️</span>
+                                          <span>{language === "en" ? "Reply" : "Trả lời"}</span>
+                                        </button>
+                                      </div>
                                     </div>
                                   </div>
                                 );
