@@ -374,7 +374,7 @@ function HomeContent() {
                   </button>
                 </div>
 
-                {/* Left Arrow Button */}
+                {/* Left Arrow Button (Chỉ hiển thị trên máy tính/tablet, ẩn trên điện thoại để không đè nội dung) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -387,13 +387,13 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang trái"
                 >
                   ◀
                 </button>
 
-                {/* Right Arrow Button */}
+                {/* Right Arrow Button (Chỉ hiển thị trên máy tính/tablet) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -406,7 +406,7 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang phải"
                 >
                   ▶
@@ -415,10 +415,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Featured Assistants Only */}
                 <div
                   id="featured-assistants-scroll"
-                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-2"
+                  className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-1 sm:px-2"
                 >
                   {FEATURED_ASSISTANTS.map((assistant) => (
-                    <div key={assistant.id} className="w-[280px] sm:w-[300px] shrink-0 snap-start">
+                    <div key={assistant.id} className="w-[82vw] max-w-[290px] sm:w-[300px] shrink-0 snap-center sm:snap-start">
                       <AssistantCard
                         assistant={assistant}
                         onClick={handleSelectAssistant}
@@ -449,7 +449,7 @@ function HomeContent() {
                   </button>
                 </div>
 
-                {/* Left Arrow Button */}
+                {/* Left Arrow Button (Chỉ hiển thị trên máy tính/tablet, ẩn trên điện thoại) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -462,13 +462,13 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute left-0 top-1/2 translate-y-2 -translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang trái"
                 >
                   ◀
                 </button>
 
-                {/* Right Arrow Button */}
+                {/* Right Arrow Button (Chỉ hiển thị trên máy tính/tablet) */}
                 <button
                   type="button"
                   onClick={() => {
@@ -481,7 +481,7 @@ function HomeContent() {
                       }
                     }
                   }}
-                  className="absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 flex items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
+                  className="hidden sm:flex absolute right-0 top-1/2 translate-y-2 translate-x-3.5 z-20 w-10 h-10 rounded-full bg-white/95 dark:bg-[#11131c]/95 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-indigo-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-slate-950 items-center justify-center text-sm transition-all shadow-xl cursor-pointer active:scale-95"
                   title="Lướt sang phải"
                 >
                   ▶
@@ -490,10 +490,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Trending Characters */}
                 <div
                   id="trending-characters-scroll"
-                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-2"
+                  className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-1 sm:px-2"
                 >
                   {TRENDING_CHARACTERS.map((char) => (
-                    <div key={char.id} className="w-[280px] sm:w-[300px] shrink-0 snap-start">
+                    <div key={char.id} className="w-[82vw] max-w-[290px] sm:w-[300px] shrink-0 snap-center sm:snap-start">
                       <CharacterCard
                         character={char}
                         onClick={handleSelectCharacter}
