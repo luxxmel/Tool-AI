@@ -80,24 +80,24 @@ function HomeContent() {
     if (currentTab !== "home" || isChatOpen) return;
 
     const interval = setInterval(() => {
-      // Auto-scroll Trợ lý nổi bật
+      // Auto-scroll Trợ lý nổi bật (trôi từng thẻ một mượt mà)
       const featuredContainer = document.getElementById("featured-assistants-scroll");
       if (featuredContainer && !featuredContainer.matches(":hover")) {
-        const isMobile = window.innerWidth < 640;
-        const step = isMobile ? featuredContainer.clientWidth : 316;
-        if (featuredContainer.scrollLeft + featuredContainer.clientWidth >= featuredContainer.scrollWidth - 30) {
+        const firstCard = featuredContainer.querySelector(":scope > div") as HTMLElement;
+        const step = firstCard ? firstCard.offsetWidth + 12 : 240;
+        if (featuredContainer.scrollLeft + featuredContainer.clientWidth >= featuredContainer.scrollWidth - 15) {
           featuredContainer.scrollTo({ left: 0, behavior: "smooth" });
         } else {
           featuredContainer.scrollBy({ left: step, behavior: "smooth" });
         }
       }
 
-      // Auto-scroll Nhân vật xu hướng
+      // Auto-scroll Nhân vật xu hướng (trôi từng thẻ một mượt mà)
       const trendingContainer = document.getElementById("trending-characters-scroll");
       if (trendingContainer && !trendingContainer.matches(":hover")) {
-        const isMobile = window.innerWidth < 640;
-        const step = isMobile ? trendingContainer.clientWidth : 316;
-        if (trendingContainer.scrollLeft + trendingContainer.clientWidth >= trendingContainer.scrollWidth - 30) {
+        const firstCard = trendingContainer.querySelector(":scope > div") as HTMLElement;
+        const step = firstCard ? firstCard.offsetWidth + 12 : 240;
+        if (trendingContainer.scrollLeft + trendingContainer.clientWidth >= trendingContainer.scrollWidth - 15) {
           trendingContainer.scrollTo({ left: 0, behavior: "smooth" });
         } else {
           trendingContainer.scrollBy({ left: step, behavior: "smooth" });
@@ -376,16 +376,18 @@ function HomeContent() {
                   </button>
                 </div>
 
-                {/* Left Arrow Button (Chỉ hiển thị trên máy tính/tablet, ẩn trên điện thoại để không đè nội dung) */}
+                {/* Left Arrow Button (Chỉ hiển thị trên máy tính/tablet, ẩn trên điện thoại) */}
                 <button
                   type="button"
                   onClick={() => {
                     const container = document.getElementById("featured-assistants-scroll");
                     if (container) {
+                      const firstCard = container.querySelector(":scope > div") as HTMLElement;
+                      const step = firstCard ? firstCard.offsetWidth + 12 : 240;
                       if (container.scrollLeft <= 10) {
                         container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
                       } else {
-                        container.scrollBy({ left: -316, behavior: "smooth" });
+                        container.scrollBy({ left: -step, behavior: "smooth" });
                       }
                     }
                   }}
@@ -401,10 +403,12 @@ function HomeContent() {
                   onClick={() => {
                     const container = document.getElementById("featured-assistants-scroll");
                     if (container) {
-                      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 30) {
+                      const firstCard = container.querySelector(":scope > div") as HTMLElement;
+                      const step = firstCard ? firstCard.offsetWidth + 12 : 240;
+                      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 15) {
                         container.scrollTo({ left: 0, behavior: "smooth" });
                       } else {
-                        container.scrollBy({ left: 316, behavior: "smooth" });
+                        container.scrollBy({ left: step, behavior: "smooth" });
                       }
                     }
                   }}
@@ -414,13 +418,13 @@ function HomeContent() {
                   ▶
                 </button>
 
-                {/* Horizontal Scrollable Carousel of Featured Assistants Only */}
+                {/* Horizontal Scrollable Carousel of Featured Assistants (Mobile: 1 card, Tablet: 2 cards, PC: đúng 4 cards) */}
                 <div
                   id="featured-assistants-scroll"
-                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0 sm:px-2"
+                  className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0 sm:px-1"
                 >
                   {FEATURED_ASSISTANTS.map((assistant) => (
-                    <div key={assistant.id} className="w-full sm:w-[300px] shrink-0 snap-center sm:snap-start">
+                    <div key={assistant.id} className="w-full sm:w-[calc(50%-6px)] lg:w-[calc(25%-9px)] shrink-0 snap-center sm:snap-start">
                       <AssistantCard
                         assistant={assistant}
                         onClick={handleSelectAssistant}
@@ -457,10 +461,12 @@ function HomeContent() {
                   onClick={() => {
                     const container = document.getElementById("trending-characters-scroll");
                     if (container) {
+                      const firstCard = container.querySelector(":scope > div") as HTMLElement;
+                      const step = firstCard ? firstCard.offsetWidth + 12 : 240;
                       if (container.scrollLeft <= 10) {
                         container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
                       } else {
-                        container.scrollBy({ left: -316, behavior: "smooth" });
+                        container.scrollBy({ left: -step, behavior: "smooth" });
                       }
                     }
                   }}
@@ -476,10 +482,12 @@ function HomeContent() {
                   onClick={() => {
                     const container = document.getElementById("trending-characters-scroll");
                     if (container) {
-                      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 30) {
+                      const firstCard = container.querySelector(":scope > div") as HTMLElement;
+                      const step = firstCard ? firstCard.offsetWidth + 12 : 240;
+                      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 15) {
                         container.scrollTo({ left: 0, behavior: "smooth" });
                       } else {
-                        container.scrollBy({ left: 316, behavior: "smooth" });
+                        container.scrollBy({ left: step, behavior: "smooth" });
                       }
                     }
                   }}
@@ -492,10 +500,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Trending Characters */}
                 <div
                   id="trending-characters-scroll"
-                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0 sm:px-2"
+                  className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0 sm:px-1"
                 >
                   {TRENDING_CHARACTERS.map((char) => (
-                    <div key={char.id} className="w-full sm:w-[300px] shrink-0 snap-center sm:snap-start">
+                    <div key={char.id} className="w-full sm:w-[calc(50%-6px)] lg:w-[calc(25%-9px)] shrink-0 snap-center sm:snap-start">
                       <CharacterCard
                         character={char}
                         onClick={handleSelectCharacter}
