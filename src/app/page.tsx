@@ -83,7 +83,8 @@ function HomeContent() {
       // Auto-scroll Trợ lý nổi bật
       const featuredContainer = document.getElementById("featured-assistants-scroll");
       if (featuredContainer && !featuredContainer.matches(":hover")) {
-        const step = 316; // 300px card + 16px gap
+        const isMobile = window.innerWidth < 640;
+        const step = isMobile ? featuredContainer.clientWidth : 316;
         if (featuredContainer.scrollLeft + featuredContainer.clientWidth >= featuredContainer.scrollWidth - 30) {
           featuredContainer.scrollTo({ left: 0, behavior: "smooth" });
         } else {
@@ -94,7 +95,8 @@ function HomeContent() {
       // Auto-scroll Nhân vật xu hướng
       const trendingContainer = document.getElementById("trending-characters-scroll");
       if (trendingContainer && !trendingContainer.matches(":hover")) {
-        const step = 316;
+        const isMobile = window.innerWidth < 640;
+        const step = isMobile ? trendingContainer.clientWidth : 316;
         if (trendingContainer.scrollLeft + trendingContainer.clientWidth >= trendingContainer.scrollWidth - 30) {
           trendingContainer.scrollTo({ left: 0, behavior: "smooth" });
         } else {
@@ -415,10 +417,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Featured Assistants Only */}
                 <div
                   id="featured-assistants-scroll"
-                  className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-1 sm:px-2"
+                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0 sm:px-2"
                 >
                   {FEATURED_ASSISTANTS.map((assistant) => (
-                    <div key={assistant.id} className="w-[82vw] max-w-[290px] sm:w-[300px] shrink-0 snap-center sm:snap-start">
+                    <div key={assistant.id} className="w-full sm:w-[300px] shrink-0 snap-center sm:snap-start">
                       <AssistantCard
                         assistant={assistant}
                         onClick={handleSelectAssistant}
@@ -490,10 +492,10 @@ function HomeContent() {
                 {/* Horizontal Scrollable Carousel of Trending Characters */}
                 <div
                   id="trending-characters-scroll"
-                  className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-1 sm:px-2"
+                  className="flex items-center gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth w-full px-0 sm:px-2"
                 >
                   {TRENDING_CHARACTERS.map((char) => (
-                    <div key={char.id} className="w-[82vw] max-w-[290px] sm:w-[300px] shrink-0 snap-center sm:snap-start">
+                    <div key={char.id} className="w-full sm:w-[300px] shrink-0 snap-center sm:snap-start">
                       <CharacterCard
                         character={char}
                         onClick={handleSelectCharacter}
