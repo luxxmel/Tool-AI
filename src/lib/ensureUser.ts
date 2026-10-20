@@ -117,40 +117,29 @@ export async function ensureUser(
       }
     }
 
-    // 4. Nếu không tìm thấy trong DB, tự tạo mới với 20 Credits
-    const newUser = await prisma.user.upsert({
-      where: { email: effectiveEmail },
-      update: {},
-      create: {
-        email: effectiveEmail,
-        name: effectiveName,
-        avatar: effectiveAvatar,
-        credits: 20,
-        role: "USER",
-      },
-    });
+    // 4. CHỈ tự tạo tài khoản nếu đây là email thật (hợp lệ) do người dùng đăng ký hoặc OAuth trả về
+    // Tuyệt đối KHÔNG tự bịa tài khoản dạng targetId@omni.user nếu người dùng chưa từng đăng ký
+    if (targetEmail && targetEmail.includes("@") && !targetEmail.endsWith("@omni.user")) {
+      const newUser = await prisma.user.upsert({
+        where: { email: targetEmail },
+        update: {},
+        create: {
+          email: targetEmail,
+          name: effectiveName,
+          avatar: effectiveAvatar,
+          credits: 20,
+          role: "USER",
+        },
+      });
 
-    if (newUser && newUser.id) {
-      return newUser;
+      if (newUser && newUser.id) {
+        return newUser;
+      }
     }
   } catch (err) {
     console.warn(`Lỗi khi tìm/tạo user trong DB:`, err);
   }
 
-  // 5. Fallback vững chắc: Đảm bảo user có record trong SQLite DB trước khi trả về
-  try {
-    const existing = await prisma.user.findFirst({ where: { email: effectiveEmail } });
-    if (existing) return existing;
-  } catch {
-    // Ignored
-  }
-
-  return {
-    id: targetId || effectiveEmail,
-    email: effectiveEmail,
-    name: effectiveName,
-    avatar: effectiveAvatar,
-    credits: 20,
-    role: "USER",
-  };
+  // 5. Nếu không tìm thấy người dùng hợp lệ trong DB, trả về null để yêu cầu đăng nhập
+  return null;
 }
