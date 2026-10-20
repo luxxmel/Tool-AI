@@ -292,45 +292,83 @@ export default function HomeChatView({
     };
   }, []);
 
-  const detectMessageVoice = (text: string): "tong_tai" | "male" | "female" => {
+  const detectMessageVoice = (text: string): string => {
     if (selectedAssistant) {
-      const maleAssistants = [
-        "char-tong-tai",
-        "char-co-da-than",
-        "char-tieu-viem",
-        "alex",
-        "master-zen",
-        "luc-tong",
-      ];
-      if (maleAssistants.includes(selectedAssistant.id)) return "tong_tai";
+      const bid = selectedAssistant.id;
+      // 1. Nhóm Tổng Tài, Ma Vương, Chiến Thần, Sát Thủ (Trầm khàn, bá đạo, uy lực)
+      if (
+        bid === "char-luc-ngang-thien" ||
+        bid === "char-trieu-vo-than" ||
+        bid === "char-thac-bat-da" ||
+        bid === "char-ma-ton-huyet-vo-nhai" ||
+        bid === "char-du-ma-hai" ||
+        bid === "char-tong-tai" ||
+        bid === "luc-tong"
+      ) {
+        return "tong_tai";
+      }
+
+      // 2. Nhóm Giáo Sư, Công Tử, Bác Sĩ Tâm Lý, Thần Y, Hồ Ly (Trầm ấm, dịu dàng, tri thức)
+      if (
+        bid === "char-mac-tu-khiem" ||
+        bid === "char-bui-chi-dien" ||
+        bid === "char-dinh-khac-nam" ||
+        bid === "char-mo-dung-ta" ||
+        bid === "char-ho-nguyet-bach" ||
+        bid === "char-tham-da-han" ||
+        bid === "master-zen"
+      ) {
+        return "thu_sinh";
+      }
+
+      // 3. Nhóm Nam Trẻ, Bạn Trai, Idol Kpop, Hải Tặc, Gym, Sinh Viên
+      if (
+        bid === "char-giang-da" ||
+        bid === "char-bach-nhuy-bang" ||
+        bid === "char-co-yen-thanh" ||
+        bid === "char-lam-phong-chau" ||
+        bid === "char-tran-vinh-quan" ||
+        bid === "alex"
+      ) {
+        return "nam_tre";
+      }
+
+      // 4. Nhóm Nữ Ngọt Ngào, Bạn Gái, Quận Chúa E Ốp
+      if (
+        bid === "char-nha-an" ||
+        bid === "char-tieu-duyet-nhi"
+      ) {
+        return "female_sweet";
+      }
+
+      // 5. Nhóm Nữ Soái Tỷ, Nữ Hoàng Băng Giá, Đốc Công Cyberpunk
+      if (
+        bid === "char-vuong-tue-tuyet" ||
+        bid === "char-ha-lan-tuyet"
+      ) {
+        return "nu_soai_ty";
+      }
+
+      // 6. Nhóm Mỹ Nhân Tỳ Bà Cổ Trang, Thư Ký Chu Đáo
+      if (
+        bid === "char-chu-tue-nguyet" ||
+        bid === "char-duong-tam-tieu"
+      ) {
+        return "co_trang";
+      }
     }
+
     const lower = text.toLowerCase();
     const isTongTaiVibe =
       lower.includes("lục tổng") ||
       lower.includes("tổng tài") ||
-      lower.includes("chủ tịch lục") ||
       lower.includes("bảo bối") ||
-      lower.includes("tiểu ngốc nghếch") ||
-      lower.includes("đại ca") ||
-      lower.includes("ngoan ngoãn") ||
-      lower.includes("vòng tay ôm") ||
-      lower.includes("giọng nói trầm") ||
       lower.includes("cưng chiều") ||
-      lower.includes("thâm trầm") ||
-      lower.includes("ngực rắn chắc") ||
-      lower.includes("anh yêu em") ||
-      lower.includes("cô gái nhỏ") ||
+      lower.includes("nghe lời anh") ||
       lower.includes("bản tọa") ||
-      lower.includes("vi sư") ||
-      lower.includes("lục thị");
+      lower.includes("vi sư");
 
     if (isTongTaiVibe) return "tong_tai";
-
-    if (lower.startsWith("tôi") || lower.startsWith("anh")) {
-      if (lower.includes("em") || lower.includes("cô bé") || lower.includes("người phụ nữ")) {
-        return "tong_tai";
-      }
-    }
 
     return "female";
   };

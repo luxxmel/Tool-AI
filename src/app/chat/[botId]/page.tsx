@@ -565,33 +565,92 @@ export default function BotChatPage() {
     }
     const botName = (bot?.name || "").toLowerCase();
     const bid = (botId as string || "").toLowerCase();
-    const isTongTai =
+
+    // Xác định giọng lồng tiếng phim chuẩn điện ảnh cho từng nhân vật
+    let defaultVoice = "female";
+
+    // 1. Nhóm Tổng Tài, Ma Vương, Chiến Thần, Sát Thủ (Trầm khàn, bá đạo, nam thần lồng tiếng phim)
+    if (
       bid.includes("tong-tai") ||
-      bid.includes("co-da-than") ||
-      bid.includes("tieu-viem") ||
+      bid.includes("luc-ngang-thien") ||
+      bid.includes("trieu-vo-than") ||
       bid.includes("thac-bat-da") ||
-      bid.includes("bui-chi-dien") ||
-      bid.includes("giang-da") ||
-      bid.includes("tham-da-han") ||
-      bid.includes("mo-dung-ta") ||
+      bid.includes("ma-ton") ||
       bid.includes("du-ma-hai") ||
-      bid.includes("ho-nguyet-bach") ||
-      botName.includes("thác bạt") ||
-      botName.includes("chiến thần") ||
-      botName.includes("công tử") ||
-      botName.includes("bạn trai") ||
       botName.includes("tổng tài") ||
-      botName.includes("lục cận phong") ||
-      botName.includes("thiếu gia") ||
-      botName.includes("tiên tôn") ||
-      botName.includes("cố dạ thần") ||
-      botName.includes("tiêu viêm") ||
-      botName.includes("nam chính") ||
-      botName.includes("thần y") ||
+      botName.includes("ma vương") ||
+      botName.includes("chiến thần") ||
       botName.includes("sát thủ") ||
-      botName.includes("hồ ly");
-    const isMale = isTongTai || ["alex", "master-zen"].includes(botId as string);
-    const defaultVoice = isTongTai || isMale ? "tong_tai" : "female";
+      botName.includes("lục cận phong") ||
+      botName.includes("ma tôn")
+    ) {
+      defaultVoice = "tong_tai";
+    }
+    // 2. Nhóm Giáo Sư, Công Tử, Bác Sĩ Tâm Lý, Thần Y, Hồ Ly (Trầm ấm dịu dàng, thanh tao tri thức)
+    else if (
+      bid.includes("mac-tu-khiem") ||
+      bid.includes("bui-chi-dien") ||
+      bid.includes("dinh-khac-nam") ||
+      bid.includes("mo-dung-ta") ||
+      bid.includes("ho-nguyet-bach") ||
+      bid.includes("tham-da-han") ||
+      bid.includes("master-zen") ||
+      botName.includes("giáo sư") ||
+      botName.includes("công tử") ||
+      botName.includes("bác sĩ") ||
+      botName.includes("thần y") ||
+      botName.includes("hồ ly")
+    ) {
+      defaultVoice = "thu_sinh";
+    }
+    // 3. Nhóm Nam Trẻ, Bạn Trai, Idol Kpop, Hải Tặc, Thể Thao Gym (Trẻ trung, phóng khoáng, dứt khoát)
+    else if (
+      bid.includes("giang-da") ||
+      bid.includes("bach-nhuy-bang") ||
+      bid.includes("co-yen-thanh") ||
+      bid.includes("lam-phong-chau") ||
+      bid.includes("tran-vinh-quan") ||
+      bid.includes("alex") ||
+      botName.includes("bạn trai") ||
+      botName.includes("idol") ||
+      botName.includes("thuyền trưởng") ||
+      botName.includes("gym") ||
+      botName.includes("hotboy")
+    ) {
+      defaultVoice = "nam_tre";
+    }
+    // 4. Nhóm Nữ Ngọt Ngào, Bạn Gái, Quận Chúa E Ốp (Nũng nịu, ngọt ngào, đáng yêu)
+    else if (
+      bid.includes("nha-an") ||
+      bid.includes("tieu-duyet-nhi") ||
+      botName.includes("nhã an") ||
+      botName.includes("quận chúa") ||
+      botName.includes("bạn gái")
+    ) {
+      defaultVoice = "female_sweet";
+    }
+    // 5. Nhóm Nữ Soái Tỷ, Nữ Hoàng Băng Giá, Đốc Công Cyberpunk (Sắc sảo, kiêu kỳ, bản lĩnh)
+    else if (
+      bid.includes("vuong-tue-tuyet") ||
+      bid.includes("ha-lan-tuyet") ||
+      botName.includes("nữ hoàng") ||
+      botName.includes("băng giá") ||
+      botName.includes("cyberpunk") ||
+      botName.includes("đốc công")
+    ) {
+      defaultVoice = "nu_soai_ty";
+    }
+    // 6. Nhóm Mỹ Nhân Tỳ Bà Cổ Trang, Nữ Thư Ký Chu Đáo (Dịu dàng, thanh thoát truyền cảm)
+    else if (
+      bid.includes("chu-tue-nguyet") ||
+      bid.includes("duong-tam-tieu") ||
+      botName.includes("tỳ bà") ||
+      botName.includes("thư ký") ||
+      botName.includes("mỹ nhân")
+    ) {
+      defaultVoice = "co_trang";
+    }
+
     const voice = forcedVoice || defaultVoice;
 
     setSpeakingMsgId(msgId);

@@ -162,35 +162,127 @@ async function fetchGoogleTTSChunk(chunk: string): Promise<Buffer> {
 
 function resolveVoiceConfig(voiceParam: string) {
   const v = (voiceParam || "").toLowerCase();
-  // Giọng nam chính phim ngôn tình / lồng tiếng ("Kẹo Ngọt Tình Yêu", "Tiếng Yêu Này Anh Dịch Được Không", Bá đạo tổng tài):
-  // Âm sắc trầm ấm, quyến rũ, cưng chiều, dày giọng, tốc độ thong thả tự nhiên
+
+  // 1. Giọng Bá Đạo Tổng Tài / Ma Vương / Chiến Thần (Trầm khàn uy quyền, điện ảnh, nam thần lồng tiếng phim)
   if (
     v === "tong_tai" ||
-    v === "male_movie" ||
-    v === "nam_than" ||
-    v === "cinema_male" ||
+    v === "ma_vuong" ||
+    v === "chien_than" ||
+    v === "sat_thu" ||
+    v.includes("tong_tai") ||
+    v.includes("trieu_vo_than") ||
+    v.includes("luc_ngang_thien") ||
+    v.includes("ma_ton") ||
+    v.includes("thac_bat_da") ||
+    v.includes("du_ma_hai")
+  ) {
+    return {
+      selectedVoice: "vi-VN-NamMinhNeural",
+      voiceRate: 0.90,
+      voicePitch: "-7Hz",
+    };
+  }
+
+  // 2. Giọng Công Tử / Giáo Sư / Bác Sĩ Tâm Lý / Thư Sinh (Thanh tao, điềm tĩnh, ấm áp dịu dàng chuẩn phim tình cảm)
+  if (
+    v === "thu_sinh" ||
+    v === "giao_su" ||
+    v === "bac_si" ||
+    v === "cong_tu" ||
+    v.includes("mac_tu_khiem") ||
+    v.includes("bui_chi_dien") ||
+    v.includes("dinh_khac_nam") ||
+    v.includes("mo_dung_ta") ||
+    v.includes("ho_nguyet_bach")
+  ) {
+    return {
+      selectedVoice: "vi-VN-NamMinhNeural",
+      voiceRate: 0.94,
+      voicePitch: "-2Hz",
+    };
+  }
+
+  // 3. Giọng Nam Trẻ Năng Động / Biker / Idol / Thể Thao (Rõ ràng, dứt khoát, hào sảng)
+  if (
+    v === "nam_tre" ||
+    v === "idol" ||
+    v === "biker" ||
+    v === "the_thao" ||
+    v === "hai_tac" ||
+    v.includes("giang_da") ||
+    v.includes("bach_nhuy_bang") ||
+    v.includes("tran_vinh_quan") ||
+    v.includes("lam_phong_chau") ||
+    v.includes("co_yen_thanh")
+  ) {
+    return {
+      selectedVoice: "vi-VN-NamMinhNeural",
+      voiceRate: 1.02,
+      voicePitch: "+0Hz",
+    };
+  }
+
+  // 4. Giọng Nữ Ngọt Ngào / Bạn Gái / Quận Chúa E Ốp (Dễ thương, nũng nịu, ngọt ngào trong trẻo)
+  if (
+    v === "female_sweet" ||
+    v === "nu_ngot" ||
+    v === "ban_gai" ||
+    v === "quan_chua" ||
+    v.includes("nha_an") ||
+    v.includes("tieu_duyet_nhi")
+  ) {
+    return {
+      selectedVoice: "vi-VN-HoaiMyNeural",
+      voiceRate: 0.98,
+      voicePitch: "+4Hz",
+    };
+  }
+
+  // 5. Giọng Nữ Soái Tỷ / Nữ Hoàng Băng Giá / Cyberpunk (Sắc lạnh, kiêu kỳ, bản lĩnh quý cô tổng tài)
+  if (
+    v === "nu_soai_ty" ||
+    v === "bang_gia" ||
+    v === "cyberpunk" ||
+    v === "nu_hoang" ||
+    v.includes("vuong_tue_tuyet") ||
+    v.includes("ha_lan_tuyet")
+  ) {
+    return {
+      selectedVoice: "vi-VN-HoaiMyNeural",
+      voiceRate: 0.93,
+      voicePitch: "-3Hz",
+    };
+  }
+
+  // 6. Giọng Nữ Cổ Trang / Thục Nữ / Mỹ Nhân Tỳ Bà (Dịu dàng, thanh thoát, đượm nét thơ phim cổ trang)
+  if (
+    v === "co_trang" ||
+    v === "thuc_nu" ||
+    v === "ty_ba" ||
+    v.includes("chu_tue_nguyet") ||
+    v.includes("duong_tam_tieu")
+  ) {
+    return {
+      selectedVoice: "vi-VN-HoaiMyNeural",
+      voiceRate: 0.92,
+      voicePitch: "+1Hz",
+    };
+  }
+
+  // 7. Giọng Nam Chung mặc định
+  if (
     v === "male" ||
     v === "nam" ||
-    v.includes("tongtai") ||
     v.includes("namminh")
   ) {
     return {
       selectedVoice: "vi-VN-NamMinhNeural",
-      voiceRate: 0.92,
-      voicePitch: "-6Hz",
+      voiceRate: 0.94,
+      voicePitch: "-4Hz",
     };
   }
 
-  // Giọng nữ nũng nịu ngọt ngào
-  if (v === "female_sweet" || v === "nu_ngot") {
-    return {
-      selectedVoice: "vi-VN-HoaiMyNeural",
-      voiceRate: 0.98,
-      voicePitch: "+3Hz",
-    };
-  }
-
-  // Giọng nữ truyền cảm, dịu dàng chuẩn phim
+  // 8. Giọng Nữ Chuẩn Truyền Cảm Phim (Mặc định)
   return {
     selectedVoice: "vi-VN-HoaiMyNeural",
     voiceRate: 0.95,
