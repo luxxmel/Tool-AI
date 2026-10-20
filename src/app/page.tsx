@@ -80,27 +80,50 @@ function HomeContent() {
     if (currentTab !== "home" || isChatOpen) return;
 
     const interval = setInterval(() => {
-      // Auto-scroll Trợ lý nổi bật (trôi từng thẻ một mượt mà)
+      // Auto-scroll Trợ lý nổi bật (nhảy chính xác từng thẻ bằng scrollIntoView, chống lệch 100%)
       const featuredContainer = document.getElementById("featured-assistants-scroll");
       if (featuredContainer && !featuredContainer.matches(":hover")) {
-        const firstCard = featuredContainer.querySelector(":scope > div") as HTMLElement;
-        const step = firstCard ? firstCard.offsetWidth + 12 : 240;
-        if (featuredContainer.scrollLeft + featuredContainer.clientWidth >= featuredContainer.scrollWidth - 15) {
-          featuredContainer.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          featuredContainer.scrollBy({ left: step, behavior: "smooth" });
+        const cards = Array.from(featuredContainer.querySelectorAll(":scope > div")) as HTMLElement[];
+        if (cards.length > 0) {
+          const currentScroll = featuredContainer.scrollLeft;
+          // Tìm index của thẻ hiện tại
+          let currentIndex = 0;
+          for (let i = 0; i < cards.length; i++) {
+            if (cards[i].offsetLeft <= currentScroll + 20) {
+              currentIndex = i;
+            }
+          }
+          const nextIndex = (currentIndex + 1) >= cards.length ? 0 : currentIndex + 1;
+          const targetCard = cards[nextIndex];
+          if (targetCard) {
+            featuredContainer.scrollTo({
+              left: targetCard.offsetLeft,
+              behavior: "smooth",
+            });
+          }
         }
       }
 
-      // Auto-scroll Nhân vật xu hướng (trôi từng thẻ một mượt mà)
+      // Auto-scroll Nhân vật xu hướng (nhảy chính xác từng thẻ bằng scrollIntoView, chống lệch 100%)
       const trendingContainer = document.getElementById("trending-characters-scroll");
       if (trendingContainer && !trendingContainer.matches(":hover")) {
-        const firstCard = trendingContainer.querySelector(":scope > div") as HTMLElement;
-        const step = firstCard ? firstCard.offsetWidth + 12 : 240;
-        if (trendingContainer.scrollLeft + trendingContainer.clientWidth >= trendingContainer.scrollWidth - 15) {
-          trendingContainer.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          trendingContainer.scrollBy({ left: step, behavior: "smooth" });
+        const cards = Array.from(trendingContainer.querySelectorAll(":scope > div")) as HTMLElement[];
+        if (cards.length > 0) {
+          const currentScroll = trendingContainer.scrollLeft;
+          let currentIndex = 0;
+          for (let i = 0; i < cards.length; i++) {
+            if (cards[i].offsetLeft <= currentScroll + 20) {
+              currentIndex = i;
+            }
+          }
+          const nextIndex = (currentIndex + 1) >= cards.length ? 0 : currentIndex + 1;
+          const targetCard = cards[nextIndex];
+          if (targetCard) {
+            trendingContainer.scrollTo({
+              left: targetCard.offsetLeft,
+              behavior: "smooth",
+            });
+          }
         }
       }
     }, 3000);
