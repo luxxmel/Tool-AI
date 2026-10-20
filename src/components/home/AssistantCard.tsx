@@ -19,7 +19,7 @@ export default function AssistantCard({ assistant, onClick }: AssistantCardProps
     <Link
       href={`/chat/${assistant.id}`}
       onClick={() => onClick?.(assistant)}
-      className="group relative h-[195px] rounded-2xl bg-white dark:bg-[#0c0e18] border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-500/70 dark:hover:border-indigo-500/70 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between block"
+      className="group relative min-h-[200px] h-full rounded-2xl bg-white dark:bg-[#0c0e18] border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-500/70 dark:hover:border-indigo-500/70 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between block"
     >
       {/* Background glowing gradient */}
       <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 rounded-full blur-2xl group-hover:from-indigo-500/20 group-hover:to-cyan-500/20 transition-all pointer-events-none" />
@@ -41,17 +41,17 @@ export default function AssistantCard({ assistant, onClick }: AssistantCardProps
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors truncate">
+            <div className="flex items-start gap-1.5">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-2 leading-snug">
                 {name}
               </h3>
               {assistant.verified && (
-                <span className="w-3.5 h-3.5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-[10px] flex items-center justify-center shrink-0 font-bold" title="Đã kiểm chứng">
+                <span className="w-3.5 h-3.5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-[10px] flex items-center justify-center shrink-0 font-bold mt-0.5" title="Đã kiểm chứng">
                   ✓
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5 truncate">
               By {assistant.author}
             </p>
           </div>
