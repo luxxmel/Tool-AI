@@ -438,7 +438,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!botId) {
-      return NextResponse.json({ error: "Thiếu botId" }, { status: 400 });
+      botId = "general-assistant";
     }
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {

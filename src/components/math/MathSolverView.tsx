@@ -276,6 +276,10 @@ Chủ đề: ${subjectPrefix}
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          botId: "math-solver",
+          userId: user?.id,
+          userEmail: user?.email,
+          userName: user?.name,
           messages: [
             {
               role: "user",

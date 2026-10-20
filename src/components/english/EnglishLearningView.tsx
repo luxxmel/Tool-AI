@@ -148,6 +148,10 @@ ${newLogs.map((l) => `${l.role === "ai" ? "Tutor" : "Student"}: ${l.text}`).join
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          botId: "english-tutor",
+          userId: user?.id,
+          userEmail: user?.email,
+          userName: user?.name,
           messages: [{ role: "user", content: promptContext }],
           model: "gemini-2.5-flash",
           stream: false,
