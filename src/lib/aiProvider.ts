@@ -12,8 +12,14 @@ const FALLBACK_TROLLLLM_KEY = Buffer.from(
   "base64"
 ).toString("utf8");
 
-const rawGemini = (process.env.GOOGLE_GENERATIVE_AI_API_KEY || FALLBACK_GEMINI_KEY || "").trim().replace(/^["']|["']$/g, "");
-const rawTrollKey = (process.env.TROLLLLM_API_KEY || FALLBACK_TROLLLLM_KEY || "").trim().replace(/^["']|["']$/g, "");
+const envGemini = (process.env.GOOGLE_GENERATIVE_AI_API_KEY || "").trim().replace(/^["']|["']$/g, "");
+const isDummyGemini = !envGemini || envGemini.startsWith("YOUR_") || envGemini.length < 30;
+const rawGemini = isDummyGemini ? FALLBACK_GEMINI_KEY : envGemini;
+
+const envTrollKey = (process.env.TROLLLLM_API_KEY || "").trim().replace(/^["']|["']$/g, "");
+const isDummyTroll = !envTrollKey || envTrollKey.startsWith("YOUR_") || envTrollKey.length < 15;
+const rawTrollKey = isDummyTroll ? FALLBACK_TROLLLLM_KEY : envTrollKey;
+
 const rawTrollUrl = (process.env.TROLLLLM_BASE_URL || "https://chat.trollllm.xyz/v1").trim().replace(/^["']|["']$/g, "");
 
 const GEMINI_API_KEY = rawGemini;
