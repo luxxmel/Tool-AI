@@ -43,9 +43,6 @@
   "/favicon.ico/route": "/favicon.ico",
   "/webhook/[...slug]/route": "/webhook/[...slug]",
   "/webhook/route": "/webhook",
-  "/api/contributors/route": "/api/contributors",
-  "/api/images/generate/route": "/api/images/generate",
-  "/api/images/proxy/route": "/api/images/proxy",
   "/admin/page": "/admin",
   "/chat/[botId]/page": "/chat/[botId]",
   "/page": "/",
@@ -53,5 +50,8 @@
   "/profile/page": "/profile",
   "/register/page": "/register",
   "/terms/page": "/terms",
-  "/typing/page": "/typing"
+  "/typing/page": "/typing",
+  "/api/contributors/route": "/api/contributors",
+  "/api/images/generate/route": "/api/images/generate",
+  "/api/images/proxy/route": "/api/images/proxy"
 }

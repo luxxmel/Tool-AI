@@ -43,9 +43,6 @@
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/webhook/[...slug]/route": "app/webhook/[...slug]/route.js",
   "/webhook/route": "app/webhook/route.js",
-  "/api/contributors/route": "app/api/contributors/route.js",
-  "/api/images/generate/route": "app/api/images/generate/route.js",
-  "/api/images/proxy/route": "app/api/images/proxy/route.js",
   "/admin/page": "app/admin/page.js",
   "/chat/[botId]/page": "app/chat/[botId]/page.js",
   "/page": "app/page.js",
@@ -53,5 +50,8 @@
   "/profile/page": "app/profile/page.js",
   "/register/page": "app/register/page.js",
   "/terms/page": "app/terms/page.js",
-  "/typing/page": "app/typing/page.js"
+  "/typing/page": "app/typing/page.js",
+  "/api/contributors/route": "app/api/contributors/route.js",
+  "/api/images/generate/route": "app/api/images/generate/route.js",
+  "/api/images/proxy/route": "app/api/images/proxy/route.js"
 }

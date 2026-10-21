@@ -444,8 +444,18 @@ export const conversation = {
     const params: any[] = [];
     const conds: string[] = [];
     if (where?.userId) {
-      conds.push("userId = ?");
-      params.push(where.userId);
+      if (typeof where.userId === "object" && Array.isArray(where.userId.in)) {
+        if (where.userId.in.length > 0) {
+          const placeholders = where.userId.in.map(() => "?").join(", ");
+          conds.push(`userId IN (${placeholders})`);
+          params.push(...where.userId.in);
+        } else {
+          return null;
+        }
+      } else {
+        conds.push("userId = ?");
+        params.push(where.userId);
+      }
     }
     if (where?.botId) {
       conds.push("botId = ?");
@@ -466,16 +476,30 @@ export const conversation = {
     const conds: string[] = [];
 
     if (where.userId) {
-      conds.push("userId = ?");
-      params.push(where.userId);
+      if (typeof where.userId === "object" && Array.isArray(where.userId.in)) {
+        if (where.userId.in.length > 0) {
+          const placeholders = where.userId.in.map(() => "?").join(", ");
+          conds.push(`userId IN (${placeholders})`);
+          params.push(...where.userId.in);
+        } else {
+          return [];
+        }
+      } else {
+        conds.push("userId = ?");
+        params.push(where.userId);
+      }
     }
     if (where.botId) {
       conds.push("botId = ?");
       params.push(where.botId);
     }
-    if (where.projectId) {
-      conds.push("projectId = ?");
-      params.push(where.projectId);
+    if (where.projectId !== undefined) {
+      if (where.projectId === null) {
+        conds.push("(projectId IS NULL OR projectId = '')");
+      } else {
+        conds.push("projectId = ?");
+        params.push(where.projectId);
+      }
     }
 
     if (conds.length) sql += " WHERE " + conds.join(" AND ");
