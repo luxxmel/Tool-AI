@@ -24,6 +24,20 @@ export async function GET() {
     diag.yescaleKeyLength = (process.env.YESCALE_API_KEY || "").length;
     diag.yescaleKeyPrefix = (process.env.YESCALE_API_KEY || "").slice(0, 10);
     diag.trollllmKeyLength = (process.env.TROLLLLM_API_KEY || "").length;
+    diag.geminiEnvKeyLength = (process.env.GOOGLE_GENERATIVE_AI_API_KEY || "").length;
+    diag.geminiEnvKeyPrefix = (process.env.GOOGLE_GENERATIVE_AI_API_KEY || "").slice(0, 8);
+
+    const { googleAI } = await import("@/lib/aiProvider");
+    const { generateText } = await import("ai");
+    try {
+      const testRes = await generateText({
+        model: googleAI("gemini-2.5-flash"),
+        prompt: "Say OK",
+      });
+      diag.geminiTest = testRes.text.trim();
+    } catch (gErr: any) {
+      diag.geminiError = gErr.message || String(gErr);
+    }
   } catch (e: any) {
     diag.dbError = e.message;
   }
