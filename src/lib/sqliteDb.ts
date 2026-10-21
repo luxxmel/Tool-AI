@@ -564,6 +564,24 @@ export const conversation = {
     return existing;
   },
 
+  async deleteMany({ where = {} }: any) {
+    const db = getDb();
+    if (where.id) {
+      db.prepare("DELETE FROM Message WHERE conversationId = ?").run(where.id);
+      const res = db.prepare("DELETE FROM Conversation WHERE id = ?").run(where.id);
+      return { count: res.changes };
+    }
+    if (where.userId) {
+      const convs = db.prepare("SELECT id FROM Conversation WHERE userId = ?").all(where.userId);
+      for (const c of convs) {
+        db.prepare("DELETE FROM Message WHERE conversationId = ?").run(c.id);
+      }
+      const res = db.prepare("DELETE FROM Conversation WHERE userId = ?").run(where.userId);
+      return { count: res.changes };
+    }
+    return { count: 0 };
+  },
+
   _format(row: any, include: any) {
     const db = getDb();
     const res: any = {
