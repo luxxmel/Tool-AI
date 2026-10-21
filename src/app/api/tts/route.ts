@@ -1,5 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+
+const CACHE_DIR = path.join(process.cwd(), ".cache", "tts");
+
+// Đảm bảo thư mục lưu cache audio tồn tại
+function ensureCacheDir() {
+  try {
+    if (!fs.existsSync(CACHE_DIR)) {
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+    }
+  } catch (err) {
+    console.warn("Failed to create TTS cache dir:", err);
+  }
+}
+
+function getCacheKey(text: string, voice: string, rate: number, pitch: string): string {
+  return crypto
+    .createHash("md5")
+    .update(`${text}_${voice}_${rate}_${pitch}`)
+    .digest("hex");
+}
+
+function getFromCache(cacheKey: string): Buffer | null {
+  try {
+    ensureCacheDir();
+    const filePath = path.join(CACHE_DIR, `${cacheKey}.mp3`);
+    if (fs.existsSync(filePath)) {
+      return fs.readFileSync(filePath);
+    }
+  } catch {}
+  return null;
+}
+
+function saveToCache(cacheKey: string, buffer: Buffer) {
+  try {
+    ensureCacheDir();
+    const filePath = path.join(CACHE_DIR, `${cacheKey}.mp3`);
+    fs.writeFileSync(filePath, buffer);
+  } catch (err) {
+    console.warn("Failed to save audio to cache:", err);
+  }
+}
 
 // Làm sạch văn bản để giọng đọc diễn cảm, mượt mà và tự nhiên nhất
 function cleanTextForEmotionalSpeech(text: string): string {
@@ -40,19 +84,25 @@ function cleanTextForEmotionalSpeech(text: string): string {
     .trim();
 }
 
-// Hàm sinh giọng đọc Neural với handshake ổn định và tự động thử lại
+// Hàm sinh giọng đọc Neural với handshake ổn định, có Disk Cache và tự động thử lại
 async function synthesizeNeuralWithRetry(
   text: string,
   voice: string,
   rate: number,
   pitch: string
 ): Promise<Buffer> {
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  const cacheKey = getCacheKey(text, voice, rate, pitch);
+  const cached = getFromCache(cacheKey);
+  if (cached && cached.length > 0) {
+    return cached;
+  }
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
     const tts = new MsEdgeTTS();
     try {
       await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
-      // Chờ 120ms để WebSocket hoàn tất đăng ký speech.config trước khi gửi SSML
-      await new Promise((r) => setTimeout(r, 120));
+      // Chờ 150ms để WebSocket ổn định handshake trước khi truyền dữ liệu
+      await new Promise((r) => setTimeout(r, 150));
 
       const buf = await new Promise<Buffer>((resolve, reject) => {
         const { audioStream } = tts.toStream(text, { rate, pitch });
@@ -60,7 +110,7 @@ async function synthesizeNeuralWithRetry(
         const timer = setTimeout(() => {
           if (bufs.length > 0) resolve(Buffer.concat(bufs));
           else reject(new Error("Timeout khi tạo giọng đọc Neural"));
-        }, 15000);
+        }, 12000);
 
         audioStream.on("data", (d: Buffer) => bufs.push(d));
         audioStream.on("end", () => {
@@ -77,18 +127,22 @@ async function synthesizeNeuralWithRetry(
         });
       });
 
-      if (buf && buf.length > 0) return buf;
+      if (buf && buf.length > 0) {
+        saveToCache(cacheKey, buf);
+        return buf;
+      }
     } catch (err: any) {
       console.warn(`Neural TTS attempt ${attempt} failed:`, err?.message || err);
-      if (attempt === 2) throw err;
-      await new Promise((r) => setTimeout(r, 400));
+      if (attempt === 3) throw err;
+      // Exponential backoff nhẹ để tránh 429
+      await new Promise((r) => setTimeout(r, attempt * 500));
     } finally {
       try {
         tts.close();
       } catch {}
     }
   }
-  throw new Error("Không thể tạo giọng đọc Neural sau 2 lần thử");
+  throw new Error("Không thể tạo giọng đọc Neural sau 3 lần thử");
 }
 
 // Chia văn bản thành từng câu ngắn tự nhiên (dưới 160 ký tự) theo dấu chấm câu cho Google fallback
@@ -304,7 +358,7 @@ export async function GET(req: NextRequest) {
     const { selectedVoice, voiceRate, voicePitch } = resolveVoiceConfig(voiceParam);
     const textToSynthesize = clean.slice(0, 420);
 
-    // 1. Thử sinh âm thanh với Microsoft Neural Voice
+    // 1. Sinh âm thanh với Microsoft Neural Voice (Có Disk Cache)
     try {
       const buf = await synthesizeNeuralWithRetry(
         textToSynthesize,
@@ -323,34 +377,11 @@ export async function GET(req: NextRequest) {
         });
       }
     } catch (neuralError) {
-      console.warn("Microsoft Neural TTS GET fallback:", neuralError);
+      console.error("Microsoft Neural TTS GET error:", neuralError);
+      return new NextResponse("Không thể kết nối máy chủ giọng nói Neural", { status: 503 });
     }
 
-    // 2. Fallback sang Google Translate TTS
-    const googleChunks = splitTextIntoSentences(clean.slice(0, 350), 140).slice(0, 3);
-    const fallbackBuffers: Buffer[] = [];
-    for (const chunk of googleChunks) {
-      try {
-        const buf = await fetchGoogleTTSChunk(chunk);
-        fallbackBuffers.push(buf);
-      } catch (err) {
-        console.error("Lỗi Google TTS fallback chunk:", chunk, err);
-      }
-    }
-
-    if (fallbackBuffers.length === 0) {
-      return new NextResponse("Failed to generate speech", { status: 500 });
-    }
-
-    const combined = Buffer.concat(fallbackBuffers);
-    return new NextResponse(new Uint8Array(combined), {
-      status: 200,
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=86400, s-maxage=86400",
-        "X-TTS-Engine": "Google-Fallback",
-      },
-    });
+    return new NextResponse("Failed to generate neural speech", { status: 500 });
   } catch (error: any) {
     console.error("TTS GET error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
@@ -371,7 +402,7 @@ export async function POST(req: NextRequest) {
     const { selectedVoice, voiceRate, voicePitch } = resolveVoiceConfig(voiceParam);
     const textToSynthesize = clean.slice(0, 420);
 
-    // 1. Thử sinh âm thanh với Microsoft Neural Voice
+    // 1. Sinh âm thanh với Microsoft Neural Voice (Có Disk Cache)
     try {
       const buf = await synthesizeNeuralWithRetry(
         textToSynthesize,
@@ -390,37 +421,17 @@ export async function POST(req: NextRequest) {
         });
       }
     } catch (neuralError) {
-      console.warn("Microsoft Neural TTS POST fallback:", neuralError);
-    }
-
-    // 2. Fallback sang Google Translate TTS
-    const googleChunks = splitTextIntoSentences(clean.slice(0, 350), 140).slice(0, 3);
-    const fallbackBuffers: Buffer[] = [];
-    for (const chunk of googleChunks) {
-      try {
-        const buf = await fetchGoogleTTSChunk(chunk);
-        fallbackBuffers.push(buf);
-      } catch (err) {
-        console.error("Lỗi Google TTS fallback chunk:", chunk, err);
-      }
-    }
-
-    if (fallbackBuffers.length === 0) {
+      console.error("Microsoft Neural TTS POST error:", neuralError);
       return NextResponse.json(
-        { error: "Failed to generate speech" },
-        { status: 500 }
+        { error: "Không thể tạo giọng đọc Neural lúc này" },
+        { status: 503 }
       );
     }
 
-    const combined = Buffer.concat(fallbackBuffers);
-    return new NextResponse(new Uint8Array(combined), {
-      status: 200,
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=86400, s-maxage=86400",
-        "X-TTS-Engine": "Google-Fallback",
-      },
-    });
+    return NextResponse.json(
+      { error: "Failed to generate neural speech" },
+      { status: 500 }
+    );
   } catch (error: any) {
     console.error("TTS POST error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

@@ -417,7 +417,8 @@ function generatePersonaFallback(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { botId, messages, conversationId, projectId, model: requestedModel, language } = body;
+    const { messages, conversationId, projectId, model: requestedModel, language } = body;
+    let botId = body.botId;
     let userId = body.userId;
     let userEmail = body.userEmail;
     let userName = body.userName;
@@ -618,15 +619,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Lấy systemPrompt kết hợp và nâng cấp chuẩn chất lượng cao nhất cho AI
-    const currentDateStr = new Date().toLocaleDateString("vi-VN", { year: "numeric", month: "long", day: "numeric" });
-    const timeContext = `[MỐC THỜI GIAN THỰC TẾ HỆ THỐNG]:
-- Hôm nay là ngày ${currentDateStr} (Năm 2026).
-- Mốc thời gian hiện tại của hệ thống là NĂM 2026.
-- Bắt buộc trả lời chính xác thông tin thực tế mới nhất cập nhật đến NĂM 2026.
-- Lưu ý quan trọng về các sự kiện thể thao/thời sự mới nhất 2026:
-  * Nếu người dùng hỏi về tin tức mới, sự kiện vừa xảy ra (ví dụ: Cristiano Ronaldo rời đội tuyển quốc gia Bồ Đào Nha, tin thời sự mới nhất, HLV mới Jorge Jesus...): Hãy cập nhật chính xác tin tức mới nhất năm 2026.
-  * Cristiano Ronaldo (41 tuổi vào năm 2026) vừa có quyết định chính thức rời trại huấn luyện đội tuyển quốc gia Bồ Đào Nha (tháng 10/2026) sau những rạn nứt/mâu thuẫn với HLV Jorge Jesus do không được xếp đá chính.
-  * Hãy luôn tìm kiếm thông tin mới nhất và không khẳng định thông tin cũ là "đúng" nếu người dùng đề cập đến sự kiện mới vừa diễn ra.`;
+    const currentDateStr = new Date().toLocaleDateString("vi-VN", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const currentISO = new Date().toISOString();
+    const timeContext = `[THỜI GIAN THỰC TẾ]:
+- Hôm nay là: ${currentDateStr} (${currentISO}).
+- Mọi câu hỏi về tỷ số thể thao, kết quả trận đấu, tin tức mới, sự kiện thời sự, giá cả, thời tiết... BẮT BUỘC sử dụng thông tin tìm kiếm thời gian thực mới nhất để trả lời chính xác 100%.`;
 
     let effectiveSystemPrompt = bot.systemPrompt;
     if (botId === "omni-assistant") {
@@ -990,7 +992,7 @@ ${projectObj.systemPrompt}`;
             try {
               if (!isExcludedFromSearch && candidate.isGoogle) {
                 streamOptions.tools = {
-                  google_search: google.tools.googleSearch({}),
+                  google_search: googleAI.tools.googleSearch({}),
                 };
               }
               result = streamText(streamOptions);

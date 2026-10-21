@@ -161,11 +161,12 @@ export default function DailyCheckinModal({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 cursor-pointer overflow-y-auto"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 cursor-pointer overflow-y-auto overscroll-contain touch-pan-y py-6"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[90dvh] overflow-y-auto scrollbar-thin scrollbar-thumb-amber-500/20 bg-gradient-to-b from-[#171328] via-[#10101b] to-[#0a0a12] border border-amber-500/30 rounded-3xl p-4 sm:p-7 shadow-[0_0_50px_rgba(245,158,11,0.15)] cursor-default my-auto"
+        className="relative w-full max-w-2xl max-h-[88vh] sm:max-h-[90dvh] overflow-y-auto overscroll-contain touch-pan-y scrollbar-thin scrollbar-thumb-amber-500/20 bg-gradient-to-b from-[#171328] via-[#10101b] to-[#0a0a12] border border-amber-500/30 rounded-3xl p-4 sm:p-7 shadow-[0_0_50px_rgba(245,158,11,0.15)] cursor-default my-auto"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* Decorative Top Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-28 bg-gradient-to-b from-amber-500/20 via-rose-500/10 to-transparent blur-2xl pointer-events-none" />

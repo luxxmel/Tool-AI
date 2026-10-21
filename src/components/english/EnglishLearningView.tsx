@@ -151,7 +151,7 @@ ${newLogs.map((l) => `${l.role === "ai" ? "Tutor" : "Student"}: ${l.text}`).join
           botId: "english-tutor",
           userId: user?.id,
           userEmail: user?.email,
-          userName: user?.name,
+          userName: user?.displayName || user?.username,
           messages: [{ role: "user", content: promptContext }],
           model: "gemini-2.5-flash",
           stream: false,

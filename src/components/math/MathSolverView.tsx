@@ -279,7 +279,7 @@ Chủ đề: ${subjectPrefix}
           botId: "math-solver",
           userId: user?.id,
           userEmail: user?.email,
-          userName: user?.name,
+          userName: user?.displayName || user?.username,
           messages: [
             {
               role: "user",

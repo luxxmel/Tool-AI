@@ -99,16 +99,47 @@ export async function playVietnameseTTS(
     return true;
   } catch (err) {
     console.warn("TTS fetch/play error:", err);
-    // Chỉ fallback sang SpeechSynthesis nếu máy tính của người dùng có cài giọng tiếng Việt chuẩn
+    // Fallback sang SpeechSynthesis nếu máy có hỗ trợ (ưu tiên giọng Microsoft Natural Online)
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
         const voices = window.speechSynthesis.getVoices();
-        const hasViVoice = voices.some((v) => v.lang.startsWith("vi"));
-        if (hasViVoice) {
+        const viVoices = voices.filter((v) => v.lang.startsWith("vi") || v.lang.includes("VN"));
+        if (viVoices.length > 0) {
           const cleanText = text.replace(/[*#`_~\[\]|]/g, "").trim();
           const utterance = new SpeechSynthesisUtterance(cleanText);
           utterance.lang = "vi-VN";
-          utterance.rate = 0.95;
+
+          // Ưu tiên chọn giọng Microsoft Natural (Hoài My hoặc Nam Minh) nếu có sẵn trên thiết bị
+          const isMale =
+            voice.includes("tong_tai") ||
+            voice.includes("ma_vuong") ||
+            voice.includes("nam_tre") ||
+            voice.includes("thu_sinh") ||
+            voice === "male";
+          const naturalVoice = viVoices.find((v) =>
+            isMale
+              ? v.name.toLowerCase().includes("nam") || v.name.toLowerCase().includes("male")
+              : v.name.toLowerCase().includes("hoai") || v.name.toLowerCase().includes("female")
+          );
+
+          if (naturalVoice) {
+            utterance.voice = naturalVoice;
+          } else {
+            utterance.voice = viVoices[0];
+          }
+
+          // Điều chỉnh cao độ và tốc độ chuẩn điện ảnh
+          if (voice.includes("tong_tai") || voice.includes("ma_vuong")) {
+            utterance.pitch = 0.85; // Trầm ấm uy quyền
+            utterance.rate = 0.92;
+          } else if (voice.includes("female_sweet") || voice.includes("nu_ngot")) {
+            utterance.pitch = 1.15; // Ngọt ngào dễ thương
+            utterance.rate = 0.98;
+          } else {
+            utterance.pitch = 1.0;
+            utterance.rate = 0.95;
+          }
+
           utterance.onend = () => {
             if (currentPlayingId === id) currentPlayingId = null;
             options?.onEnd?.();
