@@ -263,7 +263,10 @@ export default function AppSidebar({
             : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-0.5 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+        <div 
+          className="flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-0.5 custom-scrollbar scroll-smooth"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           {/* Brand Logo & Controls */}
           <div className="flex items-center justify-between px-1 py-1.5 mb-2 gap-2 min-w-0 shrink-0">
             <Link

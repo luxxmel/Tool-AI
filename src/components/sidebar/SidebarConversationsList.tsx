@@ -247,7 +247,7 @@ export default function SidebarConversationsList({
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 pt-2 border-t border-slate-200/80 dark:border-slate-800/80 mt-2">
+    <div className="flex flex-col pt-2 border-t border-slate-200/80 dark:border-slate-800/80 mt-2 shrink-0">
       {/* Search Input Bar (ChatGPT style) */}
       <div className="relative mb-2 px-1">
         <input
@@ -271,8 +271,8 @@ export default function SidebarConversationsList({
         )}
       </div>
 
-      {/* Main Scrollable Content: Projects Section (Top) + Recent Chats (Bottom) */}
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-3.5 pr-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800">
+      {/* Main Content: Projects Section (Top) + Recent Chats (Bottom) */}
+      <div className="space-y-3.5 pr-1">
         
         {/* ─── PHẦN 1: DỰ ÁN (PROJECTS - ChatGPT style) ─── */}
         <div>
