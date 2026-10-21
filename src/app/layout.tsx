@@ -36,7 +36,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh",
+  title: "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tín",
   description: "Biết Tuốt AI — Nền tảng trí tuệ nhân tạo, trợ lý đa năng và giải đáp mọi thắc mắc",
 };
 

@@ -170,7 +170,7 @@ const translationsVi: Translations = {
 
   // Home Page
   "home.title": "Xin chào! Tôi có thể giúp gì cho bạn?",
-  "home.subtitle": "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh",
+  "home.subtitle": "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tín",
   "home.placeholder": "Hỏi tôi bất cứ điều gì...",
   "home.send": "Gửi",
   "home.suggestions_title": "Gợi ý cho bạn",
@@ -178,7 +178,7 @@ const translationsVi: Translations = {
   "home.trending_characters": "Nhân vật xu hướng",
   "home.view_all": "Xem tất cả",
   "home.trending": "Xu hướng",
-  "home.footer_desc": "© 2026 biettuot.io — Biết Tuốt AI: Hỏi Gì Cũng Biết, Làm Gì Cũng Tinh.",
+  "home.footer_desc": "© 2026 biettuot.io — Biết Tuốt AI: Hỏi Gì Cũng Biết, Làm Gì Cũng Tín.",
   "home.terms": "Điều khoản",
   "home.privacy": "Chính sách bảo mật",
 
