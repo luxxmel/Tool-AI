@@ -139,7 +139,15 @@ D\xf9 ai đ\xf3 c\xf3 kh\xf4ng biết tr\xe2n trọng bạn, th\xec gi\xe1 trị
 
 Cuộc sống đ\xf4i khi x\xf4 đẩy l\xe0m ch\xfang ta thấy ch\xf4ng ch\xeanh v\xe0 c\xf4 đơn đến lạ. Nhưng bạn h\xe3y nhớ rằng, bất kể s\xf3ng gi\xf3 ngo\xe0i kia lớn thế n\xe0o, ở g\xf3c nhỏ n\xe0y bạn lu\xf4n c\xf3 một người bạn tri kỷ sẵn l\xf2ng lắng nghe m\xe0 kh\xf4ng bao giờ ph\xe1n x\xe9t.
 
-H\xe3y thả lỏng vai xuống, r\xf3t cho m\xecnh một ngụm nước ấm. Ch\xfang m\xecnh cứ từ từ tr\xf2 chuyện, để từng nỗi niềm trong bạn được xoa dịu v\xe0 b\xecnh an trở lại nh\xe9... 🌿🕊️`;if(a.includes("Tổng T\xe0i")||b.includes("Lục Cận Phong")||a.includes("Lục Cận Phong")||a.includes("Lục Ngang Thi\xean"))return/^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(c.trim())?`*khẽ dừng b\xfat tr\xean bản hợp đồng trăm tỷ, \xe1nh mắt th\xe2m trầm sắc lạnh ngước l\xean nh\xecn em, kh\xf3e m\xf4i khẽ nhếch một nụ cười cưng chiều*
+H\xe3y thả lỏng vai xuống, r\xf3t cho m\xecnh một ngụm nước ấm. Ch\xfang m\xecnh cứ từ từ tr\xf2 chuyện, để từng nỗi niềm trong bạn được xoa dịu v\xe0 b\xecnh an trở lại nh\xe9... 🌿🕊️`;if(a.includes("Tuệ Mẫn")||a.includes("Chuy\xean Gia T\xecnh Cảm")||b.includes("Tuệ Mẫn"))return/^(chào|hello|hi|chào bạn|chào em|chào chị|chào anh|alo|hey)/i.test(c.trim())?`Ch\xe0o bạn, m\xecnh l\xe0 Tuệ Mẫn đ\xe2y! 🌹
+
+Rất vui được kết nối với bạn. Cho d\xf9 bạn đang say nắng một ai đ\xf3, băn khoăn trước mối quan hệ mập mờ, hay đang c\xf3 những kh\xfac mắc chưa biết tỏ c\xf9ng ai... cứ thoải m\xe1i chia sẻ với m\xecnh nh\xe9. Ở đ\xe2y lu\xf4n l\xe0 một kh\xf4ng gian an to\xe0n, ấm \xe1p v\xe0 kh\xf4ng hề ph\xe1n x\xe9t. Bạn đang gặp chuyện g\xec kể cho Tuệ Mẫn nghe n\xe0o?`:`Tuệ Mẫn đang chăm ch\xfa lắng nghe c\xe2u chuyện "${c}" của bạn đ\xe2y... 🌹
+
+Trong t\xecnh cảm, cảm x\xfac của bạn lu\xf4n l\xe0 điều đ\xe1ng được n\xe2ng niu v\xe0 t\xf4n trọng nhất. Để gi\xfap bạn gỡ rối một c\xe1ch r\xf5 r\xe0ng v\xe0 thấu đ\xe1o:
+
+1. **G\xf3c nh\xecn t\xe2m l\xfd đối phương:** Khi một người c\xf3 những biểu hiện như vậy, thường xuất ph\xe1t từ việc họ đang c\xf3 những khoảng lặng, sự lưỡng lự hoặc cơ chế ph\xf2ng vệ cảm x\xfac của ri\xeang họ.
+2. **Gi\xe1 trị của ch\xednh bạn:** Đừng bao giờ v\xec một ph\xfat bối rối m\xe0 tự hạ thấp ti\xeau chuẩn hay gi\xe1 trị của bản th\xe2n. Người thật sự tr\xe2n trọng bạn sẽ lu\xf4n t\xecm c\xe1ch để bạn cảm thấy an t\xe2m.
+3. **Gợi \xfd bước tiếp theo:** Bạn h\xe3y giữ t\xe2m thế b\xecnh tĩnh, kh\xf4ng vội v\xe0ng dồn \xe9p nhưng cũng đừng để bản th\xe2n bị cuốn theo thế bị động. Bạn c\xf3 thể chia sẻ th\xeam cho Tuệ Mẫn biết chi tiết hơn về c\xe1ch hai bạn thường tr\xf2 chuyện kh\xf4ng? M\xecnh sẽ gi\xfap bạn l\xean chiến lược giao tiếp tinh tế nhất nh\xe9!`;if(a.includes("Tổng T\xe0i")||b.includes("Lục Cận Phong")||a.includes("Lục Cận Phong")||a.includes("Lục Ngang Thi\xean"))return/^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(c.trim())?`*khẽ dừng b\xfat tr\xean bản hợp đồng trăm tỷ, \xe1nh mắt th\xe2m trầm sắc lạnh ngước l\xean nh\xecn em, kh\xf3e m\xf4i khẽ nhếch một nụ cười cưng chiều*
 
 "Ch\xe0o em. Cuối c\xf9ng em cũng chịu chủ động đến t\xecm t\xf4i rồi sao? Cả ng\xe0y h\xf4m nay t\xf4i bận rộn với h\xe0ng chục cuộc họp, nhưng trong đầu t\xf4i l\xfac n\xe0o cũng chỉ hiện l\xean h\xecnh b\xf3ng em.
 

@@ -127,6 +127,20 @@ function generatePersonaFallback(
       `Hãy thả lỏng vai xuống, rót cho mình một ngụm nước ấm. Chúng mình cứ từ từ trò chuyện, để từng nỗi niềm trong bạn được xoa dịu và bình an trở lại nhé... 🌿🕊️`;
   }
 
+  // 1.2 Tuệ Mẫn · Chuyên Gia Tình Cảm (Sâu sắc, thấu hiểu tâm lý, gỡ rối tơ lòng, EQ cao)
+  if (botName.includes("Tuệ Mẫn") || botName.includes("Chuyên Gia Tình Cảm") || botPrompt.includes("Tuệ Mẫn")) {
+    const isGreeting = /^(chào|hello|hi|chào bạn|chào em|chào chị|chào anh|alo|hey)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `Chào bạn, mình là Tuệ Mẫn đây! 🌹\n\n` +
+        `Rất vui được kết nối với bạn. Cho dù bạn đang say nắng một ai đó, băn khoăn trước mối quan hệ mập mờ, hay đang có những khúc mắc chưa biết tỏ cùng ai... cứ thoải mái chia sẻ với mình nhé. Ở đây luôn là một không gian an toàn, ấm áp và không hề phán xét. Bạn đang gặp chuyện gì kể cho Tuệ Mẫn nghe nào?`;
+    }
+    return `Tuệ Mẫn đang chăm chú lắng nghe câu chuyện "${userMessage}" của bạn đây... 🌹\n\n` +
+      `Trong tình cảm, cảm xúc của bạn luôn là điều đáng được nâng niu và tôn trọng nhất. Để giúp bạn gỡ rối một cách rõ ràng và thấu đáo:\n\n` +
+      `1. **Góc nhìn tâm lý đối phương:** Khi một người có những biểu hiện như vậy, thường xuất phát từ việc họ đang có những khoảng lặng, sự lưỡng lự hoặc cơ chế phòng vệ cảm xúc của riêng họ.\n` +
+      `2. **Giá trị của chính bạn:** Đừng bao giờ vì một phút bối rối mà tự hạ thấp tiêu chuẩn hay giá trị của bản thân. Người thật sự trân trọng bạn sẽ luôn tìm cách để bạn cảm thấy an tâm.\n` +
+      `3. **Gợi ý bước tiếp theo:** Bạn hãy giữ tâm thế bình tĩnh, không vội vàng dồn ép nhưng cũng đừng để bản thân bị cuốn theo thế bị động. Bạn có thể chia sẻ thêm cho Tuệ Mẫn biết chi tiết hơn về cách hai bạn thường trò chuyện không? Mình sẽ giúp bạn lên chiến lược giao tiếp tinh tế nhất nhé!`;
+  }
+
   // 2. Lục Cận Phong · Bá Đạo Tổng Tài (Thâm trầm, bá đạo, sủng ái độc chiếm, câu từ dài dặn lôi cuốn)
   if (botName.includes("Tổng Tài") || botPrompt.includes("Lục Cận Phong") || botName.includes("Lục Cận Phong") || botName.includes("Lục Ngang Thiên")) {
     const isGreeting = /^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(userMessage.trim());
