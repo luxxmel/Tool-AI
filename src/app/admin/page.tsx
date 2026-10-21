@@ -757,49 +757,81 @@ export default function AdminCmsPage() {
 
           <span className="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
 
-          {/* Admin Tab Switcher — scrollable row */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/90 p-1 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-[calc(100vw-230px)] sm:max-w-none scrollbar-none">
-            {(
-              [
-                { key: "revenue", label: "📊 Doanh thu", count: null, color: "emerald" },
-                { key: "users", label: "👥 Người dùng", count: totalMembers, color: "indigo" },
-                { key: "admins", label: "🛡️ Quản trị viên", count: totalAdmins, color: "purple" },
-                { key: "posts", label: "📝 Bài viết", count: totalPosts, color: "rose" },
-                { key: "credits", label: "💰 Credits", count: null, color: "amber" },
-                { key: "announcements", label: "🔔 Thông báo", count: null, color: "yellow" },
-                { key: "support", label: "💬 Hỗ trợ", count: supportTickets.length, color: "cyan" },
-                { key: "characters", label: "🎭 Nhân vật truyện", count: botsCharCount, color: "rose" },
-                { key: "assistants", label: "🤖 Trợ lý AI", count: botsAssistantCount, color: "violet" },
-              ] as const
-            ).map(({ key, label, count, color }) => {
-              const active = adminTab === key;
-              const colorMap: Record<string, string> = {
-                emerald: "text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm",
-                indigo: "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm",
-                purple: "text-purple-600 dark:text-purple-400 bg-white dark:bg-slate-800 shadow-sm",
-                rose: "text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-800 shadow-sm",
-                amber: "text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm",
-                yellow: "text-yellow-600 dark:text-yellow-400 bg-white dark:bg-slate-800 shadow-sm",
-                cyan: "text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-800 shadow-sm",
-                violet: "text-violet-600 dark:text-violet-400 bg-white dark:bg-slate-800 shadow-sm",
-              };
-              return (
-                <button
-                  key={key}
-                  onClick={() => setAdminTab(key)}
-                  className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                    active
-                      ? colorMap[color]
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
-                  }`}
-                >
-                  {label}
-                  {count !== null && (
-                    <span className="ml-1 opacity-70">({count})</span>
-                  )}
-                </button>
-              );
-            })}
+          {/* Admin Tab Switcher — scrollable row with buttons */}
+          <div className="relative flex-1 min-w-0 flex items-center">
+            {/* Nút lướt sang trái */}
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById("admin-tabs-scroll-container");
+                if (el) el.scrollBy({ left: -180, behavior: "smooth" });
+              }}
+              className="hidden sm:flex shrink-0 w-6 h-6 items-center justify-center rounded-lg bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 shadow-xs mr-1 z-10 transition-colors"
+              title="Lướt sang trái"
+            >
+              ‹
+            </button>
+
+            <div
+              id="admin-tabs-scroll-container"
+              className="flex items-center gap-1.5 bg-slate-100/90 dark:bg-slate-900/90 p-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 overflow-x-auto scroll-smooth custom-scrollbar flex-1 select-none"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
+              {(
+                [
+                  { key: "revenue", label: "📊 Doanh thu", count: null, color: "emerald" },
+                  { key: "users", label: "👥 Người dùng", count: totalMembers, color: "indigo" },
+                  { key: "admins", label: "🛡️ Quản trị viên", count: totalAdmins, color: "purple" },
+                  { key: "posts", label: "📝 Bài viết", count: totalPosts, color: "rose" },
+                  { key: "credits", label: "💰 Credits", count: null, color: "amber" },
+                  { key: "announcements", label: "🔔 Thông báo", count: null, color: "yellow" },
+                  { key: "support", label: "💬 Hỗ trợ", count: supportTickets.length, color: "cyan" },
+                  { key: "characters", label: "🎭 Nhân vật truyện", count: botsCharCount, color: "rose" },
+                  { key: "assistants", label: "🤖 Trợ lý AI", count: botsAssistantCount, color: "violet" },
+                ] as const
+              ).map(({ key, label, count, color }) => {
+                const active = adminTab === key;
+                const colorMap: Record<string, string> = {
+                  emerald: "text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm border border-emerald-500/20",
+                  indigo: "text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 shadow-sm border border-indigo-500/20",
+                  purple: "text-purple-600 dark:text-purple-400 bg-white dark:bg-slate-800 shadow-sm border border-purple-500/20",
+                  rose: "text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-800 shadow-sm border border-rose-500/20",
+                  amber: "text-amber-600 dark:text-amber-400 bg-white dark:bg-slate-800 shadow-sm border border-amber-500/20",
+                  yellow: "text-yellow-600 dark:text-yellow-400 bg-white dark:bg-slate-800 shadow-sm border border-yellow-500/20",
+                  cyan: "text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-800 shadow-sm border border-cyan-500/20",
+                  violet: "text-violet-600 dark:text-violet-400 bg-white dark:bg-slate-800 shadow-sm border border-violet-500/20",
+                };
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setAdminTab(key)}
+                    className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      active
+                        ? colorMap[color]
+                        : "text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
+                    }`}
+                  >
+                    {label}
+                    {count !== null && (
+                      <span className="ml-1 opacity-70">({count})</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Nút lướt sang phải */}
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById("admin-tabs-scroll-container");
+                if (el) el.scrollBy({ left: 180, behavior: "smooth" });
+              }}
+              className="hidden sm:flex shrink-0 w-6 h-6 items-center justify-center rounded-lg bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 shadow-xs ml-1 z-10 transition-colors"
+              title="Lướt sang phải"
+            >
+              ›
+            </button>
           </div>
         </div>
 
