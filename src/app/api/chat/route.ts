@@ -650,17 +650,29 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Lấy systemPrompt kết hợp và nâng cấp chuẩn chất lượng cao nhất cho AI
-    const currentDateStr = new Date().toLocaleDateString("vi-VN", {
+    // Lấy thời gian thực tế chuẩn múi giờ Việt Nam (Asia/Ho_Chi_Minh - GMT+7)
+    const now = new Date();
+    const currentTimeStr = now.toLocaleTimeString("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const currentDateStr = now.toLocaleDateString("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-    const currentISO = new Date().toISOString();
-    const timeContext = `[THỜI GIAN THỰC TẾ]:
-- Hôm nay là: ${currentDateStr} (${currentISO}).
-- Mọi câu hỏi về tỷ số thể thao, kết quả trận đấu, tin tức mới, sự kiện thời sự, giá cả, thời tiết... BẮT BUỘC sử dụng thông tin tìm kiếm thời gian thực mới nhất để trả lời chính xác 100%.`;
+    const currentISO = now.toISOString();
+
+    const timeContext = `[THỜI GIAN THỰC TẾ NGOÀI ĐỜI]:
+- Thời gian hiện tại ngoài đời thực là: ${currentTimeStr} (Giờ Việt Nam - GMT+7), ${currentDateStr} (Chuẩn ISO: ${currentISO}).
+- MÚI GIỜ MẶC ĐỊNH: Múi giờ Việt Nam (GMT+7 / UTC+7).
+- QUY TẮC KHI NGƯỜI DÙNG HỎI GIỜ/NGÀY: Khi người dùng hỏi "bây giờ là mấy giờ?", "hôm nay ngày mấy?", "thời gian hiện tại?", hãy trả lời ngay giờ thực tế theo giờ Việt Nam (${currentTimeStr}, ${currentDateStr}), TUYỆT ĐỐI KHÔNG dùng giờ UTC hay trả lời lệch múi giờ.
+- Mọi câu hỏi về tỷ số thể thao, kết quả trận đấu, tin tức mới, sự kiện thời sự, giá cả, thời tiết... BẮT BUỘC sử dụng thông tin và thời gian thực tế mới nhất để trả lời chính xác 100%.`;
 
     let effectiveSystemPrompt = bot.systemPrompt;
     if (botId === "omni-assistant") {
