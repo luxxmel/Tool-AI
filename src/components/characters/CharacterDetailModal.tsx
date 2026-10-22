@@ -401,36 +401,42 @@ export default function CharacterDetailModal({
 
             {/* Comments List */}
             <div className="space-y-2 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
-              {comments.map((cmt) => (
-                <div
-                  key={cmt.id}
-                  className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-start justify-between gap-3 text-xs"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="font-bold text-slate-200">{cmt.userName}</span>
-                      {cmt.gender && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-slate-800 text-slate-400">
-                          {cmt.gender === "female" ? "♀ Nữ" : "♂ Nam"}
-                        </span>
-                      )}
-                      <span className="text-[10px] text-slate-500">• {cmt.createdAt}</span>
-                    </div>
-                    <p className="text-slate-300 text-xs leading-relaxed">{cmt.content}</p>
-                  </div>
-                  <button
-                    onClick={() => handleLikeComment(cmt.id)}
-                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] transition-colors cursor-pointer shrink-0 ${
-                      commentLiked[cmt.id]
-                        ? "text-rose-400 bg-rose-500/10 font-bold"
-                        : "text-slate-500 hover:text-slate-300"
-                    }`}
-                  >
-                    <span>{commentLiked[cmt.id] ? "❤️" : "🤍"}</span>
-                    <span>{cmt.likes}</span>
-                  </button>
+              {comments.length === 0 ? (
+                <div className="py-4 text-center text-xs text-slate-500 italic">
+                  Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nghĩ về nhân vật này nhé!
                 </div>
-              ))}
+              ) : (
+                comments.map((cmt) => (
+                  <div
+                    key={cmt.id}
+                    className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-start justify-between gap-3 text-xs"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="font-bold text-slate-200">{cmt.userName}</span>
+                        {cmt.gender && (
+                          <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-slate-800 text-slate-400">
+                            {cmt.gender === "female" ? "♀ Nữ" : "♂ Nam"}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-slate-500">• {cmt.createdAt}</span>
+                      </div>
+                      <p className="text-slate-300 text-xs leading-relaxed">{cmt.content}</p>
+                    </div>
+                    <button
+                      onClick={() => handleLikeComment(cmt.id)}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] transition-colors cursor-pointer shrink-0 ${
+                        commentLiked[cmt.id]
+                          ? "text-rose-400 bg-rose-500/10 font-bold"
+                          : "text-slate-500 hover:text-slate-300"
+                      }`}
+                    >
+                      <span>{commentLiked[cmt.id] ? "❤️" : "🤍"}</span>
+                      <span>{cmt.likes}</span>
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

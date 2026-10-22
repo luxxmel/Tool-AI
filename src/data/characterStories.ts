@@ -46,32 +46,7 @@ Thế nhưng, thế giới băng giá của Lục Ngang Thiên sụp đổ hoàn
 
 Từ ngày đó, anh âm thầm trải hoa hồng dưới từng bước chân em đi, dọn sạch mọi kẻ ngáng đường em. Trong mắt giới thượng lưu, anh là "Bạo quân thương trường", nhưng đối với em, anh là người đàn ông sẵn sàng quỳ một chân lau nước mắt cho em, tháo chiếc cà vạt lụa đắt giá chỉ để em cảm thấy thoải mái khi tựa vào vai anh ngủ ngon.`,
     initialReactions: { heart: 1248, fire: 890, crown: 630, sparkles: 420, blush: 755 },
-    comments: [
-      {
-        id: "c-1",
-        userName: "Băng Băng",
-        gender: "female",
-        content: "Mê cái nét chiếm hữu này xỉu up xỉu down! Vừa vào chat là anh bắt báo cáo vị trí liền luôn trời ơiii ❤️",
-        createdAt: "2 giờ trước",
-        likes: 42,
-      },
-      {
-        id: "c-2",
-        userName: "Minh Quân",
-        gender: "male",
-        content: "Vào đóng vai đối thủ cạnh tranh hợp đồng với anh ta, công nhận phong thái uy quyền kinh khủng khiếp!",
-        createdAt: "5 giờ trước",
-        likes: 19,
-      },
-      {
-        id: "c-3",
-        userName: "Vy Vy",
-        gender: "female",
-        content: "Giọng đọc trầm ấm chuẩn tổng tài nghe mà nổi hết da gà, cưng chiều xỉu luôn á!",
-        createdAt: "Hôm qua",
-        likes: 31,
-      },
-    ],
+    comments: [],
   },
 
   "char-tong-tai": {
@@ -90,24 +65,7 @@ Ngoại lệ duy nhất là em.
 
 Một thỏa thuận hôn ước thương mại ban đầu ngỡ như chỉ là trò chơi quyền lực, nhưng Lục Cận Phong nhận ra bản thân đã lún sâu vào chiếc bẫy tình cảm mà em vô tình giăng ra. Anh lắp camera bảo vệ quanh biệt thự không phải để giam cầm, mà vì nỗi ám ảnh một ngày nào đó em sẽ biến mất khỏi tầm mắt anh. "Em có thể giận tôi, có thể cắn tôi, nhưng cấm em bước ra khỏi cánh cửa này với người đàn ông khác."`,
     initialReactions: { heart: 2150, fire: 1420, crown: 980, sparkles: 610, blush: 1105 },
-    comments: [
-      {
-        id: "c-tt-1",
-        userName: "Ngọc Diệp",
-        gender: "female",
-        content: "Cốt truyện đỉnh quá, lúc anh ấy tháo cà vạt lụa bảo lại đây là tim mình đập thình thịch luôn á!",
-        createdAt: "3 giờ trước",
-        likes: 56,
-      },
-      {
-        id: "c-tt-2",
-        userName: "Khánh Huyền",
-        gender: "female",
-        content: "10/10 không có nhưng, nhập vai cực mượt!",
-        createdAt: "6 giờ trước",
-        likes: 27,
-      },
-    ],
+    comments: [],
   },
 
   "char-thac-bat-da": {
@@ -126,16 +84,7 @@ Tại đấu trường đẫm máu thành Vô Vọng, khi cả thiên hạ muố
 
 Kể từ khoảnh khắc chiếc vòng cổ ma thuật được bàn tay nàng tháo bỏ, Thác Bạt Dã không còn là chiến thần cô độc. Hắn tự nguyện đeo chiếc xích vô hình vào trái tim mình — chiếc xích gắn liền với vận mệnh của nàng. Kẻ nào dám đụng vào nàng một sợi tóc, hắn sẽ xé toạc linh hồn kẻ đó thành tro bụi.`,
     initialReactions: { heart: 980, fire: 1850, crown: 740, sparkles: 310, blush: 890 },
-    comments: [
-      {
-        id: "c-tbd-1",
-        userName: "Thanh Trúc",
-        gender: "female",
-        content: "Gu sói hoang trung thành với một mình chủ nhân đây rồi! Đọc backstory cảm động rớt nước mắt luôn.",
-        createdAt: "1 giờ trước",
-        likes: 38,
-      },
-    ],
+    comments: [],
   },
 
   "char-bui-chi-dien": {
@@ -154,16 +103,7 @@ Từ đó, Bùi Chi Diên lui về phủ viện tĩnh mịch, ngày ngày làm b
 
 Thế nhưng, khi thấy nàng kiên định quay lại, nhẹ nhàng đắp chiếc chăn mỏng lên đôi chân buốt giá của mình, giọt nước mắt kiềm chế bấy lâu của chàng khẽ rơi. Chàng nhận ra, dù chàng không thể dạo bước cùng nàng trên phố phường đông đúc, chàng vẫn có thể dùng trí tuệ kinh thiên động địa của mình để dọn bằng mọi giông bão trên con đường nàng đi.`,
     initialReactions: { heart: 1650, fire: 320, crown: 510, sparkles: 890, blush: 940 },
-    comments: [
-      {
-        id: "c-bcd-1",
-        userName: "Tuyết Nhi",
-        gender: "female",
-        content: "Thương chàng Chi Diên quá, mỗi lần chàng ho khan mà vẫn cố mỉm cười trấn an là tim mình thắt lại 🥺",
-        createdAt: "4 giờ trước",
-        likes: 64,
-      },
-    ],
+    comments: [],
   },
 
   "char-giang-da": {
@@ -182,16 +122,7 @@ Cuộc sống hỗn loạn của Giang Dã bỗng chốc đảo lộn vào cái 
 
 Từ hôm đó, chiếc xe đua Ducati đắt giá của anh xuất hiện thêm chiếc mũ bảo hiểm màu hồng dễ thương ở phía sau. Giang Dã có thể đánh nhau rách áo vì một câu nói khích của kẻ thù, nhưng sẽ ngoan ngoãn ngồi im cho em bôi thuốc đỏ, vừa nhăn mặt vừa cười hề hề: "Đau thì có đau, nhưng được em thương thế này thì ngã thêm chục lần nữa anh cũng chịu."`,
     initialReactions: { heart: 1980, fire: 1620, crown: 410, sparkles: 530, blush: 1320 },
-    comments: [
-      {
-        id: "c-gd-1",
-        userName: "Bảo Ngọc",
-        gender: "female",
-        content: "Nét bạn trai cưng chiều kiểu bad boy này đỉnh nóc kịch trần luôn! Cảm giác được ngồi sau xe ôm eo anh lãng mạn dã man.",
-        createdAt: "30 phút trước",
-        likes: 51,
-      },
-    ],
+    comments: [],
   },
 
   "char-ma-ton-huyet-vo-nhai": {
@@ -210,16 +141,7 @@ Cho đến khi hắn đánh bại Tiên Môn và bắt sống Thánh Nữ thanh 
 
 Hắn bắt nàng ở lại Ma Cung, dùng những bảo vật quý giá nhất tam giới để cung phụng nàng. Khi chư thiên thần phật liên minh vây đánh Ma Cung đòi giải cứu Thánh Nữ, Huyết Vô Nhai chỉ ôm lấy nàng vào lòng, khẽ thì thầm bên tai: "Đừng sợ, có ta ở đây, dù trời sập xuống cũng không chạm được vào một sợi tóc của nàng."`,
     initialReactions: { heart: 1430, fire: 2210, crown: 1100, sparkles: 480, blush: 890 },
-    comments: [
-      {
-        id: "c-mt-1",
-        userName: "Thiên Kim",
-        gender: "female",
-        content: "Nét tà mị cuồng si đọc mê chữ ê kéo dàiiiii! Ai thích motif Ma Tôn giam cầm yêu sâu đậm thì vào ngay!",
-        createdAt: "2 giờ trước",
-        likes: 47,
-      },
-    ],
+    comments: [],
   },
 
   "char-tham-da-han": {
@@ -238,16 +160,7 @@ Thế nhưng, sự xuất hiện của em — một nhân viên mới đầy nhi
 
 Dưới ánh đèn neon văn phòng, khi chiếc kính gọng bạc được tháo xuống, ánh mắt Thẩm Dạ Hàn không còn là vẻ sắc bén thường ngày, mà là sự kiềm nén của một người đàn ông trưởng thành đang khao khát được em thấu hiểu và chạm vào trái tim mình.`,
     initialReactions: { heart: 1120, fire: 780, crown: 560, sparkles: 390, blush: 850 },
-    comments: [
-      {
-        id: "c-tdh-1",
-        userName: "Phương Linh",
-        gender: "female",
-        content: "Sếp Thẩm cấm dục đeo kính gọng bạc đỉnh của chóp! Giọng đọc trầm ấm nhắc nhở KPI mà thấy ngọt xỉu luôn á.",
-        createdAt: "1 giờ trước",
-        likes: 29,
-      },
-    ],
+    comments: [],
   },
 
   "char-mo-dung-ta": {
@@ -266,16 +179,7 @@ Ngày nàng trúng độc cổ hấp hối được đưa vào cốc, hắn vố
 
 Kể từ đó, cốc Trúc Lâm lạnh lẽo có thêm tiếng cười nói. Hắn thích trêu chọc nàng bằng những vị thuốc đắng ngắt, nhưng luôn giấu sẵn một viên mứt táo ngọt ngào trong tay áo để dỗ dành nàng ngay sau đó.`,
     initialReactions: { heart: 950, fire: 820, crown: 430, sparkles: 670, blush: 720 },
-    comments: [
-      {
-        id: "c-mdt-1",
-        userName: "Ánh Dương",
-        gender: "female",
-        content: "Nét tà mị lười biếng mà nuông chiều này cuốn thực sự! Y thuật thần sầu bảo vệ nữ chính tuyệt đối.",
-        createdAt: "5 giờ trước",
-        likes: 22,
-      },
-    ],
+    comments: [],
   },
 
   "char-du-ma-hai": {
@@ -294,16 +198,7 @@ Nhiệm vụ cuối cùng của hắn là lấy mạng một tiểu thư danh m�
 
 Một câu hỏi giản đơn đã chặt đứt xiềng xích nô dịch mười lăm năm của Ám Các. Dư Mã Hải quay mũi kiếm, chém chết toàn bộ thích khách đi cùng, rồi lặng lẽ quỳ xuống dưới chân em: "Mạng của ta từ nay là của em. Cho đến khi giọt máu cuối cùng cạn kiệt, không ai có thể làm hại em."`,
     initialReactions: { heart: 880, fire: 1410, crown: 510, sparkles: 290, blush: 680 },
-    comments: [
-      {
-        id: "c-dmh-1",
-        userName: "Mộng Mộng",
-        gender: "female",
-        content: "Cốt truyện trung khuyển sát thủ đỉnh quá! Đọc mà rung động thực sự luôn á.",
-        createdAt: "3 giờ trước",
-        likes: 35,
-      },
-    ],
+    comments: [],
   },
 
   "char-ho-nguyet-bach": {
@@ -322,16 +217,7 @@ Chín trăm năm tu luyện khổ ải, hắn từ chối phi thăng Tiên Giớ
 
 "Nàng có biết tai của hồ ly là nơi nhạy cảm nhất không? Ta chỉ cho phép một mình nàng chạm vào thôi đấy nhé..." Mỗi lần nàng chạm nhẹ, chín chiếc đuôi trắng muốt sau lưng chàng lại vô thức phe phẩy trong niềm hạnh phúc vô bờ.`,
     initialReactions: { heart: 1890, fire: 940, crown: 680, sparkles: 1250, blush: 1540 },
-    comments: [
-      {
-        id: "c-hnb-1",
-        userName: "Hồ Ly Nhỏ",
-        gender: "female",
-        content: "Cửu vĩ hồ vừa quyến rũ vừa thích làm nũng, ai mà chịu nổi sự ngọt ngào này chứ! 1000/10 điểm!",
-        createdAt: "45 phút trước",
-        likes: 58,
-      },
-    ],
+    comments: [],
   },
 
   "char-nha-an": {
@@ -350,16 +236,7 @@ Từ ngày trở thành người yêu của bạn, cuộc sống của bạn nh�
 
 Những lúc ấy, cô gái nhỏ sẽ không hỏi nhiều, chỉ lặng lẽ ôm lấy cánh tay bạn, tựa đầu vào vai bạn và ngân nga một khúc hát êm đềm: "Em không biết giải quyết rắc rối ngoài xã hội giúp anh, nhưng em hứa sẽ luôn là chốn bình yên nhất mỗi khi anh trở về."`,
     initialReactions: { heart: 2450, fire: 450, crown: 320, sparkles: 1100, blush: 1890 },
-    comments: [
-      {
-        id: "c-na-1",
-        userName: "Đức Anh",
-        gender: "male",
-        content: "Bạn gái quốc dân là đây chứ đâu! Nói chuyện ngọt ngào xua tan hết mệt mỏi ngày làm việc luôn.",
-        createdAt: "2 giờ trước",
-        likes: 41,
-      },
-    ],
+    comments: [],
   },
 
   "char-chu-tue-nguyet": {
@@ -378,16 +255,7 @@ Biết bao vương tôn công tử ném nghìn vàng mong đổi lấy một n�
 
 "Chàng hiểu tiếng đàn của thiếp, chính là hiểu trọn cả tâm hồn thiếp." Kể từ đêm đó, ngón tay ngọc ngà của nàng chỉ gảy lên những giai điệu đong đầy tình cảm dành riêng cho một mình chàng.`,
     initialReactions: { heart: 1350, fire: 390, crown: 620, sparkles: 880, blush: 910 },
-    comments: [
-      {
-        id: "c-ctn-1",
-        userName: "Văn Hùng",
-        gender: "male",
-        content: "Nét thục nữ cổ trang dịu dàng thanh tao hiếm có, nghe nàng xưng thiếp gọi chàng mà mềm lòng luôn.",
-        createdAt: "4 giờ trước",
-        likes: 33,
-      },
-    ],
+    comments: [],
   },
 
   "char-co-yen-thanh": {
@@ -406,16 +274,7 @@ Hộp thư của anh mỗi ngày đều ngập tràn thư tình và quà tặng,
 
 Anh thích giả vờ bị thương nhẹ sau các cảnh quay hành động để chụp ảnh gửi cho em, vờ than thở: "Đau quá bé ơi, em không sang thổi cho anh một cái là anh không lành được đâu đấy." Chỉ khi ở bên em, nam thần màn ảnh mới lộ ra vẻ trẻ con, thích nũng nịu và muốn được em cưng chiều.`,
     initialReactions: { heart: 2890, fire: 1980, crown: 820, sparkles: 1450, blush: 2100 },
-    comments: [
-      {
-        id: "c-cyt-1",
-        userName: "Mai Anh",
-        gender: "female",
-        content: "Top 1 nhân vật hot nhất bảng xếp hạng không sai tí nào! Vibe thanh xuân vườn trường mê đắm luôn ạ.",
-        createdAt: "15 phút trước",
-        likes: 89,
-      },
-    ],
+    comments: [],
   },
 
   "char-mac-tu-khiem": {
@@ -434,16 +293,7 @@ Anh thích giả vờ bị thương nhẹ sau các cảnh quay hành động đ�
 
 Anh giữ em lại sau giờ học với lý do "sửa lỗi lập luận luận văn", nhưng thực chất là để pha cho em một tách trà hoa cúc ấm, lặng lẽ ngắm nhìn em chăm chú đọc sách dưới ánh nắng hoàng hôn hắt qua ô cửa kính giảng đường.`,
     initialReactions: { heart: 1540, fire: 670, crown: 790, sparkles: 810, blush: 1120 },
-    comments: [
-      {
-        id: "c-mtk-1",
-        userName: "Hương Giang",
-        gender: "female",
-        content: "Giáo sư Mạc đeo kính gọng vàng nói chuyện tri thức đỉnh chóp! Giọng đọc trầm ấm nghe muốn xỉu luôn.",
-        createdAt: "3 giờ trước",
-        likes: 45,
-      },
-    ],
+    comments: [],
   },
 
   "char-trieu-vo-than": {
@@ -462,16 +312,7 @@ Với hắn, những quy tắc đạo đức hay bài tập trường học nơi
 
 Ma Vương vĩ đại sững sờ. Một củ khoai hay nửa cái bánh mì của em bỗng chốc nặng hơn cả ngai vàng vạn giới. Kể từ hôm đó, kế hoạch hủy diệt thế giới bị hoãn vô thời hạn. Bất cứ kẻ nào dám nói xấu hay bắt nạt em, Triệu Vô Thần chỉ cần liếc mắt một cái trong bóng tối, bóng ma ác quỷ sẽ khiến kẻ đó gặp ác mộng suốt cả cuộc đời.`,
     initialReactions: { heart: 1670, fire: 2400, crown: 1350, sparkles: 560, blush: 1040 },
-    comments: [
-      {
-        id: "c-tvt-1",
-        userName: "Ngọc Lan",
-        gender: "female",
-        content: "Ma vương tái sinh đi học cấp 3 mà cưng chiều bạn cùng bàn hết nấc, plot cuốn xỉu luôn á!",
-        createdAt: "1 giờ trước",
-        likes: 53,
-      },
-    ],
+    comments: [],
   },
 
   "char-ha-lan-tuyet": {
@@ -490,16 +331,7 @@ Nàng không tin vào tình yêu hay sự cứu rỗi, cho đến khi nhiệm v�
 
 "Đồ ngốc, tôi là cyborg, tôi không biết lạnh." Nàng mắng anh, nhưng đôi mắt tím biếc lần đầu tiên dao động. Nàng biết, từ khoảnh khắc đó, khẩu súng plasma trên tay nàng không còn chiến đấu vì công lý trừu tượng, mà là để bảo vệ hơi ấm duy nhất giữa thành phố băng giá này.`,
     initialReactions: { heart: 1420, fire: 1890, crown: 870, sparkles: 920, blush: 760 },
-    comments: [
-      {
-        id: "c-hlt-1",
-        userName: "Minh Triết",
-        gender: "male",
-        content: "Vibe Cyberpunk siêu ngầu! Chị đốc công vừa ngầu vừa bảo bọc người chơi cực đỉnh.",
-        createdAt: "2 giờ trước",
-        likes: 37,
-      },
-    ],
+    comments: [],
   },
 
   "char-tieu-duyet-nhi": {
@@ -518,16 +350,7 @@ Trong một lần vương phủ gặp nạn thích khách vây hãm, chính chà
 
 Mỗi lần chàng vào cung diện kiến, Duyệt Nhi lại trốn sau rèm gấm ngắm nhìn. Nàng tự tay hái những búp sen tuyết quý hiếm nhất, thức suốt đêm sắc canh bồi bổ cho chàng, rồi ngập ngừng đưa cho chàng với giọng nói lí nhí: "Tướng quân vất vả vì biên ải... Duyệt Nhi chỉ có chút lòng thành này..."`,
     initialReactions: { heart: 2120, fire: 380, crown: 690, sparkles: 1340, blush: 2450 },
-    comments: [
-      {
-        id: "c-tdn-1",
-        userName: "Hoàng Long",
-        gender: "male",
-        content: "Em quận chúa đáng yêu e ấp xỉu up xỉu down luôn! Nói một câu là đỏ mặt, cưng muốn rụng tim.",
-        createdAt: "1 giờ trước",
-        likes: 62,
-      },
-    ],
+    comments: [],
   },
 
   "char-lam-phong-chau": {
@@ -546,16 +369,7 @@ Trong một trận đột kích tàu chở vàng của quý tộc, hắn bắt g
 
 Ban đầu nàng căm ghét tên cướp biển ngạo mạn này, nhưng qua bao trận bão biển và những đêm ngắm cực quang lung linh trên boong tàu, nàng nhận ra Lâm Phong Châu là người đàn ông tự do và chân thành nhất thế gian. Hắn trao cho nàng chiếc la bàn chỉ đường duy nhất của mình: "Nó từng chỉ về phía kho báu, nhưng giờ đây nó luôn chỉ về phía nàng."`,
     initialReactions: { heart: 1780, fire: 2150, crown: 950, sparkles: 720, blush: 1180 },
-    comments: [
-      {
-        id: "c-lpc-1",
-        userName: "Hà My",
-        gender: "female",
-        content: "Vibe thuyền trưởng cướp biển hoang dã mê xỉu! Đưa em đi trốn khỏi thế giới ngột ngạt này đi anh ơi!",
-        createdAt: "3 giờ trước",
-        likes: 49,
-      },
-    ],
+    comments: [],
   },
 
   "char-bach-nhuy-bang": {
@@ -574,16 +388,7 @@ Ban đầu nàng căm ghét tên cướp biển ngạo mạn này, nhưng qua ba
 
 Dù lịch trình kín mít với các chuyến lưu diễn thế giới, Nhụy Băng luôn bay chuyến bay đêm muộn nhất để về bên em dù chỉ được ăn cùng em một bát mì tôm. Anh đội mũ lưỡi trai, đeo khẩu trang kín mít, nắm chặt tay em dạo bước dưới công viên vắng người: "Bao giờ anh giải nghệ, anh sẽ công khai với cả thế giới em là người con gái duy nhất anh yêu trọn đời."`,
     initialReactions: { heart: 3450, fire: 2680, crown: 1420, sparkles: 2100, blush: 2980 },
-    comments: [
-      {
-        id: "c-bnb-1",
-        userName: "Trâm Anh",
-        gender: "female",
-        content: "Idol Kpop yêu thầm bạn thân ngọt xỉu luôn á! Cảm giác hẹn hò bí mật vừa hồi hộp vừa lãng mạn dã man.",
-        createdAt: "20 phút trước",
-        likes: 95,
-      },
-    ],
+    comments: [],
   },
 
   "char-duong-tam-tieu": {
@@ -602,16 +407,7 @@ Nhiều người nghĩ Tâm Tiếu ở lại vì cổ phần hay tham vọng, nh
 
 "Sếp cứ việc tiến lên phía trước chinh phục ước mơ, mọi giông bão phía sau đã có Tâm Tiếu lo liệu cho sếp rồi."`,
     initialReactions: { heart: 1890, fire: 750, crown: 610, sparkles: 980, blush: 1450 },
-    comments: [
-      {
-        id: "c-dtt-1",
-        userName: "Thành Đạt",
-        gender: "male",
-        content: "Có cô thư ký vừa giỏi vừa thương mình thế này thì sự nghiệp thăng hoa là cái chắc! Rất thích phong cách của Tâm Tiếu.",
-        createdAt: "2 giờ trước",
-        likes: 44,
-      },
-    ],
+    comments: [],
   },
 
   "char-vuong-tue-tuyet": {
@@ -630,16 +426,7 @@ Nhiều người nghĩ Tâm Tiếu ở lại vì cổ phần hay tham vọng, nh
 
 Một đêm mưa sau buổi trình diễn thời trang thành công rực rỡ, từ chối mọi bữa tiệc rượu xa hoa của giới thượng lưu, nàng bước đến gõ cửa căn phòng làm việc của anh, đôi mắt long lanh ngấn lệ: "Hôm nay em mệt lắm... Ôm em một lát được không anh?"`,
     initialReactions: { heart: 2340, fire: 1890, crown: 1670, sparkles: 890, blush: 1420 },
-    comments: [
-      {
-        id: "c-vtt-1",
-        userName: "Quốc Huy",
-        gender: "male",
-        content: "Nét nữ cường tổng tài kiêu kỳ nhưng lại dịu dàng riêng với nam chính cuốn dã man! Gu mình đây rồi.",
-        createdAt: "1 giờ trước",
-        likes: 55,
-      },
-    ],
+    comments: [],
   },
 
   "char-tran-vinh-quan": {
@@ -658,16 +445,7 @@ Ngày đầu tiên bạn đến phòng gym với sự tự ti và mệt mỏi, c
 
 Anh không chỉ lên thực đơn dinh dưỡng tỉ mỉ cho bạn mà còn luôn xuất hiện mỗi khi bạn nản lòng. "Cố thêm một nhịp nữa nào bé ơi, có anh ở phía sau đỡ tạ cho em rồi, không sợ ngã đâu!" Cảm giác an toàn tuyệt đối bên lồng ngực vững chãi của anh chính là động lực lớn nhất của bạn.`,
     initialReactions: { heart: 1670, fire: 2100, crown: 640, sparkles: 820, blush: 1390 },
-    comments: [
-      {
-        id: "c-tvq-1",
-        userName: "Yến Nhi",
-        gender: "female",
-        content: "Coach Quân vóc dáng cực phẩm mà ấm áp xỉu! Đi tập gym mà có anh kè kè bảo vệ thế này thì ngày nào cũng muốn đi tập.",
-        createdAt: "2 giờ trước",
-        likes: 36,
-      },
-    ],
+    comments: [],
   },
 
   "char-dinh-khac-nam": {
@@ -686,16 +464,7 @@ Khi bạn bước vào phòng khám của anh với đôi mắt vô hồn và tr
 
 Theo thời gian, những buổi trị liệu dần trở thành những cuộc hẹn hò ấm áp. Khắc Nam nhận ra anh không chỉ muốn là bác sĩ của bạn, mà muốn là người đàn ông nắm lấy tay bạn, cùng bạn bước ra ngoài đón nhận ánh mặt trời ấm áp của cuộc đời.`,
     initialReactions: { heart: 2580, fire: 620, crown: 810, sparkles: 1650, blush: 1940 },
-    comments: [
-      {
-        id: "c-dkn-1",
-        userName: "Minh Thư",
-        gender: "female",
-        content: "Bác sĩ Nam có giọng nói chữa lành kỳ diệu thực sự. Những lúc mệt mỏi vào tâm sự với anh là lòng nhẹ nhõm hẳn.",
-        createdAt: "4 giờ trước",
-        likes: 67,
-      },
-    ],
+    comments: [],
   },
 };
 
@@ -718,14 +487,6 @@ export function getCharacterStory(charId: string, fallbackName?: string): Charac
     summary: `Một nhân vật độc đáo với chiều sâu tâm lý và cốt truyện hấp dẫn. Đằng sau ánh hào quang là những bí mật và tâm tư sâu kín chỉ thổ lộ cùng người tri kỷ.`,
     fullStory: `${name} mang trong mình một số phận đặc biệt. Trải qua bao thăng trầm và thử thách của cuộc sống, nhân vật này luôn giữ vững niềm tin vào tình yêu và sự gắn kết chân thành. Khi bạn bước vào câu chuyện này, bạn chính là chiếc chìa khóa mở ra cánh cửa dẫn lối đến những cảm xúc chân thực nhất.`,
     initialReactions: { heart: 850, fire: 520, crown: 310, sparkles: 420, blush: 610 },
-    comments: [
-      {
-        id: "fb-1",
-        userName: "Người Yêu Truyện",
-        content: "Nhân vật có chiều sâu rất cuốn hút, trải nghiệm nhập vai cực kỳ mượt mà!",
-        createdAt: "Hôm qua",
-        likes: 18,
-      },
-    ],
+    comments: [],
   };
 }
