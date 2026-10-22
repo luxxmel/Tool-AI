@@ -18,6 +18,7 @@ import { useWorkspaceBackground } from "@/context/WorkspaceBackgroundContext";
 import { playVietnameseTTS, stopVietnameseTTS } from "@/lib/ttsAudio";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
+import { isCharacterStoryBot } from "@/lib/characterUtils";
 
 interface BotData {
   id: string;
@@ -403,6 +404,38 @@ function getBotQuickTools(botId: string, category?: string): QuickToolItem[] {
     ];
   }
 
+  // 13.5 Trợ Lý Tình Yêu (An Nhiên) & Chuyên Gia Tình Cảm (Tuệ Mẫn)
+  if (botId === "love-advisor" || botId === "love-coach") {
+    return [
+      {
+        id: "love_decode",
+        label: "💌 Giải mã tin nhắn Crush",
+        promptPrefix: "Phân tích tâm lý và giải mã ý nghĩa thật sự đằng sau câu nói/tin nhắn này của đối phương:\n",
+        placeholder: "Dán tin nhắn hoặc câu nói của crush khiến bạn băn khoăn...",
+        isHighlight: true,
+      },
+      {
+        id: "love_flirt",
+        label: "🌷 Soạn tin nhắn thả thính",
+        promptPrefix: "Gợi ý 3 cách nhắn tin phản hồi tinh tế, cuốn hút và hài hước cho tình huống sau:\n",
+        placeholder: "Mô tả ngữ cảnh bạn muốn nhắn tin (rep story, mở đầu làm quen)...",
+        isHighlight: true,
+      },
+      {
+        id: "love_date",
+        label: "🥂 Kế hoạch hẹn hò mượt mà",
+        promptPrefix: "Lên kế hoạch một buổi hẹn hò ấn tượng, tự nhiên và dễ tạo rung động cho cặp đôi:\n",
+        placeholder: "Nhập sở thích hoặc phong cách của bạn và đối phương...",
+      },
+      {
+        id: "love_boundary",
+        label: "👑 Giữ giá trị bản thân",
+        promptPrefix: "Cho mình lời khuyên để xử lý tình huống sau mà vẫn giữ trọn sự tự tin, ranh giới lành mạnh và giá trị bản thân:\n",
+        placeholder: "Mô tả chuyện tình cảm khiến bạn thấy bị động hoặc lăn tăn...",
+      },
+    ];
+  }
+
   // 14. Nhân vật truyện nhập vai / Tổng tài / Thiếu gia / Tiên tôn / Danh môn
   const isVipStoryChar = [
     "char-tong-tai",
@@ -518,6 +551,8 @@ export default function BotChatPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isRecharging, setIsRecharging] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [characterSavedScripts, setCharacterSavedScripts] = useState<any[]>([]);
+  const [isScriptDrawerOpen, setIsScriptDrawerOpen] = useState(false);
   const { bgType } = useWorkspaceBackground();
 
   useEffect(() => {
@@ -538,6 +573,46 @@ export default function BotChatPage() {
   // States nâng cấp
   const [editingMsgId, setEditingMsgId] = useState<string | null>(null);
   const [editInputText, setEditInputText] = useState<string>("");
+
+  // Persona Roleplay State (Tên & Giới tính)
+  const [roleplayPersona, setRoleplayPersona] = useState<{ name: string; gender: "male" | "female" } | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const qName = searchParams?.get("rpName");
+    const qGender = searchParams?.get("gender") as "male" | "female" | null;
+
+    if (qName) {
+      const decodedName = decodeURIComponent(qName);
+      const chosenGender: "male" | "female" = qGender === "male" ? "male" : "female";
+      const personaObj: { name: string; gender: "male" | "female" } = { name: decodedName, gender: chosenGender };
+      setRoleplayPersona(personaObj);
+      try {
+        localStorage.setItem(`omni_rp_persona_${botId}`, JSON.stringify(personaObj));
+        localStorage.setItem("omni_rp_persona", JSON.stringify(personaObj));
+      } catch {}
+      return;
+    }
+
+    // Nếu không có trên URL, đọc từ localStorage
+    try {
+      const savedBotPersona = localStorage.getItem(`omni_rp_persona_${botId}`);
+      if (savedBotPersona) {
+        const p = JSON.parse(savedBotPersona);
+        if (p?.name) {
+          setRoleplayPersona({ name: String(p.name), gender: p.gender === "male" ? "male" : "female" });
+          return;
+        }
+      }
+      const savedGlobal = localStorage.getItem("omni_rp_persona");
+      if (savedGlobal) {
+        const p = JSON.parse(savedGlobal);
+        if (p?.name) {
+          setRoleplayPersona({ name: String(p.name), gender: p.gender === "male" ? "male" : "female" });
+        }
+      }
+    } catch {}
+  }, [botId, searchParams]);
   const [isListening, setIsListening] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<string>("tong_tai");
   const [isVoiceDropdownOpen, setIsVoiceDropdownOpen] = useState(false);
@@ -857,11 +932,12 @@ export default function BotChatPage() {
         const staticBot = ALL_ASSISTANTS_MAP[botId];
 
         // Fetch Bot info
-        const botRes = await fetch(`/api/bots/${botId}`);
-        if (botRes.ok) {
-          const botData = await botRes.json();
-          if (isMounted) {
-            setBot({
+        let resolvedBot: BotData | null = null;
+        try {
+          const botRes = await fetch(`/api/bots/${botId}`);
+          if (botRes.ok) {
+            const botData = await botRes.json();
+            resolvedBot = {
               ...botData,
               badge: botData.badge || staticBot?.badge,
               personality: botData.personality || staticBot?.personality,
@@ -869,12 +945,48 @@ export default function BotChatPage() {
               greeting: botData.greeting || staticBot?.greeting,
               suggestedPrompts: botData.suggestedPrompts || staticBot?.suggestedPrompts,
               category: botData.category || staticBot?.category,
-            });
+            };
           }
-        } else if (staticBot && isMounted) {
-          setBot(staticBot as unknown as BotData);
-        } else {
-          console.error("Không tìm thấy bot");
+        } catch (fetchErr) {
+          console.warn("Lỗi fetch /api/bots, sử dụng fallback cấu hình:", fetchErr);
+        }
+
+        // Nếu API chưa trả về, dùng staticBot từ ALL_ASSISTANTS_MAP
+        if (!resolvedBot && staticBot) {
+          resolvedBot = staticBot as unknown as BotData;
+        }
+
+        // Nếu là nhân vật truyện (char-...) mà chưa có trong danh sách bot, tự động tạo từ Character Stories
+        if (!resolvedBot && botId.startsWith("char-")) {
+          const { getCharacterStory } = await import("@/data/characterStories");
+          const story = getCharacterStory(botId);
+          if (story) {
+            resolvedBot = {
+              id: story.id,
+              name: story.name,
+              avatar: story.avatar || "/characters/luc_can_phong.jpg",
+              description: story.summary || story.quote,
+              systemPrompt: `Bạn là ${story.name}. Tính cách: ${story.personality}. Mối quan hệ với người dùng: ${story.relationship}. Luôn giữ vững phong thái nhân vật 100%.`,
+              badge: story.tag || "Nhân vật",
+              personality: story.personality,
+              tagline: story.quote,
+              greeting: story.quote ? `*nhìn em* ${story.quote}` : `Chào em. Lại đây bên cạnh tôi.`,
+              category: "entertainment",
+              suggestedPrompts: [
+                `*bước vào* Em tới tìm anh đây...`,
+                `Hôm nay em mệt quá, anh an ủi em đi...`,
+                `Anh đang nghĩ gì thế?`,
+              ],
+            };
+          }
+        }
+
+        if (isMounted) {
+          if (resolvedBot) {
+            setBot(resolvedBot);
+          } else {
+            console.error("Không tìm thấy bot:", botId);
+          }
         }
 
         // Fetch User Credits & Chat History (chỉ khi đã đăng nhập)
@@ -888,15 +1000,51 @@ export default function BotChatPage() {
             }
           }
 
-          const historyRes = await fetch(`/api/chat/history/${botId}?userId=${activeUserId}`);
-          if (historyRes.ok) {
-            const historyData = await historyRes.json();
-            if (isMounted) {
-              setConversationId(historyData.conversationId);
-              if (historyData.messages && historyData.messages.length > 0) {
-                setMessages(historyData.messages);
+          const qConvId = searchParams?.get("convId");
+          const isNewScript = searchParams?.get("new") === "true";
+
+          if (qConvId) {
+            // Load trực tiếp conversation theo ID đã chọn
+            const convRes = await fetch(`/api/conversations/${qConvId}`);
+            if (convRes.ok) {
+              const convData = await convRes.json();
+              if (isMounted) {
+                setConversationId(convData.id);
+                if (convData.messages && convData.messages.length > 0) {
+                  setMessages(convData.messages);
+                }
               }
             }
+          } else if (isNewScript) {
+            // Bắt đầu kịch bản mới hoàn toàn
+            if (isMounted) {
+              setConversationId(null);
+              setMessages([]);
+            }
+          } else {
+            // Mặc định: Lấy đoạn chat gần nhất
+            const historyRes = await fetch(`/api/chat/history/${botId}?userId=${activeUserId}`);
+            if (historyRes.ok) {
+              const historyData = await historyRes.json();
+              if (isMounted) {
+                setConversationId(historyData.conversationId);
+                if (historyData.messages && historyData.messages.length > 0) {
+                  setMessages(historyData.messages);
+                }
+              }
+            }
+          }
+
+          // Nếu là nhân vật truyện, tải toàn bộ danh sách kịch bản riêng của nhân vật này
+          if (isCharacterStoryBot(botId)) {
+            fetch(`/api/conversations?userId=${encodeURIComponent(activeUserId)}&botId=${encodeURIComponent(botId)}`)
+              .then((res) => (res.ok ? res.json() : []))
+              .then((data) => {
+                if (Array.isArray(data) && isMounted) {
+                  setCharacterSavedScripts(data);
+                }
+              })
+              .catch((err) => console.error("Lỗi tải danh sách kịch bản nhân vật:", err));
           }
         }
       } catch (err) {
@@ -1034,6 +1182,10 @@ export default function BotChatPage() {
           userName: currentUser?.displayName || currentUser?.username,
           conversationId,
           language,
+          roleplayPersona: roleplayPersona ? {
+            name: roleplayPersona.name,
+            gender: roleplayPersona.gender,
+          } : undefined,
           messages: newMessages.map((m) => ({
             role: m.role,
             content: m.content,
@@ -1270,17 +1422,85 @@ export default function BotChatPage() {
             </div>
           ) : (
             <>
+              {/* Nút Kịch bản đã lưu & Tạo kịch bản mới (Dành riêng cho nhân vật truyện) */}
+              {isCharacterStoryBot(botId) && (
+                <div className="relative flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsScriptDrawerOpen((prev) => !prev)}
+                    className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 text-xs font-bold transition-all shadow-xs hover:bg-cyan-500/20 cursor-pointer"
+                    title="Xem các kịch bản / đoạn chat đã lưu với nhân vật này"
+                  >
+                    <span>📜</span>
+                    <span className="hidden sm:inline">Kịch bản ({characterSavedScripts.length})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setConversationId(null);
+                      setMessages([]);
+                      router.replace(`/chat/${botId}?new=true`);
+                    }}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all shadow-xs hover:bg-emerald-500/20 cursor-pointer"
+                    title="Bắt đầu một kịch bản mới với nhân vật này"
+                  >
+                    <span>➕</span>
+                    <span className="hidden md:inline">Mới</span>
+                  </button>
+
+                  {/* Dropdown danh sách kịch bản */}
+                  {isScriptDrawerOpen && (
+                    <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white dark:bg-[#131622] border border-slate-200 dark:border-slate-800 shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95">
+                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white">
+                        <span>📜 Kịch bản với {bot.name}</span>
+                        <button
+                          onClick={() => setIsScriptDrawerOpen(false)}
+                          className="text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
+                        {characterSavedScripts.length === 0 ? (
+                          <div className="py-4 text-center text-xs text-slate-400">
+                            Chưa có kịch bản nào được lưu
+                          </div>
+                        ) : (
+                          characterSavedScripts.map((s) => (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() => {
+                                setIsScriptDrawerOpen(false);
+                                router.replace(`/chat/${botId}?convId=${s.id}`);
+                                setConversationId(s.id);
+                                fetch(`/api/conversations/${s.id}`)
+                                  .then((r) => r.json())
+                                  .then((data) => {
+                                    if (data.messages) setMessages(data.messages);
+                                  });
+                              }}
+                              className={`w-full text-left p-2 rounded-xl text-xs transition-colors flex items-center justify-between cursor-pointer ${
+                                conversationId === s.id
+                                  ? "bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-bold border border-cyan-500/30"
+                                  : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                              }`}
+                            >
+                              <span className="truncate pr-2">{s.title || "Cuộc trò chuyện"}</span>
+                              <span className="text-[10px] text-slate-400 shrink-0">{s.messagesCount || 0} msgs</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Nút bật/tắt ẩn ghi chú cử chỉ (Chỉ hiện khi là nhân vật truyện / nhập vai) */}
-              {[
-                "char-tong-tai",
-                "char-co-da-than",
-                "char-tieu-viem",
-                "char-lam-tuyet-dao",
-                "char-luna",
-                "char-mira",
-                "char-zen",
-                "char-alex",
-              ].includes(botId) && (
+              {isCharacterStoryBot(botId) && (
                 <button
                   type="button"
                   onClick={() => setHideActionNotes((prev) => !prev)}
@@ -1547,14 +1767,14 @@ export default function BotChatPage() {
 
                     {isUser ? (
                       <div>
-                        {/* Header của User Message để luôn nhận diện rõ ràng đoạn tin nhắn của bạn */}
+                        {/* Header của User Message hiển thị Tên nhập vai + Biểu tượng Giới tính */}
                         <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-white/20 text-[11px] font-bold text-white/90">
-                          <span className="flex items-center gap-1">
-                            <span>👤</span>
-                            <span>{user?.displayName || "Bạn"}</span>
+                          <span className="flex items-center gap-1.5">
+                            <span>{roleplayPersona?.gender === "male" ? "⚡" : "🌸"}</span>
+                            <span>{roleplayPersona?.name || user?.displayName || (language === "en" ? "You" : "Bạn")}</span>
                           </span>
-                          <span className="text-[10px] font-medium text-white/75 bg-white/20 px-1.5 py-0.2 rounded-md">
-                            {language === "en" ? "Question" : "Câu hỏi"}
+                          <span className="text-[10px] font-medium text-white/80 bg-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span>{roleplayPersona?.gender === "male" ? "♂ Nam" : "♀ Nữ"}</span>
                           </span>
                         </div>
                         <div className="whitespace-pre-wrap break-words text-sm sm:text-base font-medium text-white leading-relaxed select-text">
@@ -1657,11 +1877,13 @@ export default function BotChatPage() {
                     {user?.avatar ? (
                       <img
                         src={user.avatar}
-                        alt={user.displayName || "User"}
+                        alt={roleplayPersona?.name || user?.displayName || "User"}
                         className="w-full h-full object-cover"
                       />
+                    ) : roleplayPersona?.name ? (
+                      roleplayPersona.name.charAt(0).toUpperCase()
                     ) : (
-                      user?.displayName?.charAt(0).toUpperCase() || "U"
+                      user?.displayName?.charAt(0).toUpperCase() || (roleplayPersona?.gender === "male" ? "♂" : "♀")
                     )}
                   </div>
                 )}

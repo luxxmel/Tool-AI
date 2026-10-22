@@ -141,6 +141,24 @@ function generatePersonaFallback(
       `3. **Gợi ý bước tiếp theo:** Bạn hãy giữ tâm thế bình tĩnh, không vội vàng dồn ép nhưng cũng đừng để bản thân bị cuốn theo thế bị động. Bạn có thể chia sẻ thêm cho Tuệ Mẫn biết chi tiết hơn về cách hai bạn thường trò chuyện không? Mình sẽ giúp bạn lên chiến lược giao tiếp tinh tế nhất nhé!`;
   }
 
+  // 1.3 An Nhiên · Trợ Lý Tình Yêu & Bật Đèn Xanh (Tâm lý, thả thính, giải mã tin nhắn crush, ngọt ngào)
+  if (botName.includes("An Nhiên") || botName.includes("Trợ Lý Tình Yêu") || botPrompt.includes("An Nhiên")) {
+    const isGreeting = /^(chào|hello|hi|chào bạn|chào em|alo|hey|an nhiên)/i.test(userMessage.trim());
+    if (isGreeting) {
+      return `Hế lô bạn yêu! An Nhiên nghe thấy bạn gọi rồi nè! 💌✨\n\n` +
+        `Chuyện tình cảm của bạn hôm nay thế nào rồi? Đang có crush làm tim đập thình thịch, vừa nhận được tin nhắn khó hiểu cần giải mã, hay đang chuẩn bị cho một buổi hẹn hò quan trọng? Kể ngay cho An Nhiên nghe nào, quân sư tình trường sẵn sàng cùng bạn "tác chiến" đây! 💕🌷`;
+    }
+    return `An Nhiên vừa đọc thật kỹ chuyện "${userMessage}" của bạn nè! 💌✨\n\n` +
+      `Để An Nhiên bóc tách nhanh cho bạn theo góc nhìn tâm lý hẹn hò nhé:\n\n` +
+      `🔍 **1. Đọc vị tình huống:** Tình huống này cho thấy cảm xúc giữa hai bạn đang ở một giai đoạn khá thú vị. Đối phương có thể đang dò xét tín hiệu từ bạn hoặc cũng đang bối rối chưa biết cách bày tỏ.\n\n` +
+      `🎯 **2. Chiến thuật gợi ý:**\n` +
+      `- Giữ nguyên tắc **"Bật đèn xanh tinh tế"**: Không quá vồ vập để giữ trọn sức hút, nhưng cũng không quá lạnh lùng khiến họ nản lòng.\n` +
+      `- Tạo một cái cớ tự nhiên: Hỏi về một sở thích chung, nhờ họ một việc nhỏ hoặc phản hồi câu chuyện trên mạng xã hội một cách dí dỏm.\n\n` +
+      `💬 **Gợi ý tin nhắn gửi đi:**\n` +
+      `*"Dạo này thấy bạn bận rộn ghê, vừa xem cái này tự nhiên nhớ tới bạn nè..."*\n\n` +
+      `Bạn kể thêm cho An Nhiên chi tiết hơn về tính cách đối phương để mình chỉnh mẫu tin nhắn chuẩn xác 100% cho bạn nhé! 💕`;
+  }
+
   // 2. Lục Cận Phong · Bá Đạo Tổng Tài (Thâm trầm, bá đạo, sủng ái độc chiếm, câu từ dài dặn lôi cuốn)
   if (botName.includes("Tổng Tài") || botPrompt.includes("Lục Cận Phong") || botName.includes("Lục Cận Phong") || botName.includes("Lục Ngang Thiên")) {
     const isGreeting = /^(chào|hello|hi|chào cậu|chào anh|alo|hey)/i.test(userMessage.trim());
@@ -431,7 +449,7 @@ function generatePersonaFallback(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { messages, conversationId, projectId, model: requestedModel, language } = body;
+    const { messages, conversationId, projectId, model: requestedModel, language, roleplayPersona } = body;
     let botId = body.botId;
     let userId = body.userId;
     let userEmail = body.userEmail;
@@ -675,6 +693,20 @@ TIÊU CHUẨN CÂU TRẢ LỜI CHỈN CHU, SÂU SẮC & CHUYÊN NGHIỆP:
 - GIỮ VỮNG 100% PERSONALITY: Tuyệt đối trung thành với tính cách, phong thái xưng hô độc bản của bạn.
 - TRÌNH BÀY ĐẸP MẮT: Dùng Markdown thoáng đãng, nhấn mạnh từ khóa chính, dùng icon/emoji tinh tế.
 - BẢO MẬT: Tuyệt đối không bao giờ nhắc tên các mô hình bên thứ 3 (GPT, Claude, Gemini, OpenAI...).`;
+
+      // Hướng dẫn xưng hô chuẩn mực theo Danh tính & Giới tính người dùng đã thiết lập
+      if (roleplayPersona?.name || roleplayPersona?.gender) {
+        const rpName = roleplayPersona.name || (roleplayPersona.gender === "female" ? "Nàng" : "Chàng");
+        const isFemale = roleplayPersona.gender === "female";
+        effectiveSystemPrompt += `
+
+[THÔNG TIN NGƯỜI CHƠI & QUY TẮC XƯNG HÔ ĐẶC BIỆT]:
+1. TÊN NGƯỜI ĐANG TRÒ CHUYỆN VỚI BẠN: "${rpName}".
+2. GIỚI TÍNH CỦA NGƯỜI ĐANG TRÒ CHUYỆN: ${isFemale ? "NỮ (Con gái / Nàng / Nữ tử / Tiểu thư / Em)" : "NAM (Con trai / Chàng / Nam tử / Huynh đài / Thiếu hiệp / Anh)"}.
+3. QUY TẮC BẮT BUỘC VỀ XƯNG HÔ:
+   - Hãy gọi người dùng trực tiếp bằng tên "${rpName}" hoặc các danh xưng phù hợp với giới tính ${isFemale ? "NỮ (Em, Nàng, Muội muội, Tiểu thư...)" : "NAM (Anh, Chàng, Huynh, Thiếu hiệp...)"} tùy theo bối cảnh cổ trang, hiện đại hay thần thoại của nhân vật.
+   - Tuyệt đối xưng hô chuẩn xác theo giới tính đã chọn này trong toàn bộ câu trả lời, không nhầm lẫn!`;
+      }
 
       // Giới hạn phạm vi nghiêm ngặt cho Góc Chữa Lành: CHỈ TÂM SỰ & XOA DỊU, KHÔNG TRẢ LỜI CÂU HỎI NGOÀI LUỒNG (Code, Toán, SEO, Kiến thức...)
       if (botId === "goc-chua-lanh" || botId === "healing-companion" || (bot.name && bot.name.includes("Góc Chữa Lành"))) {

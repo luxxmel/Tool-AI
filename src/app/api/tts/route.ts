@@ -378,6 +378,22 @@ export async function GET(req: NextRequest) {
       }
     } catch (neuralError) {
       console.error("Microsoft Neural TTS GET error:", neuralError);
+      // Fallback sang Google Translate TTS để đảm bảo âm thanh luôn luôn phát được
+      try {
+        const fallbackBuf = await fetchGoogleTTSChunk(textToSynthesize.slice(0, 200));
+        if (fallbackBuf && fallbackBuf.length > 0) {
+          return new NextResponse(new Uint8Array(fallbackBuf), {
+            status: 200,
+            headers: {
+              "Content-Type": "audio/mpeg",
+              "Cache-Control": "public, max-age=86400, s-maxage=86400",
+              "X-TTS-Engine": "Google-Translate-Fallback",
+            },
+          });
+        }
+      } catch (fbErr) {
+        console.error("Google TTS fallback GET error:", fbErr);
+      }
       return new NextResponse("Không thể kết nối máy chủ giọng nói Neural", { status: 503 });
     }
 
@@ -422,6 +438,22 @@ export async function POST(req: NextRequest) {
       }
     } catch (neuralError) {
       console.error("Microsoft Neural TTS POST error:", neuralError);
+      // Fallback sang Google Translate TTS để đảm bảo người dùng luôn nghe thấy âm thanh
+      try {
+        const fallbackBuf = await fetchGoogleTTSChunk(textToSynthesize.slice(0, 200));
+        if (fallbackBuf && fallbackBuf.length > 0) {
+          return new NextResponse(new Uint8Array(fallbackBuf), {
+            status: 200,
+            headers: {
+              "Content-Type": "audio/mpeg",
+              "Cache-Control": "public, max-age=86400, s-maxage=86400",
+              "X-TTS-Engine": "Google-Translate-Fallback",
+            },
+          });
+        }
+      } catch (fbErr) {
+        console.error("Google TTS fallback POST error:", fbErr);
+      }
       return NextResponse.json(
         { error: "Không thể tạo giọng đọc Neural lúc này" },
         { status: 503 }

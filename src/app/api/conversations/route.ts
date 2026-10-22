@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId");
     const projectId = searchParams.get("projectId");
+    const botId = searchParams.get("botId");
+    const excludeCharacters = searchParams.get("excludeCharacters") === "true";
     const all = searchParams.get("all") === "true";
 
     if (!userId || userId === "user-demo-123" || userId.startsWith("guest_") || userId === "null" || userId === "undefined") {
@@ -27,6 +29,15 @@ export async function GET(request: NextRequest) {
       whereClause.projectId = projectId;
     } else if (!all) {
       whereClause.projectId = null;
+    }
+
+    if (botId) {
+      whereClause.botId = botId;
+    } else if (excludeCharacters) {
+      // Loại trừ các nhân vật truyện khỏi danh sách đoạn chat chung ở ngoài
+      whereClause.NOT = [
+        { botId: { startsWith: "char-" } },
+      ];
     }
 
     const conversations = await prisma.conversation.findMany({

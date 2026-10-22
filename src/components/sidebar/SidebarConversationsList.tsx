@@ -6,6 +6,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 
+import { isCharacterStoryBot } from "@/lib/characterUtils";
+
 export interface ConversationSummary {
   id: string;
   title: string;
@@ -88,7 +90,7 @@ export default function SidebarConversationsList({
     try {
       setIsLoading(true);
       let serverConvs: ConversationSummary[] = [];
-      const res = await fetch(`/api/conversations?userId=${encodeURIComponent(uid)}`);
+      const res = await fetch(`/api/conversations?userId=${encodeURIComponent(uid)}&excludeCharacters=true`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) serverConvs = data;
@@ -115,10 +117,10 @@ export default function SidebarConversationsList({
         }
       } catch {}
 
-      // Hợp nhất serverConvs và localConvs không bị lặp ID, loại bỏ triệt để các ID đã xóa hoặc thuộc về dự án riêng
+      // Hợp nhất serverConvs và localConvs không bị lặp ID, loại bỏ triệt để các ID đã xóa, dự án riêng hoặc nhân vật truyện
       const map = new Map<string, ConversationSummary>();
       [...serverConvs, ...localConvs].forEach((item: any) => {
-        if (item && item.id && !deletedIds.has(item.id) && !item.projectId) {
+        if (item && item.id && !deletedIds.has(item.id) && !item.projectId && !isCharacterStoryBot(item.botId)) {
           const existing = map.get(item.id);
           if (!existing || new Date(item.updatedAt) > new Date(existing.updatedAt)) {
             map.set(item.id, item);

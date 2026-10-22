@@ -22,10 +22,9 @@ export default function CharacterCard({ character, onClick }: CharacterCardProps
   const titleAlias = parts.length > 1 ? parts.slice(1).join(" · ").trim() : "";
 
   return (
-    <Link
-      href={`/chat/${character.id}`}
+    <div
       onClick={() => onClick?.(character)}
-      className="group relative min-h-[200px] h-full rounded-2xl bg-white dark:bg-[#0c0e18] border border-slate-200/90 dark:border-slate-800/80 hover:border-cyan-500/70 dark:hover:border-cyan-500/70 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between block"
+      className="group relative min-h-[200px] h-full rounded-2xl bg-white dark:bg-[#0c0e18] border border-slate-200/90 dark:border-slate-800/80 hover:border-cyan-500/70 dark:hover:border-cyan-500/70 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between"
     >
       <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 rounded-full blur-2xl group-hover:from-cyan-500/20 group-hover:to-violet-500/20 transition-all pointer-events-none" />
 
@@ -71,6 +70,6 @@ export default function CharacterCard({ character, onClick }: CharacterCardProps
           {language === "en" ? "Roleplay →" : "Nhập vai →"}
         </span>
       </div>
-    </Link>
+    </div>
   );
 }

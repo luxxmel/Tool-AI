@@ -8,6 +8,7 @@ import AppSidebar from "@/components/sidebar/AppSidebar";
 import AiSearchBox from "@/components/home/AiSearchBox";
 import AssistantCard from "@/components/home/AssistantCard";
 import CharacterCard from "@/components/home/CharacterCard";
+import CharacterDetailModal from "@/components/characters/CharacterDetailModal";
 import ChatResponseModal from "@/components/home/ChatResponseModal";
 import LoginForm from "@/components/auth/LoginForm";
 import ExploreFeed from "@/components/explore/ExploreFeed";
@@ -62,6 +63,7 @@ function HomeContent() {
   const { bgType } = useWorkspaceBackground();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("appearance");
+  const [selectedDetailChar, setSelectedDetailChar] = useState<CharacterItem | null>(null);
 
   // Đồng bộ URL tab parameter
   useEffect(() => {
@@ -223,9 +225,9 @@ function HomeContent() {
     router.push(`/chat/${assistant.id}`);
   };
 
-  // Handle clicking a character -> chuyển hướng sang trang chat /chat/[botId]
+  // Handle clicking a character -> Mở modal chi tiết cốt truyện + cảm xúc + persona
   const handleSelectCharacter = (character: CharacterItem) => {
-    router.push(`/chat/${character.id}`);
+    setSelectedDetailChar(character);
   };
 
   const handleSelectTab = (tab: string) => {
@@ -578,6 +580,17 @@ function HomeContent() {
         onClose={() => setIsSettingsOpen(false)}
         initialTab={settingsTab}
       />
+
+      {/* Character Story Detail & Persona Modal */}
+      {selectedDetailChar && (
+        <CharacterDetailModal
+          characterId={selectedDetailChar.id}
+          fallbackName={selectedDetailChar.name}
+          fallbackAvatar={selectedDetailChar.avatar}
+          isOpen={!!selectedDetailChar}
+          onClose={() => setSelectedDetailChar(null)}
+        />
+      )}
 
       {/* Native-style Mobile Bottom Navigation Bar */}
       <MobileBottomBar

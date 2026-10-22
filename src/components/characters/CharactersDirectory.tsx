@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CharacterItem, TRENDING_CHARACTERS } from "@/data/aiData";
 import { useLanguage } from "@/context/LanguageContext";
+import CharacterDetailModal from "@/components/characters/CharacterDetailModal";
 
 export interface DirectoryCharacterItem extends CharacterItem {
   badge?: string;
@@ -49,6 +50,7 @@ export default function CharactersDirectory() {
   const { language, t } = useLanguage();
   const [selectedCat, setSelectedCat] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedChar, setSelectedChar] = useState<DirectoryCharacterItem | null>(null);
 
   const filteredCharacters = ALL_CHARACTERS.filter((char) => {
     const matchCat = selectedCat === "all" || char.tag === selectedCat;
@@ -113,11 +115,10 @@ export default function CharactersDirectory() {
         {/* Poster Card Grid: 6 columns per row on Desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {filteredCharacters.map((char) => (
-            <Link
+            <div
               key={char.id}
-              href={`/chat/${char.id}`}
-              onClick={() => router.push(`/chat/${char.id}`)}
-              className="group relative aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#141622] border border-slate-800/80 hover:border-slate-600 transition-all duration-300 shadow-md hover:shadow-2xl hover:scale-[1.02] cursor-pointer flex flex-col justify-end"
+              onClick={() => setSelectedChar(char)}
+              className="group relative aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#141622] border border-slate-800/80 hover:border-cyan-500/80 transition-all duration-300 shadow-md hover:shadow-2xl hover:scale-[1.02] cursor-pointer flex flex-col justify-end"
             >
               {/* Full Card Background Image */}
               <img
@@ -153,7 +154,7 @@ export default function CharactersDirectory() {
                   <span className="font-mono text-slate-300">{char.interactions}</span>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
@@ -167,11 +168,10 @@ export default function CharactersDirectory() {
         {/* Poster Card Grid: 6 columns per row on Desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {filteredCharacters.slice(0, 6).map((char) => (
-            <Link
+            <div
               key={`trending-${char.id}`}
-              href={`/chat/${char.id}`}
-              onClick={() => router.push(`/chat/${char.id}`)}
-              className="group relative aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#141622] border border-slate-800/80 hover:border-slate-600 transition-all duration-300 shadow-md hover:shadow-2xl hover:scale-[1.02] cursor-pointer flex flex-col justify-end"
+              onClick={() => setSelectedChar(char)}
+              className="group relative aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#141622] border border-slate-800/80 hover:border-cyan-500/80 transition-all duration-300 shadow-md hover:shadow-2xl hover:scale-[1.02] cursor-pointer flex flex-col justify-end"
             >
               <img
                 src={char.avatar}
@@ -199,10 +199,21 @@ export default function CharactersDirectory() {
                   <span className="font-mono text-slate-300">{char.interactions}</span>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Character Story Detail & Persona Onboarding Modal */}
+      {selectedChar && (
+        <CharacterDetailModal
+          characterId={selectedChar.id}
+          fallbackName={selectedChar.name}
+          fallbackAvatar={selectedChar.avatar}
+          isOpen={!!selectedChar}
+          onClose={() => setSelectedChar(null)}
+        />
+      )}
     </div>
   );
 }

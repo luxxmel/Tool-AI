@@ -8,30 +8,31 @@ export async function GET(
   try {
     const { botId } = await context.params;
 
-    let bot = await prisma.bot.findUnique({
-      where: { id: botId },
-      select: {
-        id: true,
-        name: true,
-        avatar: true,
-        description: true,
-        systemPrompt: true,
-        createdAt: true,
-      },
-    });
-
     const { ALL_ASSISTANTS_MAP } = await import("@/data/aiData");
     const staticBot = ALL_ASSISTANTS_MAP[botId];
 
-    if (staticBot) {
-      // Tự động đồng bộ chuẩn xác từ ALL_ASSISTANTS_MAP vào DB nếu DB đang chứa thông tin cũ
-      if (
-        !bot ||
-        bot.name !== staticBot.name ||
-        bot.systemPrompt !== (staticBot.systemPrompt || staticBot.description) ||
-        bot.avatar !== staticBot.avatar
-      ) {
-        try {
+    let bot: any = null;
+    try {
+      bot = await prisma.bot.findUnique({
+        where: { id: botId },
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+          description: true,
+          systemPrompt: true,
+          createdAt: true,
+        },
+      });
+
+      if (staticBot) {
+        // Tự động đồng bộ chuẩn xác từ ALL_ASSISTANTS_MAP vào DB nếu DB đang chứa thông tin cũ
+        if (
+          !bot ||
+          bot.name !== staticBot.name ||
+          bot.systemPrompt !== (staticBot.systemPrompt || staticBot.description) ||
+          bot.avatar !== staticBot.avatar
+        ) {
           bot = await prisma.bot.upsert({
             where: { id: botId },
             update: {
@@ -56,8 +57,10 @@ export async function GET(
               createdAt: true,
             },
           });
-        } catch {}
+        }
       }
+    } catch (dbErr) {
+      console.warn("DB bot query warning, falling back to static bot config:", dbErr);
     }
 
     if (!bot && !staticBot) {
