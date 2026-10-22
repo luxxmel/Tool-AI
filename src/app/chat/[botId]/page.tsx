@@ -1021,11 +1021,17 @@ export default function BotChatPage() {
               }
             }
           } else if (isNewScript) {
-            // Bắt đầu kịch bản mới hoàn toàn
+            // Bắt đầu kịch bản mới hoàn toàn (chỉ reset 1 lần duy nhất khi chưa có tin nhắn nào được gửi)
             if (isMounted && hasLoadedHistoryRef.current !== loadKey) {
-              setConversationId(null);
-              setMessages([]);
               hasLoadedHistoryRef.current = loadKey;
+              setConversationId(null);
+              setMessages((prev) => (prev.length === 0 ? [] : prev));
+              // Xóa query param new=true để không bị reset khi re-render
+              if (typeof window !== "undefined" && window.history?.replaceState) {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.delete("new");
+                window.history.replaceState({}, "", currentUrl.toString());
+              }
             }
           } else {
             // Mặc định: Lấy đoạn chat gần nhất (chỉ tải 1 lần đầu khi vào trang, không ghi đè nếu người dùng đang chat)
@@ -1176,6 +1182,16 @@ export default function BotChatPage() {
     const newMessages: ChatMessage[] = [...messages, userMessageItem];
     setMessages((prev) => [...prev, userMessageItem, aiMessageItem]);
     setIsLoading(true);
+
+    // Khóa hasLoadedHistoryRef để tuyệt đối không có effect nào reset lại state
+    hasLoadedHistoryRef.current = "locked";
+    if (typeof window !== "undefined" && window.history?.replaceState) {
+      const currentUrl = new URL(window.location.href);
+      if (currentUrl.searchParams.has("new")) {
+        currentUrl.searchParams.delete("new");
+        window.history.replaceState({}, "", currentUrl.toString());
+      }
+    }
 
     // Cuộn ngay đến tin nhắn người dùng vừa gửi để người dùng thấy rõ ràng
     setTimeout(() => {
@@ -1699,12 +1715,12 @@ export default function BotChatPage() {
           </div>
         ) : (
           messages.map((msg) => {
-            const isUser = msg.role === "user";
+            const isUser = msg.role?.toLowerCase() === "user";
             return (
               <div
                 key={msg.id}
                 id={msg.id}
-                className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"} items-start transition-all`}
+                className={`flex gap-3 ${isUser ? "justify-end ml-auto" : "justify-start mr-auto"} items-start transition-all w-full`}
               >
                 {/* Avatar của Assistant */}
                 {!isUser && (
@@ -1723,7 +1739,7 @@ export default function BotChatPage() {
 
                 {/* Nội dung Bubble */}
                 {isUser && editingMsgId === msg.id ? (
-                  <div className="w-full max-w-[85%] sm:max-w-[75%] p-3.5 rounded-3xl bg-white dark:bg-[#131522] border border-indigo-400 dark:border-cyan-400 shadow-xl space-y-2.5 animate-in fade-in duration-150">
+                  <div className="w-full max-w-[85%] sm:max-w-[75%] p-3.5 rounded-3xl bg-white dark:bg-[#131522] border border-indigo-400 dark:border-cyan-400 shadow-xl space-y-2.5 animate-in fade-in duration-150 ml-auto">
                     <div className="text-[11px] font-bold text-indigo-600 dark:text-cyan-300 flex items-center gap-1.5">
                       <span>✏️</span>
                       <span>{language === "en" ? "Edit your message" : "Chỉnh sửa lời thoại của bạn"}</span>
@@ -1757,14 +1773,15 @@ export default function BotChatPage() {
                   <div
                     className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-5 py-3.5 text-xs sm:text-sm leading-relaxed group shadow-md transition-all ${
                       isUser
-                        ? "bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-br-sm shadow-indigo-500/25 border border-indigo-400/40 font-medium"
-                        : "bg-white dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-xs backdrop-blur-md"
+                        ? "ml-auto bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-br-sm shadow-indigo-500/25 border border-indigo-400/40 font-medium"
+                        : "mr-auto bg-white dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-xs backdrop-blur-md"
                     }`}
                     style={
                       isUser
                         ? {
                             background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #06b6d4 100%)",
                             color: "#ffffff",
+                            marginLeft: "auto",
                           }
                         : undefined
                     }
