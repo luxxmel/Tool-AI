@@ -553,6 +553,7 @@ export default function BotChatPage() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [characterSavedScripts, setCharacterSavedScripts] = useState<any[]>([]);
   const [isScriptDrawerOpen, setIsScriptDrawerOpen] = useState(false);
+  const hasLoadedHistoryRef = useRef<string | null>(null);
   const { bgType } = useWorkspaceBackground();
 
   useEffect(() => {
@@ -891,8 +892,8 @@ export default function BotChatPage() {
     if (msgId) {
       const el = document.getElementById(msgId);
       if (el) {
-        // Cuộn để bong bóng câu hỏi của User nằm ngay dưới header, không bị che khuất
-        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        // Cuộn để bong bóng câu hỏi của User nằm ở vị trí rõ ràng, không bị che khuất
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
     }
@@ -903,16 +904,16 @@ export default function BotChatPage() {
   const handleScroll = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-    // Nếu khoảng cách đến đáy <= 100px thì tính là đang chủ động theo dõi ở đáy
-    isUserNearBottomRef.current = scrollHeight - scrollTop - clientHeight <= 100;
+    // Nếu khoảng cách đến đáy <= 160px thì tính là đang chủ động theo dõi ở đáy
+    isUserNearBottomRef.current = scrollHeight - scrollTop - clientHeight <= 160;
   };
 
   useEffect(() => {
-    // Chỉ tự động cuộn nếu người dùng đang ở sát đáy, tránh kéo trôi mất câu hỏi vừa gửi
-    if (isUserNearBottomRef.current && !isLoading) {
+    // Tự động cuộn theo đáy khi tin nhắn mới xuất hiện nếu người dùng đang ở gần đáy
+    if (isUserNearBottomRef.current) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [messages, isLoading]);
+  }, [messages]);
 
   // 1. Tải thông tin Bot và Credit của User
   useEffect(() => {
@@ -1002,34 +1003,42 @@ export default function BotChatPage() {
 
           const qConvId = searchParams?.get("convId");
           const isNewScript = searchParams?.get("new") === "true";
+          const loadKey = `${botId}_${activeUserId || "anon"}_${qConvId || (isNewScript ? "new" : "default")}`;
 
           if (qConvId) {
             // Load trực tiếp conversation theo ID đã chọn
-            const convRes = await fetch(`/api/conversations/${qConvId}`);
-            if (convRes.ok) {
-              const convData = await convRes.json();
-              if (isMounted) {
-                setConversationId(convData.id);
-                if (convData.messages && convData.messages.length > 0) {
-                  setMessages(convData.messages);
+            if (hasLoadedHistoryRef.current !== loadKey) {
+              const convRes = await fetch(`/api/conversations/${qConvId}`);
+              if (convRes.ok) {
+                const convData = await convRes.json();
+                if (isMounted) {
+                  setConversationId(convData.id);
+                  if (convData.messages && convData.messages.length > 0) {
+                    setMessages(convData.messages);
+                    hasLoadedHistoryRef.current = loadKey;
+                  }
                 }
               }
             }
           } else if (isNewScript) {
             // Bắt đầu kịch bản mới hoàn toàn
-            if (isMounted) {
+            if (isMounted && hasLoadedHistoryRef.current !== loadKey) {
               setConversationId(null);
               setMessages([]);
+              hasLoadedHistoryRef.current = loadKey;
             }
           } else {
-            // Mặc định: Lấy đoạn chat gần nhất
-            const historyRes = await fetch(`/api/chat/history/${botId}?userId=${activeUserId}`);
-            if (historyRes.ok) {
-              const historyData = await historyRes.json();
-              if (isMounted) {
-                setConversationId(historyData.conversationId);
-                if (historyData.messages && historyData.messages.length > 0) {
-                  setMessages(historyData.messages);
+            // Mặc định: Lấy đoạn chat gần nhất (chỉ tải 1 lần đầu khi vào trang, không ghi đè nếu người dùng đang chat)
+            if (hasLoadedHistoryRef.current !== loadKey) {
+              const historyRes = await fetch(`/api/chat/history/${botId}?userId=${activeUserId}`);
+              if (historyRes.ok) {
+                const historyData = await historyRes.json();
+                if (isMounted) {
+                  setConversationId(historyData.conversationId);
+                  if (historyData.messages && historyData.messages.length > 0) {
+                    setMessages(historyData.messages);
+                    hasLoadedHistoryRef.current = loadKey;
+                  }
                 }
               }
             }
