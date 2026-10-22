@@ -1015,8 +1015,8 @@ export default function BotChatPage() {
                   setConversationId(convData.id);
                   if (convData.messages && convData.messages.length > 0) {
                     setMessages(convData.messages);
-                    hasLoadedHistoryRef.current = loadKey;
                   }
+                  hasLoadedHistoryRef.current = loadKey;
                 }
               }
             }
@@ -1030,14 +1030,17 @@ export default function BotChatPage() {
           } else {
             // Mặc định: Lấy đoạn chat gần nhất (chỉ tải 1 lần đầu khi vào trang, không ghi đè nếu người dùng đang chat)
             if (hasLoadedHistoryRef.current !== loadKey) {
-              const historyRes = await fetch(`/api/chat/history/${botId}?userId=${activeUserId}`);
+              hasLoadedHistoryRef.current = loadKey;
+              const historyRes = await fetch(`/api/chat/history/${botId}?userId=${encodeURIComponent(activeUserId)}`);
               if (historyRes.ok) {
                 const historyData = await historyRes.json();
                 if (isMounted) {
-                  setConversationId(historyData.conversationId);
+                  if (historyData.conversationId) {
+                    setConversationId(historyData.conversationId);
+                  }
                   if (historyData.messages && historyData.messages.length > 0) {
-                    setMessages(historyData.messages);
-                    hasLoadedHistoryRef.current = loadKey;
+                    // Chỉ setMessages nếu hiện tại chưa có tin nhắn nào đang hiển thị
+                    setMessages((prev) => (prev.length === 0 ? historyData.messages : prev));
                   }
                 }
               }
@@ -1155,21 +1158,24 @@ export default function BotChatPage() {
     }
     setAttachedImages([]);
 
-    // Tạo tin nhắn User tức thời trên giao diện (Optimistic update)
+    // Tạo tin nhắn User và AI placeholder tức thời trên giao diện (Single batch state update)
     const userMsgId = `user-${Date.now()}`;
-    const newMessages: ChatMessage[] = [
-      ...messages,
-      { id: userMsgId, role: "user", content: userText, images: imagesToSend },
-    ];
-    setMessages(newMessages);
-    setIsLoading(true);
+    const aiMsgId = `ai-${Date.now() + 1}`;
+    const userMessageItem: ChatMessage = {
+      id: userMsgId,
+      role: "user",
+      content: userText,
+      images: imagesToSend,
+    };
+    const aiMessageItem: ChatMessage = {
+      id: aiMsgId,
+      role: "assistant",
+      content: "",
+    };
 
-    // Chuẩn bị khung tin nhắn của AI
-    const aiMsgId = `ai-${Date.now()}`;
-    setMessages((prev) => [
-      ...prev,
-      { id: aiMsgId, role: "assistant", content: "" },
-    ]);
+    const newMessages: ChatMessage[] = [...messages, userMessageItem];
+    setMessages((prev) => [...prev, userMessageItem, aiMessageItem]);
+    setIsLoading(true);
 
     // Cuộn ngay đến tin nhắn người dùng vừa gửi để người dùng thấy rõ ràng
     setTimeout(() => {
@@ -1749,11 +1755,19 @@ export default function BotChatPage() {
                   </div>
                 ) : (
                   <div
-                    className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-5 py-3.5 text-xs sm:text-sm leading-relaxed group ${
+                    className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-5 py-3.5 text-xs sm:text-sm leading-relaxed group shadow-md transition-all ${
                       isUser
-                        ? "bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 text-white rounded-br-xs shadow-md shadow-indigo-600/20 font-medium"
-                        : "bg-white dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 text-slate-800 dark:text-slate-200 rounded-bl-xs shadow-sm backdrop-blur-md"
+                        ? "bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-br-sm shadow-indigo-500/25 border border-indigo-400/40 font-medium"
+                        : "bg-white dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-xs backdrop-blur-md"
                     }`}
+                    style={
+                      isUser
+                        ? {
+                            background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #06b6d4 100%)",
+                            color: "#ffffff",
+                          }
+                        : undefined
+                    }
                   >
                     {isUser && msg.images && msg.images.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-2.5">
@@ -1777,16 +1791,19 @@ export default function BotChatPage() {
                     {isUser ? (
                       <div>
                         {/* Header của User Message hiển thị Tên nhập vai + Biểu tượng Giới tính */}
-                        <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-white/20 text-[11px] font-bold text-white/90">
+                        <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-white/20 text-[11px] font-bold text-white">
                           <span className="flex items-center gap-1.5">
                             <span>{roleplayPersona?.gender === "male" ? "⚡" : "🌸"}</span>
-                            <span>{roleplayPersona?.name || user?.displayName || (language === "en" ? "You" : "Bạn")}</span>
+                            <span className="drop-shadow-xs">{roleplayPersona?.name || user?.displayName || (language === "en" ? "You" : "Bạn")}</span>
                           </span>
-                          <span className="text-[10px] font-medium text-white/80 bg-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <span className="text-[10px] font-semibold text-white bg-black/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
                             <span>{roleplayPersona?.gender === "male" ? "♂ Nam" : "♀ Nữ"}</span>
                           </span>
                         </div>
-                        <div className="whitespace-pre-wrap break-words text-sm sm:text-base font-medium text-white leading-relaxed select-text">
+                        <div
+                          className="whitespace-pre-wrap break-words text-sm sm:text-base font-medium text-white leading-relaxed select-text"
+                          style={{ color: "#ffffff", wordBreak: "break-word" }}
+                        >
                           {msg.content}
                         </div>
                         {!isLoading && (

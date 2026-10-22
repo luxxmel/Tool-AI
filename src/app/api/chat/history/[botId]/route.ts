@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { ensureUser } from "@/lib/ensureUser";
 
 import { parseMessageImages } from "@/lib/imageUtils";
 
@@ -19,10 +20,16 @@ export async function GET(
       });
     }
 
+    // Tra cứu thông tin người dùng qua ensureUser để lấy danh sách ID / Email mở rộng
+    const user = await ensureUser(userId);
+    const possibleUserIds = Array.from(
+      new Set([userId, user?.id, user?.email].filter((x): x is string => Boolean(x) && typeof x === "string"))
+    );
+
     // Tìm cuộc hội thoại gần nhất của user với bot này
     const conversation = await prisma.conversation.findFirst({
       where: {
-        userId,
+        userId: possibleUserIds.length === 1 ? possibleUserIds[0] : { in: possibleUserIds },
         botId,
       },
       orderBy: {
