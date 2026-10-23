@@ -1042,7 +1042,16 @@ export default function AdminCmsPage() {
                             className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 text-xs"
                           >
                             <div>
-                              <div className="font-semibold text-slate-800 dark:text-slate-200">{d.date}</div>
+                              <div className="font-semibold text-slate-800 dark:text-slate-200">
+                                {(() => {
+                                  try {
+                                    const parts = d.date.split("-");
+                                    return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : d.date;
+                                  } catch {
+                                    return d.date;
+                                  }
+                                })()}
+                              </div>
                               <div className="text-[10px] text-slate-400">{d.count} giao dịch</div>
                             </div>
                             <div className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
@@ -1074,7 +1083,16 @@ export default function AdminCmsPage() {
                             className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 text-xs"
                           >
                             <div>
-                              <div className="font-semibold text-slate-800 dark:text-slate-200">Tháng {m.month}</div>
+                              <div className="font-semibold text-slate-800 dark:text-slate-200">
+                                {(() => {
+                                  try {
+                                    const parts = m.month.split("-");
+                                    return parts.length === 2 ? `Tháng ${parts[1]}/${parts[0]}` : `Tháng ${m.month}`;
+                                  } catch {
+                                    return `Tháng ${m.month}`;
+                                  }
+                                })()}
+                              </div>
                               <div className="text-[10px] text-slate-400">{m.count} giao dịch</div>
                             </div>
                             <div className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
@@ -1195,8 +1213,18 @@ export default function AdminCmsPage() {
                           <td className="py-3.5 px-4 text-slate-500 uppercase text-[10px] font-mono">
                             {order.paymentMethod}
                           </td>
-                          <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400">
-                            {new Date(order.createdAt).toLocaleString("vi-VN")}
+                          <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
+                            {(() => {
+                              try {
+                                const d = new Date(order.createdAt);
+                                const pad = (n: number) => String(n).padStart(2, "0");
+                                const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                                const dateStr = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+                                return `${timeStr} - ${dateStr}`;
+                              } catch {
+                                return new Date(order.createdAt).toLocaleString("vi-VN");
+                              }
+                            })()}
                           </td>
                           <td className="py-3.5 px-4 text-center">
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
