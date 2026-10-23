@@ -1,0 +1,13 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /profile
+
+User-Agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /profile
+
+Sitemap: https://biettuot.io/sitemap.xml
