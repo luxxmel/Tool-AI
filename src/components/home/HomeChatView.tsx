@@ -1334,31 +1334,6 @@ export default function HomeChatView({
           ))
         )}
 
-        {/* Smart Follow-Up Suggestions */}
-        {!isTyping && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && (
-          <div className="pt-2 pb-1 pl-11 animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-1.5">
-              <span>✨ Gợi ý câu hỏi tiếp theo:</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {[
-                "💡 Giải thích chi tiết hơn kèm ví dụ thực tế",
-                "⚖️ Phân tích sâu các ưu và nhược điểm cốt lõi",
-                "🚀 Các bước triển khai thực tế tiếp theo là gì?",
-                "🔍 Có giải pháp hoặc phương án nào thay thế không?",
-              ].map((suggestion, sIdx) => (
-                <button
-                  key={sIdx}
-                  type="button"
-                  onClick={() => sendChatMessage(messages, suggestion)}
-                  className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#121422] hover:bg-indigo-50 dark:hover:bg-indigo-950/60 border border-slate-200/90 dark:border-indigo-950 text-xs text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-cyan-300 transition-all shadow-2xs cursor-pointer flex items-center gap-1 hover:border-indigo-300 dark:hover:border-cyan-500/40 hover:scale-[1.01]"
-                >
-                  <span>{suggestion}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {isTyping && messages[messages.length - 1]?.role === "user" && (
           <div className="w-full flex gap-3.5 items-start">
