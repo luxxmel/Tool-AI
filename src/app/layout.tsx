@@ -38,6 +38,23 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Biết Tuốt AI — Hỏi Gì Cũng Biết, Làm Gì Cũng Tín",
   description: "Biết Tuốt AI — Nền tảng trí tuệ nhân tạo, trợ lý đa năng và giải đáp mọi thắc mắc",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title: "Biết Tuốt AI — Trí Tuệ Nhân Tạo Đa Năng",
+    description: "Hỏi gì cũng biết, làm gì cũng tín. Nền tảng AI toàn năng hàng đầu cho người Việt.",
+    type: "website",
+    locale: "vi_VN",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
