@@ -334,7 +334,8 @@ export default function AdminCmsPage() {
     fetchSupportTickets();
     fetchAnnouncements();
     fetchRevenue();
-  }, [fetchSupportTickets, fetchAnnouncements, fetchRevenue]);
+    fetchCreditUsers();
+  }, [fetchSupportTickets, fetchAnnouncements, fetchRevenue, fetchCreditUsers]);
 
   useEffect(() => {
     if (adminTab === "support") {
@@ -346,7 +347,10 @@ export default function AdminCmsPage() {
     if (adminTab === "revenue") {
       fetchRevenue();
     }
-  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchRevenue]);
+    if (adminTab === "credits") {
+      fetchCreditUsers();
+    }
+  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchRevenue, fetchCreditUsers]);
 
   // ── Credit toast helper ─────────────────────────────────────────────────────
   const showToast = useCallback((msg: string) => {
@@ -354,26 +358,30 @@ export default function AdminCmsPage() {
     setTimeout(() => setCreditToast(null), 3000);
   }, []);
 
-  // ── Credit search ──────────────────────────────────────────────────────────
-  const handleCreditSearch = async () => {
+  // ── Credit search / fetch all ─────────────────────────────────────────────
+  const fetchCreditUsers = useCallback(async (query: string = "") => {
     if (!user) return;
     setIsCreditLoading(true);
     try {
       const res = await fetch(
-        `/api/admin/credits?adminId=${user.id}&search=${encodeURIComponent(creditSearch)}`
+        `/api/admin/credits?adminId=${user.id}&search=${encodeURIComponent(query)}`
       );
       if (res.ok) {
         const data = await res.json();
         setCreditResults(data.users ?? []);
       } else {
-        showToast("❌ Lỗi khi tìm kiếm người dùng");
+        showToast("❌ Lỗi khi tải danh sách người dùng");
       }
     } catch (e) {
-      console.error("Lỗi tìm kiếm credits:", e);
+      console.error("Lỗi tải credits:", e);
       showToast("❌ Không thể kết nối server");
     } finally {
       setIsCreditLoading(false);
     }
+  }, [user, showToast]);
+
+  const handleCreditSearch = () => {
+    fetchCreditUsers(creditSearch);
   };
 
   // ── Credit update ──────────────────────────────────────────────────────────
@@ -2215,28 +2223,34 @@ export default function AdminCmsPage() {
         {adminTab === "credits" && (
           <>
             {/* Metric */}
+            {/* Metric */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
                 <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
-                  <span>Tổng credits (kết quả tìm)</span>
+                  <span>Tổng Credits Người Dùng</span>
                   <span className="text-emerald-500 text-lg">💰</span>
                 </div>
                 <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
                   {totalCredits.toLocaleString()}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  {creditResults.length} người dùng trong kết quả
+                  {creditResults.length} người dùng trong danh sách
                 </div>
               </div>
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs sm:col-span-2 flex flex-col justify-center">
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">
-                  Tìm người dùng theo email hoặc tên:
+                  Tìm kiếm hoặc lọc người dùng theo email hoặc tên:
                 </p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={creditSearch}
-                    onChange={(e) => setCreditSearch(e.target.value)}
+                    onChange={(e) => {
+                      setCreditSearch(e.target.value);
+                      if (e.target.value === "") {
+                        fetchCreditUsers("");
+                      }
+                    }}
                     onKeyDown={(e) => e.key === "Enter" && handleCreditSearch()}
                     placeholder="Email hoặc tên người dùng..."
                     className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors"
@@ -2248,6 +2262,17 @@ export default function AdminCmsPage() {
                   >
                     {isCreditLoading ? "⏳" : "🔍 Tìm"}
                   </button>
+                  {creditSearch && (
+                    <button
+                      onClick={() => {
+                        setCreditSearch("");
+                        fetchCreditUsers("");
+                      }}
+                      className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium rounded-xl transition-all cursor-pointer shrink-0"
+                    >
+                      Xóa lọc
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -2255,10 +2280,16 @@ export default function AdminCmsPage() {
             {/* Results Table */}
             {creditResults.length > 0 && (
               <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-3xl shadow-xs overflow-hidden">
-                <div className="p-5 border-b border-slate-200 dark:border-slate-800/80">
+                <div className="p-5 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
                   <h2 className="text-base font-bold text-slate-900 dark:text-white">
-                    Kết quả tìm kiếm ({creditResults.length} người dùng)
+                    {creditSearch ? `Kết quả tìm kiếm (${creditResults.length} người dùng)` : `Danh sách người dùng (${creditResults.length} tài khoản)`}
                   </h2>
+                  <button
+                    onClick={() => fetchCreditUsers(creditSearch)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+                  >
+                    🔄 Làm mới
+                  </button>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
@@ -2392,10 +2423,21 @@ export default function AdminCmsPage() {
               </div>
             )}
 
-            {creditResults.length === 0 && !isCreditLoading && creditSearch && (
+            {isCreditLoading && creditResults.length === 0 && (
+              <div className="text-center py-20 text-slate-400">
+                <div className="text-4xl mb-3 animate-spin inline-block">⏳</div>
+                <p className="text-sm font-medium">Đang tải danh sách người dùng...</p>
+              </div>
+            )}
+
+            {creditResults.length === 0 && !isCreditLoading && (
               <div className="text-center py-16 text-slate-400">
                 <div className="text-4xl mb-3">🔍</div>
-                <p>Không tìm thấy người dùng nào khớp với &quot;{creditSearch}&quot;</p>
+                <p>
+                  {creditSearch
+                    ? `Không tìm thấy người dùng nào khớp với "${creditSearch}"`
+                    : "Chưa có dữ liệu người dùng trong hệ thống"}
+                </p>
               </div>
             )}
           </>
