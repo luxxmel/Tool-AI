@@ -1769,87 +1769,85 @@ export default function BotChatPage() {
                       </button>
                     </div>
                   </div>
-                ) : (
-                  <div
-                    className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-5 py-3.5 text-xs sm:text-sm leading-relaxed group shadow-md transition-all ${
-                      isUser
-                        ? "ml-auto bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-br-sm shadow-indigo-500/25 border border-indigo-400/40 font-medium"
-                        : "mr-auto bg-white dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-xs backdrop-blur-md"
-                    }`}
-                    style={
-                      isUser
-                        ? {
-                            background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #06b6d4 100%)",
-                            color: "#ffffff",
-                            marginLeft: "auto",
-                          }
-                        : undefined
-                    }
-                  >
-                    {isUser && msg.images && msg.images.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2.5">
-                        {msg.images.map((imgSrc, idx) => (
-                          <div
-                            key={idx}
-                            className="relative rounded-2xl overflow-hidden border border-white/30 shadow-md max-w-xs group cursor-pointer"
-                            onClick={() => window.open(imgSrc, "_blank")}
-                            title={language === "en" ? "Click to view full image" : "Bấm để xem ảnh phóng to"}
-                          >
-                            <img
-                              src={imgSrc}
-                              alt={`Image ${idx + 1}`}
-                              className="w-full h-auto max-h-60 object-cover hover:scale-105 transition-transform"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {isUser ? (
-                      <div>
-                        {/* Header của User Message hiển thị Tên nhập vai + Biểu tượng Giới tính */}
+                ) : isUser ? (
+                    <div className="group relative max-w-[85%] sm:max-w-[75%] flex flex-col items-end ml-auto">
+                      <div
+                        className="w-full px-5 py-3.5 rounded-3xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/25 leading-relaxed border border-indigo-400/40"
+                        style={{
+                          background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%)",
+                          color: "#ffffff",
+                        }}
+                      >
+                        {/* Header của User Message hiển thị Tên nhập vai / Nickname */}
                         <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-white/20 text-[11px] font-bold text-white">
                           <span className="flex items-center gap-1.5">
                             <span>{roleplayPersona?.gender === "male" ? "⚡" : "🌸"}</span>
                             <span className="drop-shadow-xs">{roleplayPersona?.name || user?.displayName || (language === "en" ? "You" : "Bạn")}</span>
                           </span>
-                          <span className="text-[10px] font-semibold text-white bg-black/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
+                          <span className="text-[10px] font-semibold text-white bg-black/25 backdrop-blur-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
                             <span>{roleplayPersona?.gender === "male" ? "♂ Nam" : "♀ Nữ"}</span>
                           </span>
                         </div>
+
+                        {msg.images && msg.images.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-2.5">
+                            {msg.images.map((imgSrc, idx) => (
+                              <div
+                                key={idx}
+                                className="relative rounded-2xl overflow-hidden border border-white/30 shadow-md max-w-xs group cursor-pointer"
+                                onClick={() => window.open(imgSrc, "_blank")}
+                                title={language === "en" ? "Click to view full image" : "Bấm để xem ảnh phóng to"}
+                              >
+                                <img
+                                  src={imgSrc}
+                                  alt={`Image ${idx + 1}`}
+                                  className="w-full h-auto max-h-60 object-cover hover:scale-105 transition-transform"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
                         <div
                           className="whitespace-pre-wrap break-words text-sm sm:text-base font-medium text-white leading-relaxed select-text"
                           style={{ color: "#ffffff", wordBreak: "break-word" }}
                         >
                           {msg.content}
                         </div>
-                        {!isLoading && (
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1.5 mt-2 pt-1 border-t border-white/20">
-                            <button
-                              type="button"
-                              onClick={() => handleStartEdit(msg)}
-                              className="px-2 py-0.5 rounded-lg bg-black/30 hover:bg-black/50 text-[10px] text-white font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                              title={language === "en" ? "Edit message" : "Sửa tin nhắn"}
-                            >
-                              <span>✏️ {language === "en" ? "Edit" : "Sửa"}</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleCopyMessage(msg.id, msg.content)}
-                              className="px-2 py-0.5 rounded-lg bg-black/30 hover:bg-black/50 text-[10px] text-white font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                              title={language === "en" ? "Copy" : "Chép"}
-                            >
-                              <span>{copiedMsgId === msg.id ? (language === "en" ? "✓ Copied" : "✓ Đã chép") : (language === "en" ? "📋 Copy" : "📋 Chép")}</span>
-                            </button>
-                          </div>
-                        )}
                       </div>
-                    ) : msg.content ? (
-                      <div>
-                        <MarkdownRenderer content={msg.content} hideActionNotes={hideActionNotes} />
-                        {/* Action Toolbar under AI Response */}
-                        <div className="flex items-center justify-between pt-2.5 mt-3 border-t border-slate-100 dark:border-slate-800/70 text-xs text-slate-400">
-                          <div className="flex items-center gap-1.5 flex-wrap">
+
+                      {!isLoading && (
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1.5 mt-1 pr-1">
+                          <button
+                            type="button"
+                            onClick={() => handleStartEdit(msg)}
+                            className="p-1 px-2 rounded-lg bg-slate-200/80 dark:bg-[#1a1c2d] hover:bg-slate-300 dark:hover:bg-indigo-900/50 text-[11px] font-semibold text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                            title={language === "en" ? "Edit message" : "Sửa tin nhắn"}
+                          >
+                            <span>✏️</span>
+                            <span>{language === "en" ? "Edit" : "Sửa"}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyMessage(msg.id, msg.content)}
+                            className="p-1 px-2 rounded-lg bg-slate-200/80 dark:bg-[#1a1c2d] hover:bg-slate-300 dark:hover:bg-indigo-900/50 text-[11px] font-semibold text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-1 cursor-pointer shadow-2xs"
+                            title={language === "en" ? "Copy" : "Chép"}
+                          >
+                            <span>{copiedMsgId === msg.id ? (language === "en" ? "✓ Copied" : "✓ Đã chép") : (language === "en" ? "📋 Copy" : "📋 Chép")}</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      className="max-w-[85%] sm:max-w-[75%] rounded-3xl px-5 py-3.5 text-xs sm:text-sm leading-relaxed group shadow-md transition-all mr-auto bg-white dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 text-slate-800 dark:text-slate-200 rounded-bl-sm shadow-xs backdrop-blur-md"
+                    >
+                      {msg.content ? (
+                        <div>
+                          <MarkdownRenderer content={msg.content} hideActionNotes={hideActionNotes} />
+                          {/* Action Toolbar under AI Response */}
+                          <div className="flex items-center justify-between pt-2.5 mt-3 border-t border-slate-100 dark:border-slate-800/70 text-xs text-slate-400">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                             <button
                               type="button"
                               onClick={() => handleCopyMessage(msg.id, msg.content)}
@@ -1904,14 +1902,14 @@ export default function BotChatPage() {
                           </div>
                         </div>
                       </div>
-                  ) : (
-                    <span className="flex items-center gap-1.5 text-slate-400 py-1">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
-                      <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.2s]" />
-                      <span className="w-2 h-2 rounded-full bg-violet-400 animate-bounce [animation-delay:0.4s]" />
-                    </span>
-                  )}
-                </div>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-slate-400 py-1">
+                        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
+                        <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.2s]" />
+                        <span className="w-2 h-2 rounded-full bg-violet-400 animate-bounce [animation-delay:0.4s]" />
+                      </span>
+                    )}
+                  </div>
                 )}
 
                 {/* Avatar của User */}
