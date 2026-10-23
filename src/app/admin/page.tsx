@@ -1167,18 +1167,18 @@ export default function AdminCmsPage() {
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-2">
                               <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] font-bold flex items-center justify-center shrink-0 overflow-hidden">
-                                {order.user.avatar ? (
+                                {order.user?.avatar ? (
                                   <img src={order.user.avatar} alt="" className="w-full h-full object-cover" />
                                 ) : (
-                                  order.user.email.slice(0, 2).toUpperCase()
+                                  (order.user?.email || order.user?.name || "KH").slice(0, 2).toUpperCase()
                                 )}
                               </div>
                               <div className="min-w-0">
                                 <div className="font-semibold text-slate-800 dark:text-slate-200 truncate">
-                                  {order.user.name || order.user.email.split("@")[0]}
+                                  {order.user?.name || (order.user?.email ? order.user.email.split("@")[0] : "Khách hàng")}
                                 </div>
                                 <div className="text-[10px] text-slate-400 truncate max-w-[150px]">
-                                  {order.user.email}
+                                  {order.user?.email || "Chưa có email"}
                                 </div>
                               </div>
                             </div>
@@ -2710,7 +2710,7 @@ export default function AdminCmsPage() {
                               </div>
                             </div>
                             <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-lg">
-                              ID: {activeTicket.id.slice(0, 8)}
+                              ID: {activeTicket.id?.slice(0, 8) || "N/A"}
                             </span>
                           </div>
 
