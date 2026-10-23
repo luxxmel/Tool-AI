@@ -10,5 +10,11 @@
     "files": [
       "static/chunks/3899.55a0943bf5e7fec7.js"
     ]
+  },
+  "app\\chat\\[botId]\\page.tsx -> @/data/characterStories": {
+    "id": 4584,
+    "files": [
+      "static/chunks/4584-ca271e2fc9f43a06.js"
+    ]
   }
 }

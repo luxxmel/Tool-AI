@@ -600,7 +600,7 @@ export async function POST(request: NextRequest) {
       bot = {
         id: botId,
         name: "Biết Tuốt AI",
-        avatar: "/icons/icon-192x192.png",
+        avatar: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
         description: "Trợ lý trí tuệ nhân tạo toàn năng",
         systemPrompt: "Bạn là Biết Tuốt AI, trợ lý trí tuệ nhân tạo toàn năng độc quyền của nền tảng Biết Tuốt AI.",
       };
