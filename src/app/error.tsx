@@ -13,15 +13,19 @@ export default function RootError({
     console.error("Lỗi ứng dụng (Client Error Boundary):", error);
   }, [error]);
 
-  const handleClearCacheAndReload = () => {
+  const handleClearCacheAndReload = async () => {
     try {
       if (typeof window !== "undefined") {
-        localStorage.removeItem("tool_ai_auth_user");
-        localStorage.removeItem("omni_ws_bg_type");
-        localStorage.removeItem("omni_ws_bg_value");
-        localStorage.removeItem("omni_ws_bg_preset_id");
+        if ("caches" in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((k) => caches.delete(k)));
+        }
+        if ("serviceWorker" in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((r) => r.unregister()));
+        }
         sessionStorage.clear();
-        window.location.href = "/";
+        window.location.reload();
       }
     } catch {
       window.location.reload();
