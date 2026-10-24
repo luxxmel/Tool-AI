@@ -1865,9 +1865,10 @@ export default function AdminCmsPage() {
                   <button
                     onClick={handleCreditSearch}
                     disabled={isCreditLoading}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-bold rounded-xl shadow-sm shadow-emerald-600/30 transition-all cursor-pointer active:scale-95 shrink-0"
+                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-75 text-white text-sm font-bold rounded-xl shadow-sm shadow-emerald-600/30 transition-all cursor-pointer active:scale-95 shrink-0 flex items-center gap-1.5"
                   >
-                    {isCreditLoading ? "⏳" : "🔍 Tìm"}
+                    <span>🔍</span>
+                    <span>Tìm</span>
                   </button>
                   {creditSearch && (
                     <button
