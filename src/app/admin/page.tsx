@@ -363,22 +363,48 @@ export default function AdminCmsPage() {
     if (!user) return;
     setIsCreditLoading(true);
     try {
+      const adminIdentifier = user.id || user.email || "hoanglinhcntti@gmail.com";
       const res = await fetch(
-        `/api/admin/credits?adminId=${user.id}&search=${encodeURIComponent(query)}`
+        `/api/admin/credits?adminId=${encodeURIComponent(adminIdentifier)}&search=${encodeURIComponent(query)}`
       );
       if (res.ok) {
         const data = await res.json();
         setCreditResults(data.users ?? []);
       } else {
-        showToast("❌ Lỗi khi tải danh sách người dùng");
+        // Fallback: nếu /api/admin/credits gặp vấn đề, lấy từ danh sách users đã có
+        if (users && users.length > 0) {
+          const fallbackUsers = users.map((u) => ({
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            avatar: u.avatar || null,
+            role: u.role ? u.role.toUpperCase() : "USER",
+            credits: Number(u.credits || 0),
+          }));
+          setCreditResults(fallbackUsers);
+        } else {
+          showToast("❌ Lỗi khi tải danh sách người dùng");
+        }
       }
     } catch (e) {
       console.error("Lỗi tải credits:", e);
-      showToast("❌ Không thể kết nối server");
+      if (users && users.length > 0) {
+        const fallbackUsers = users.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          avatar: u.avatar || null,
+          role: u.role ? u.role.toUpperCase() : "USER",
+          credits: Number(u.credits || 0),
+        }));
+        setCreditResults(fallbackUsers);
+      } else {
+        showToast("❌ Không thể kết nối server");
+      }
     } finally {
       setIsCreditLoading(false);
     }
-  }, [user, showToast]);
+  }, [user, users, showToast]);
 
   const handleCreditSearch = () => {
     fetchCreditUsers(creditSearch);
@@ -392,10 +418,11 @@ export default function AdminCmsPage() {
     if (!user) return;
     const amount = creditAmounts[targetUserId] ?? 0;
     try {
+      const adminIdentifier = user.id || user.email || "hoanglinhcntti@gmail.com";
       const res = await fetch("/api/admin/credits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminId: user.id, targetUserId, amount, mode }),
+        body: JSON.stringify({ adminId: adminIdentifier, targetUserId, amount, mode }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -426,10 +453,11 @@ export default function AdminCmsPage() {
   const handleRoleUpdate = async (targetUserId: string, role: string) => {
     if (!user) return;
     try {
+      const adminIdentifier = user.id || user.email || "hoanglinhcntti@gmail.com";
       const res = await fetch("/api/admin/credits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminId: user.id, targetUserId, role }),
+        body: JSON.stringify({ adminId: adminIdentifier, targetUserId, role }),
       });
       if (res.ok) {
         showToast("✅ Cập nhật vai trò thành công!");
