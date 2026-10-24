@@ -70,35 +70,7 @@ export default function AdminCmsPage() {
   // Admin Tab: "users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support"
   const [adminTab, setAdminTab] = useState<"users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support">("users");
 
-  // Revenue State
-  const [revenueData, setRevenueData] = useState<{
-    summary: {
-      totalRevenue: number;
-      totalOrders: number;
-      todayRevenue: number;
-      todayOrdersCount: number;
-      thisMonthRevenue: number;
-      thisMonthOrdersCount: number;
-      thisYearRevenue: number;
-      thisYearOrdersCount: number;
-    };
-    dailyStats: Array<{ revenue: number; count: number; date: string }>;
-    monthlyStats: Array<{ revenue: number; count: number; month: string }>;
-    yearlyStats: Array<{ revenue: number; count: number; year: string }>;
-    recentOrders: Array<{
-      id: string;
-      orderCode: number;
-      amount: number;
-      credits: number;
-      packageName: string;
-      paymentMethod: string;
-      transactionId: string | null;
-      createdAt: string;
-      user: { id: string; name: string | null; email: string; avatar: string | null };
-    }>;
-  } | null>(null);
-  const [isRevenueLoading, setIsRevenueLoading] = useState(false);
-  const [revenuePeriodFilter, setRevenuePeriodFilter] = useState<"all" | "daily" | "monthly" | "yearly">("all");
+
 
   // Users State
   const [users, setUsers] = useState<CmsUser[]>([]);
@@ -312,46 +284,6 @@ export default function AdminCmsPage() {
     }
   };
 
-  const fetchRevenue = useCallback(async () => {
-    if (!user) return;
-    setIsRevenueLoading(true);
-    try {
-      const res = await fetch(`/api/admin/revenue?adminId=${user.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setRevenueData(data);
-      }
-    } catch (err) {
-      console.error("Lỗi khi tải dữ liệu doanh thu:", err);
-    } finally {
-      setIsRevenueLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchPosts();
-    fetchSupportTickets();
-    fetchAnnouncements();
-    fetchRevenue();
-    fetchCreditUsers();
-  }, [fetchSupportTickets, fetchAnnouncements, fetchRevenue, fetchCreditUsers]);
-
-  useEffect(() => {
-    if (adminTab === "support") {
-      fetchSupportTickets();
-    }
-    if (adminTab === "announcements") {
-      fetchAnnouncements();
-    }
-    if (adminTab === "revenue") {
-      fetchRevenue();
-    }
-    if (adminTab === "credits") {
-      fetchCreditUsers();
-    }
-  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchRevenue, fetchCreditUsers]);
-
   // ── Credit toast helper ─────────────────────────────────────────────────────
   const showToast = useCallback((msg: string) => {
     setCreditToast(msg);
@@ -409,6 +341,26 @@ export default function AdminCmsPage() {
   const handleCreditSearch = () => {
     fetchCreditUsers(creditSearch);
   };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchPosts();
+    fetchSupportTickets();
+    fetchAnnouncements();
+    fetchCreditUsers();
+  }, [fetchSupportTickets, fetchAnnouncements, fetchCreditUsers]);
+
+  useEffect(() => {
+    if (adminTab === "support") {
+      fetchSupportTickets();
+    }
+    if (adminTab === "announcements") {
+      fetchAnnouncements();
+    }
+    if (adminTab === "credits") {
+      fetchCreditUsers();
+    }
+  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchCreditUsers]);
 
   // ── Credit update ──────────────────────────────────────────────────────────
   const handleCreditUpdate = async (
