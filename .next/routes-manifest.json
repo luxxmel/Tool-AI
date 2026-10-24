@@ -246,6 +246,12 @@
       "namedRegex": "^/api/auth/send\\-otp(?:/)?$"
     },
     {
+      "page": "/api/card-scan",
+      "regex": "^/api/card\\-scan(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/card\\-scan(?:/)?$"
+    },
+    {
       "page": "/api/chat",
       "regex": "^/api/chat(?:/)?$",
       "routeKeys": {},

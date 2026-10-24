@@ -14,6 +14,7 @@
   "/api/auth/register/route": "/api/auth/register",
   "/api/auth/send-otp/route": "/api/auth/send-otp",
   "/api/bots/[botId]/route": "/api/bots/[botId]",
+  "/api/card-scan/route": "/api/card-scan",
   "/api/chat/history/[botId]/route": "/api/chat/history/[botId]",
   "/api/chat/route": "/api/chat",
   "/api/conversations/[id]/route": "/api/conversations/[id]",

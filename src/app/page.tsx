@@ -27,6 +27,7 @@ import ChiemTinhView from "@/components/astrology/ChiemTinhView";
 import BatTuView from "@/components/astrology/BatTuView";
 import MathSolverView from "@/components/math/MathSolverView";
 import EnglishLearningView from "@/components/english/EnglishLearningView";
+import CardScannerView from "@/components/ocr/CardScannerView";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import MobileBottomBar from "@/components/layout/MobileBottomBar";
 import {
@@ -346,6 +347,8 @@ function HomeContent() {
             <MathSolverView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : currentTab === "english" ? (
             <EnglishLearningView onOpenLoginModal={() => setShowLoginModal(true)} />
+          ) : currentTab === "card_scan" || currentTab === "ocr" ? (
+            <CardScannerView onOpenLoginModal={() => setShowLoginModal(true)} />
           ) : isChatOpen ? (
             /* Direct In-Page Chat (ChatGPT Style) */
             <HomeChatView

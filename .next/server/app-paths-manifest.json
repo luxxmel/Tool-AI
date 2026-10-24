@@ -14,6 +14,7 @@
   "/api/auth/register/route": "app/api/auth/register/route.js",
   "/api/auth/send-otp/route": "app/api/auth/send-otp/route.js",
   "/api/bots/[botId]/route": "app/api/bots/[botId]/route.js",
+  "/api/card-scan/route": "app/api/card-scan/route.js",
   "/api/chat/history/[botId]/route": "app/api/chat/history/[botId]/route.js",
   "/api/chat/route": "app/api/chat/route.js",
   "/api/conversations/[id]/route": "app/api/conversations/[id]/route.js",
