@@ -547,7 +547,7 @@ export const CATEGORIZED_ASSISTANTS: Record<
         name: "Thầy Bói Bà Bà",
         nameEn: "Fortune Teller Grandma",
         category: "entertainment",
-        avatar: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&auto=format&fit=crop&q=80",
+        avatar: "/thay-boi-baba.png",
         description: "Bậc thầy tiên tri cổ xưa, thấu thị nhân duyên & giải mã huyền cơ vũ trụ qua từng quẻ bài Tarot.",
         descriptionEn: "Master fortune teller & seer, unveiling cosmic destiny and relationships through ancient Tarot.",
         author: "@omni",

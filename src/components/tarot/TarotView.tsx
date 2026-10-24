@@ -1065,11 +1065,11 @@ Sợi dây nhân duyên giữa các lá bài cho thấy con đang đứng trư�
 
             <div className="relative z-10 flex items-center justify-between border-b border-purple-800/40 pb-5">
               <div className="flex items-center gap-3.5">
-                <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-purple-600 to-indigo-700 p-0.5 shadow-lg shadow-purple-950/60 shrink-0">
+                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-purple-600 to-indigo-700 p-0.5 shadow-lg shadow-purple-950/60 shrink-0">
                   <img
-                    src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80"
+                    src="/thay-boi-baba.png"
                     alt="Thầy Bói Bà Bà"
-                    className="w-full h-full rounded-2xl object-cover"
+                    className="w-full h-full rounded-2xl object-cover bg-slate-900"
                   />
                   <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[9px] shadow-sm animate-pulse">
                     🔮
