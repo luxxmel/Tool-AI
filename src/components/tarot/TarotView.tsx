@@ -1069,7 +1069,7 @@ Sợi dây nhân duyên giữa các lá bài cho thấy con đang đứng trư�
                   <img
                     src="/thay-boi-baba.png"
                     alt="Thầy Bói Bà Bà"
-                    className="w-full h-full rounded-2xl object-cover bg-slate-900"
+                    className="w-full h-full rounded-2xl object-contain bg-gradient-to-b from-purple-950/80 to-[#120d24] p-1"
                   />
                   <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[9px] shadow-sm animate-pulse">
                     🔮
