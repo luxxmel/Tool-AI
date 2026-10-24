@@ -130,20 +130,27 @@ export default function CardScannerView({ onOpenLoginModal }: CardScannerViewPro
     handleProcessImage(dataUrl);
   };
 
-  // Xử lý chọn file ảnh từ máy
+  // Xử lý chọn nhiều file ảnh từ máy (Batch Scan)
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const dataUrl = await compressImage(file, 1600, 0.9);
-      if (dataUrl) {
-        handleProcessImage(dataUrl);
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    const fileArray = Array.from(files);
+    showToast(`Đang nén và quét ${fileArray.length} ảnh danh thiếp...`);
+
+    for (let i = 0; i < fileArray.length; i++) {
+      const file = fileArray[i];
+      try {
+        const dataUrl = await compressImage(file, 1600, 0.9);
+        if (dataUrl) {
+          await handleProcessImage(dataUrl);
+        }
+      } catch (err) {
+        console.error("Lỗi đọc file:", err);
       }
-    } catch (err) {
-      showToast("Lỗi đọc file ảnh");
-    } finally {
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // Gửi ảnh lên API để trích xuất dữ liệu AI Vision
@@ -193,8 +200,13 @@ export default function CardScannerView({ onOpenLoginModal }: CardScannerViewPro
         scannedAt: new Date().toLocaleString("vi-VN"),
       };
 
-      const updated = [newContact, ...contacts];
-      saveContacts(updated);
+      setContacts((prev) => {
+        const updated = [newContact, ...prev];
+        try {
+          localStorage.setItem("omni_scanned_cards", JSON.stringify(updated.slice(0, 100)));
+        } catch {}
+        return updated;
+      });
       setSelectedContactId(newContact.id);
       showToast("✨ Đã trích xuất thông tin danh thiếp thành công!");
     } catch (err: any) {
@@ -325,6 +337,61 @@ export default function CardScannerView({ onOpenLoginModal }: CardScannerViewPro
     );
   };
 
+  // Tạo nội dung file vCard (.vcf) chuẩn
+  const generateVCardString = (c: ScannedContact) => {
+    const lines = [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `FN:${c.fullName || "Liên hệ mới"}`,
+      `N:${c.fullName || ""};;;;`,
+    ];
+    if (c.company) lines.push(`ORG:${c.company}`);
+    if (c.jobTitle) lines.push(`TITLE:${c.jobTitle}`);
+    if (c.phone) lines.push(`TEL;TYPE=CELL,VOICE:${c.phone}`);
+    if (c.email) lines.push(`EMAIL;TYPE=WORK,INTERNET:${c.email}`);
+    if (c.address) lines.push(`ADR;TYPE=WORK:;;${c.address};;;;`);
+    if (c.website) lines.push(`URL:${c.website}`);
+    if (c.notes || c.socials) {
+      const noteStr = [c.notes, c.socials].filter(Boolean).join(" | ");
+      lines.push(`NOTE:${noteStr}`);
+    }
+    lines.push("END:VCARD");
+    return lines.join("\r\n");
+  };
+
+  // Tải vCard (.vcf) của 1 danh thiếp đang chọn để lưu ngay vào điện thoại
+  const handleExportSingleVCard = (contact: ScannedContact) => {
+    const vcardContent = generateVCardString(contact);
+    const blob = new Blob([vcardContent], { type: "text/vcard;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    const cleanName = (contact.fullName || "Danh_Ba").replace(/[\s/\\?%*:|"<>]/g, "_");
+    link.setAttribute("download", `${cleanName}.vcf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`📱 Đã tải danh bạ "${contact.fullName}". Bấm mở file để lưu vào điện thoại!`);
+  };
+
+  // Tải tất cả danh thiếp thành 1 file vCard chung
+  const handleExportAllVCard = () => {
+    if (contacts.length === 0) {
+      showToast("Chưa có danh thiếp nào để xuất danh bạ!");
+      return;
+    }
+    const allVcards = contacts.map(generateVCardString).join("\r\n");
+    const blob = new Blob([allVcards], { type: "text/vcard;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Danh_Ba_Card_Visit_${new Date().toISOString().slice(0, 10)}.vcf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("📱 Đã tải toàn bộ danh bạ (.vcf) về máy!");
+  };
+
   const selectedContact = contacts.find((c) => c.id === selectedContactId) || contacts[0] || null;
 
   return (
@@ -383,13 +450,14 @@ export default function CardScannerView({ onOpenLoginModal }: CardScannerViewPro
               <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <span>Tải Ảnh Lên</span>
+              <span>Tải Ảnh / Hàng Loạt</span>
             </button>
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
               accept="image/*"
+              multiple
               className="hidden"
             />
           </div>
@@ -505,6 +573,16 @@ export default function CardScannerView({ onOpenLoginModal }: CardScannerViewPro
                 <span>Mở Google Sheets</span>
               </button>
 
+              <button
+                onClick={handleExportAllVCard}
+                disabled={contacts.length === 0}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 text-purple-600 dark:text-purple-400 border border-purple-500/30 text-xs font-bold transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                title="Tải file danh bạ điện thoại .vcf (lưu 1 chạm vào danh bạ iPhone/Android)"
+              >
+                <span>📱</span>
+                <span>Lưu Danh Bạ (.vcf)</span>
+              </button>
+
               {contacts.length > 0 && (
                 <button
                   onClick={handleClearAll}
@@ -600,11 +678,22 @@ export default function CardScannerView({ onOpenLoginModal }: CardScannerViewPro
               <span>Chi Tiết Dữ Liệu Thẻ</span>
               <span className="text-xs font-normal text-slate-400">(Có thể sửa trực tiếp)</span>
             </h3>
-            {selectedContact && (
-              <span className="text-[10px] text-slate-400 font-mono">
-                {selectedContact.scannedAt}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {selectedContact && (
+                <>
+                  <button
+                    onClick={() => handleExportSingleVCard(selectedContact)}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-600/15 hover:bg-purple-600/25 text-purple-600 dark:text-purple-400 border border-purple-500/30 text-[11px] font-bold transition-all cursor-pointer"
+                    title="Lưu danh bạ người này vào điện thoại"
+                  >
+                    <span>📱 Lưu Danh Bạ</span>
+                  </button>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    {selectedContact.scannedAt}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
 
           {!selectedContact ? (

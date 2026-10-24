@@ -51,6 +51,16 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
 
   const [readingText, setReadingText] = useState('');
   const [isReadingLoading, setIsReadingLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Dừng giọng đọc khi thoát trang
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const relationshipOptions = ['Người yêu', 'Crush', 'Bạn bè', 'Gia đình', 'Đồng nghiệp', 'Người cũ'];
 
@@ -1089,6 +1099,48 @@ Sợi dây nhân duyên giữa các lá bài cho thấy con đang đứng trư�
                   </p>
                 </div>
               </div>
+
+              {/* Nút Giọng Đọc Truyền Cảm Thầy Bói Bà Bà */}
+              {readingText && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+                        alert('Trình duyệt của bạn chưa hỗ trợ phát âm thanh trực tiếp.');
+                        return;
+                      }
+                      if (isSpeaking) {
+                        window.speechSynthesis.cancel();
+                        setIsSpeaking(false);
+                      } else {
+                        window.speechSynthesis.cancel();
+                        // Làm sạch văn bản markdown trước khi đọc
+                        const cleanSpeech = readingText
+                          .replace(/[#*_`~>-]/g, ' ')
+                          .replace(/🔮|✨|🌿|🎴|🧩|🌟/g, ' ')
+                          .replace(/\s+/g, ' ')
+                          .trim();
+                        const utterance = new SpeechSynthesisUtterance(cleanSpeech);
+                        utterance.lang = 'vi-VN';
+                        utterance.rate = 0.92; // Tốc độ trầm ấm, từ tốn như lời Bà Bà
+                        utterance.pitch = 0.95;
+                        utterance.onend = () => setIsSpeaking(false);
+                        utterance.onerror = () => setIsSpeaking(false);
+                        window.speechSynthesis.speak(utterance);
+                        setIsSpeaking(true);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl border text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer ${
+                      isSpeaking
+                        ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-amber-500/30 animate-pulse'
+                        : 'bg-purple-900/40 hover:bg-purple-900/60 text-amber-300 border-amber-500/30'
+                    }`}
+                    title={isSpeaking ? "Dừng giọng đọc" : "Nghe Thầy Bói Bà Bà đọc lời luận giải"}
+                  >
+                    <span>{isSpeaking ? "🔊 Dừng Đọc" : "🎙️ Nghe Bà Bà Đọc"}</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {isReadingLoading && !readingText ? (

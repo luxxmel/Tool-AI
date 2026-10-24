@@ -352,6 +352,23 @@ export default function AppSidebar({
             </button>
           </div>
 
+          {/* Quick Command Palette Button (Ctrl + K) */}
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }));
+            }}
+            className="w-full mb-3 px-3 py-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 transition-all cursor-pointer group"
+          >
+            <span className="flex items-center gap-2">
+              <span className="text-sm">🔍</span>
+              <span className="font-medium group-hover:text-slate-900 dark:group-hover:text-white">Tìm nhanh...</span>
+            </span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-500">
+              Ctrl K
+            </kbd>
+          </button>
+
           {/* Nav List */}
           <nav className="space-y-1">
             {navItems.map((item) => {

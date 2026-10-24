@@ -11,25 +11,29 @@ import CharacterCard from "@/components/home/CharacterCard";
 import CharacterDetailModal from "@/components/characters/CharacterDetailModal";
 import ChatResponseModal from "@/components/home/ChatResponseModal";
 import LoginForm from "@/components/auth/LoginForm";
+import dynamic from "next/dynamic";
 import ExploreFeed from "@/components/explore/ExploreFeed";
-import AiImageStudio from "@/components/images/AiImageStudio";
-import CharactersDirectory from "@/components/characters/CharactersDirectory";
-import MyStoriesView from "@/components/stories/MyStoriesView";
-import HomeChatView from "@/components/home/HomeChatView";
-import ProjectDetailView from "@/components/projects/ProjectDetailView";
-import CreateProjectView from "@/components/projects/CreateProjectView";
-import AiToolsStudio from "@/components/tools/AiToolsStudio";
-import HealingCorner from "@/components/healing/HealingCorner";
-import UserProfileView from "@/components/profile/UserProfileView";
-import TarotView from "@/components/tarot/TarotView";
-import TuViView from "@/components/astrology/TuViView";
-import ChiemTinhView from "@/components/astrology/ChiemTinhView";
-import BatTuView from "@/components/astrology/BatTuView";
-import MathSolverView from "@/components/math/MathSolverView";
-import EnglishLearningView from "@/components/english/EnglishLearningView";
-import CardScannerView from "@/components/ocr/CardScannerView";
 import HomeFeaturesShowcase from "@/components/home/HomeFeaturesShowcase";
 import MobileBottomBar from "@/components/layout/MobileBottomBar";
+import CommandPalette from "@/components/layout/CommandPalette";
+
+// Tối ưu hóa tải trang: Lazy loading (Dynamic Import) các module nặng để trang chủ load siêu tốc
+const AiImageStudio = dynamic(() => import("@/components/images/AiImageStudio"), { ssr: false });
+const CharactersDirectory = dynamic(() => import("@/components/characters/CharactersDirectory"), { ssr: false });
+const MyStoriesView = dynamic(() => import("@/components/stories/MyStoriesView"), { ssr: false });
+const HomeChatView = dynamic(() => import("@/components/home/HomeChatView"), { ssr: false });
+const ProjectDetailView = dynamic(() => import("@/components/projects/ProjectDetailView"), { ssr: false });
+const CreateProjectView = dynamic(() => import("@/components/projects/CreateProjectView"), { ssr: false });
+const AiToolsStudio = dynamic(() => import("@/components/tools/AiToolsStudio"), { ssr: false });
+const HealingCorner = dynamic(() => import("@/components/healing/HealingCorner"), { ssr: false });
+const UserProfileView = dynamic(() => import("@/components/profile/UserProfileView"), { ssr: false });
+const TarotView = dynamic(() => import("@/components/tarot/TarotView"), { ssr: false });
+const TuViView = dynamic(() => import("@/components/astrology/TuViView"), { ssr: false });
+const ChiemTinhView = dynamic(() => import("@/components/astrology/ChiemTinhView"), { ssr: false });
+const BatTuView = dynamic(() => import("@/components/astrology/BatTuView"), { ssr: false });
+const MathSolverView = dynamic(() => import("@/components/math/MathSolverView"), { ssr: false });
+const EnglishLearningView = dynamic(() => import("@/components/english/EnglishLearningView"), { ssr: false });
+const CardScannerView = dynamic(() => import("@/components/ocr/CardScannerView"), { ssr: false });
 import {
   FEATURED_ASSISTANTS,
   TRENDING_CHARACTERS,
@@ -65,6 +69,19 @@ function HomeContent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<SettingsTab>("appearance");
   const [selectedDetailChar, setSelectedDetailChar] = useState<CharacterItem | null>(null);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  // Phím tắt toàn cục Ctrl + K / Cmd + K để mở Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Đồng bộ URL tab parameter
   useEffect(() => {
@@ -594,6 +611,16 @@ function HomeContent() {
           onClose={() => setSelectedDetailChar(null)}
         />
       )}
+
+      {/* Command Palette (Ctrl + K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onSelectTab={(tabId) => {
+          setIsChatOpen(false);
+          setCurrentTab(tabId);
+        }}
+      />
 
       {/* Native-style Mobile Bottom Navigation Bar */}
       <MobileBottomBar
