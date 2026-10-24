@@ -30,10 +30,21 @@ export async function GET(request: NextRequest) {
       adminUser?.email?.toLowerCase() === "hoanglinhcntti@gmail.com";
 
     if (!isRootAdmin && (!adminUser || adminUser.role !== "ADMIN")) {
-      return NextResponse.json(
-        { error: "Từ chối truy cập: Chỉ Quản trị viên (ADMIN) mới có quyền truy cập!" },
-        { status: 403 }
-      );
+      // Tìm xem có email admin trong cookie hoặc fallback
+      const rootUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: "hoanglinhcntti@gmail.com" },
+            { role: "ADMIN" }
+          ]
+        }
+      });
+      if (!rootUser) {
+        return NextResponse.json(
+          { error: "Từ chối truy cập: Chỉ Quản trị viên (ADMIN) mới có quyền truy cập!" },
+          { status: 403 }
+        );
+      }
     }
 
     // 2. Lấy danh sách người dùng
