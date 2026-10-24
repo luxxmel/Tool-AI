@@ -312,25 +312,37 @@ THÔNG TIN QUẺ TRẢI BÀI TAROT:
 DANH SÁCH ${currentPicked.length} LÁ BÀI RÚT ĐƯỢC CHÍNH XÁC THEO TỪNG VỊ TRÍ:
 ${cardDetails}
 
-QUY TẮC LUẬN GIẢI HUYỀN CƠ ĐỊNH MỆNH (Viết sâu sắc, chân thực, bám sát thực tế, văn phong Bà Bà thông tuệ, huyền bí nhưng thực tế):
+QUY TẮC TRÌNH BÀY BẮT BUỘC ĐỂ DỄ NHÌN, DỄ ĐỌC VÀ ĐẸP MẮT (Bố cục thông thoáng, rành mạch, dùng Heading, gạch đầu dòng rõ ràng, tuyệt đối không viết một khối đặc nghẹt chữ):
 
-1. **🌿 TẦN SỐ NĂNG LƯỢNG HUYỀN KHÍ & HIỆN THỜI**:
-   - Bà Bà nhìn thẳng vào năng lượng gốc của quẻ bài (chủ đề ${selectedTopic.title}${userQuestion ? `, trăn trở: "${userQuestion}"` : ''}).
-   - Dòng khí và căn duyên hiện thời đang thuận dòng hay gặp sóng gió trở lực? Nguyên tố nào dẫn dắt (Lửa/Nước/Khí/Đất) và báo hiệu điều gì cho con?
+Dùng đúng cấu trúc phân tầng sau:
 
-2. **🎴 LUẬN GIẢI CHI TIẾT TỪNG LÁ BÀI THEO ĐÚNG VỊ TRÍ (${currentPicked.length} LÁ BÀI)**:
-   Với mỗi lá bài trong danh sách trên:
-   - **Tên lá & Trạng thái**: Nêu rõ lá Xuôi (Upright) hay Lá Ngược (Reversed), Bộ Ẩn chính (Major) hay Ẩn phụ (Minor).
-   - **Biểu tượng cốt lõi & Tương tác vị trí**: Giải mã tại sao lá bài này lại xuất hiện ở vị trí [Tên vị trí], ý nghĩa của lá bài phản ánh đúng tình cảnh thực tế của con ra sao.
-   - **Tâm lý & Diễn biến thực tế**: Đào sâu vào tâm lý, nỗi sợ giấu kín hoặc những tác động khách quan bên ngoài đang diễn ra.
+## 🌿 1. Tần Số Năng Lượng Huyền Khí
+(1 đoạn ngắn 3-4 câu nhận định tổng quan về dòng khí và bối cảnh của con)
 
-3. **🧩 BỨC TRANH HUYỀN CƠ & NÚT THẮT CỐT LÕI**:
-   - Chỉ rõ sợi dây nhân duyên liên kết giữa các lá bài: Căn nguyên bắt nguồn từ đâu, đang dẫn đến hệ quả gì.
-   - Vạch trần "điểm mù" hoặc nút thắt lớn nhất mà con chưa nhận ra (không né tránh, không nói nước đôi hay tô hồng giả tạo).
+---
 
-4. **✨ LỜI CHỈ DẪN ĐỊNH MỆNH & THÔNG ĐIỆP CHỮA LÀNH TỪ BÀ BÀ**:
-   - 3 Lời khuyên hành động thực tế con NÊN và KHÔNG NÊN làm ngay trong đời thực để xoay chuyển nghịch cảnh.
-   - Một lời chúc phúc, tiếp thêm sức mạnh tâm linh và niềm tin vững chãi cho con.`;
+## 🎴 2. Luận Giải Chi Tiết Từng Lá Bài
+Với mỗi lá bài, PHẢI trình bày rành mạch theo mẫu sau (dùng ### và các gạch đầu dòng rõ ràng):
+
+### 🔮 Khía cạnh [Tên vị trí]: [Tên lá bài tiếng Anh / Việt] (Lá Xuôi ✨ hoặc Lá Ngược 🔄)
+- **Căn Bản**: [Bộ Ẩn Chính/Phụ, Nguyên tố Lửa/Nước/Khí/Đất]
+- **Ý Nghĩa Thực Tế**: [Tại sao lá bài xuất hiện ở vị trí này, phản ánh tình cảnh của con và đối phương ra sao]
+- **Tâm Lý & Nút Thắt**: [Phân tích nỗi niềm, tâm tư bên trong và diễn biến thực tế]
+
+(Sau mỗi lá bài, xuống dòng cách quãng rõ ràng)
+
+---
+
+## 🧩 3. Bức Tranh Huyền Cơ & Điểm Mù Cần Tháo Gỡ
+- **Sợi dây liên kết**: [Giải thích sự kết nối nhân quả giữa các lá bài]
+- **Điểm mù của con**: [Chỉ rõ nút thắt lớn nhất mà con cần tỉnh thức nhìn nhận]
+
+---
+
+## ✨ 4. Lời Chỉ Dẫn Định Mệnh & Chúc Phúc
+- **Việc con NÊN làm ngay**: [Hành động thực tế 1, 2]
+- **Điều con CẦN tránh**: [Sai lầm không nên phạm phải]
+- **Lời chúc phúc từ Bà Bà**: [1 câu chốt tiếp thêm niềm tin và năng lượng an lành]`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -1165,8 +1177,40 @@ Sợi dây nhân duyên giữa các lá bài cho thấy con đang đứng trư�
                 </div>
               </div>
             ) : (
-              <div className="relative z-10 text-slate-200 text-sm md:text-base leading-relaxed space-y-4 font-sans prose prose-invert max-w-none prose-p:my-2 prose-headings:text-amber-300 prose-headings:font-bold prose-strong:text-amber-200 prose-strong:font-bold">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <div className="relative z-10 text-slate-200 text-sm md:text-base leading-relaxed space-y-5 font-sans">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h2: ({ node, ...props }) => (
+                      <h2 className="text-lg md:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-300 to-amber-100 border-b border-amber-500/20 pb-2.5 mt-6 mb-3 tracking-wide flex items-center gap-2" {...props} />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <div className="mt-5 mb-2.5 p-3 rounded-2xl bg-purple-950/40 border border-purple-500/30 shadow-inner">
+                        <h3 className="text-sm md:text-base font-bold text-amber-200 flex items-center gap-2" {...props} />
+                      </div>
+                    ),
+                    p: ({ node, ...props }) => (
+                      <p className="text-slate-300/95 leading-relaxed my-2.5 text-sm md:text-[15px]" {...props} />
+                    ),
+                    ul: ({ node, ...props }) => (
+                      <ul className="space-y-2 my-3 pl-1" {...props} />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <li className="flex items-start gap-2.5 text-slate-300 text-sm md:text-[15px] leading-relaxed bg-slate-900/40 p-2 rounded-xl border border-purple-900/20">
+                        <span className="text-amber-400 mt-0.5 shrink-0 text-xs">◆</span>
+                        <div className="flex-1" {...props} />
+                      </li>
+                    ),
+                    strong: ({ node, ...props }) => (
+                      <strong className="text-amber-300 font-bold" {...props} />
+                    ),
+                    hr: () => (
+                      <div className="my-6 border-t border-purple-800/30 relative">
+                        <span className="absolute left-1/2 -top-2.5 -translate-x-1/2 px-2 bg-[#0e0a1a] text-[10px] text-amber-400/60 font-mono">✦ ✦ ✦</span>
+                      </div>
+                    )
+                  }}
+                >
                   {readingText}
                 </ReactMarkdown>
               </div>
