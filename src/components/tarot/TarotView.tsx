@@ -293,7 +293,7 @@ export default function TarotView({ onOpenLoginModal }: TarotViewProps = {}) {
         ? `\n- Câu hỏi trăn trở trọng tâm của người hỏi: "${userQuestion.trim()}"`
         : '';
 
-      const prompt = `Bạn là Luna - Master Tarot Reader & Nhà Thực Hành Tâm Lý Học Trực Giác Chiều Sâu hàng đầu.
+      const prompt = `Bạn là Thầy Bói Bà Bà - Bậc Thầy Tiên Tri, Nhà Thực Hành Tâm Linh Cổ Xưa & Trực Giác Thấu Thị Chiều Sâu. Hãy xưng là "Bà Bà" (hoặc "Bà") và gọi người hỏi một cách trìu mến, thâm sâu là "con" (hoặc "thí chủ"). Giọng văn đậm chất tiên tri cổ xưa, huyền bí, ấm áp, từng trải, đĩnh đạc nhưng thẳng thắn chỉ rõ gốc rễ vấn đề, vạch trần huyền cơ định mệnh.
 
 THÔNG TIN QUẺ TRẢI BÀI TAROT:
 - Chủ đề: "${selectedTopic.title}" (${selectedTopic.description})
@@ -302,25 +302,25 @@ THÔNG TIN QUẺ TRẢI BÀI TAROT:
 DANH SÁCH ${currentPicked.length} LÁ BÀI RÚT ĐƯỢC CHÍNH XÁC THEO TỪNG VỊ TRÍ:
 ${cardDetails}
 
-QUY TẮC LUẬN GIẢI CHUẨN XÁC, CHÂN THỰC & BÁM SÁT THỰC TẾ (Viết sâu sắc, mạch lạc, chi tiết, văn phong ấm áp nhưng thẳng thắn):
+QUY TẮC LUẬN GIẢI HUYỀN CƠ ĐỊNH MỆNH (Viết sâu sắc, chân thực, bám sát thực tế, văn phong Bà Bà thông tuệ, huyền bí nhưng thực tế):
 
-1. **🌿 TẦN SỐ NĂNG LƯỢNG CHỦ ĐẠO & BỐI CẢNH HIỆN TẠI**:
-   - Nhìn thẳng vào thông điệp trung tâm của toàn bộ quẻ bài (chủ đề ${selectedTopic.title}${userQuestion ? `, giải quyết câu hỏi: "${userQuestion}"` : ''}).
-   - Tần số năng lượng hiện thời đang thuận dòng hay bị ách tắc? Nguyên tố nào chiếm ưu thế (Lửa/Nước/Khí/Đất) và nói lên điều gì?
+1. **🌿 TẦN SỐ NĂNG LƯỢNG HUYỀN KHÍ & HIỆN THỜI**:
+   - Bà Bà nhìn thẳng vào năng lượng gốc của quẻ bài (chủ đề ${selectedTopic.title}${userQuestion ? `, trăn trở: "${userQuestion}"` : ''}).
+   - Dòng khí và căn duyên hiện thời đang thuận dòng hay gặp sóng gió trở lực? Nguyên tố nào dẫn dắt (Lửa/Nước/Khí/Đất) và báo hiệu điều gì cho con?
 
 2. **🎴 LUẬN GIẢI CHI TIẾT TỪNG LÁ BÀI THEO ĐÚNG VỊ TRÍ (${currentPicked.length} LÁ BÀI)**:
    Với mỗi lá bài trong danh sách trên:
    - **Tên lá & Trạng thái**: Nêu rõ lá Xuôi (Upright) hay Lá Ngược (Reversed), Bộ Ẩn chính (Major) hay Ẩn phụ (Minor).
-   - **Biểu tượng cốt lõi & Tương tác vị trí**: Giải mã tại sao lá bài này lại xuất hiện ở vị trí [Tên vị trí], ý nghĩa của lá bài phản ánh đúng tình cảnh thực tế của người hỏi ra sao.
+   - **Biểu tượng cốt lõi & Tương tác vị trí**: Giải mã tại sao lá bài này lại xuất hiện ở vị trí [Tên vị trí], ý nghĩa của lá bài phản ánh đúng tình cảnh thực tế của con ra sao.
    - **Tâm lý & Diễn biến thực tế**: Đào sâu vào tâm lý, nỗi sợ giấu kín hoặc những tác động khách quan bên ngoài đang diễn ra.
 
-3. **🧩 BỨC TRANH TỔNG HỢP & NÚT THẮT CỐT LÕI**:
-   - Chỉ rõ sợi dây liên kết giữa các lá bài: Nguyên nhân bắt nguồn từ đâu, đang dẫn đến hệ quả gì.
-   - Vạch trần "điểm mù" hoặc nút thắt lớn nhất mà người hỏi có thể chưa nhận ra (không né tránh, không nói nước đôi hay tô hồng giả tạo).
+3. **🧩 BỨC TRANH HUYỀN CƠ & NÚT THẮT CỐT LÕI**:
+   - Chỉ rõ sợi dây nhân duyên liên kết giữa các lá bài: Căn nguyên bắt nguồn từ đâu, đang dẫn đến hệ quả gì.
+   - Vạch trần "điểm mù" hoặc nút thắt lớn nhất mà con chưa nhận ra (không né tránh, không nói nước đôi hay tô hồng giả tạo).
 
-4. **✨ LỜI KHUYÊN HÀNH ĐỘNG THỰC TẾ & THÔNG ĐIỆP CHỮA LÀNH TỪ VŨ TRỤ**:
-   - 3 Hành động cụ thể, rõ ràng người hỏi NÊN và KHÔNG NÊN làm ngay trong đời thực để chuyển hóa hoàn cảnh.
-   - Một thông điệp chữa lành, trao quyền và tiếp thêm niềm tin nội tại.`;
+4. **✨ LỜI CHỈ DẪN ĐỊNH MỆNH & THÔNG ĐIỆP CHỮA LÀNH TỪ BÀ BÀ**:
+   - 3 Lời khuyên hành động thực tế con NÊN và KHÔNG NÊN làm ngay trong đời thực để xoay chuyển nghịch cảnh.
+   - Một lời chúc phúc, tiếp thêm sức mạnh tâm linh và niềm tin vững chãi cho con.`;
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -427,12 +427,12 @@ QUY TẮC LUẬN GIẢI CHUẨN XÁC, CHÂN THỰC & BÁM SÁT THỰC TẾ (Vi�
       
       // Bản luận giải dự phòng chuyên sâu, đầy đủ 4 tầng phân tích chuẩn Tatca.AI
       const partnerStr = partnerName ? `dành riêng cho kết nối giữa bạn và **${partnerName}**` : '';
-      const richFallbackText = `🔮 **BẢN LUẬN GIẢI CHUYÊN SÂU TỪ READER LUNA** ${partnerStr}
+      const richFallbackText = `🔮 **BẢN LUẬN GIẢI HUYỀN CƠ TỪ THẦY BÓI BÀ BÀ** ${partnerStr}
 
 ---
 
-### 🌿 1. TẤN SỐ NĂNG LƯỢNG & MỞ ĐẦU CHỮA LÀNH
-Chào bạn, khi trải bài "${selectedTopic.title}" - kiệt tác "${selectedSpread.title}" hiện ra, Vũ Trụ phản ánh một dòng năng lượng đang cuộn chảy rất đặc biệt trong tâm trí bạn. Đôi khi những băn khoăn hay sự chông chênh hiện tại không phải là tín hiệu bế tắc, mà là thời điểm trực giác của bạn thức tỉnh để tháo gỡ những khúc mắc bấy lâu.
+### 🌿 1. TẦN SỐ NĂNG LƯỢNG HUYỀN KHÍ & LỜI MỞ ĐẦU
+Chào con, khi quẻ bài "${selectedTopic.title}" - kiệt tác trải bài "${selectedSpread.title}" hiện ra, Bà Bà đã nhìn thấy dòng năng lượng thiên mệnh đang cuộn chảy rất đặc biệt xung quanh con. Những chông chênh, trăn trở hiện thời của con không phải là ngõ cụt, mà là thời điểm cơ duyên thức tỉnh để con thấu suốt và xoay chuyển vận mệnh của chính mình.
 
 ---
 
@@ -449,17 +449,17 @@ ${currentPicked
 
 ---
 
-### 🧩 3. BỨC TRANH TỔNG HỢP & NÚT THẮT CẦN THÁO GỠ
-Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần đến mốc thời gian chuyển dịch quan trọng. Nút thắt lớn nhất lúc này chính là việc buông bỏ những kỳ vọng quá mức hoặc nỗi lo sợ mơ hồ về tương lai. Khi bạn nhìn nhận sự việc bằng tâm thế lý trí và bao dung, bức tranh toàn cảnh sẽ tự khắc trở nên minh bạch và gãy gọn.
+### 🧩 3. BỨC TRANH HUYỀN CƠ & NÚT THẮT CẦN THÁO GỠ
+Sợi dây nhân duyên giữa các lá bài cho thấy con đang đứng trước bước ngoặt chuyển dịch vận mệnh rất quan trọng. Nút thắt lớn nhất lúc này chính là việc buông bỏ những kỳ vọng quá mức hoặc nỗi âu lo vô căn cứ về tương lai. Khi con nhìn nhận mọi sự bằng tâm thế vững vàng và bao dung, bức tranh toàn cảnh sẽ tự khắc sáng rõ.
 
 ---
 
-### 🌟 4. HƯỚNG ĐI THỰC CHUYÊN & LỜI NHẮN NHỦ TỪ VŨ TRỤ
-- **Hành động 1**: Dành thời gian lắng nghe cảm xúc nội tâm, ngừng so sánh hành trình của mình với người khác.
-- **Hành động 2**: Chủ động giao tiếp chân thành và rõ ràng để giải tỏa mọi hiểu lầm nếu có.
-- **Hành động 3**: Tin tưởng vào tiềm năng và sự lựa chọn của chính bạn ở khoảnh khắc hiện tại.
+### 🌟 4. LỜI CHỈ DẪN HUYỀN CƠ & CHÚC PHÚC TỪ BÀ BÀ
+- **Chỉ dẫn 1**: Lắng nghe tiếng nói trực giác bên trong, tĩnh tâm và dừng ngay việc hoang mang so sánh số phận mình với người khác.
+- **Chỉ dẫn 2**: Thẳng thắn, chân thành đối diện với khúc mắc hiện tại, dũng cảm cắt tỉa những điều độc hại đang kìm hãm con.
+- **Chỉ dẫn 3**: Vững tin vào thiên thời và căn duyên của chính mình, bước từng bước kiên định.
 
-✨ *"Khi bạn vững tâm bước đi trên con đường của chính mình, cả vũ trụ sẽ hợp lực để soi sáng từng bước tiến của bạn."*`;
+✨ *"Tâm an thì vạn sự an. Khi con đủ tĩnh lặng và thấu suốt, mọi nút thắt số mệnh đều sẽ tự khắc khai mở soi đường cho con."*`;
 
       setReadingText(richFallbackText);
 
@@ -1058,30 +1058,62 @@ Sợi dây liên kết giữa các lá bài cho thấy bạn đang tiến gần 
           </div>
 
           {/* AI Reading Text Output */}
-          <div className="mt-4 bg-slate-950/90 border border-purple-900/50 rounded-2xl p-5 sm:p-7 space-y-4 shadow-inner">
-            <div className="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-amber-500 p-0.5 shadow-md shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop"
-                  alt="Reader Luna"
-                  className="w-full h-full rounded-full object-cover"
-                />
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-100 text-base">Reader Luna - Lời Giải Bài Tarot</h4>
-                <p className="text-xs text-purple-300">Thông điệp trực giác chuyên sâu dành cho bạn</p>
+          <div className="mt-4 bg-gradient-to-b from-[#0e0a1a] via-[#120d24] to-[#0a0714] border border-amber-500/30 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+            {/* Ambient decorative magical glow */}
+            <div className="absolute top-0 right-1/4 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+            <div className="absolute -bottom-10 left-10 w-60 h-60 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div className="relative z-10 flex items-center justify-between border-b border-purple-800/40 pb-5">
+              <div className="flex items-center gap-3.5">
+                <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-purple-600 to-indigo-700 p-0.5 shadow-lg shadow-purple-950/60 shrink-0">
+                  <img
+                    src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80"
+                    alt="Thầy Bói Bà Bà"
+                    className="w-full h-full rounded-2xl object-cover"
+                  />
+                  <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[9px] shadow-sm animate-pulse">
+                    🔮
+                  </span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-black text-amber-200 text-base sm:text-lg tracking-wide flex items-center gap-1.5">
+                      <span>Thầy Bói Bà Bà</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-normal">
+                        Bậc Thầy Tiên Tri
+                      </span>
+                    </h4>
+                  </div>
+                  <p className="text-xs text-purple-300/90 flex items-center gap-1.5 mt-0.5">
+                    <span>✨ Thấu thị nhân duyên & Giải mã huyền cơ vũ trụ</span>
+                  </p>
+                </div>
               </div>
             </div>
 
             {isReadingLoading && !readingText ? (
-              <div className="py-12 text-center space-y-3">
-                <span className="text-3xl inline-block animate-spin">✨</span>
-                <p className="text-sm text-slate-300 font-medium">
-                  Luna đang luận giải từng khía cạnh trong quẻ trải bài {pickedCards.length} lá của bạn...
-                </p>
+              <div className="py-14 text-center space-y-4 relative z-10">
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-600/30 via-amber-500/30 to-pink-500/30 animate-spin border border-amber-400/40"></div>
+                  <span className="absolute text-4xl animate-bounce">🔮</span>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-base text-amber-200 font-bold tracking-wide">
+                    Thầy Bói Bà Bà đang gieo quẻ & thấu thị huyền cơ...
+                  </p>
+                  <p className="text-xs text-purple-300/80 max-w-md mx-auto leading-relaxed">
+                    Bà Bà đang kết nối năng lượng từng khía cạnh trong quẻ trải bài {pickedCards.length} lá của bạn. Hãy tĩnh tâm hít sâu để đón nhận thông điệp định mệnh...
+                  </p>
+                </div>
+                {/* Mystical dots animation */}
+                <div className="flex justify-center items-center gap-2 pt-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                  <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping [animation-delay:0.2s]"></span>
+                  <span className="w-2 h-2 rounded-full bg-pink-400 animate-ping [animation-delay:0.4s]"></span>
+                </div>
               </div>
             ) : (
-              <div className="text-slate-200 text-sm md:text-base leading-relaxed space-y-4 font-sans prose prose-invert max-w-none prose-p:my-2 prose-headings:text-amber-300 prose-headings:font-bold prose-strong:text-amber-200 prose-strong:font-bold">
+              <div className="relative z-10 text-slate-200 text-sm md:text-base leading-relaxed space-y-4 font-sans prose prose-invert max-w-none prose-p:my-2 prose-headings:text-amber-300 prose-headings:font-bold prose-strong:text-amber-200 prose-strong:font-bold">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {readingText}
                 </ReactMarkdown>
