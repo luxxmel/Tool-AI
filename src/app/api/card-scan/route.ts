@@ -81,11 +81,8 @@ QUY TẮC BẮT BUỘC:
 
     const result = await generateText({
       model,
+      system: systemPrompt,
       messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
         {
           role: "user",
           content: [
