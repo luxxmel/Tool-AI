@@ -103,8 +103,8 @@ export async function generateImageViaYescale({
             }
           }
 
-          if (status === "FAILED") {
-            console.warn("[Yescale Gemini] Task báo FAILED, chuyển sang động cơ dự phòng sạch.");
+          if (status === "FAILED" || status === "FAILURE") {
+            console.warn("[Yescale Gemini] Task báo FAILED/FAILURE, chuyển ngay sang động cơ dự phòng sạch.");
             return generateCleanFallbackImage(prompt, aspectRatio);
           }
 
