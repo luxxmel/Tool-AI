@@ -43,7 +43,7 @@
   "app\\page.tsx -> @/components/characters/CharactersDirectory": {
     "id": 2502,
     "files": [
-      "static/chunks/2502.5e2f0a850fd0ba3f.js"
+      "static/chunks/2502.4b63c0dfd0244ef1.js"
     ]
   },
   "app\\page.tsx -> @/components/english/EnglishLearningView": {

@@ -62,19 +62,19 @@ export default function CharactersDirectory() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col px-2 sm:px-4 pb-12">
-      {/* Top Search Input (Gọn gàng, vừa vặn không choáng màn hình) */}
-      <div className="w-full mb-3">
+    <div className="w-full min-h-screen flex flex-col px-3 sm:px-6 lg:px-8 pb-16">
+      {/* Top Search Input (Full width, hiện đại và thanh lịch) */}
+      <div className="w-full mb-3.5">
         <div className="relative w-full">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm kiếm nhân vật, danh xưng hoặc kịch bản truyện..."
-            className="w-full pl-9 pr-4 py-2 sm:py-2.5 bg-[#12131a] dark:bg-[#0e1017] border border-slate-800/90 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-cyan-500/50 transition-all shadow-inner"
+            className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-[#12131a] dark:bg-[#0e1017] border border-slate-800/90 rounded-2xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-cyan-500/60 transition-all shadow-inner"
           />
           <svg
-            className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"
+            className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -89,13 +89,13 @@ export default function CharactersDirectory() {
         </div>
       </div>
 
-      {/* Category Pills Slider Bar (Thanh trượt danh mục nhỏ gọn) */}
-      <div className="w-full mb-3.5 overflow-x-auto pb-1 scrollbar-none flex items-center gap-1.5">
+      {/* Category Pills Slider Bar (Thanh trượt danh mục phủ đầy đủ) */}
+      <div className="w-full mb-4 overflow-x-auto pb-1.5 scrollbar-none flex items-center gap-2">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedCat(cat.id)}
-            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
               selectedCat === cat.id
                 ? "bg-white text-black shadow-md font-semibold"
                 : "bg-[#181a24] text-slate-400 hover:text-white hover:bg-[#202330]"
@@ -107,73 +107,80 @@ export default function CharactersDirectory() {
       </div>
 
       {/* Title & Count Header */}
-      <div className="w-full flex items-center justify-between mb-3 px-0.5">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm sm:text-base font-bold text-white tracking-tight flex items-center gap-1.5">
+      <div className="w-full flex items-center justify-between mb-3.5 px-0.5">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-white tracking-tight flex items-center gap-2">
             <span>✨</span>
             <span>{selectedCat === "all" ? "Tất cả nhân vật truyện" : `Nhân vật: ${selectedCat}`}</span>
           </h2>
-          <span className="text-[10px] sm:text-[11px] font-medium text-cyan-400 px-2 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-800/50">
+          <span className="text-[11px] font-medium text-cyan-400 px-2.5 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-800/50">
             {filteredCharacters.length} nhân vật
           </span>
         </div>
       </div>
 
-      {/* Poster Card Grid: Tối ưu tỉ lệ aspect-[3/3.7], tăng số cột trên desktop để hiện đầy đủ không bị ẩn */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2.5 sm:gap-3.5">
-        {filteredCharacters.map((char) => (
-          <div
-            key={char.id}
-            onClick={() => setSelectedChar(char)}
-            className="group relative aspect-[3/3.7] rounded-xl sm:rounded-2xl overflow-hidden bg-[#141622] border border-slate-800/80 hover:border-cyan-500/80 transition-all duration-300 shadow-sm hover:shadow-xl hover:scale-[1.02] cursor-pointer flex flex-col justify-end"
-          >
-            {/* Full Card Background Image */}
-            <img
-              src={char.avatar}
-              alt={char.name}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "/characters/luc_can_phong.jpg";
-              }}
-            />
+      {/* Fluid Responsive Grid: Full màn hình 100%, tự động co giãn thích ứng theo kích thước thiết bị & mức zoom */}
+      <div className="w-full grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 sm:gap-4 lg:gap-5">
+        {filteredCharacters.map((char) => {
+          // Bổ sung cache buster ?v=3 để trình duyệt luôn tải ảnh 3D Cinematic mới nhất, không bị lưu cache anime cũ
+          const freshAvatar = char.avatar
+            ? `${char.avatar}${char.avatar.includes("?") ? "&" : "?"}v=3`
+            : "/characters/luc_can_phong.jpg";
 
-            {/* Dark Gradient Overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
+          return (
+            <div
+              key={char.id}
+              onClick={() => setSelectedChar(char)}
+              className="group relative aspect-[3/3.8] rounded-2xl overflow-hidden bg-[#141622] border border-slate-800/80 hover:border-cyan-500/80 transition-all duration-300 shadow-md hover:shadow-2xl hover:scale-[1.02] cursor-pointer flex flex-col justify-end"
+            >
+              {/* Full Card Background Image */}
+              <img
+                src={freshAvatar}
+                alt={char.name}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/characters/luc_can_phong.jpg";
+                }}
+              />
 
-            {/* Card Content Overlay at bottom */}
-            <div className="relative z-10 p-2 sm:p-2.5 text-white flex flex-col justify-end">
-              {/* Character Name */}
-              <h3 className="text-xs sm:text-[13px] font-bold text-white drop-shadow-md truncate mb-0.5 group-hover:text-cyan-300 transition-colors">
-                {char.name}
-              </h3>
+              {/* Dark Gradient Overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
 
-              {/* Character Description Quote Snippet */}
-              <p className="text-[10px] sm:text-[11px] text-slate-300 line-clamp-1 sm:line-clamp-2 leading-tight italic font-normal drop-shadow-sm mb-1.5 opacity-85">
-                {char.quote || char.description}
-              </p>
+              {/* Card Content Overlay at bottom */}
+              <div className="relative z-10 p-2.5 sm:p-3 text-white flex flex-col justify-end">
+                {/* Character Name */}
+                <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-md truncate mb-0.5 group-hover:text-cyan-300 transition-colors">
+                  {char.name}
+                </h3>
 
-              {/* Interaction count stats bottom row */}
-              <div className="flex items-center justify-between text-[9px] sm:text-[10px] text-slate-400">
-                <div className="flex items-center gap-1">
-                  <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    />
-                  </svg>
-                  <span className="font-mono text-slate-300">{char.interactions}</span>
+                {/* Character Description Quote Snippet */}
+                <p className="text-[10px] sm:text-[11px] text-slate-300 line-clamp-1 sm:line-clamp-2 leading-tight italic font-normal drop-shadow-sm mb-2 opacity-90">
+                  {char.quote || char.description}
+                </p>
+
+                {/* Interaction count stats bottom row */}
+                <div className="flex items-center justify-between text-[10px] text-slate-400">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                    <span className="font-mono text-slate-300">{char.interactions}</span>
+                  </div>
+
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-xs text-cyan-300 font-medium border border-white/10">
+                    {char.tag}
+                  </span>
                 </div>
-
-                <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-white/10 text-cyan-300/90 font-medium">
-                  {char.tag}
-                </span>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Character Story Detail & Persona Onboarding Modal */}
@@ -181,7 +188,7 @@ export default function CharactersDirectory() {
         <CharacterDetailModal
           characterId={selectedChar.id}
           fallbackName={selectedChar.name}
-          fallbackAvatar={selectedChar.avatar}
+          fallbackAvatar={selectedChar.avatar ? `${selectedChar.avatar}${selectedChar.avatar.includes("?") ? "&" : "?"}v=3` : undefined}
           isOpen={!!selectedChar}
           onClose={() => setSelectedChar(null)}
         />

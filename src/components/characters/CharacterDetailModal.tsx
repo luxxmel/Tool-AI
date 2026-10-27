@@ -26,7 +26,8 @@ export default function CharacterDetailModal({
   const { user } = useAuth();
 
   const storyData: CharacterStoryData = getCharacterStory(characterId, fallbackName);
-  const avatarUrl = fallbackAvatar || storyData.avatar;
+  const rawAvatar = fallbackAvatar || storyData.avatar;
+  const avatarUrl = rawAvatar ? `${rawAvatar}${rawAvatar.includes("?") ? "&" : "?"}v=3` : "/characters/luc_can_phong.jpg";
 
   // Tab & Read State
   const [activeTab, setActiveTab] = useState<"summary" | "fullStory">("summary");
