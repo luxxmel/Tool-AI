@@ -90,15 +90,15 @@ export default function CharactersDirectory() {
       </div>
 
       {/* Category Pills Slider Bar (Thanh trượt danh mục phủ đầy đủ) */}
-      <div className="w-full mb-4 overflow-x-auto overflow-y-visible pb-2 pt-1 flex items-center gap-2">
+      <div className="w-full mb-5 flex flex-wrap items-center gap-2 sm:gap-2.5">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedCat(cat.id)}
-            className={`px-4 py-2 shrink-0 rounded-full text-xs sm:text-sm font-medium leading-normal whitespace-nowrap transition-all cursor-pointer flex items-center justify-center ${
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center border ${
               selectedCat === cat.id
-                ? "bg-white text-black shadow-md font-semibold"
-                : "bg-[#181a24] text-slate-400 hover:text-white hover:bg-[#202330]"
+                ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/60 shadow-sm font-semibold"
+                : "bg-[#141622] text-slate-400 border-slate-800/80 hover:text-white hover:border-slate-700 hover:bg-[#1c1f2e]"
             }`}
           >
             {cat.label}
