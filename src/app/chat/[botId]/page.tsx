@@ -1780,11 +1780,19 @@ export default function BotChatPage() {
                       >
                         {/* Header của User Message hiển thị Tên nhập vai / Nickname */}
                         <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-white/20 text-[11px] font-bold text-white">
-                          <span className="flex items-center gap-1.5">
-                            <span>{roleplayPersona?.gender === "male" ? "⚡" : "🌸"}</span>
-                            <span className="drop-shadow-xs">{roleplayPersona?.name || user?.displayName || (language === "en" ? "You" : "Bạn")}</span>
+                          <span className="flex items-center gap-1.5 min-w-0">
+                            {user?.avatar ? (
+                              <img
+                                src={user.avatar}
+                                alt={roleplayPersona?.name || user?.displayName || "User"}
+                                className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full object-cover border border-white/40 shadow-xs shrink-0"
+                              />
+                            ) : (
+                              <span>{roleplayPersona?.gender === "male" ? "⚡" : "🌸"}</span>
+                            )}
+                            <span className="drop-shadow-xs truncate">{roleplayPersona?.name || user?.displayName || (language === "en" ? "You" : "Bạn")}</span>
                           </span>
-                          <span className="text-[10px] font-semibold text-white bg-black/25 backdrop-blur-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
+                          <span className="text-[10px] font-semibold text-white bg-black/25 backdrop-blur-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20 shrink-0">
                             <span>{roleplayPersona?.gender === "male" ? "♂ Nam" : "♀ Nữ"}</span>
                           </span>
                         </div>
