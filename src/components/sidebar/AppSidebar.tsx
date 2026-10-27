@@ -175,8 +175,8 @@ export default function AppSidebar({
         </button>
 
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xs shadow-xs shadow-indigo-500/30">
-            ▲
+          <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+            <img src="/logo.png" alt="Biết Tuốt Logo" className="w-full h-full object-contain" />
           </div>
           <span className="font-black text-slate-900 dark:text-white text-base tracking-tight whitespace-nowrap">
             biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">.io</span>
@@ -274,10 +274,8 @@ export default function AppSidebar({
               onClick={() => setIsMobileOpen(false)}
               className="flex items-center gap-2 group cursor-pointer min-w-0 flex-1 truncate"
             >
-              <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-cyan-400 flex items-center justify-center text-white font-black shadow-md shadow-indigo-500/25 ring-1 ring-white/20 group-hover:scale-105 transition-transform shrink-0">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
-                </svg>
+              <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                <img src="/logo.png" alt="Biết Tuốt Logo" className="w-full h-full object-contain drop-shadow-sm" />
               </div>
               <span className="text-[15px] font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
                 biettuot<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400">.io</span>

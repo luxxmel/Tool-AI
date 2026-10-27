@@ -42,6 +42,7 @@
   "/api/users/route": "/api/users",
   "/api/webhook/facebook/route": "/api/webhook/facebook",
   "/favicon.ico/route": "/favicon.ico",
+  "/icon.png/route": "/icon.png",
   "/robots.txt/route": "/robots.txt",
   "/sitemap.xml/route": "/sitemap.xml",
   "/webhook/[...slug]/route": "/webhook/[...slug]",
