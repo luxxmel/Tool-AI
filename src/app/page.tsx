@@ -308,9 +308,9 @@ function HomeContent() {
           isChatOpen
             ? "h-screen max-h-[100dvh] overflow-hidden px-2 sm:px-4 pt-14 lg:pt-3 pb-2"
             : "min-h-full px-1 sm:px-3 lg:px-4 pt-16 lg:pt-8 pb-32 sm:pb-44"
-        } flex flex-col ${isChatOpen ? "items-stretch" : "items-center"} justify-start w-full relative z-10 transition-all duration-300 ${
-          isSidebarCollapsed ? "lg:ml-0" : "lg:ml-64"
-        }`}
+        } flex flex-col ${isChatOpen ? "items-stretch" : "items-center"} justify-start w-full min-w-0 relative z-10 transition-all duration-300 ${
+          isSidebarCollapsed ? "lg:ml-0 lg:max-w-full" : "lg:ml-64 lg:max-w-[calc(100vw-16rem)] lg:w-[calc(100%-16rem)]"
+        } overflow-x-hidden`}
       >
 
         {/* Centered Unified Content Container */}

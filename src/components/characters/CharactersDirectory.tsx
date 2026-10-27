@@ -120,12 +120,9 @@ export default function CharactersDirectory() {
       </div>
 
       {/* Fluid Responsive Grid: Full màn hình 100%, tự động co giãn thích ứng theo kích thước thiết bị & mức zoom */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 sm:gap-4 lg:gap-5">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
         {filteredCharacters.map((char) => {
-          // Bổ sung cache buster ?v=3 để trình duyệt luôn tải ảnh 3D Cinematic mới nhất, không bị lưu cache anime cũ
-          const freshAvatar = char.avatar
-            ? `${char.avatar}${char.avatar.includes("?") ? "&" : "?"}v=3`
-            : "/characters/luc_can_phong.jpg";
+          const freshAvatar = char.avatar || "/characters/luc_can_phong.jpg";
 
           return (
             <div
