@@ -69,9 +69,20 @@ export async function GET(request: NextRequest) {
         if (res.ok) {
           const rawBuf = Buffer.from(await res.arrayBuffer());
           try {
-            finalBuffer = await sharp(rawBuf)
-              .jpeg({ quality: 96, mozjpeg: true })
-              .toBuffer();
+            if (directUrl.includes("pollinations.ai")) {
+              const meta = await sharp(rawBuf).metadata();
+              const w = meta.width || width;
+              const h = meta.height || height;
+              finalBuffer = await sharp(rawBuf)
+                .extract({ left: 0, top: 0, width: w, height: Math.max(50, h - 45) })
+                .resize(w, h, { fit: "cover" })
+                .jpeg({ quality: 96, mozjpeg: true })
+                .toBuffer();
+            } else {
+              finalBuffer = await sharp(rawBuf)
+                .jpeg({ quality: 96, mozjpeg: true })
+                .toBuffer();
+            }
             finalContentType = "image/jpeg";
           } catch {
             finalBuffer = rawBuf;

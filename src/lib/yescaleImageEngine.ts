@@ -1,6 +1,6 @@
 /**
  * Động cơ sinh ảnh chính thức qua Yescale Gemini Image Engine (Watermark-Free HD)
- * Model chính: gemini-2.5-flash-image[nano-banana]
+ * Model chính: nano-banana-pro / nano-banana-2
  * Endpoint: https://api.yescale.io/task/submit
  */
 
@@ -15,8 +15,14 @@ function getYescaleApiKey(): string {
 const YESCALE_BASE_URL =
   process.env.YESCALE_BASE_URL || "https://api.yescale.io";
 
-const YESCALE_MODEL =
-  process.env.YESCALE_IMAGE_MODEL || "nano-banana-2";
+function getActiveModels(): string[] {
+  const envModel = process.env.YESCALE_IMAGE_MODEL?.trim();
+  // Nếu envModel là gemini-2.5-flash-image[nano-banana] (đang bị lỗi phía upstream), ưu tiên nano-banana-pro & nano-banana-2
+  if (!envModel || envModel.includes("gemini-2.5-flash-image")) {
+    return ["nano-banana-pro", "nano-banana-2"];
+  }
+  return [envModel, "nano-banana-pro", "nano-banana-2"];
+}
 
 interface YescaleGenerateParams {
   prompt: string;
@@ -29,98 +35,111 @@ export async function generateImageViaYescale({
   aspectRatio = "1:1",
   referenceImage,
 }: YescaleGenerateParams): Promise<string> {
-  const submitUrl = `${YESCALE_BASE_URL}/task/submit`;
+  const apiKey = getYescaleApiKey();
+  const modelsToTry = getActiveModels();
 
-  const config: Record<string, any> = {
-    aspect_ratio: aspectRatio || "1:1",
-    size: "1K",
-  };
+  for (const model of modelsToTry) {
+    try {
+      const submitUrl = `${YESCALE_BASE_URL}/task/submit`;
+      const config: Record<string, any> = {
+        aspect_ratio: aspectRatio || "1:1",
+        size: "1K",
+      };
 
-  if (referenceImage && typeof referenceImage === "string") {
-    config.images = [referenceImage];
-  }
+      if (model === "nano-banana-pro") {
+        config.google_search = false;
+      }
 
-  const payload = {
-    model: YESCALE_MODEL,
-    prompt: prompt.trim(),
-    config,
-  };
+      if (referenceImage && typeof referenceImage === "string") {
+        config.images = [referenceImage];
+      }
 
-  try {
-    const apiKey = getYescaleApiKey();
-    console.log(`[Yescale AI Image] Gửi task sinh ảnh với model ${YESCALE_MODEL}...`);
-    const submitRes = await fetch(submitUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(20000),
-    });
+      const payload = {
+        model,
+        prompt: prompt.trim(),
+        config,
+      };
 
-    if (!submitRes.ok) {
-      const errText = await submitRes.text();
-      console.warn("[Yescale Gemini] Submit task thất bại, sử dụng động cơ dự phòng sạch:", submitRes.status, errText);
-      return generateCleanFallbackImage(prompt, aspectRatio);
-    }
+      console.log(`[Yescale AI Image] Gửi task sinh ảnh với model ${model}...`);
+      const submitRes = await fetch(submitUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(15000),
+      });
 
-    const submitData = await submitRes.json();
-    const taskId = submitData?.task_id;
+      if (!submitRes.ok) {
+        const errText = await submitRes.text();
+        console.warn(`[Yescale AI Image] Model ${model} submit thất bại (${submitRes.status}):`, errText);
+        continue;
+      }
 
-    if (!taskId) {
-      console.warn("[Yescale Gemini] Không nhận được task_id, chuyển sang động cơ dự phòng.");
-      return generateCleanFallbackImage(prompt, aspectRatio);
-    }
+      const submitData = await submitRes.json();
+      const taskId = submitData?.task_id;
 
-    console.log(`[Yescale Gemini] Task ID đã tạo thành công: ${taskId}. Bắt đầu theo dõi kết quả...`);
+      if (!taskId) {
+        console.warn(`[Yescale AI Image] Model ${model} không trả về task_id:`, submitData);
+        continue;
+      }
 
-    // Polling theo dõi tiến độ task (Tối đa 35 lần x 1.5s ~ 50s)
-    const pollUrl = `${YESCALE_BASE_URL}/task/${taskId}`;
-    const maxRetries = 35;
+      console.log(`[Yescale AI Image] Task ID: ${taskId} (${model}). Bắt đầu theo dõi...`);
 
-    for (let i = 0; i < maxRetries; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Polling kết quả (40 lần x 1.5s ~ 60s)
+      const pollUrl = `${YESCALE_BASE_URL}/task/${taskId}`;
+      const maxRetries = 40;
+      let modelSuccessUrl: string | null = null;
 
-      try {
-        const pollRes = await fetch(pollUrl, {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-          },
-          signal: AbortSignal.timeout(8000),
-        });
+      for (let i = 0; i < maxRetries; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        if (pollRes.ok) {
-          const pollData = await pollRes.json();
-          const status = pollData?.status;
-          const progress = pollData?.progress || "0%";
+        try {
+          const pollRes = await fetch(pollUrl, {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+            },
+            signal: AbortSignal.timeout(8000),
+          });
 
-          if (status === "SUCCESS") {
-            const finalUrl = pollData?.task_result?.url;
-            if (finalUrl) {
-              console.log(`[Yescale Gemini] Sinh ảnh HD thành công 100% (No Watermark): ${finalUrl}`);
-              return finalUrl;
+          if (pollRes.ok) {
+            const pollData = await pollRes.json();
+            const status = pollData?.status;
+            const progress = pollData?.progress || "0%";
+
+            if (status === "SUCCESS") {
+              const finalUrl = pollData?.task_result?.url;
+              if (finalUrl) {
+                console.log(`[Yescale AI Image] Sinh ảnh HD thành công 100% (No Watermark): ${finalUrl}`);
+                return finalUrl;
+              }
+            }
+
+            if (status === "FAILED" || status === "FAILURE") {
+              console.warn(`[Yescale AI Image] Task ${taskId} báo thất bại (${pollData?.err_reason?.code || status}). Thử model kế tiếp...`);
+              break;
+            }
+
+            if ((i + 1) % 4 === 0) {
+              console.log(`[Yescale AI Image] Lần ${i + 1}/${maxRetries} - Trạng thái: ${status} (${progress})`);
             }
           }
-
-          if (status === "FAILED" || status === "FAILURE") {
-            console.warn("[Yescale Gemini] Task báo FAILED/FAILURE, chuyển ngay sang động cơ dự phòng sạch.");
-            return generateCleanFallbackImage(prompt, aspectRatio);
-          }
-
-          console.log(`[Yescale Gemini] Lần ${i + 1}/${maxRetries} - Trạng thái: ${status} (${progress})`);
+        } catch (pollErr: any) {
+          console.warn(`[Yescale AI Image] Kiểm tra lần ${i + 1} lỗi kết nối:`, pollErr?.message);
         }
-      } catch (pollErr: any) {
-        console.warn(`[Yescale Gemini] Lần kiểm tra ${i + 1} cảnh báo:`, pollErr?.message);
       }
-    }
 
-    console.warn("[Yescale Gemini] Hết thời gian chờ Yescale, tự động dùng động cơ AI dự phòng sạch.");
-    return generateCleanFallbackImage(prompt, aspectRatio);
-  } catch (err: any) {
-    console.warn("[Yescale Gemini] Lỗi hệ thống Yescale, khởi động động cơ dự phòng sạch:", err?.message);
-    return generateCleanFallbackImage(prompt, aspectRatio);
+      if (modelSuccessUrl) {
+        return modelSuccessUrl;
+      }
+    } catch (err: any) {
+      console.warn(`[Yescale AI Image] Lỗi khi xử lý model ${model}:`, err?.message);
+    }
   }
+
+  console.warn("[Yescale AI Image] Tất cả model Yescale bận, tự động kích hoạt Clean Fallback Engine.");
+  return generateCleanFallbackImage(prompt, aspectRatio);
 }
 
 /**
@@ -143,6 +162,6 @@ function generateCleanFallbackImage(prompt: string, aspectRatio: string = "1:1")
   // Dùng tham số model=flux và nologo=true để ảnh đẹp và không logo
   const cleanUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=flux&nologo=true&seed=${seed}`;
   
-  console.log(`[Clean AI Engine] Sinh ảnh thành công qua Clean AI Engine (No Watermark): ${cleanUrl}`);
+  console.log(`[Clean AI Engine] Sinh ảnh thành công qua Clean AI Engine: ${cleanUrl}`);
   return cleanUrl;
 }

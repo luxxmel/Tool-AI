@@ -1,18 +1,11 @@
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
+
 /**
  * Module tạo và tối ưu hóa Prompt cho AI Image Studio
- * - Bước 1: Claude Fable 5.1 (claude-fable-5-1) phân tích yêu cầu + ảnh gốc + tỉ lệ khung hình (Aspect Ratio)
- * - Bước 2: Gemini 3.8 Flash (gemini-3-8-flash) tối ưu hóa chiều sâu nhiếp ảnh, chi tiết da thật và ánh sáng
+ * - Sử dụng Gemini 2.5 Flash / Flash Lite làm đạo diễn prompt dịch tiếng Việt siêu chuẩn sang tiếng Anh nhiếp ảnh
+ * - Giữ nguyên 100% ý định, phong cách, chủ thể của người dùng
  */
-
-function getTrollllmApiKey(): string {
-  const envKey = process.env.TROLLLLM_API_KEY?.replace(/["']/g, "")?.trim();
-  if (envKey && envKey.startsWith("sk-") && envKey.length > 25 && !envKey.includes("YOUR_")) {
-    return envKey;
-  }
-  return "sk-trollllm-b28bae23ee1d9bc12cbcaada91d7ec306d0a91fab5fc2ba3f04f110380b83301";
-}
-
-const OPENAI_ENDPOINT = "https://chat.trollllm.xyz/v1/chat/completions";
 
 interface GeneratePromptParams {
   prompt: string;
@@ -28,58 +21,56 @@ export async function generateOptimizedPromptWithFableAndGemini({
   finalPrompt: string;
 }> {
   const cleanUserPrompt = prompt.trim();
-  let fablePrompt = cleanUserPrompt;
-  const apiKey = getTrollllmApiKey();
+  let optimizedPrompt = cleanUserPrompt;
 
-  // Sử dụng DeepSeek v4 Flash siêu tốc (2-3s) và hiểu tiếng Việt cực kỳ chuẩn xác
-  try {
-    const res = await fetch(OPENAI_ENDPOINT, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "deepseek-v4-flash",
-        messages: [
-          {
-            role: "system",
-            content: `You are an elite AI image prompt director and translator.
-Task: Convert the user's request (including Vietnamese, slang, names, actions, artistic styles) into an English prompt that STRICTLY follows what the user wants.
+  // 1. Thử qua Google Gemini 2.5 Flash / Flash Lite (Cực nhanh ~1s, chất lượng dịch chuẩn xác nhất)
+  const candidateModels = ["gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-3.7-flash"];
+  for (const modelName of candidateModels) {
+    try {
+      const result = await generateText({
+        model: google(modelName),
+        system: `You are an elite AI image prompt director and translator.
+Task: Convert the user's request (which may be in Vietnamese, slang, shorthand, or English) into an accurate, rich, photorealistic or stylistically matching English prompt for image generation.
 Selected Aspect Ratio: ${aspectRatio}.
 
-CRITICAL INSTRUCTIONS:
-1. STRICT USER INTENT FIDELITY (TOP PRIORITY):
-   - Exactly follow the user's requested subject, actions, setting, mood, and interactions.
-   - Respect the user's desired style: If the user asks for anime, 3D render, cartoon, cyberpunk, fantasy, painting, sketch, or photography, KEEP THAT EXACT STYLE.
-   - If no specific style is requested, make it a natural, vivid, high-detail, visually stunning realistic representation.
-2. PRESERVE EVERY REQUESTED DETAIL:
-   - Specific colors, outfits, emotions, characters, objects, and compositions requested by the user MUST be preserved.
+CRITICAL RULES:
+1. STRICT USER INTENT FIDELITY (HIGHEST PRIORITY):
+   - Accurately translate and represent the user's core subject (e.g., if user asks for "đèn diệt côn trùng nhà xưởng", the output MUST be an industrial UV insect killer lamp in a factory warehouse, NOT a vehicle or random machine).
+   - If user asks for a specific art style (anime, 3D render, cartoon, cyberpunk, sketch, watercolor, photography), PRESERVE THAT EXACT STYLE.
+   - If no specific style is requested, make it a natural, vivid, highly detailed, realistic photograph with authentic lighting.
+2. PRESERVE ALL DETAILS:
+   - Specific colors, settings, objects, moods, and actions requested by the user must be retained.
 3. CONCISE & PURE:
-   - Output ONLY the final English prompt under 60 words. No chat, no explanations, no quotes.`,
-          },
-          {
-            role: "user",
-            content: cleanUserPrompt,
-          },
-        ],
-      }),
-      signal: AbortSignal.timeout(6500),
-    });
+   - Output ONLY the final English prompt under 60 words. No chat, no quotes, no explanations.`,
+        prompt: cleanUserPrompt,
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      const text = data?.choices?.[0]?.message?.content?.trim();
-      if (text) {
-        fablePrompt = text.replace(/^["'`]|["'`]$/g, "").trim();
+      if (result?.text?.trim()) {
+        const text = result.text.replace(/^["'`]|["'`]$/g, "").trim();
+        if (text && text.length > 5) {
+          optimizedPrompt = text;
+          return {
+            fablePrompt: optimizedPrompt,
+            finalPrompt: optimizedPrompt,
+          };
+        }
       }
+    } catch (err: any) {
+      console.warn(`[Image Prompt Gemini] Model ${modelName} cảnh báo:`, err?.message);
     }
-  } catch (err) {
-    console.warn("[TrollLLM] Cảnh báo tối ưu prompt DeepSeek, giữ prompt gốc:", err);
+  }
+
+  // 2. Fallback cơ bản nếu API AI tạm thời bận
+  if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(cleanUserPrompt)) {
+    // Nếu vẫn là tiếng Việt thô, cố gắng dọn dẹp các từ khóa lệnh vẽ
+    const cleanIdea = cleanUserPrompt
+      .replace(/^(?:hãy\s+|vui lòng\s+|nhờ bạn\s+|giúp mình\s+|tạo cho t\s+|tạo cho tôi\s+|tạo cho mình\s+)?(?:1 ảnh về|ảnh về|hình ảnh về|vẽ|tạo hình|tạo ảnh|thiết kế ảnh|vẽ tranh)\s+/i, "")
+      .trim();
+    optimizedPrompt = `High quality, ultra detailed realistic photo of ${cleanIdea}, photorealistic, 8k, cinematic lighting`;
   }
 
   return {
-    fablePrompt,
-    finalPrompt: fablePrompt,
+    fablePrompt: optimizedPrompt,
+    finalPrompt: optimizedPrompt,
   };
 }
