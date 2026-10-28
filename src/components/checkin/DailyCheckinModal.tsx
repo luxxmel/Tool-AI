@@ -91,8 +91,12 @@ export default function DailyCheckinModal({
 
   if (!isOpen) return null;
 
-  // Active day index in current 7-day cycle (1 to 7)
-  const activeCycleDay = currentStreak === 0 ? 1 : ((currentStreak - 1) % 7) + 1;
+  // Active day index in current 7-day cycle (1 to 7):
+  // - Nếu hôm nay ĐÃ điểm danh: activeCycleDay là ô ngày vừa nhận ((currentStreak - 1) % 7) + 1
+  // - Nếu hôm nay CHƯA điểm danh: activeCycleDay là ô ngày hôm nay chuẩn bị nhận (currentStreak % 7) + 1
+  const activeCycleDay = isCheckedToday
+    ? (currentStreak === 0 ? 1 : ((currentStreak - 1) % 7) + 1)
+    : (currentStreak % 7) + 1;
 
   const handleClaim = async () => {
     if (!isAuthenticated || !user) {
