@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureUser } from "@/lib/ensureUser";
+import { DEDICATED_BOT_IDS } from "@/lib/characterUtils";
 
 // GET /api/conversations?userId=... - Lấy danh sách cuộc trò chuyện
 export async function GET(request: NextRequest) {
@@ -34,9 +35,10 @@ export async function GET(request: NextRequest) {
     if (botId) {
       whereClause.botId = botId;
     } else if (excludeCharacters) {
-      // Loại trừ các nhân vật truyện khỏi danh sách đoạn chat chung ở ngoài
+      // Loại trừ các nhân vật truyện và các trợ lý chuyên môn riêng biệt khỏi danh sách "Đoạn chat gần đây" ở Sidebar chính
       whereClause.NOT = [
         { botId: { startsWith: "char-" } },
+        { botId: { in: Array.from(DEDICATED_BOT_IDS) } },
       ];
     }
 
@@ -80,30 +82,36 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, botId, userId } = body;
+    const { userId, botId = "omni-assistant", title = "Cuộc trò chuyện mới", projectId = null } = body;
 
-    if (!userId || userId === "user-demo-123" || userId.startsWith("guest_")) {
-      return NextResponse.json(
-        { error: "Vui lòng đăng nhập để tạo cuộc trò chuyện" },
-        { status: 401 }
-      );
+    if (!userId || userId === "user-demo-123" || userId.startsWith("guest_") || userId === "null" || userId === "undefined") {
+      return NextResponse.json({ error: "Yêu cầu đăng nhập hợp lệ để lưu cuộc trò chuyện" }, { status: 401 });
     }
 
     const user = await ensureUser(userId);
     if (!user) {
-      return NextResponse.json(
-        { error: "Vui lòng đăng nhập để tạo cuộc trò chuyện" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Không tìm thấy người dùng" }, { status: 404 });
     }
 
-    const targetBotId = botId || "omni-assistant";
+    // Đảm bảo bot tồn tại trong database
+    const bot = await prisma.bot.upsert({
+      where: { id: botId },
+      update: {},
+      create: {
+        id: botId,
+        name: "Biết Tuốt AI",
+        category: "general",
+        avatar: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80",
+        description: "Trợ lý trí tuệ nhân tạo toàn năng",
+      },
+    });
 
-    const newConv = await prisma.conversation.create({
+    const conversation = await prisma.conversation.create({
       data: {
         userId: user.id,
-        botId: targetBotId,
-        title: title || "Cuộc trò chuyện mới",
+        botId: bot.id,
+        title,
+        projectId,
       },
       include: {
         bot: {
@@ -112,12 +120,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(newConv);
+    return NextResponse.json(conversation, { status: 201 });
   } catch (error) {
-    console.error("Lỗi khi tạo cuộc hội thoại mới:", error);
-    return NextResponse.json(
-      { error: "Lỗi khi tạo cuộc hội thoại mới" },
-      { status: 500 }
-    );
+    console.error("Lỗi khi tạo cuộc trò chuyện mới:", error);
+    return NextResponse.json({ error: "Không thể tạo cuộc trò chuyện" }, { status: 500 });
   }
 }
