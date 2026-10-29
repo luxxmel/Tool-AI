@@ -86,7 +86,7 @@ export default function HealingCorner({ onOpenLoginModal }: HealingCornerProps =
       text: language === "en"
         ? "Hello... How has your day been? If there is anything bothering or weighing you down, feel free to chat with me."
         : "Chào bạn... Hôm nay của bạn thế nào? Có chuyện gì làm bạn phiền lòng hay mệt mỏi không, cứ tâm sự với mình nhé.",
-      time: new Date().toLocaleTimeString(language === "en" ? "en-US" : "vi-VN", { hour: "2-digit", minute: "2-digit" }),
+      time: "",
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +101,16 @@ export default function HealingCorner({ onOpenLoginModal }: HealingCornerProps =
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    const formattedTime = new Date().toLocaleTimeString(language === "en" ? "en-US" : "vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    setMessages((prev) =>
+      prev.map((m) => (m.id === "welcome-msg" && !m.time ? { ...m, time: formattedTime } : m))
+    );
+  }, []);
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
