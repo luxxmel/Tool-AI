@@ -6,7 +6,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 
-import { isCharacterStoryBot, isDedicatedBotOrCharacter } from "@/lib/characterUtils";
+import { isMainChatBot } from "@/lib/characterUtils";
 
 export interface ConversationSummary {
   id: string;
@@ -117,10 +117,10 @@ export default function SidebarConversationsList({
         }
       } catch {}
 
-      // Hợp nhất serverConvs và localConvs không bị lặp ID, loại bỏ triệt để các ID đã xóa, dự án riêng, nhân vật truyện hoặc trợ lý chuyên sâu riêng
+      // Hợp nhất serverConvs và localConvs không bị lặp ID, CHỈ GIỮ LẠI đoạn chat của khung chat bình thường (Biết Tuốt AI)
       const map = new Map<string, ConversationSummary>();
       [...serverConvs, ...localConvs].forEach((item: any) => {
-        if (item && item.id && !deletedIds.has(item.id) && !item.projectId && !isDedicatedBotOrCharacter(item.botId)) {
+        if (item && item.id && !deletedIds.has(item.id) && !item.projectId && isMainChatBot(item.botId)) {
           const existing = map.get(item.id);
           if (!existing || new Date(item.updatedAt) > new Date(existing.updatedAt)) {
             map.set(item.id, item);

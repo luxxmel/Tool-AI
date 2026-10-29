@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureUser } from "@/lib/ensureUser";
-import { DEDICATED_BOT_IDS } from "@/lib/characterUtils";
+import { MAIN_CHAT_BOT_IDS } from "@/lib/characterUtils";
 
 // GET /api/conversations?userId=... - Lấy danh sách cuộc trò chuyện
 export async function GET(request: NextRequest) {
@@ -35,11 +35,8 @@ export async function GET(request: NextRequest) {
     if (botId) {
       whereClause.botId = botId;
     } else if (excludeCharacters) {
-      // Loại trừ các nhân vật truyện và các trợ lý chuyên môn riêng biệt khỏi danh sách "Đoạn chat gần đây" ở Sidebar chính
-      whereClause.NOT = [
-        { botId: { startsWith: "char-" } },
-        { botId: { in: Array.from(DEDICATED_BOT_IDS) } },
-      ];
+      // Chỉ cho phép các đoạn chat chính (omni-assistant / biettuot-ai) xuất hiện ở "Đoạn chat gần đây" ở Sidebar chính
+      whereClause.botId = { in: Array.from(MAIN_CHAT_BOT_IDS) };
     }
 
     const conversations = await prisma.conversation.findMany({

@@ -1053,17 +1053,15 @@ export default function BotChatPage() {
             }
           }
 
-          // Nếu là nhân vật truyện, tải toàn bộ danh sách kịch bản riêng của nhân vật này
-          if (isCharacterStoryBot(botId)) {
-            fetch(`/api/conversations?userId=${encodeURIComponent(activeUserId)}&botId=${encodeURIComponent(botId)}`)
-              .then((res) => (res.ok ? res.json() : []))
-              .then((data) => {
-                if (Array.isArray(data) && isMounted) {
-                  setCharacterSavedScripts(data);
-                }
-              })
-              .catch((err) => console.error("Lỗi tải danh sách kịch bản nhân vật:", err));
-          }
+          // Tải toàn bộ danh sách lịch sử / kịch bản riêng của bot / trợ lý / nhân vật này
+          fetch(`/api/conversations?userId=${encodeURIComponent(activeUserId)}&botId=${encodeURIComponent(botId)}`)
+            .then((res) => (res.ok ? res.json() : []))
+            .then((data) => {
+              if (Array.isArray(data) && isMounted) {
+                setCharacterSavedScripts(data);
+              }
+            })
+            .catch((err) => console.error("Lỗi tải danh sách đoạn chat riêng của bot:", err));
         }
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu trang chat:", err);
@@ -1453,82 +1451,82 @@ export default function BotChatPage() {
             </div>
           ) : (
             <>
-              {/* Nút Kịch bản đã lưu & Tạo kịch bản mới (Dành riêng cho nhân vật truyện) */}
-              {isCharacterStoryBot(botId) && (
-                <div className="relative flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setIsScriptDrawerOpen((prev) => !prev)}
-                    className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 text-xs font-bold transition-all shadow-xs hover:bg-cyan-500/20 cursor-pointer"
-                    title="Xem các kịch bản / đoạn chat đã lưu với nhân vật này"
-                  >
-                    <span>📜</span>
-                    <span className="hidden sm:inline">Kịch bản ({characterSavedScripts.length})</span>
-                  </button>
+              {/* Nút Lịch sử đoạn chat đã lưu & Tạo đoạn chat mới (Dành cho trợ lý / nhân vật) */}
+              <div className="relative flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setIsScriptDrawerOpen((prev) => !prev)}
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 text-xs font-bold transition-all shadow-xs hover:bg-cyan-500/20 cursor-pointer"
+                  title="Xem lịch sử trò chuyện đã lưu với trợ lý này"
+                >
+                  <span>{isCharacterStoryBot(botId) ? "📜" : "💬"}</span>
+                  <span className="hidden sm:inline">
+                    {isCharacterStoryBot(botId) ? "Kịch bản" : "Lịch sử"} ({characterSavedScripts.length})
+                  </span>
+                </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setConversationId(null);
-                      setMessages([]);
-                      router.replace(`/chat/${botId}?new=true`);
-                    }}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all shadow-xs hover:bg-emerald-500/20 cursor-pointer"
-                    title="Bắt đầu một kịch bản mới với nhân vật này"
-                  >
-                    <span>➕</span>
-                    <span className="hidden md:inline">Mới</span>
-                  </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setConversationId(null);
+                    setMessages([]);
+                    router.replace(`/chat/${botId}?new=true`);
+                  }}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all shadow-xs hover:bg-emerald-500/20 cursor-pointer"
+                  title="Bắt đầu cuộc trò chuyện mới"
+                >
+                  <span>➕</span>
+                  <span className="hidden md:inline">Mới</span>
+                </button>
 
-                  {/* Dropdown danh sách kịch bản */}
-                  {isScriptDrawerOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white dark:bg-[#131622] border border-slate-200 dark:border-slate-800 shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95">
-                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white">
-                        <span>📜 Kịch bản với {bot.name}</span>
-                        <button
-                          onClick={() => setIsScriptDrawerOpen(false)}
-                          className="text-slate-400 hover:text-slate-600 dark:hover:text-white"
-                        >
-                          ✕
-                        </button>
-                      </div>
-
-                      <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
-                        {characterSavedScripts.length === 0 ? (
-                          <div className="py-4 text-center text-xs text-slate-400">
-                            Chưa có kịch bản nào được lưu
-                          </div>
-                        ) : (
-                          characterSavedScripts.map((s) => (
-                            <button
-                              key={s.id}
-                              type="button"
-                              onClick={() => {
-                                setIsScriptDrawerOpen(false);
-                                router.replace(`/chat/${botId}?convId=${s.id}`);
-                                setConversationId(s.id);
-                                fetch(`/api/conversations/${s.id}`)
-                                  .then((r) => r.json())
-                                  .then((data) => {
-                                    if (data.messages) setMessages(data.messages);
-                                  });
-                              }}
-                              className={`w-full text-left p-2 rounded-xl text-xs transition-colors flex items-center justify-between cursor-pointer ${
-                                conversationId === s.id
-                                  ? "bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-bold border border-cyan-500/30"
-                                  : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
-                              }`}
-                            >
-                              <span className="truncate pr-2">{s.title || "Cuộc trò chuyện"}</span>
-                              <span className="text-[10px] text-slate-400 shrink-0">{s.messagesCount || 0} msgs</span>
-                            </button>
-                          ))
-                        )}
-                      </div>
+                {/* Dropdown danh sách lịch sử / kịch bản */}
+                {isScriptDrawerOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white dark:bg-[#131622] border border-slate-200 dark:border-slate-800 shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95">
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white">
+                      <span>{isCharacterStoryBot(botId) ? "📜 Kịch bản" : "💬 Lịch sử trò chuyện"} với {bot.name}</span>
+                      <button
+                        onClick={() => setIsScriptDrawerOpen(false)}
+                        className="text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                      >
+                        ✕
+                      </button>
                     </div>
-                  )}
-                </div>
-              )}
+
+                    <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
+                      {characterSavedScripts.length === 0 ? (
+                        <div className="py-4 text-center text-xs text-slate-400">
+                          Chưa có lịch sử trò chuyện nào
+                        </div>
+                      ) : (
+                        characterSavedScripts.map((s) => (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => {
+                              setIsScriptDrawerOpen(false);
+                              router.replace(`/chat/${botId}?convId=${s.id}`);
+                              setConversationId(s.id);
+                              fetch(`/api/conversations/${s.id}`)
+                                .then((r) => r.json())
+                                .then((data) => {
+                                  if (data.messages) setMessages(data.messages);
+                                });
+                            }}
+                            className={`w-full text-left p-2 rounded-xl text-xs transition-colors flex items-center justify-between cursor-pointer ${
+                              conversationId === s.id
+                                ? "bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-bold border border-cyan-500/30"
+                                : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                            }`}
+                          >
+                            <span className="truncate pr-2">{s.title || "Cuộc trò chuyện"}</span>
+                            <span className="text-[10px] text-slate-400 shrink-0">{s.messagesCount || 0} msgs</span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Nút bật/tắt ẩn ghi chú cử chỉ (Chỉ hiện khi là nhân vật truyện / nhập vai) */}
               {isCharacterStoryBot(botId) && (
