@@ -164,7 +164,7 @@ export default function AppSidebar({
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white/90 dark:bg-[#07080d]/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 z-50 flex items-center justify-between px-4 transition-colors">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white/95 dark:bg-[#090a0f]/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/[0.08] z-50 flex items-center justify-between px-4 transition-colors">
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-1"
@@ -255,7 +255,7 @@ export default function AppSidebar({
 
       {/* Main Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-60 w-64 bg-white dark:bg-[#090a10] backdrop-blur-2xl border-r border-slate-200/80 dark:border-indigo-950/50 flex flex-col justify-between p-3.5 transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 z-60 w-64 bg-white/95 dark:bg-[#0d0f17]/95 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/[0.08] flex flex-col justify-between p-3.5 transition-all duration-300 ease-in-out ${
           isMobileOpen
             ? "translate-x-0 shadow-2xl"
             : isCollapsed
@@ -312,7 +312,7 @@ export default function AppSidebar({
           </div>
 
           {/* Quick Action Toolbar (3 ô vuông đều nhau: Quà, Thông báo, Đổi theme) */}
-          <div className="grid grid-cols-3 gap-2 p-1.5 mb-3 bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800/80 rounded-xl">
+          <div className="grid grid-cols-3 gap-2 p-1.5 mb-3 bg-slate-100/70 dark:bg-[#131622]/90 border border-slate-200/70 dark:border-white/[0.08] rounded-xl">
             {/* Daily Check-in Button */}
             <button
               type="button"
@@ -389,7 +389,7 @@ export default function AppSidebar({
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                       isActive || isFlyoutOpen
-                        ? "bg-indigo-50/90 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs font-semibold"
+                        ? "bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 dark:border-cyan-400/40 shadow-xs shadow-xs font-semibold"
                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
                     }`}
                   >
@@ -418,7 +418,7 @@ export default function AppSidebar({
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                     isActive
-                      ? "bg-indigo-50/90 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs font-semibold"
+                      ? "bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 dark:border-cyan-400/40 shadow-xs shadow-xs font-semibold"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
                   }`}
                 >

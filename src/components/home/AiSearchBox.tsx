@@ -358,10 +358,10 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
-        className={`w-full bg-white/95 dark:bg-[#0c0e1a]/95 backdrop-blur-2xl rounded-2xl border-2 transition-all duration-300 shadow-2xl relative ${
+        className={`w-full bg-white/95 dark:bg-[#12141f]/95 backdrop-blur-2xl rounded-2xl border-2 transition-all duration-300 shadow-2xl relative ${
           isFocused
-            ? "border-indigo-500 shadow-[0_0_35px_rgba(99,102,241,0.35)] ring-4 ring-indigo-500/20 z-30"
-            : "border-slate-300 dark:border-indigo-500/40 hover:border-indigo-400 dark:hover:border-indigo-400 shadow-[0_4px_25px_rgba(99,102,241,0.12)] hover:shadow-[0_0_28px_rgba(99,102,241,0.22)] z-20"
+            ? "border-cyan-500 shadow-[0_0_35px_rgba(6,182,212,0.35)] ring-4 ring-cyan-500/20 z-30"
+            : "border-slate-300 dark:border-white/[0.12] hover:border-cyan-500/60 dark:hover:border-cyan-500/60 shadow-[0_4px_25px_rgba(6,182,212,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.25)] z-20"
         }`}
       >
         {/* Quick Mode/Task Chips (Gợi ý tác vụ nhanh) */}
@@ -451,7 +451,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
         />
 
         {/* Bottom Actions Bar */}
-        <div className="px-4 py-2.5 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/70 dark:bg-[#090a12]/60 rounded-b-2xl">
+        <div className="px-4 py-2.5 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/70 dark:bg-[#0e101a]/80 rounded-b-2xl">
           {/* Left: Attach & Model Selector */}
           <div className="flex items-center gap-2">
             {/* Attach file button */}
@@ -542,7 +542,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               disabled={!prompt.trim() && attachedImages.length === 0}
               className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 ${
                 prompt.trim() || attachedImages.length > 0
-                  ? "bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white shadow-lg shadow-indigo-600/35 hover:shadow-indigo-600/50 scale-100 cursor-pointer border border-white/20"
+                  ? "bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 scale-100 cursor-pointer border border-white/20"
                   : "bg-slate-200/80 dark:bg-slate-800/80 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-50"
               }`}
               title={language === "en" ? "Send query" : "Gửi câu hỏi"}

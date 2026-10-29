@@ -265,7 +265,7 @@ function HomeContent() {
       className={`${
         isChatOpen ? "h-screen max-h-[100dvh] overflow-hidden" : "h-screen overflow-y-auto"
       } ${
-        bgType === "default" ? "bg-[#f8fafc] dark:bg-[#07080d]" : "bg-[#07080d]"
+        bgType === "default" ? "bg-[#f8fafc] dark:bg-[#090a0f]" : "bg-[#090a0f]"
       } text-slate-900 dark:text-slate-100 flex flex-col lg:flex-row transition-colors duration-300 relative`}
     >
       {/* Workspace Background Layer */}
