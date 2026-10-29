@@ -230,36 +230,8 @@ Hãy phân tích mạch lạc, chuyên sâu và chuẩn mực theo 5 phần:
         });
 
         // Đồng bộ vào sidebar lịch sử
-        try {
-          const uid = user?.id || user?.email;
-          if (uid) {
-            const convSummary = {
-              id: newItem.id,
-              title: `🌙 Tử Vi: ${fullName} (${fullChart.menhNguHanh})`,
-              updatedAt: new Date().toISOString()
-            };
-            const recentKey = `omni_recent_convs_${uid}`;
-            const existingRaw = localStorage.getItem(recentKey);
-            let existingList = existingRaw ? JSON.parse(existingRaw) : [];
-            existingList = [convSummary, ...existingList.filter((c: any) => c.id !== newItem.id)];
-            localStorage.setItem(recentKey, JSON.stringify(existingList.slice(0, 30)));
-            const msgs = [
-              {
-                id: `msg-user-${Date.now()}`,
-                role: 'user',
-                content: `🌙 Lập lá số Tử Vi cho ${fullName}, sinh ngày ${newItem.solarDate}`,
-                createdAt: new Date().toISOString()
-              },
-              {
-                id: `msg-ai-${Date.now()}`,
-                role: 'assistant',
-                content: textAcc,
-                createdAt: new Date().toISOString()
-              }
-            ];
-            localStorage.setItem(`omni_chat_msgs_${newItem.id}`, JSON.stringify(msgs));
-          }
-        } catch {}
+        // Lịch sử lưu riêng trong tử vi
+
       }
     } catch (err) {
       console.error(err);

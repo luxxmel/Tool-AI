@@ -196,36 +196,8 @@ Hãy luận giải theo cấu trúc 5 phần chuẩn xác:
         });
 
         // Đồng bộ vào sidebar lịch sử
-        try {
-          const uid = user?.id || user?.email;
-          if (uid) {
-            const convSummary = {
-              id: newItem.id,
-              title: `🪐 Chiêm Tinh: ${name} (${chartObj.sunSign})`,
-              updatedAt: new Date().toISOString()
-            };
-            const recentKey = `omni_recent_convs_${uid}`;
-            const existingRaw = localStorage.getItem(recentKey);
-            let existingList = existingRaw ? JSON.parse(existingRaw) : [];
-            existingList = [convSummary, ...existingList.filter((c: any) => c.id !== newItem.id)];
-            localStorage.setItem(recentKey, JSON.stringify(existingList.slice(0, 30)));
-            const msgs = [
-              {
-                id: `msg-user-${Date.now()}`,
-                role: 'user',
-                content: `🪐 Lập bản đồ sao Chiêm Tinh cho ${name}, sinh ngày ${chartObj.birthStr}`,
-                createdAt: new Date().toISOString()
-              },
-              {
-                id: `msg-ai-${Date.now()}`,
-                role: 'assistant',
-                content: textAcc,
-                createdAt: new Date().toISOString()
-              }
-            ];
-            localStorage.setItem(`omni_chat_msgs_${newItem.id}`, JSON.stringify(msgs));
-          }
-        } catch {}
+        // Lịch sử lưu riêng trong chiêm tinh
+
       }
     } catch (err) {
       console.error(err);

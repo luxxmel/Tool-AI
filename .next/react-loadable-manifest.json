@@ -22,14 +22,14 @@
     "files": [
       "static/chunks/428ccf76.192cb87141faf5ff.js",
       "static/chunks/8767-9f9a03cd251f8b78.js",
-      "static/chunks/414.8f1245ee6181d40b.js"
+      "static/chunks/414.924d02618964fbe0.js"
     ]
   },
   "app\\page.tsx -> @/components/astrology/ChiemTinhView": {
     "id": 4673,
     "files": [
       "static/chunks/8767-9f9a03cd251f8b78.js",
-      "static/chunks/4673.6f43f60d1cea6025.js"
+      "static/chunks/4673.7937416069c950fb.js"
     ]
   },
   "app\\page.tsx -> @/components/astrology/TuViView": {
@@ -37,7 +37,7 @@
     "files": [
       "static/chunks/428ccf76.192cb87141faf5ff.js",
       "static/chunks/8767-9f9a03cd251f8b78.js",
-      "static/chunks/1934.75d212f14135740e.js"
+      "static/chunks/1934.6651c465be8f821e.js"
     ]
   },
   "app\\page.tsx -> @/components/characters/CharactersDirectory": {
@@ -126,7 +126,7 @@
     "id": 9082,
     "files": [
       "static/chunks/8767-9f9a03cd251f8b78.js",
-      "static/chunks/9082.9dd009ee81d7f37e.js"
+      "static/chunks/9082.230b516914210708.js"
     ]
   },
   "app\\page.tsx -> @/components/tools/AiToolsStudio": {

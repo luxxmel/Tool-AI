@@ -118,9 +118,27 @@ export default function SidebarConversationsList({
       } catch {}
 
       // Hợp nhất serverConvs và localConvs không bị lặp ID, CHỈ GIỮ LẠI đoạn chat của khung chat bình thường (Biết Tuốt AI)
+      // Lọc bỏ triệt để: botId không phải chat chính, hoặc title chứa dấu hiệu Tarot / Bói toán / Trợ lý chuyên sâu
+      const isPureMainChat = (item: any) => {
+        if (!item) return false;
+        if (!isMainChatBot(item.botId)) return false;
+        const titleLower = (item.title || "").toLowerCase();
+        if (
+          titleLower.includes("tarot") ||
+          titleLower.includes("tử vi") ||
+          titleLower.includes("chiêm tinh") ||
+          titleLower.includes("bát tự") ||
+          titleLower.includes("thầy bói") ||
+          titleLower.includes("bà bà")
+        ) {
+          return false;
+        }
+        return true;
+      };
+
       const map = new Map<string, ConversationSummary>();
       [...serverConvs, ...localConvs].forEach((item: any) => {
-        if (item && item.id && !deletedIds.has(item.id) && !item.projectId && isMainChatBot(item.botId)) {
+        if (item && item.id && !deletedIds.has(item.id) && !item.projectId && isPureMainChat(item)) {
           const existing = map.get(item.id);
           if (!existing || new Date(item.updatedAt) > new Date(existing.updatedAt)) {
             map.set(item.id, item);
