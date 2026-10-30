@@ -27,10 +27,13 @@ export default function NotificationToast() {
   const isOuterHomePage = pathname === "/" && isHomeTab;
 
   useEffect(() => {
-    let lastSeenId: string | null = null;
+    let hasShownInThisSession = false;
     if (typeof window !== "undefined") {
-      lastSeenId = localStorage.getItem("last_seen_announcement_id");
+      hasShownInThisSession = sessionStorage.getItem("has_shown_announcement_toast") === "true";
     }
+
+    // Nếu trong phiên vào website này đã hiển thị rồi thì không hiển thị lại nữa
+    if (hasShownInThisSession) return;
 
     const checkNewAnnouncement = async () => {
       try {
@@ -40,33 +43,22 @@ export default function NotificationToast() {
         const list = data.announcements;
         if (Array.isArray(list) && list.length > 0) {
           const newest = list[0];
-          const newestId = String(newest.id);
-
-          // Nếu phát hiện thông báo mới chưa từng xem
-          if (lastSeenId && lastSeenId !== newestId) {
-            setToast({
-              id: newest.id,
-              emoji: newest.emoji || "🔔",
-              title: newest.title,
-              desc: newest.desc || "",
-            });
-            localStorage.setItem("last_seen_announcement_id", newestId);
-          } else if (!lastSeenId) {
-            // Lần đầu vào web, lưu id để lần sau đăng mới sẽ hiện
-            localStorage.setItem("last_seen_announcement_id", newestId);
-          }
+          setToast({
+            id: newest.id,
+            emoji: newest.emoji || "🔔",
+            title: newest.title,
+            desc: newest.desc || "",
+          });
+          // Đánh dấu phiên này đã hiển thị thông báo
+          sessionStorage.setItem("has_shown_announcement_toast", "true");
         }
       } catch (e) {
         // bỏ qua lỗi fetch ngầm
       }
     };
 
-    // Kiểm tra ngay khi tải trang
+    // Kiểm tra và hiển thị ngay 1 lần duy nhất khi vào website
     checkNewAnnouncement();
-
-    // Kiểm tra định kỳ mỗi 15 giây xem Admin có vừa đăng thông báo mới không
-    const interval = setInterval(checkNewAnnouncement, 15000);
-    return () => clearInterval(interval);
   }, []);
 
   // Tự động ẩn thông báo sau 5 giây
