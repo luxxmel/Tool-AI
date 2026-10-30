@@ -1,9 +1,30 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function NotificationToast() {
+  const pathname = usePathname();
   const [toast, setToast] = useState<{ id: string | number; emoji: string; title: string; desc: string } | null>(null);
+  const [isHomeTab, setIsHomeTab] = useState(true);
+
+  // Kiểm tra URLSearchParams trực tiếp từ window.location để không làm vỡ prerendering SSR
+  useEffect(() => {
+    const checkIsHome = () => {
+      if (typeof window === "undefined") return;
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get("tab");
+      // Coi như trang chủ nếu tab rỗng hoặc tab === 'home'
+      setIsHomeTab(!tab || tab === "home");
+    };
+
+    checkIsHome();
+    window.addEventListener("popstate", checkIsHome);
+    return () => window.removeEventListener("popstate", checkIsHome);
+  }, [pathname]);
+
+  // Chỉ cho phép hiển thị ở ngoài trang chủ chính (pathname === "/" và tab === "home")
+  const isOuterHomePage = pathname === "/" && isHomeTab;
 
   useEffect(() => {
     let lastSeenId: string | null = null;
@@ -57,7 +78,8 @@ export default function NotificationToast() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  if (!toast) return null;
+  // Chỉ hiển thị ngoài trang chủ (không hiển thị trong khung chat hoặc các đường dẫn khác)
+  if (!toast || !isOuterHomePage) return null;
 
   return (
     <div className="fixed top-4 right-4 sm:top-5 sm:right-5 z-[9999] max-w-[320px] sm:max-w-xs w-full bg-white/95 dark:bg-[#12141f]/95 backdrop-blur-md border border-slate-200/90 dark:border-indigo-950/70 shadow-xl rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 animate-in slide-in-from-top-3 fade-in duration-200 transition-all">
