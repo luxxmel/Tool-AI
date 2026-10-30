@@ -60,29 +60,32 @@ export default function NotificationToast() {
   if (!toast) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-[9999] max-w-sm w-full bg-white dark:bg-[#151722] border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-4 flex items-start gap-3 animate-in slide-in-from-bottom-4 fade-in duration-300">
-      <div className="w-10 h-10 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-cyan-400 flex items-center justify-center text-xl shrink-0">
+    <div className="fixed top-4 right-4 sm:top-5 sm:right-5 z-[9999] max-w-[320px] sm:max-w-xs w-full bg-white/95 dark:bg-[#12141f]/95 backdrop-blur-md border border-slate-200/90 dark:border-indigo-950/70 shadow-xl rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 animate-in slide-in-from-top-3 fade-in duration-200 transition-all">
+      <div className="w-8 h-8 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-cyan-400 flex items-center justify-center text-base shrink-0">
         {toast.emoji}
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-cyan-400">
+      <div className="flex-1 min-w-0 pr-1">
+        <div className="flex items-center justify-between gap-1.5">
+          <span className="text-[9px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-cyan-400">
             Thông báo mới
           </span>
           <button
             type="button"
             onClick={() => setToast(null)}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs cursor-pointer p-0.5"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs cursor-pointer p-0.5 leading-none"
+            title="Đóng thông báo"
           >
             ✕
           </button>
         </div>
-        <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate mt-0.5">
+        <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
           {toast.title}
         </h4>
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">
-          {toast.desc}
-        </p>
+        {toast.desc && (
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+            {toast.desc}
+          </p>
+        )}
       </div>
     </div>
   );
