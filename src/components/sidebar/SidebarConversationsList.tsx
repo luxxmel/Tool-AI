@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePopup } from "@/context/PopupContext";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
-
 import { isMainChatBot } from "@/lib/characterUtils";
 
 export interface ConversationSummary {
@@ -60,6 +59,92 @@ export default function SidebarConversationsList({
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedProjectIds, setExpandedProjectIds] = useState<Record<string, boolean>>({});
 
+  // Tính năng 1.1: Ghim (Pin) & Đổi tên (Rename)
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  // Load danh sách ghim từ localStorage
+  useEffect(() => {
+    const uid = user?.id || user?.email || "guest";
+    try {
+      const storedPinned = localStorage.getItem(`omni_pinned_convs_${uid}`);
+      if (storedPinned) {
+        setPinnedIds(JSON.parse(storedPinned));
+      }
+    } catch {}
+  }, [user]);
+
+  // Focus khi mở chế độ đổi tên
+  useEffect(() => {
+    if (editingId && editInputRef.current) {
+      editInputRef.current.focus();
+      editInputRef.current.select();
+    }
+  }, [editingId]);
+
+  const togglePin = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    const uid = user?.id || user?.email || "guest";
+    setPinnedIds((prev) => {
+      const updated = prev.includes(id) ? prev.filter((p) => p !== id) : [id, ...prev];
+      try {
+        localStorage.setItem(`omni_pinned_convs_${uid}`, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleStartRename = (e: React.MouseEvent, conv: ConversationSummary) => {
+    e.stopPropagation();
+    setEditingId(conv.id);
+    setEditTitle(conv.title || "");
+  };
+
+  const handleSaveRename = async (id: string) => {
+    const trimmed = editTitle.trim();
+    if (!trimmed) {
+      setEditingId(null);
+      return;
+    }
+
+    // 1. Cập nhật state local
+    setConversations((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, title: trimmed } : c))
+    );
+    setEditingId(null);
+
+    // 2. Cập nhật localStorage
+    const uid = user?.id || user?.email || activeUserId;
+    if (uid) {
+      try {
+        const storageKey = `omni_recent_convs_${uid}`;
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          const list = JSON.parse(stored);
+          if (Array.isArray(list)) {
+            const updated = list.map((c: any) =>
+              c && c.id === id ? { ...c, title: trimmed } : c
+            );
+            localStorage.setItem(storageKey, JSON.stringify(updated));
+          }
+        }
+      } catch {}
+    }
+
+    // 3. Gửi PATCH lên server nếu là đoạn chat trong DB
+    try {
+      await fetch(`/api/conversations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: trimmed }),
+      });
+    } catch (err) {
+      console.warn("Lỗi đồng bộ đổi tên lên server:", err);
+    }
+  };
+
   const toggleExpandProject = (e: React.MouseEvent, projId: string) => {
     e.stopPropagation();
     setExpandedProjectIds((prev) => ({
@@ -73,6 +158,45 @@ export default function SidebarConversationsList({
     const q = searchQuery.toLowerCase().trim();
     return conversations.filter((c) => (c.title || "").toLowerCase().includes(q));
   }, [conversations, searchQuery]);
+
+  // Gom nhóm thời gian thông minh: Đã ghim, Hôm nay, Hôm qua, 7 ngày trước, Cũ hơn
+  const groupedConversations = useMemo(() => {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const startOfYesterday = startOfToday - 24 * 60 * 60 * 1000;
+    const startOfSevenDaysAgo = startOfToday - 7 * 24 * 60 * 60 * 1000;
+
+    const pinned: ConversationSummary[] = [];
+    const today: ConversationSummary[] = [];
+    const yesterday: ConversationSummary[] = [];
+    const pastSevenDays: ConversationSummary[] = [];
+    const older: ConversationSummary[] = [];
+
+    filteredConversations.forEach((conv) => {
+      if (pinnedIds.includes(conv.id)) {
+        pinned.push(conv);
+        return;
+      }
+      const time = new Date(conv.updatedAt).getTime();
+      if (time >= startOfToday) {
+        today.push(conv);
+      } else if (time >= startOfYesterday) {
+        yesterday.push(conv);
+      } else if (time >= startOfSevenDaysAgo) {
+        pastSevenDays.push(conv);
+      } else {
+        older.push(conv);
+      }
+    });
+
+    return [
+      { key: "pinned", label: "📌 Đã ghim", items: pinned },
+      { key: "today", label: "Hôm nay", items: today },
+      { key: "yesterday", label: "Hôm qua", items: yesterday },
+      { key: "pastSevenDays", label: "7 ngày qua", items: pastSevenDays },
+      { key: "older", label: "Cũ hơn", items: older },
+    ].filter((g) => g.items.length > 0);
+  }, [filteredConversations, pinnedIds]);
 
   const filteredProjects = useMemo(() => {
     if (!searchQuery.trim()) return projects;
@@ -117,8 +241,6 @@ export default function SidebarConversationsList({
         }
       } catch {}
 
-      // Hợp nhất serverConvs và localConvs không bị lặp ID, CHỈ GIỮ LẠI đoạn chat của khung chat bình thường (Biết Tuốt AI)
-      // Lọc bỏ triệt để: botId không phải chat chính, hoặc title chứa dấu hiệu Tarot / Bói toán / Trợ lý chuyên sâu
       const isPureMainChat = (item: any) => {
         if (!item) return false;
         if (!isMainChatBot(item.botId)) return false;
@@ -185,7 +307,7 @@ export default function SidebarConversationsList({
   useEffect(() => {
     fetchConversations();
     fetchProjects();
-  }, [activeUserId, refreshTrigger]);
+  }, [user, refreshTrigger]);
 
   const handleDeleteConversation = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -194,10 +316,9 @@ export default function SidebarConversationsList({
 
     const uid = user?.id || user?.email || activeUserId;
 
-    // 1. Cập nhật ngay lập tức UI local state
     setConversations((prev) => prev.filter((c) => c.id !== id));
+    setPinnedIds((prev) => prev.filter((p) => p !== id));
 
-    // 2. Xóa triệt để khỏi localStorage để reload trang không bao giờ bị hiện lại
     if (uid) {
       try {
         const storageKey = `omni_recent_convs_${uid}`;
@@ -209,27 +330,14 @@ export default function SidebarConversationsList({
             localStorage.setItem(storageKey, JSON.stringify(updated));
           }
         }
-        // Xóa các tin nhắn cache của đoạn chat này nếu có
         localStorage.removeItem(`omni_chat_msgs_${id}`);
 
-        // Lưu vào danh sách các ID đã xóa để fetchConversations không hồi sinh lại
         const deletedKey = `omni_deleted_conv_ids_${uid}`;
         const deletedRaw = localStorage.getItem(deletedKey);
         const deletedList: string[] = deletedRaw ? JSON.parse(deletedRaw) : [];
         if (!deletedList.includes(id)) {
           deletedList.push(id);
           localStorage.setItem(deletedKey, JSON.stringify(deletedList.slice(-200)));
-        }
-
-        // Nếu là đoạn chat Tarot / Chiêm tinh / Tử vi / Bát tự đặc thù thì dọn dẹp thêm
-        if (id.startsWith("tarot-")) {
-          const tHistory = localStorage.getItem(`omni_tarot_history_${uid}`);
-          if (tHistory) {
-            const parsed = JSON.parse(tHistory);
-            if (Array.isArray(parsed)) {
-              localStorage.setItem(`omni_tarot_history_${uid}`, JSON.stringify(parsed.filter((item: any) => item.id !== id)));
-            }
-          }
         }
       } catch (err) {
         console.warn("Lỗi khi xóa cache local của đoạn chat:", err);
@@ -240,29 +348,10 @@ export default function SidebarConversationsList({
       onNewChat();
     }
 
-    // 3. Gửi yêu cầu xóa lên Server Database (nếu đoạn chat đã lưu trong DB)
     try {
       await fetch(`/api/conversations/${id}`, { method: "DELETE" });
     } catch (err) {
       console.error("Lỗi khi xóa cuộc trò chuyện trên server:", err);
-    }
-  };
-
-  const handleDeleteProject = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    const ok = await showConfirm("Bạn có chắc chắn muốn xóa dự án này cùng toàn bộ kịch bản bên trong?", "Xác nhận xóa dự án");
-    if (!ok) return;
-
-    try {
-      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setProjects((prev) => prev.filter((p) => p.id !== id));
-        if (activeProjectId === id) {
-          onNewChat();
-        }
-      }
-    } catch (err) {
-      console.error("Lỗi khi xóa dự án:", err);
     }
   };
 
@@ -275,7 +364,7 @@ export default function SidebarConversationsList({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Tìm đoạn chat hoặc dự án..."
-          className="w-full px-2.5 py-1.5 pl-7 text-[11px] rounded-xl bg-slate-100 dark:bg-[#121422] border border-slate-200 dark:border-indigo-950/60 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+          className="w-full px-2.5 py-1.5 pl-7 text-[11px] rounded-xl bg-slate-100 dark:bg-[#121422] border border-slate-200 dark:border-indigo-950/60 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-hidden focus:border-indigo-500 transition-colors"
         />
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none">
           🔍
@@ -293,8 +382,7 @@ export default function SidebarConversationsList({
 
       {/* Main Content: Projects Section (Top) + Recent Chats (Bottom) */}
       <div className="space-y-3.5 pr-1">
-        
-        {/* ─── PHẦN 1: DỰ ÁN (PROJECTS - ChatGPT style) ─── */}
+        {/* ─── PHẦN 1: DỰ ÁN (PROJECTS) ─── */}
         <div>
           <div className="flex items-center justify-between px-1.5 pb-1">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -324,66 +412,45 @@ export default function SidebarConversationsList({
                 Chưa có dự án nào
               </div>
             ) : (
-              filteredProjects.map((proj) => {
-                const isActive = activeProjectId === proj.id;
-                const isExpanded = expandedProjectIds[proj.id] || isActive;
-                const projConvs = Array.isArray(proj.conversations) ? proj.conversations : [];
+              filteredProjects.map((project) => {
+                const isActive = activeProjectId === project.id;
+                const isExpanded = expandedProjectIds[project.id];
+                const convs = project.conversations || [];
 
                 return (
-                  <div key={proj.id} className="space-y-0.5">
+                  <div key={project.id} className="space-y-0.5">
                     <div
-                      onClick={() => onSelectProject?.(proj.id)}
-                      onMouseEnter={() => setHoveredId(proj.id)}
-                      onMouseLeave={() => setHoveredId(null)}
+                      onClick={() => onSelectProject?.(project.id)}
                       className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
                         isActive
-                          ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
-                          : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
+                          ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className="text-xs shrink-0 text-slate-400">📁</span>
-                        <span className="truncate text-left font-medium">{proj.name}</span>
-                      </div>
-
-                      <div className="flex items-center gap-1 shrink-0 ml-1">
-                        {projConvs.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={(e) => toggleExpandProject(e, proj.id)}
-                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-                            title={isExpanded ? "Thu gọn" : "Xem các đoạn chat"}
-                          >
-                            <svg
-                              className={`w-3 h-3 transform transition-transform ${isExpanded ? "rotate-90" : ""}`}
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </button>
-                        )}
-
-                        {hoveredId === proj.id && (
-                          <button
-                            type="button"
-                            onClick={(e) => handleDeleteProject(e, proj.id)}
-                            title="Xóa dự án"
-                            className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                        <span className="text-sm shrink-0">{project.icon || "📁"}</span>
+                        <span className="truncate text-left font-medium">{project.name}</span>
+                        {convs.length > 0 && (
+                          <span className="text-[10px] text-slate-400 shrink-0">
+                            ({convs.length})
+                          </span>
                         )}
                       </div>
+
+                      {convs.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={(e) => toggleExpandProject(e, project.id)}
+                          className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                        >
+                          <span className="text-[9px]">{isExpanded ? "▲" : "▼"}</span>
+                        </button>
+                      )}
                     </div>
 
-                    {/* Danh sách các đoạn chat con thuộc thư mục dự án (Tree indent giống ChatGPT) */}
-                    {isExpanded && projConvs.length > 0 && (
-                      <div className="pl-3.5 pr-1 py-0.5 space-y-0.5 border-l-2 border-indigo-200/60 dark:border-slate-800 ml-3">
-                        {projConvs.map((conv) => {
+                    {isExpanded && convs.length > 0 && (
+                      <div className="pl-6 pr-1 space-y-0.5 border-l-2 border-slate-200 dark:border-slate-800 ml-3 my-0.5">
+                        {convs.map((conv) => {
                           const isConvActive = activeConversationId === conv.id;
                           return (
                             <div
@@ -413,7 +480,7 @@ export default function SidebarConversationsList({
           </div>
         </div>
 
-        {/* ─── PHẦN 2: CÁC ĐOẠN CHAT GẦN ĐÂY (RECENT CHATS) ─── */}
+        {/* ─── PHẦN 2: CÁC ĐOẠN CHAT GẦN ĐÂY (PHÂN NHÓM & GHIM) ─── */}
         <div>
           <div className="flex items-center justify-between px-1.5 pb-1">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -422,7 +489,7 @@ export default function SidebarConversationsList({
             </span>
           </div>
 
-          <div className="space-y-0.5">
+          <div className="space-y-2">
             {isLoading && filteredConversations.length === 0 ? (
               <div className="px-2 py-1.5 text-[11px] text-slate-500 italic">
                 Đang tải đoạn chat...
@@ -432,43 +499,111 @@ export default function SidebarConversationsList({
                 Chưa có đoạn chat nào
               </div>
             ) : (
-              filteredConversations.map((conv) => {
-                const isActive = activeConversationId === conv.id;
-                return (
-                  <div
-                    key={conv.id}
-                    onClick={() => onSelectConversation(conv.id)}
-                    onMouseEnter={() => setHoveredId(conv.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                    className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
-                      isActive
-                        ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="truncate text-left">{conv.title}</span>
-                    </div>
-
-                    {hoveredId === conv.id && (
-                      <button
-                        type="button"
-                        onClick={(e) => handleDeleteConversation(e, conv.id)}
-                        title={t("sidebar.delete_chat")}
-                        className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors shrink-0 ml-1"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    )}
+              groupedConversations.map((group) => (
+                <div key={group.key} className="space-y-0.5">
+                  <div className="px-2 py-0.5 text-[10px] font-bold text-slate-400/90 dark:text-slate-500 uppercase tracking-wider">
+                    {group.label}
                   </div>
-                );
-              })
+
+                  {group.items.map((conv) => {
+                    const isActive = activeConversationId === conv.id;
+                    const isPinned = pinnedIds.includes(conv.id);
+                    const isEditing = editingId === conv.id;
+
+                    return (
+                      <div
+                        key={conv.id}
+                        onClick={() => {
+                          if (!isEditing) onSelectConversation(conv.id);
+                        }}
+                        onMouseEnter={() => setHoveredId(conv.id)}
+                        onMouseLeave={() => setHoveredId(null)}
+                        className={`group relative w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
+                          isActive
+                            ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-cyan-300 font-semibold border border-indigo-200/80 dark:border-indigo-500/30 shadow-xs"
+                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/40"
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                          {isPinned && (
+                            <span className="text-[10px] text-amber-500 shrink-0" title="Đã ghim">
+                              📌
+                            </span>
+                          )}
+
+                          {isEditing ? (
+                            <input
+                              ref={editInputRef}
+                              type="text"
+                              value={editTitle}
+                              onChange={(e) => setEditTitle(e.target.value)}
+                              onBlur={() => handleSaveRename(conv.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSaveRename(conv.id);
+                                if (e.key === "Escape") setEditingId(null);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              className="w-full px-1.5 py-0.5 text-xs rounded bg-white dark:bg-slate-900 border border-indigo-500 text-slate-900 dark:text-white focus:outline-hidden"
+                            />
+                          ) : (
+                            <span
+                              className="truncate text-left flex-1"
+                              onDoubleClick={(e) => handleStartRename(e, conv)}
+                              title="Double click để đổi tên"
+                            >
+                              {conv.title}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Action buttons khi hover */}
+                        {!isEditing && hoveredId === conv.id && (
+                          <div className="flex items-center gap-0.5 shrink-0 ml-1">
+                            {/* Nút Ghim/Bỏ ghim */}
+                            <button
+                              type="button"
+                              onClick={(e) => togglePin(e, conv.id)}
+                              title={isPinned ? "Bỏ ghim" : "Ghim lên đầu"}
+                              className={`p-1 rounded-md transition-colors ${
+                                isPinned
+                                  ? "text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+                                  : "text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800"
+                              }`}
+                            >
+                              <span className="text-[11px]">{isPinned ? "📌" : "📍"}</span>
+                            </button>
+
+                            {/* Nút Đổi tên */}
+                            <button
+                              type="button"
+                              onClick={(e) => handleStartRename(e, conv)}
+                              title="Đổi tên đoạn chat"
+                              className="p-1 rounded-md text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                            >
+                              <span className="text-[11px]">✏️</span>
+                            </button>
+
+                            {/* Nút Xóa */}
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteConversation(e, conv.id)}
+                              title={t("sidebar.delete_chat")}
+                              className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))
             )}
           </div>
         </div>
-
       </div>
 
       {/* Modal Tạo Dự Án Mới */}

@@ -449,7 +449,7 @@ function generatePersonaFallback(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { messages, conversationId, projectId, model: requestedModel, language, roleplayPersona } = body;
+    const { messages, conversationId, projectId, model: requestedModel, language, roleplayPersona, enableWebSearch } = body;
     let botId = body.botId;
     let userId = body.userId;
     let userEmail = body.userEmail;
@@ -1048,10 +1048,10 @@ ${projectObj.systemPrompt}`;
               messages: formattedMessages,
             };
 
-            // Chỉ đính kèm Google Search khi bot cho phép và model hỗ trợ
+            // Chỉ đính kèm Google Search khi bot cho phép và model hỗ trợ (hoặc khi người dùng chủ động bật enableWebSearch)
             let result;
             try {
-              if (!isExcludedFromSearch && candidate.isGoogle) {
+              if ((enableWebSearch || !isExcludedFromSearch) && candidate.isGoogle) {
                 streamOptions.tools = {
                   google_search: googleAI.tools.googleSearch({}),
                 };

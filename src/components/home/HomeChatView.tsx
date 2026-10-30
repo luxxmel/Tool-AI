@@ -89,8 +89,11 @@ export default function HomeChatView({
   const [selectedVoice, setSelectedVoice] = useState<string>("tong_tai");
   const [isVoiceDropdownOpen, setIsVoiceDropdownOpen] = useState(false);
   const [isPromptEnhancing, setIsPromptEnhancing] = useState(false);
+  const [isWebSearchActive, setIsWebSearchActive] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<Array<{ name: string; size: number; content: string; type: string }>>([]);
   const voiceDropdownRef = useRef<HTMLDivElement>(null);
   const speechRecognitionRef = useRef<any>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
 
   const [conversationId, setConversationId] = useState<string | null>(
     propConversationId || null
@@ -463,7 +466,38 @@ export default function HomeChatView({
     }
   };
 
-  // 1.2. Phù thủy Prompt (Magic Wand): Tối ưu hóa prompt ngắn thành câu lệnh chi tiết
+  // 1.1b. Xử lý tải file văn bản / tài liệu (.txt, .md, .csv, .json, .pdf, .docx, .html, .js, .ts, .py)
+  const handleDocFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.size > 10 * 1024 * 1024) {
+        showAlert(`Tài liệu "${file.name}" vượt quá kích thước cho phép (tối đa 10MB).`, "File quá lớn", "warning");
+        continue;
+      }
+
+      // Đọc file dưới dạng Text
+      try {
+        const textContent = await file.text();
+        setAttachedFiles((prev) => [
+          ...prev,
+          {
+            name: file.name,
+            size: file.size,
+            content: textContent.slice(0, 50000), // Đọc tối đa 50,000 ký tự đầu tiên
+            type: file.type || file.name.split(".").pop() || "txt",
+          },
+        ]);
+      } catch (err) {
+        console.warn("Lỗi đọc file:", err);
+        showAlert(`Không thể đọc nội dung file "${file.name}". Vui lòng thử lại.`, "Lỗi đọc file", "error");
+      }
+    }
+
+    if (docInputRef.current) docInputRef.current.value = "";
+  };
   const handlePromptEnhance = () => {
     if (!inputValue.trim()) {
       setInputValue("Hãy đóng vai trò chuyên gia, phân tích chuyên sâu đa chiều kèm ví dụ thực tế và giải pháp thực thi từng bước cụ thể cho vấn đề: ");
@@ -648,6 +682,7 @@ export default function HomeChatView({
           projectId: projectId || undefined,
           model: selectedModel,
           language,
+          enableWebSearch: isWebSearchActive,
           messages: newHistory
             .filter((m) => m.id !== aiMsgId)
             .map((m) => ({
@@ -841,7 +876,7 @@ export default function HomeChatView({
 
   const handleFormSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if ((!inputValue.trim() && attachedImages.length === 0) || isTyping) return;
+    if ((!inputValue.trim() && attachedImages.length === 0 && attachedFiles.length === 0) || isTyping) return;
 
     const rawText = inputValue.trim();
     // Tự động kết hợp tiền tố công cụ nếu người dùng đang chọn chế độ công cụ
@@ -850,10 +885,22 @@ export default function HomeChatView({
       text = `${activeTool.promptPrefix}${rawText}`;
     }
 
+    // Nếu có tài liệu văn bản đính kèm, chèn nội dung vào bối cảnh tin nhắn
+    if (attachedFiles.length > 0) {
+      const docsContext = attachedFiles
+        .map(
+          (f, idx) =>
+            `[TÀI LIỆU ĐÍNH KÈM #${idx + 1}: ${f.name} (${(f.size / 1024).toFixed(1)} KB)]:\n\`\`\`\n${f.content}\n\`\`\``
+        )
+        .join("\n\n");
+      text = text ? `${docsContext}\n\n[YÊU CẦU CỦA NGƯỜI DÙNG]:\n${text}` : `${docsContext}\n\nHãy phân tích và tóm tắt tài liệu trên.`;
+    }
+
     const imgs = [...attachedImages];
     setInputValue("");
     setActiveTool(null);
     setAttachedImages([]);
+    setAttachedFiles([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -1022,6 +1069,75 @@ export default function HomeChatView({
           <div className="py-20 flex flex-col items-center justify-center">
             <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mb-2" />
             <p className="text-xs text-slate-400">Đang tải lịch sử tin nhắn...</p>
+          </div>
+        ) : messages.length === 0 ? (
+          /* Empty Chat State: Màn hình chào mừng và Kho Prompt mẫu thông minh */
+          <div className="py-8 sm:py-12 flex flex-col items-center justify-center max-w-2xl mx-auto text-center px-3 animate-in fade-in duration-300">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white text-2xl shadow-xl shadow-indigo-500/25 mb-4">
+              ✨
+            </div>
+            <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-2">
+              {selectedAssistant ? selectedAssistant.name : "Tôi có thể giúp gì cho bạn hôm nay?"}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mb-8 leading-relaxed">
+              {selectedAssistant
+                ? selectedAssistant.description
+                : "Hỏi đáp kiến thức, phân tích tài liệu, lập trình, viết lách hoặc tra cứu thông tin thời gian thực với Biết Tuốt AI."}
+            </p>
+
+            {/* Quick Prompt Starters Matrix */}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left">
+              {[
+                {
+                  icon: "💡",
+                  title: "Lên ý tưởng & Kế hoạch",
+                  desc: "Lập kế hoạch nội dung truyền thông cho thương hiệu cá nhân trong 30 ngày tới",
+                  prompt: "Hãy lập một kế hoạch phát triển nội dung thương hiệu cá nhân toàn diện trong 30 ngày, chia theo từng tuần kèm định dạng bài đăng và mục tiêu cụ thể.",
+                },
+                {
+                  icon: "💻",
+                  title: "Lập trình & Kỹ thuật",
+                  desc: "Giải thích Clean Architecture và cách áp dụng vào dự án Next.js chuẩn",
+                  prompt: "Hãy giải thích ngắn gọn nguyên lý Clean Architecture và cung cấp cấu trúc thư mục mẫu chuẩn chỉnh khi áp dụng vào dự án Next.js 15 App Router.",
+                },
+                {
+                  icon: "📊",
+                  title: "Phân tích & Tối ưu",
+                  desc: "Phân tích đối thủ cạnh tranh và đề xuất chiến lược khác biệt hóa",
+                  prompt: "Hãy đóng vai trò chuyên gia chiến lược, hướng dẫn tôi khung phân tích đối thủ cạnh tranh (Competitive Analysis) và cách tìm ra lợi thế cạnh tranh độc bản (USP).",
+                },
+                {
+                  icon: "✍️",
+                  title: "Viết lách & Biên tập",
+                  desc: "Viết bài luận hoặc email chào hàng B2B chuyên nghiệp, thuyết phục",
+                  prompt: "Hãy viết một mẫu thư chào hàng B2B (Cold Outreach Email) gửi tới CEO/Giám đốc ngắn gọn, tôn trọng thời gian nhưng nêu bật được giải pháp giá trị cao.",
+                },
+              ].map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setInputValue(item.prompt);
+                    if (textareaRef.current) {
+                      textareaRef.current.focus();
+                      textareaRef.current.style.height = "auto";
+                      textareaRef.current.style.height = "90px";
+                    }
+                  }}
+                  className="p-3.5 rounded-2xl bg-white/70 dark:bg-[#10121d]/70 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 border border-slate-200/80 dark:border-indigo-950/70 hover:border-indigo-400 dark:hover:border-cyan-400 transition-all text-left group cursor-pointer shadow-xs hover:shadow-md"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-base group-hover:scale-110 transition-transform">{item.icon}</span>
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-cyan-300">
+                      {item.title}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           messages.map((m) => (
@@ -1479,6 +1595,34 @@ export default function HomeChatView({
           </div>
         )}
 
+        {/* Attached Files & Documents Preview Tray */}
+        {attachedFiles.length > 0 && (
+          <div className="mb-2 p-2.5 rounded-2xl bg-white/95 dark:bg-[#10121d]/95 backdrop-blur-xl border border-indigo-500/30 dark:border-cyan-500/30 flex flex-wrap items-center gap-2 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-150">
+            {attachedFiles.map((file, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200"
+              >
+                <span>📄</span>
+                <span className="max-w-[150px] truncate" title={file.name}>
+                  {file.name}
+                </span>
+                <span className="text-[10px] text-slate-400 font-normal">
+                  ({(file.size / 1024).toFixed(1)} KB)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setAttachedFiles((prev) => prev.filter((_, i) => i !== idx))}
+                  className="w-4 h-4 rounded-full hover:bg-rose-500 hover:text-white flex items-center justify-center text-[10px] text-slate-400 transition-colors cursor-pointer"
+                  title="Xóa tài liệu"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Attached Images Preview Tray */}
         {attachedImages.length > 0 && (
           <div className="mb-2 p-2.5 rounded-2xl bg-white/95 dark:bg-[#10121d]/95 backdrop-blur-xl border border-indigo-500/30 dark:border-cyan-500/30 flex flex-wrap items-center gap-2.5 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-150">
@@ -1522,7 +1666,7 @@ export default function HomeChatView({
               : "bg-white/95 dark:bg-[#0c0e17]/95 backdrop-blur-2xl border border-slate-300 dark:border-indigo-950/80 shadow-indigo-950/30"
           }`}
         >
-          {/* Attach Button */}
+          {/* Attach Image Button */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -1530,8 +1674,35 @@ export default function HomeChatView({
             title="Đính kèm hoặc dán hình ảnh (Ctrl+V)"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </button>
+
+          {/* Attach Document Button (.txt, .pdf, .docx, .csv, .json, .md) */}
+          <button
+            type="button"
+            onClick={() => docInputRef.current?.click()}
+            className="h-11 w-11 text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl flex items-center justify-center transition-colors cursor-pointer shrink-0 mb-1"
+            title="Đính kèm tài liệu văn bản (.txt, .md, .csv, .json, .pdf, .docx)"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
+          </button>
+
+          {/* Live Web Search Grounding Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsWebSearchActive((prev) => !prev)}
+            className={`h-11 px-2.5 rounded-2xl flex items-center gap-1.5 transition-all cursor-pointer shrink-0 mb-1 border text-xs font-bold ${
+              isWebSearchActive
+                ? "bg-cyan-500/15 border-cyan-500 text-cyan-600 dark:text-cyan-300 ring-2 ring-cyan-400/40 shadow-xs"
+                : "border-transparent text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}
+            title={isWebSearchActive ? "Đang BẬT tìm kiếm Web thời gian thực (Google Grounding)" : "Bật tra cứu thông tin Web thời gian thực"}
+          >
+            <span className="text-sm">🌐</span>
+            <span className="hidden xl:inline text-[11px]">Tra cứu Web</span>
           </button>
 
           {/* Voice Input (Microphone Speech-to-Text) Button */}
@@ -1564,6 +1735,15 @@ export default function HomeChatView({
             accept="image/*"
             multiple
             onChange={handleFileSelect}
+            className="hidden"
+          />
+
+          <input
+            type="file"
+            ref={docInputRef}
+            accept=".txt,.md,.csv,.json,.pdf,.docx,.doc,.xlsx,.xls,.html,.js,.ts,.py"
+            multiple
+            onChange={handleDocFileSelect}
             className="hidden"
           />
 
