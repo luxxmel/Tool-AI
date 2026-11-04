@@ -24,13 +24,13 @@ export default function CharacterCard({ character, onClick }: CharacterCardProps
   return (
     <div
       onClick={() => onClick?.(character)}
-      className="group relative min-h-[200px] h-full rounded-2xl bg-white dark:bg-[#0c0e18] border border-slate-200/90 dark:border-slate-800/80 hover:border-cyan-500/70 dark:hover:border-cyan-500/70 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between"
+      className="group relative min-h-[210px] h-full rounded-2xl bg-gradient-to-b from-white/95 to-white/80 dark:from-[#0c0e18]/95 dark:to-[#07080f]/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 hover:border-cyan-500/70 dark:hover:border-cyan-400/70 p-4.5 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
     >
-      <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-cyan-500/10 to-violet-500/10 rounded-full blur-2xl group-hover:from-cyan-500/20 group-hover:to-violet-500/20 transition-all pointer-events-none" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-500/15 to-violet-500/15 rounded-full blur-2xl group-hover:from-cyan-500/25 group-hover:to-violet-500/25 transition-all pointer-events-none" />
 
       <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/80 group-hover:border-cyan-400/80 transition-all shadow-xs shrink-0 bg-slate-100 dark:bg-slate-800">
+        <div className="flex items-center gap-3.5 mb-3">
+          <div className="relative w-12 h-12 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700/80 group-hover:border-cyan-400/80 transition-all shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800 group-hover:shadow-md group-hover:shadow-cyan-500/20">
             <img
               src={character.avatar}
               alt={mainName}
@@ -44,11 +44,11 @@ export default function CharacterCard({ character, onClick }: CharacterCardProps
               {mainName}
             </h3>
             {titleAlias ? (
-              <p className="text-[11px] font-medium text-cyan-600 dark:text-cyan-400 truncate mt-0.5">
+              <p className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 truncate mt-0.5">
                 ✦ {titleAlias}
               </p>
             ) : (
-              <span className="inline-block mt-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 dark:border-cyan-500/30">
+              <span className="inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 dark:border-cyan-500/30">
                 {tag}
               </span>
             )}
@@ -60,14 +60,15 @@ export default function CharacterCard({ character, onClick }: CharacterCardProps
         </p>
       </div>
 
-      <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-500 dark:text-slate-400 mt-2">
         <span>
           {language === "en" ? "Interactions:" : "Tương tác:"}{" "}
           <strong className="text-slate-700 dark:text-slate-300 font-mono">{character.interactions}</strong>
         </span>
 
-        <span className="text-indigo-600 dark:text-cyan-400 group-hover:translate-x-1 transition-transform font-bold flex items-center gap-0.5">
-          {language === "en" ? "Roleplay →" : "Nhập vai →"}
+        <span className="text-xs font-bold text-indigo-600 dark:text-cyan-400 group-hover:translate-x-1 transition-transform flex items-center gap-1">
+          <span>{language === "en" ? "Roleplay" : "Nhập vai"}</span>
+          <span>➔</span>
         </span>
       </div>
     </div>

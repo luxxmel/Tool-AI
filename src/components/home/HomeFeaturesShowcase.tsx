@@ -69,30 +69,33 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
       </div>
 
       {/* Grid of Sleek Cyber Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {features.map((item) => (
           <button
             key={item.id}
             onClick={() => onSelectTab(item.id)}
-            className="p-4 rounded-2xl bg-white dark:bg-[#11131c] border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400 dark:hover:border-indigo-500/60 transition-all duration-300 hover:-translate-y-1 shadow-xs hover:shadow-md group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-32"
+            className="p-4 rounded-2xl bg-gradient-to-b from-white/90 to-white/70 dark:from-[#11131c]/90 dark:to-[#0c0e17]/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-400 dark:hover:border-cyan-400/50 transition-all duration-300 hover:-translate-y-1.5 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 dark:hover:shadow-cyan-500/10 group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-36"
           >
+            {/* Ambient Background Glow */}
+            <div className={`absolute -right-6 -bottom-6 w-28 h-28 bg-gradient-to-br ${item.accent} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500 pointer-events-none opacity-60 group-hover:opacity-100`} />
+
             {/* Top row */}
             <div className="flex items-center justify-between relative z-10">
-              <span className="text-2xl group-hover:scale-110 transition-transform">
+              <span className="text-2xl group-hover:scale-115 transition-transform duration-300 drop-shadow-sm">
                 {item.icon}
               </span>
-              <span className={`text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full border ${item.tagBg}`}>
+              <span className={`text-[9px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full border backdrop-blur-md shadow-2xs ${item.tagBg}`}>
                 {item.badge}
               </span>
             </div>
 
             {/* Content */}
             <div className="relative z-10 mt-auto">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors flex items-center gap-1">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-cyan-300 transition-colors flex items-center justify-between">
                 <span>{item.title}</span>
-                <span className="text-xs opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-indigo-500 dark:text-cyan-400">→</span>
+                <span className="text-xs opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-300 text-indigo-500 dark:text-cyan-400">➔</span>
               </h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-relaxed">
                 {item.subtitle}
               </p>
             </div>

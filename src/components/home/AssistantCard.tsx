@@ -19,15 +19,15 @@ export default function AssistantCard({ assistant, onClick }: AssistantCardProps
     <Link
       href={`/chat/${assistant.id}`}
       onClick={() => onClick?.(assistant)}
-      className="group relative min-h-[200px] h-full rounded-2xl bg-white dark:bg-[#0c0e18] border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-500/70 dark:hover:border-indigo-500/70 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 cursor-pointer overflow-hidden flex flex-col justify-between block"
+      className="group relative min-h-[210px] h-full rounded-2xl bg-gradient-to-b from-white/95 to-white/80 dark:from-[#0c0e18]/95 dark:to-[#07080f]/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-500/70 dark:hover:border-cyan-400/70 p-4.5 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between block"
     >
       {/* Background glowing gradient */}
-      <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 rounded-full blur-2xl group-hover:from-indigo-500/20 group-hover:to-cyan-500/20 transition-all pointer-events-none" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/15 via-purple-500/10 to-cyan-500/15 rounded-full blur-2xl group-hover:from-indigo-500/25 group-hover:to-cyan-500/25 transition-all pointer-events-none" />
 
       <div>
         {/* Top: Avatar and Title */}
-        <div className="flex items-center gap-3 mb-2.5">
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/80 group-hover:border-indigo-500/80 transition-all shadow-xs shrink-0 bg-slate-100 dark:bg-slate-800">
+        <div className="flex items-center gap-3.5 mb-3">
+          <div className="relative w-12 h-12 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700/80 group-hover:border-indigo-500/80 dark:group-hover:border-cyan-400/80 transition-all shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800 group-hover:shadow-md group-hover:shadow-indigo-500/20">
             <img
               src={assistant.avatar}
               alt={name}
@@ -64,7 +64,7 @@ export default function AssistantCard({ assistant, onClick }: AssistantCardProps
       </div>
 
       {/* Footer / Stats */}
-      <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[11px] text-slate-500 dark:text-slate-400 mt-2">
         <div className="flex items-center gap-1.5">
           <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -73,8 +73,9 @@ export default function AssistantCard({ assistant, onClick }: AssistantCardProps
           <span className="font-mono font-medium">{assistant.uses}</span>
         </div>
 
-        <span className="text-indigo-600 dark:text-cyan-400 group-hover:translate-x-1 transition-transform font-bold flex items-center gap-0.5">
-          {language === "en" ? "Chat →" : "Trò chuyện →"}
+        <span className="text-xs font-bold text-indigo-600 dark:text-cyan-400 group-hover:translate-x-1 transition-transform flex items-center gap-1">
+          <span>{language === "en" ? "Chat" : "Trò chuyện"}</span>
+          <span>➔</span>
         </span>
       </div>
     </Link>

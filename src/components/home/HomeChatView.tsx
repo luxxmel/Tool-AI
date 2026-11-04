@@ -1182,13 +1182,13 @@ export default function HomeChatView({
                   </div>
                 ) : (
                   <div className="group relative max-w-[85%] sm:max-w-[75%] flex flex-col items-end">
-                    <div className="w-full px-5 py-3.5 rounded-3xl bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/20 leading-relaxed">
+                    <div className="w-full px-5 py-3.5 rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-600 text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/25 border border-white/20 leading-relaxed">
                       {m.images && m.images.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-2.5">
                           {m.images.map((imgSrc, idx) => (
                             <div
                               key={idx}
-                              className="relative rounded-2xl overflow-hidden border border-white/30 shadow-md max-w-xs group cursor-pointer"
+                              className="relative rounded-2xl overflow-hidden border border-white/30 shadow-md max-w-xs group cursor-pointer hover:border-cyan-300 transition-colors"
                               onClick={() => window.open(imgSrc, "_blank")}
                               title="Bấm để xem ảnh phóng to"
                             >
@@ -1201,7 +1201,7 @@ export default function HomeChatView({
                           ))}
                         </div>
                       )}
-                      {m.content && <div>{m.content}</div>}
+                      {m.content && <div className="tracking-wide select-text">{m.content}</div>}
                     </div>
 
                     {/* Quick Action Button for User Message (Edit & Copy) */}

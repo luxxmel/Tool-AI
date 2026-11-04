@@ -358,14 +358,14 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
-        className={`w-full bg-white/95 dark:bg-[#12141f]/95 backdrop-blur-2xl rounded-2xl border-2 transition-all duration-300 shadow-2xl relative ${
+        className={`w-full bg-gradient-to-b from-white/95 to-slate-50/95 dark:from-[#111320]/95 dark:to-[#0b0c16]/95 backdrop-blur-2xl rounded-3xl border-2 transition-all duration-300 shadow-2xl relative ${
           isFocused
-            ? "border-cyan-500 shadow-[0_0_35px_rgba(6,182,212,0.35)] ring-4 ring-cyan-500/20 z-30"
-            : "border-slate-300 dark:border-white/[0.12] hover:border-cyan-500/60 dark:hover:border-cyan-500/60 shadow-[0_4px_25px_rgba(6,182,212,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.25)] z-20"
+            ? "border-cyan-500 shadow-[0_0_40px_rgba(6,182,212,0.35)] ring-4 ring-cyan-500/20 z-30"
+            : "border-slate-300/80 dark:border-white/[0.12] hover:border-cyan-500/60 dark:hover:border-cyan-500/60 shadow-[0_8px_30px_rgba(6,182,212,0.12)] hover:shadow-[0_0_35px_rgba(6,182,212,0.25)] z-20"
         }`}
       >
         {/* Quick Mode/Task Chips (Gợi ý tác vụ nhanh) */}
-        <div className="px-4 pt-3 pb-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <div className="px-4.5 pt-3.5 pb-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {[
             { label: language === "en" ? "💬 Chat AI" : "💬 Trò chuyện", prompt: "" },
             { label: language === "en" ? "🎨 Draw Image" : "🎨 Vẽ tranh AI", prompt: "Vẽ bức ảnh " },
@@ -383,7 +383,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   textareaRef.current?.focus();
                 }
               }}
-              className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-indigo-50 dark:bg-[#1a1c28] dark:hover:bg-indigo-950/70 text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-slate-700/80 transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/80 hover:bg-indigo-50 dark:bg-[#1a1c28]/90 dark:hover:bg-indigo-950/70 text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-300 border border-slate-200/90 dark:border-slate-700/80 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
             >
               {chip.label}
             </button>
@@ -391,7 +391,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
         </div>
 
         {/* Text Input Area */}
-        <div className="p-4 pt-2.5 pb-2">
+        <div className="p-4.5 pt-3 pb-2.5">
           <textarea
             ref={textareaRef}
             value={prompt}
