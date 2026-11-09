@@ -9,10 +9,12 @@ interface HomeFeaturesShowcaseProps {
 
 export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowcaseProps) {
   const { language } = useLanguage();
+  const [activeCategory, setActiveCategory] = React.useState<"all" | "work" | "healing">("all");
 
-  const features = [
+  const allFeatures = [
     {
       id: "images",
+      category: "work",
       badge: "AI ART",
       title: language === "en" ? "8K Studio Photorealistic" : "Studio Tạo Ảnh 8K",
       subtitle: language === "en" ? "Flux Pro • DSLR Quality" : "Flux 1.1 Pro • Nhiếp ảnh DSLR",
@@ -22,7 +24,19 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
       tagBg: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
     },
     {
+      id: "characters",
+      category: "work",
+      badge: "TRỢ LÝ CHUYÊN SÂU",
+      title: language === "en" ? "AI Characters & Expert" : "Tổ Hợp Trợ Lý Chuyên Sâu",
+      subtitle: language === "en" ? "Marketing • Code • Strategy" : "Marketing • Lập trình • Phân tích",
+      icon: "💼",
+      accent: "from-indigo-500/20 via-cyan-500/10 to-transparent",
+      glowColor: "group-hover:shadow-indigo-500/20 border-indigo-500/30 group-hover:border-indigo-500/60",
+      tagBg: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
+    },
+    {
       id: "tarot",
+      category: "healing",
       badge: "3D MYSTIC",
       title: language === "en" ? "Tarot & Astromancy" : "Bói Tarot & Tử Vi",
       subtitle: language === "en" ? "3D Cards • Horoscope" : "Bài 3D • Lá số Hoàng Đạo",
@@ -33,44 +47,76 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
     },
     {
       id: "healing",
+      category: "healing",
       badge: "ASMR 3D",
-      title: language === "en" ? "Healing Soundscapes" : "Góc Chữa Lành",
-      subtitle: language === "en" ? "Ambient Audio • Relief" : "Âm thanh 3D • Tâm sự AI",
+      title: language === "en" ? "Healing Soundscapes" : "Góc Chữa Lành & Tâm Sự",
+      subtitle: language === "en" ? "Ambient Audio • Relief" : "Âm thanh 3D • Lắng nghe cảm xúc",
       icon: "🌿",
       accent: "from-cyan-500/20 via-teal-500/10 to-transparent",
       glowColor: "group-hover:shadow-cyan-500/20 border-cyan-500/30 group-hover:border-cyan-500/60",
       tagBg: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
     },
-    {
-      id: "characters",
-      badge: "ROLEPLAY",
-      title: language === "en" ? "AI Characters" : "Trợ Lý & Nhân Vật AI",
-      subtitle: language === "en" ? "Personality • Anime" : "Tổ hợp Bot • Roleplay 24/7",
-      icon: "🎭",
-      accent: "from-indigo-500/20 via-cyan-500/10 to-transparent",
-      glowColor: "group-hover:shadow-indigo-500/20 border-indigo-500/30 group-hover:border-indigo-500/60",
-      tagBg: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
-    },
   ];
 
+  const filteredFeatures =
+    activeCategory === "all"
+      ? allFeatures
+      : allFeatures.filter((f) => f.category === activeCategory);
+
   return (
-    <section className="w-full my-8">
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-1 mb-4">
+    <section className="w-full my-6 sm:my-8">
+      {/* Header bar with Category Filter Tabs */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1 mb-4">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">
+          <h2 className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">
             {language === "en" ? "EXCLUSIVE AI ECOSYSTEM" : "HỆ SINH THÁI TÍNH NĂNG ĐỘC QUYỀN"}
           </h2>
         </div>
-        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-          Omni Engines v3.5
-        </span>
+
+        {/* Tab switchers */}
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#131522] border border-slate-200/80 dark:border-indigo-950/70 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setActiveCategory("all")}
+            className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+              activeCategory === "all"
+                ? "bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-xs font-bold"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            Tất cả
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveCategory("work")}
+            className={`px-3 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+              activeCategory === "work"
+                ? "bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-xs font-bold"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            <span>💼</span>
+            <span>Công việc & Trợ lý</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveCategory("healing")}
+            className={`px-3 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+              activeCategory === "healing"
+                ? "bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-xs font-bold"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            <span>🔮</span>
+            <span>Giải trí & Chữa lành</span>
+          </button>
+        </div>
       </div>
 
       {/* Grid of Sleek Cyber Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {features.map((item) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 animate-in fade-in duration-200">
+        {filteredFeatures.map((item) => (
           <button
             key={item.id}
             onClick={() => onSelectTab(item.id)}

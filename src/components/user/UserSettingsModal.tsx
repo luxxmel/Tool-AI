@@ -15,6 +15,7 @@ export type SettingsTab =
   | "workspace"
   | "account"
   | "personalization"
+  | "memory"
   | "credits"
   | "admin_credits"
   | "invite"
@@ -151,6 +152,13 @@ export default function UserSettingsModal({
   const [customInstructions, setCustomInstructions] = useState("");
   const [autoTitle, setAutoTitle] = useState(true);
   const [prefSuccess, setPrefSuccess] = useState("");
+
+  // Memory Bank state
+  const [memories, setMemories] = useState<Array<{ id: string; key: string; content: string; category: string; isActive: boolean; createdAt: string }>>([]);
+  const [isLoadingMemories, setIsLoadingMemories] = useState(false);
+  const [newMemoryContent, setNewMemoryContent] = useState("");
+  const [newMemoryCategory, setNewMemoryCategory] = useState("general");
+  const [memorySuccessMsg, setMemorySuccessMsg] = useState("");
 
   // Invite & Team Workspace state
   const [inviteSubTab, setInviteSubTab] = useState<"team" | "referral">("team");
@@ -484,6 +492,67 @@ export default function UserSettingsModal({
     setTimeout(() => setPrefSuccess(""), 3000);
   };
 
+  // 8.5. Tải và quản lý Ký ức AI (Memory Bank)
+  const loadUserMemories = async () => {
+    if (!user?.id) return;
+    try {
+      setIsLoadingMemories(true);
+      const res = await fetch(`/api/user/memories?userId=${encodeURIComponent(user.id)}`);
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.memories)) {
+        setMemories(data.memories);
+      }
+    } catch (e) {
+      console.warn("Lỗi tải ký ức:", e);
+    } finally {
+      setIsLoadingMemories(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen && activeTab === "memory" && user?.id) {
+      loadUserMemories();
+    }
+  }, [isOpen, activeTab, user?.id]);
+
+  const handleAddMemory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMemoryContent.trim() || !user?.id) return;
+    try {
+      const res = await fetch("/api/user/memories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          content: newMemoryContent.trim(),
+          category: newMemoryCategory,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNewMemoryContent("");
+        setMemorySuccessMsg("Đã thêm ký ức mới cho AI thành công!");
+        loadUserMemories();
+        setTimeout(() => setMemorySuccessMsg(""), 3000);
+      }
+    } catch (err) {
+      console.error("Lỗi khi thêm ký ức:", err);
+    }
+  };
+
+  const handleDeleteMemory = async (id: string) => {
+    try {
+      const res = await fetch(`/api/user/memories?id=${encodeURIComponent(id)}&userId=${encodeURIComponent(user?.id || "")}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setMemories((prev) => prev.filter((m) => m.id !== id));
+      }
+    } catch (err) {
+      console.error("Lỗi xóa ký ức:", err);
+    }
+  };
+
   // 9. Tải danh sách người dùng cho Admin
   const loadAdminUsers = async (searchQuery = "") => {
     if (user?.role !== "ADMIN") return;
@@ -668,8 +737,22 @@ export default function UserSettingsModal({
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60"
               }`}
             >
-              <span>🎨</span>
+              <span>✨</span>
               <span>{t("tab.personalization", "Cá nhân hóa AI")}</span>
+            </button>
+
+            {/* 4.5. Ngân hàng Ký ức AI (Memory Bank) */}
+            <button
+              onClick={() => setActiveTab("memory")}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === "memory"
+                  ? "bg-rose-600 text-white shadow-xs font-bold"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60"
+              }`}
+            >
+              <span>🧠</span>
+              <span className="flex-1 text-left">Bộ nhớ AI (Memory)</span>
+              <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 font-bold">Mới</span>
             </button>
 
             {/* 5. Gói & Nạp Credits */}
@@ -1433,6 +1516,119 @@ export default function UserSettingsModal({
               </div>
             </div>
           )}
+
+            {/* TAB: BỘ NHỚ AI / MEMORY BANK */}
+            {activeTab === "memory" && (
+              <div className="space-y-6 animate-in fade-in duration-200">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                      <span>🧠 Ngân Hàng Ký Ức Dài Hạn (AI Memory Bank)</span>
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1 max-w-xl">
+                      Biết Tuốt AI sẽ tự động ghi nhớ và sử dụng các thông tin này trong tất cả các cuộc trò chuyện của bạn để trả lời cá nhân hóa, chuẩn xác và thấu hiểu hơn.
+                    </p>
+                  </div>
+                </div>
+
+                {memorySuccessMsg && (
+                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
+                    <span>✓</span>
+                    <span>{memorySuccessMsg}</span>
+                  </div>
+                )}
+
+                {/* Form thêm ký ức thủ công */}
+                <form onSubmit={handleAddMemory} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                    <span>➕</span>
+                    <span>Thêm điều bạn muốn AI luôn ghi nhớ</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      value={newMemoryContent}
+                      onChange={(e) => setNewMemoryContent(e.target.value)}
+                      placeholder="Ví dụ: Tôi tên là Linh, là lập trình viên React/NodeJS, thích câu trả lời ngắn gọn..."
+                      className="flex-1 p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0c0d12] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    />
+                    <select
+                      value={newMemoryCategory}
+                      onChange={(e) => setNewMemoryCategory(e.target.value)}
+                      className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#0c0d12] text-xs text-slate-800 dark:text-slate-200 focus:outline-none"
+                    >
+                      <option value="profile">Hồ sơ cá nhân</option>
+                      <option value="work">Công việc / Nghề nghiệp</option>
+                      <option value="preference">Sở thích xưng hô</option>
+                      <option value="general">Khác</option>
+                    </select>
+                    <button
+                      type="submit"
+                      disabled={!newMemoryContent.trim()}
+                      className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl transition-all cursor-pointer shrink-0"
+                    >
+                      Ghi nhớ
+                    </button>
+                  </div>
+                </form>
+
+                {/* Danh sách ký ức hiện tại */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <span>📋 Ký ức đang hoạt động</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono font-bold">
+                        {memories.length}
+                      </span>
+                    </h4>
+                    <button
+                      type="button"
+                      onClick={loadUserMemories}
+                      className="text-xs text-rose-600 hover:underline cursor-pointer font-medium"
+                    >
+                      Làm mới
+                    </button>
+                  </div>
+
+                  {isLoadingMemories ? (
+                    <div className="py-8 text-center text-xs text-slate-400">Đang tải ngân hàng ký ức...</div>
+                  ) : memories.length === 0 ? (
+                    <div className="py-8 px-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                      <p className="text-xs text-slate-400">Chưa có ký ức nào được lưu trữ. Hãy thêm điều bạn muốn AI ghi nhớ ở trên!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {memories.map((m) => (
+                        <div
+                          key={m.id}
+                          className="p-3 rounded-xl bg-white dark:bg-[#0c0d12] border border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-3 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                        >
+                          <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                            <span className="text-sm mt-0.5">🧠</span>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                                {m.content}
+                              </p>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 inline-block">
+                                {m.category === "profile" ? "👤 Hồ sơ" : m.category === "work" ? "💼 Công việc" : m.category === "preference" ? "⚙️ Sở thích" : "📌 Chung"}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteMemory(m.id)}
+                            className="p-1.5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 rounded-lg transition-colors cursor-pointer text-xs"
+                            title="Xóa ký ức này"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
           {/* TAB 5: GÓI & NẠP CREDITS (CREDITS) */}
           {activeTab === "credits" && (

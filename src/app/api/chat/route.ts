@@ -828,6 +828,29 @@ Never reply in Vietnamese, even if previous messages or character prompts were w
 Ngôn ngữ hiển thị của hệ thống là TIẾNG VIỆT. Hãy phản hồi hoàn toàn bằng tiếng Việt tự nhiên, lịch thiệp và chuẩn mực.`;
     }
 
+    // Tích hợp Ngân hàng Ký ức người dùng (AI Long-term Memory Bank)
+    if (user?.id) {
+      try {
+        const userMemories = await (prisma as any).userMemory.findMany({
+          where: { userId: user.id, isActive: true },
+          take: 15,
+          orderBy: { updatedAt: "desc" },
+        });
+
+        if (Array.isArray(userMemories) && userMemories.length > 0) {
+          const memoriesList = userMemories
+            .map((m: any) => `- [${m.category || "Ký ức"}]: ${m.content}`)
+            .join("\n");
+          effectiveSystemPrompt += `\n\n[NGÂN HÀNG KÝ ỨC DÀI HẠN VỀ NGƯỜI DÙNG HIỆN TẠI (MEMORY BANK)]:
+Dưới đây là các thông tin, thói quen và sở thích cá nhân mà người dùng đã chia sẻ hoặc muốn bạn luôn ghi nhớ xuyên suốt các phiên chat:
+${memoriesList}
+QUY TẮC: Hãy vận dụng tinh tế những ký ức này để phục vụ người dùng một cách chu đáo, tự nhiên và thấu hiểu nhất, không cần phải hỏi lại các thông tin đã được ghi nhớ ở trên!`;
+        }
+      } catch (memErr) {
+        console.warn("Không thể tải User Memories:", memErr);
+      }
+    }
+
     // Nếu cuộc trò chuyện thuộc về một Dự án, tích hợp chỉ dẫn chuyên biệt của Dự án
     if (targetProjectId) {
       try {

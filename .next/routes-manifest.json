@@ -372,6 +372,12 @@
       "namedRegex": "^/api/user/credits(?:/)?$"
     },
     {
+      "page": "/api/user/memories",
+      "regex": "^/api/user/memories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/user/memories(?:/)?$"
+    },
+    {
       "page": "/api/users",
       "regex": "^/api/users(?:/)?$",
       "routeKeys": {},

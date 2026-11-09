@@ -38,6 +38,7 @@
   "/api/tts/route": "/api/tts",
   "/api/user/checkin/route": "/api/user/checkin",
   "/api/user/credits/route": "/api/user/credits",
+  "/api/user/memories/route": "/api/user/memories",
   "/api/users/[userId]/route": "/api/users/[userId]",
   "/api/users/route": "/api/users",
   "/api/webhook/facebook/route": "/api/webhook/facebook",

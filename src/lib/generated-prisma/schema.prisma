@@ -10,24 +10,41 @@ generator client {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  username      String?        @unique
-  name          String?
-  password      String?
-  emailVerified DateTime?
-  avatar        String?
-  role          String         @default("USER") // "USER" | "VIP" | "ADMIN"
-  status        String         @default("active") // "active" | "banned"
-  credits       Int            @default(10)
-  conversations Conversation[]
-  projects      Project[]
-  posts         Post[]
-  comments      Comment[]
-  reactions     PostReaction[]
-  orders        PaymentOrder[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id                   String           @id @default(cuid())
+  email                String           @unique
+  username             String?          @unique
+  name                 String?
+  password             String?
+  emailVerified        DateTime?
+  avatar               String?
+  role                 String           @default("USER") // "USER" | "VIP" | "ADMIN"
+  status               String           @default("active") // "active" | "banned"
+  credits              Int              @default(10)
+  lastGiftNotification String?
+  conversations        Conversation[]
+  projects             Project[]
+  posts                Post[]
+  comments             Comment[]
+  reactions            PostReaction[]
+  orders               PaymentOrder[]
+  generatedImages      GeneratedImage[]
+  memories             UserMemory[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+model UserMemory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String // "name" | "job" | "preference" | "general"
+  content   String // Nội dung chi tiết cần nhớ
+  category  String   @default("general") // "profile" | "preference" | "work" | "general"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model EmailVerification {
@@ -143,4 +160,21 @@ model PaymentOrder {
   transactionId      String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+model GeneratedImage {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  url            String
+  prompt         String
+  enhancedPrompt String?
+  style          String   @default("ai-natural")
+  styleLabel     String   @default("Tạo bởi Biết Tuốt AI")
+  aspectRatio    String   @default("1:1")
+  referenceImage String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
 }

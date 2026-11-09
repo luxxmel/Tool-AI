@@ -94,6 +94,19 @@ export default function HomeChatView({
   const voiceDropdownRef = useRef<HTMLDivElement>(null);
   const speechRecognitionRef = useRef<any>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
+  const [isPlusMenuOpen, setIsPlusMenuOpen] = useState(false);
+  const plusMenuRef = useRef<HTMLDivElement>(null);
+
+  // Đóng Plus menu khi click ra ngoài
+  useEffect(() => {
+    function handleClickOutsidePlus(event: MouseEvent) {
+      if (plusMenuRef.current && !plusMenuRef.current.contains(event.target as Node)) {
+        setIsPlusMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutsidePlus);
+    return () => document.removeEventListener("mousedown", handleClickOutsidePlus);
+  }, []);
 
   const [conversationId, setConversationId] = useState<string | null>(
     propConversationId || null
@@ -132,6 +145,8 @@ export default function HomeChatView({
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
   const isInitialSent = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const currentConvIdRef = useRef<string | null>(null);
@@ -832,16 +847,32 @@ export default function HomeChatView({
     }
   };
 
-  // Auto-scroll effect respecting user settings
+  // Theo dõi vị trí cuộn của người dùng để chống giật màn hình
+  const handleScrollContainer = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    // Nếu người dùng cuộn lên quá 120px, hiện nút cuộn xuống và tạm dừng auto-scroll
+    setShowScrollBottomBtn(distanceFromBottom > 120);
+  };
+
+  const scrollToBottomSmooth = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Auto-scroll thông minh: Chỉ tự cuộn nếu người dùng đang ở gần đáy
   useEffect(() => {
     const autoScrollEnabled =
       typeof window !== "undefined"
         ? localStorage.getItem("omni_auto_scroll") !== "false"
         : true;
-    if (autoScrollEnabled && messagesEndRef.current) {
+
+    if (autoScrollEnabled && !showScrollBottomBtn && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, showScrollBottomBtn]);
 
   // 3. Khởi chạy câu hỏi ban đầu nếu có
   useEffect(() => {
@@ -1064,7 +1095,11 @@ export default function HomeChatView({
       </div>
 
       {/* Messages Stream (ChatGPT style) - Vùng cuộn tin nhắn tràn viền */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-2 sm:px-4 lg:px-6 space-y-6 pb-4 scrollbar-thin w-full">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScrollContainer}
+        className="flex-1 overflow-y-auto min-h-0 px-2 sm:px-4 lg:px-6 space-y-6 pb-4 scrollbar-thin w-full relative"
+      >
         {isLoadingHistory && messages.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center">
             <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mb-2" />
@@ -1473,7 +1508,21 @@ export default function HomeChatView({
       </div>
 
       {/* Pinned Bottom Input Bar (ChatGPT Style) - Luôn ghim cố định ở đáy màn hình */}
-      <div className="shrink-0 z-30 w-full pt-1.5 pb-2 sm:pb-3 px-2 sm:px-4 lg:px-6">
+      <div className="shrink-0 z-30 w-full pt-1.5 pb-2 sm:pb-3 px-2 sm:px-4 lg:px-6 relative">
+        {/* Floating Scroll to Bottom Button */}
+        {showScrollBottomBtn && (
+          <div className="absolute -top-11 left-1/2 -translate-x-1/2 z-40 animate-in fade-in slide-in-from-bottom-2 duration-150">
+            <button
+              type="button"
+              onClick={scrollToBottomSmooth}
+              className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/30 text-xs font-semibold flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95 transition-all"
+            >
+              <span>Cuộn xuống mới nhất</span>
+              <span>↓</span>
+            </button>
+          </div>
+        )}
+
         {/* Floating Stop Generating Button */}
         {isTyping && (
           <div className="flex justify-center mb-2 animate-in fade-in zoom-in-95 duration-150">
@@ -1666,44 +1715,81 @@ export default function HomeChatView({
               : "bg-white/95 dark:bg-[#0c0e17]/95 backdrop-blur-2xl border border-slate-300 dark:border-indigo-950/80 shadow-indigo-950/30"
           }`}
         >
-          {/* Attach Image Button */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="h-11 w-11 text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl flex items-center justify-center transition-colors cursor-pointer shrink-0 mb-1"
-            title="Đính kèm hoặc dán hình ảnh (Ctrl+V)"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </button>
+          {/* Nút Dấu Cộng (+) Tinh Gọn mở Menu Đính Kèm & Tính Năng */}
+          <div className="relative mb-1" ref={plusMenuRef}>
+            <button
+              type="button"
+              onClick={() => setIsPlusMenuOpen(!isPlusMenuOpen)}
+              className={`h-11 w-11 rounded-2xl flex items-center justify-center transition-all cursor-pointer shrink-0 border ${
+                isPlusMenuOpen
+                  ? "bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30 rotate-45"
+                  : isWebSearchActive
+                  ? "bg-cyan-500/15 border-cyan-500 text-cyan-500"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80"
+              }`}
+              title="Đính kèm tài liệu, ảnh, hoặc bật tra cứu Web"
+            >
+              <svg className="w-5 h-5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
 
-          {/* Attach Document Button (.txt, .pdf, .docx, .csv, .json, .md) */}
-          <button
-            type="button"
-            onClick={() => docInputRef.current?.click()}
-            className="h-11 w-11 text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl flex items-center justify-center transition-colors cursor-pointer shrink-0 mb-1"
-            title="Đính kèm tài liệu văn bản (.txt, .md, .csv, .json, .pdf, .docx)"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-            </svg>
-          </button>
+            {/* Popover Menu Hiện Đại Chuẩn ChatGPT / Claude */}
+            {isPlusMenuOpen && (
+              <div className="absolute left-0 bottom-full mb-3 w-56 p-1.5 rounded-2xl bg-white/95 dark:bg-[#12141f]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2.5 py-1">
+                  Công cụ & Tệp đính kèm
+                </div>
 
-          {/* Live Web Search Grounding Toggle */}
-          <button
-            type="button"
-            onClick={() => setIsWebSearchActive((prev) => !prev)}
-            className={`h-11 px-2.5 rounded-2xl flex items-center gap-1.5 transition-all cursor-pointer shrink-0 mb-1 border text-xs font-bold ${
-              isWebSearchActive
-                ? "bg-cyan-500/15 border-cyan-500 text-cyan-600 dark:text-cyan-300 ring-2 ring-cyan-400/40 shadow-xs"
-                : "border-transparent text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-            }`}
-            title={isWebSearchActive ? "Đang BẬT tìm kiếm Web thời gian thực (Google Grounding)" : "Bật tra cứu thông tin Web thời gian thực"}
-          >
-            <span className="text-sm">🌐</span>
-            <span className="hidden xl:inline text-[11px]">Tra cứu Web</span>
-          </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    fileInputRef.current?.click();
+                    setIsPlusMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-cyan-300 transition-colors cursor-pointer"
+                >
+                  <span className="text-base">📸</span>
+                  <span>Tải ảnh lên (Ctrl+V)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    docInputRef.current?.click();
+                    setIsPlusMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-cyan-300 transition-colors cursor-pointer"
+                >
+                  <span className="text-base">📄</span>
+                  <span>Đọc tài liệu (.pdf, .doc...)</span>
+                </button>
+
+                <div className="my-1 border-t border-slate-100 dark:border-slate-800/80" />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsWebSearchActive((prev) => !prev);
+                    setIsPlusMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    isWebSearchActive
+                      ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300"
+                      : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-base">🌐</span>
+                    <span>Tra cứu Web Realtime</span>
+                  </div>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${isWebSearchActive ? "bg-cyan-500 text-slate-950" : "bg-slate-200 dark:bg-slate-700 text-slate-500"}`}>
+                    {isWebSearchActive ? "BẬT" : "TẮT"}
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Voice Input (Microphone Speech-to-Text) Button */}
           <button

@@ -125,6 +125,18 @@ exports.Prisma.UserScalarFieldEnum = {
   role: 'role',
   status: 'status',
   credits: 'credits',
+  lastGiftNotification: 'lastGiftNotification',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserMemoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  content: 'content',
+  category: 'category',
+  isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -224,6 +236,20 @@ exports.Prisma.PaymentOrderScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GeneratedImageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  url: 'url',
+  prompt: 'prompt',
+  enhancedPrompt: 'enhancedPrompt',
+  style: 'style',
+  styleLabel: 'styleLabel',
+  aspectRatio: 'aspectRatio',
+  referenceImage: 'referenceImage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -237,6 +263,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  UserMemory: 'UserMemory',
   EmailVerification: 'EmailVerification',
   Project: 'Project',
   Bot: 'Bot',
@@ -245,7 +272,8 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   PostReaction: 'PostReaction',
-  PaymentOrder: 'PaymentOrder'
+  PaymentOrder: 'PaymentOrder',
+  GeneratedImage: 'GeneratedImage'
 };
 
 /**
