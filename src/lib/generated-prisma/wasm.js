@@ -286,6 +286,22 @@ exports.Prisma.StoryNotificationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.WithdrawalRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  credits: 'credits',
+  amountVnd: 'amountVnd',
+  bankCode: 'bankCode',
+  bankName: 'bankName',
+  accountNo: 'accountNo',
+  accountName: 'accountName',
+  note: 'note',
+  status: 'status',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -312,7 +328,8 @@ exports.Prisma.ModelName = {
   GeneratedImage: 'GeneratedImage',
   PublishedStory: 'PublishedStory',
   StoryLike: 'StoryLike',
-  StoryNotification: 'StoryNotification'
+  StoryNotification: 'StoryNotification',
+  WithdrawalRequest: 'WithdrawalRequest'
 };
 
 /**

@@ -88,6 +88,11 @@ export type StoryLike = $Result.DefaultSelection<Prisma.$StoryLikePayload>
  * 
  */
 export type StoryNotification = $Result.DefaultSelection<Prisma.$StoryNotificationPayload>
+/**
+ * Model WithdrawalRequest
+ * 
+ */
+export type WithdrawalRequest = $Result.DefaultSelection<Prisma.$WithdrawalRequestPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -363,6 +368,16 @@ export class PrismaClient<
     * ```
     */
   get storyNotification(): Prisma.StoryNotificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.withdrawalRequest`: Exposes CRUD operations for the **WithdrawalRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WithdrawalRequests
+    * const withdrawalRequests = await prisma.withdrawalRequest.findMany()
+    * ```
+    */
+  get withdrawalRequest(): Prisma.WithdrawalRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -817,7 +832,8 @@ export namespace Prisma {
     GeneratedImage: 'GeneratedImage',
     PublishedStory: 'PublishedStory',
     StoryLike: 'StoryLike',
-    StoryNotification: 'StoryNotification'
+    StoryNotification: 'StoryNotification',
+    WithdrawalRequest: 'WithdrawalRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -833,7 +849,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "userMemory" | "emailVerification" | "project" | "bot" | "conversation" | "message" | "post" | "comment" | "postReaction" | "paymentOrder" | "generatedImage" | "publishedStory" | "storyLike" | "storyNotification"
+      modelProps: "user" | "userMemory" | "emailVerification" | "project" | "bot" | "conversation" | "message" | "post" | "comment" | "postReaction" | "paymentOrder" | "generatedImage" | "publishedStory" | "storyLike" | "storyNotification" | "withdrawalRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1947,6 +1963,80 @@ export namespace Prisma {
           }
         }
       }
+      WithdrawalRequest: {
+        payload: Prisma.$WithdrawalRequestPayload<ExtArgs>
+        fields: Prisma.WithdrawalRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WithdrawalRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WithdrawalRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.WithdrawalRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WithdrawalRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          findMany: {
+            args: Prisma.WithdrawalRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>[]
+          }
+          create: {
+            args: Prisma.WithdrawalRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          createMany: {
+            args: Prisma.WithdrawalRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WithdrawalRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.WithdrawalRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          update: {
+            args: Prisma.WithdrawalRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.WithdrawalRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WithdrawalRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WithdrawalRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.WithdrawalRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WithdrawalRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.WithdrawalRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWithdrawalRequest>
+          }
+          groupBy: {
+            args: Prisma.WithdrawalRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WithdrawalRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WithdrawalRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<WithdrawalRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2046,6 +2136,7 @@ export namespace Prisma {
     publishedStory?: PublishedStoryOmit
     storyLike?: StoryLikeOmit
     storyNotification?: StoryNotificationOmit
+    withdrawalRequest?: WithdrawalRequestOmit
   }
 
   /* Types for Logging */
@@ -2151,6 +2242,7 @@ export namespace Prisma {
     publishedStories: number
     storyLikes: number
     storyNotifications: number
+    withdrawals: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2165,6 +2257,7 @@ export namespace Prisma {
     publishedStories?: boolean | UserCountOutputTypeCountPublishedStoriesArgs
     storyLikes?: boolean | UserCountOutputTypeCountStoryLikesArgs
     storyNotifications?: boolean | UserCountOutputTypeCountStoryNotificationsArgs
+    withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
   }
 
   // Custom InputTypes
@@ -2253,6 +2346,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountStoryNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StoryNotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountWithdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WithdrawalRequestWhereInput
   }
 
 
@@ -2697,6 +2797,7 @@ export namespace Prisma {
     publishedStories?: boolean | User$publishedStoriesArgs<ExtArgs>
     storyLikes?: boolean | User$storyLikesArgs<ExtArgs>
     storyNotifications?: boolean | User$storyNotificationsArgs<ExtArgs>
+    withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2761,6 +2862,7 @@ export namespace Prisma {
     publishedStories?: boolean | User$publishedStoriesArgs<ExtArgs>
     storyLikes?: boolean | User$storyLikesArgs<ExtArgs>
     storyNotifications?: boolean | User$storyNotificationsArgs<ExtArgs>
+    withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2780,6 +2882,7 @@ export namespace Prisma {
       publishedStories: Prisma.$PublishedStoryPayload<ExtArgs>[]
       storyLikes: Prisma.$StoryLikePayload<ExtArgs>[]
       storyNotifications: Prisma.$StoryNotificationPayload<ExtArgs>[]
+      withdrawals: Prisma.$WithdrawalRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3200,6 +3303,7 @@ export namespace Prisma {
     publishedStories<T extends User$publishedStoriesArgs<ExtArgs> = {}>(args?: Subset<T, User$publishedStoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublishedStoryPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     storyLikes<T extends User$storyLikesArgs<ExtArgs> = {}>(args?: Subset<T, User$storyLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoryLikePayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     storyNotifications<T extends User$storyNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$storyNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoryNotificationPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
+    withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3889,6 +3993,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: StoryNotificationScalarFieldEnum | StoryNotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.withdrawals
+   */
+  export type User$withdrawalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    where?: WithdrawalRequestWhereInput
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    cursor?: WithdrawalRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
   }
 
   /**
@@ -19545,6 +19673,1204 @@ export namespace Prisma {
 
 
   /**
+   * Model WithdrawalRequest
+   */
+
+  export type AggregateWithdrawalRequest = {
+    _count: WithdrawalRequestCountAggregateOutputType | null
+    _avg: WithdrawalRequestAvgAggregateOutputType | null
+    _sum: WithdrawalRequestSumAggregateOutputType | null
+    _min: WithdrawalRequestMinAggregateOutputType | null
+    _max: WithdrawalRequestMaxAggregateOutputType | null
+  }
+
+  export type WithdrawalRequestAvgAggregateOutputType = {
+    credits: number | null
+    amountVnd: number | null
+  }
+
+  export type WithdrawalRequestSumAggregateOutputType = {
+    credits: number | null
+    amountVnd: number | null
+  }
+
+  export type WithdrawalRequestMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    credits: number | null
+    amountVnd: number | null
+    bankCode: string | null
+    bankName: string | null
+    accountNo: string | null
+    accountName: string | null
+    note: string | null
+    status: string | null
+    adminNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WithdrawalRequestMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    credits: number | null
+    amountVnd: number | null
+    bankCode: string | null
+    bankName: string | null
+    accountNo: string | null
+    accountName: string | null
+    note: string | null
+    status: string | null
+    adminNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WithdrawalRequestCountAggregateOutputType = {
+    id: number
+    userId: number
+    credits: number
+    amountVnd: number
+    bankCode: number
+    bankName: number
+    accountNo: number
+    accountName: number
+    note: number
+    status: number
+    adminNote: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type WithdrawalRequestAvgAggregateInputType = {
+    credits?: true
+    amountVnd?: true
+  }
+
+  export type WithdrawalRequestSumAggregateInputType = {
+    credits?: true
+    amountVnd?: true
+  }
+
+  export type WithdrawalRequestMinAggregateInputType = {
+    id?: true
+    userId?: true
+    credits?: true
+    amountVnd?: true
+    bankCode?: true
+    bankName?: true
+    accountNo?: true
+    accountName?: true
+    note?: true
+    status?: true
+    adminNote?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WithdrawalRequestMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    credits?: true
+    amountVnd?: true
+    bankCode?: true
+    bankName?: true
+    accountNo?: true
+    accountName?: true
+    note?: true
+    status?: true
+    adminNote?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WithdrawalRequestCountAggregateInputType = {
+    id?: true
+    userId?: true
+    credits?: true
+    amountVnd?: true
+    bankCode?: true
+    bankName?: true
+    accountNo?: true
+    accountName?: true
+    note?: true
+    status?: true
+    adminNote?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type WithdrawalRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WithdrawalRequest to aggregate.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WithdrawalRequests
+    **/
+    _count?: true | WithdrawalRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: WithdrawalRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: WithdrawalRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WithdrawalRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WithdrawalRequestMaxAggregateInputType
+  }
+
+  export type GetWithdrawalRequestAggregateType<T extends WithdrawalRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateWithdrawalRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWithdrawalRequest[P]>
+      : GetScalarType<T[P], AggregateWithdrawalRequest[P]>
+  }
+
+
+
+
+  export type WithdrawalRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WithdrawalRequestWhereInput
+    orderBy?: WithdrawalRequestOrderByWithAggregationInput | WithdrawalRequestOrderByWithAggregationInput[]
+    by: WithdrawalRequestScalarFieldEnum[] | WithdrawalRequestScalarFieldEnum
+    having?: WithdrawalRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WithdrawalRequestCountAggregateInputType | true
+    _avg?: WithdrawalRequestAvgAggregateInputType
+    _sum?: WithdrawalRequestSumAggregateInputType
+    _min?: WithdrawalRequestMinAggregateInputType
+    _max?: WithdrawalRequestMaxAggregateInputType
+  }
+
+  export type WithdrawalRequestGroupByOutputType = {
+    id: string
+    userId: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note: string | null
+    status: string
+    adminNote: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: WithdrawalRequestCountAggregateOutputType | null
+    _avg: WithdrawalRequestAvgAggregateOutputType | null
+    _sum: WithdrawalRequestSumAggregateOutputType | null
+    _min: WithdrawalRequestMinAggregateOutputType | null
+    _max: WithdrawalRequestMaxAggregateOutputType | null
+  }
+
+  type GetWithdrawalRequestGroupByPayload<T extends WithdrawalRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WithdrawalRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WithdrawalRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WithdrawalRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], WithdrawalRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WithdrawalRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    credits?: boolean
+    amountVnd?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    note?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["withdrawalRequest"]>
+
+  export type WithdrawalRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    credits?: boolean
+    amountVnd?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    note?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["withdrawalRequest"]>
+
+  export type WithdrawalRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    credits?: boolean
+    amountVnd?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    note?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["withdrawalRequest"]>
+
+  export type WithdrawalRequestSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    credits?: boolean
+    amountVnd?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    note?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type WithdrawalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "credits" | "amountVnd" | "bankCode" | "bankName" | "accountNo" | "accountName" | "note" | "status" | "adminNote" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawalRequest"]>
+  export type WithdrawalRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type WithdrawalRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type WithdrawalRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $WithdrawalRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WithdrawalRequest"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      credits: number
+      amountVnd: number
+      bankCode: string
+      bankName: string
+      accountNo: string
+      accountName: string
+      note: string | null
+      status: string
+      adminNote: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["withdrawalRequest"]>
+    composites: {}
+  }
+
+  type WithdrawalRequestGetPayload<S extends boolean | null | undefined | WithdrawalRequestDefaultArgs> = $Result.GetResult<Prisma.$WithdrawalRequestPayload, S>
+
+  type WithdrawalRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WithdrawalRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WithdrawalRequestCountAggregateInputType | true
+    }
+
+  export interface WithdrawalRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WithdrawalRequest'], meta: { name: 'WithdrawalRequest' } }
+    /**
+     * Find zero or one WithdrawalRequest that matches the filter.
+     * @param {WithdrawalRequestFindUniqueArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WithdrawalRequestFindUniqueArgs>(args: SelectSubset<T, WithdrawalRequestFindUniqueArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one WithdrawalRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WithdrawalRequestFindUniqueOrThrowArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WithdrawalRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, WithdrawalRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first WithdrawalRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestFindFirstArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WithdrawalRequestFindFirstArgs>(args?: SelectSubset<T, WithdrawalRequestFindFirstArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first WithdrawalRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestFindFirstOrThrowArgs} args - Arguments to find a WithdrawalRequest
+     * @example
+     * // Get one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WithdrawalRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, WithdrawalRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more WithdrawalRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WithdrawalRequests
+     * const withdrawalRequests = await prisma.withdrawalRequest.findMany()
+     * 
+     * // Get first 10 WithdrawalRequests
+     * const withdrawalRequests = await prisma.withdrawalRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const withdrawalRequestWithIdOnly = await prisma.withdrawalRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WithdrawalRequestFindManyArgs>(args?: SelectSubset<T, WithdrawalRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a WithdrawalRequest.
+     * @param {WithdrawalRequestCreateArgs} args - Arguments to create a WithdrawalRequest.
+     * @example
+     * // Create one WithdrawalRequest
+     * const WithdrawalRequest = await prisma.withdrawalRequest.create({
+     *   data: {
+     *     // ... data to create a WithdrawalRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends WithdrawalRequestCreateArgs>(args: SelectSubset<T, WithdrawalRequestCreateArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many WithdrawalRequests.
+     * @param {WithdrawalRequestCreateManyArgs} args - Arguments to create many WithdrawalRequests.
+     * @example
+     * // Create many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WithdrawalRequestCreateManyArgs>(args?: SelectSubset<T, WithdrawalRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WithdrawalRequests and returns the data saved in the database.
+     * @param {WithdrawalRequestCreateManyAndReturnArgs} args - Arguments to create many WithdrawalRequests.
+     * @example
+     * // Create many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WithdrawalRequests and only return the `id`
+     * const withdrawalRequestWithIdOnly = await prisma.withdrawalRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WithdrawalRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, WithdrawalRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a WithdrawalRequest.
+     * @param {WithdrawalRequestDeleteArgs} args - Arguments to delete one WithdrawalRequest.
+     * @example
+     * // Delete one WithdrawalRequest
+     * const WithdrawalRequest = await prisma.withdrawalRequest.delete({
+     *   where: {
+     *     // ... filter to delete one WithdrawalRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WithdrawalRequestDeleteArgs>(args: SelectSubset<T, WithdrawalRequestDeleteArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one WithdrawalRequest.
+     * @param {WithdrawalRequestUpdateArgs} args - Arguments to update one WithdrawalRequest.
+     * @example
+     * // Update one WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WithdrawalRequestUpdateArgs>(args: SelectSubset<T, WithdrawalRequestUpdateArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more WithdrawalRequests.
+     * @param {WithdrawalRequestDeleteManyArgs} args - Arguments to filter WithdrawalRequests to delete.
+     * @example
+     * // Delete a few WithdrawalRequests
+     * const { count } = await prisma.withdrawalRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WithdrawalRequestDeleteManyArgs>(args?: SelectSubset<T, WithdrawalRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WithdrawalRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WithdrawalRequestUpdateManyArgs>(args: SelectSubset<T, WithdrawalRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WithdrawalRequests and returns the data updated in the database.
+     * @param {WithdrawalRequestUpdateManyAndReturnArgs} args - Arguments to update many WithdrawalRequests.
+     * @example
+     * // Update many WithdrawalRequests
+     * const withdrawalRequest = await prisma.withdrawalRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WithdrawalRequests and only return the `id`
+     * const withdrawalRequestWithIdOnly = await prisma.withdrawalRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WithdrawalRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, WithdrawalRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one WithdrawalRequest.
+     * @param {WithdrawalRequestUpsertArgs} args - Arguments to update or create a WithdrawalRequest.
+     * @example
+     * // Update or create a WithdrawalRequest
+     * const withdrawalRequest = await prisma.withdrawalRequest.upsert({
+     *   create: {
+     *     // ... data to create a WithdrawalRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WithdrawalRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WithdrawalRequestUpsertArgs>(args: SelectSubset<T, WithdrawalRequestUpsertArgs<ExtArgs>>): Prisma__WithdrawalRequestClient<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of WithdrawalRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestCountArgs} args - Arguments to filter WithdrawalRequests to count.
+     * @example
+     * // Count the number of WithdrawalRequests
+     * const count = await prisma.withdrawalRequest.count({
+     *   where: {
+     *     // ... the filter for the WithdrawalRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends WithdrawalRequestCountArgs>(
+      args?: Subset<T, WithdrawalRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WithdrawalRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WithdrawalRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WithdrawalRequestAggregateArgs>(args: Subset<T, WithdrawalRequestAggregateArgs>): Prisma.PrismaPromise<GetWithdrawalRequestAggregateType<T>>
+
+    /**
+     * Group by WithdrawalRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WithdrawalRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WithdrawalRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WithdrawalRequestGroupByArgs['orderBy'] }
+        : { orderBy?: WithdrawalRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WithdrawalRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWithdrawalRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WithdrawalRequest model
+   */
+  readonly fields: WithdrawalRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WithdrawalRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WithdrawalRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WithdrawalRequest model
+   */ 
+  interface WithdrawalRequestFieldRefs {
+    readonly id: FieldRef<"WithdrawalRequest", 'String'>
+    readonly userId: FieldRef<"WithdrawalRequest", 'String'>
+    readonly credits: FieldRef<"WithdrawalRequest", 'Int'>
+    readonly amountVnd: FieldRef<"WithdrawalRequest", 'Int'>
+    readonly bankCode: FieldRef<"WithdrawalRequest", 'String'>
+    readonly bankName: FieldRef<"WithdrawalRequest", 'String'>
+    readonly accountNo: FieldRef<"WithdrawalRequest", 'String'>
+    readonly accountName: FieldRef<"WithdrawalRequest", 'String'>
+    readonly note: FieldRef<"WithdrawalRequest", 'String'>
+    readonly status: FieldRef<"WithdrawalRequest", 'String'>
+    readonly adminNote: FieldRef<"WithdrawalRequest", 'String'>
+    readonly createdAt: FieldRef<"WithdrawalRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"WithdrawalRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WithdrawalRequest findUnique
+   */
+  export type WithdrawalRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest findUniqueOrThrow
+   */
+  export type WithdrawalRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest findFirst
+   */
+  export type WithdrawalRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WithdrawalRequests.
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WithdrawalRequests.
+     */
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * WithdrawalRequest findFirstOrThrow
+   */
+  export type WithdrawalRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequest to fetch.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WithdrawalRequests.
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WithdrawalRequests.
+     */
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * WithdrawalRequest findMany
+   */
+  export type WithdrawalRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which WithdrawalRequests to fetch.
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WithdrawalRequests to fetch.
+     */
+    orderBy?: WithdrawalRequestOrderByWithRelationInput | WithdrawalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WithdrawalRequests.
+     */
+    cursor?: WithdrawalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WithdrawalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WithdrawalRequests.
+     */
+    skip?: number
+    distinct?: WithdrawalRequestScalarFieldEnum | WithdrawalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * WithdrawalRequest create
+   */
+  export type WithdrawalRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WithdrawalRequest.
+     */
+    data: XOR<WithdrawalRequestCreateInput, WithdrawalRequestUncheckedCreateInput>
+  }
+
+  /**
+   * WithdrawalRequest createMany
+   */
+  export type WithdrawalRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WithdrawalRequests.
+     */
+    data: WithdrawalRequestCreateManyInput | WithdrawalRequestCreateManyInput[]
+  }
+
+  /**
+   * WithdrawalRequest createManyAndReturn
+   */
+  export type WithdrawalRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many WithdrawalRequests.
+     */
+    data: WithdrawalRequestCreateManyInput | WithdrawalRequestCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WithdrawalRequest update
+   */
+  export type WithdrawalRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WithdrawalRequest.
+     */
+    data: XOR<WithdrawalRequestUpdateInput, WithdrawalRequestUncheckedUpdateInput>
+    /**
+     * Choose, which WithdrawalRequest to update.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest updateMany
+   */
+  export type WithdrawalRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WithdrawalRequests.
+     */
+    data: XOR<WithdrawalRequestUpdateManyMutationInput, WithdrawalRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which WithdrawalRequests to update
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * Limit how many WithdrawalRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WithdrawalRequest updateManyAndReturn
+   */
+  export type WithdrawalRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update WithdrawalRequests.
+     */
+    data: XOR<WithdrawalRequestUpdateManyMutationInput, WithdrawalRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which WithdrawalRequests to update
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * Limit how many WithdrawalRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WithdrawalRequest upsert
+   */
+  export type WithdrawalRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WithdrawalRequest to update in case it exists.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+    /**
+     * In case the WithdrawalRequest found by the `where` argument doesn't exist, create a new WithdrawalRequest with this data.
+     */
+    create: XOR<WithdrawalRequestCreateInput, WithdrawalRequestUncheckedCreateInput>
+    /**
+     * In case the WithdrawalRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WithdrawalRequestUpdateInput, WithdrawalRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * WithdrawalRequest delete
+   */
+  export type WithdrawalRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+    /**
+     * Filter which WithdrawalRequest to delete.
+     */
+    where: WithdrawalRequestWhereUniqueInput
+  }
+
+  /**
+   * WithdrawalRequest deleteMany
+   */
+  export type WithdrawalRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WithdrawalRequests to delete
+     */
+    where?: WithdrawalRequestWhereInput
+    /**
+     * Limit how many WithdrawalRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WithdrawalRequest without action
+   */
+  export type WithdrawalRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WithdrawalRequest
+     */
+    select?: WithdrawalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WithdrawalRequest
+     */
+    omit?: WithdrawalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WithdrawalRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -19772,6 +21098,25 @@ export namespace Prisma {
   export type StoryNotificationScalarFieldEnum = (typeof StoryNotificationScalarFieldEnum)[keyof typeof StoryNotificationScalarFieldEnum]
 
 
+  export const WithdrawalRequestScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    credits: 'credits',
+    amountVnd: 'amountVnd',
+    bankCode: 'bankCode',
+    bankName: 'bankName',
+    accountNo: 'accountNo',
+    accountName: 'accountName',
+    note: 'note',
+    status: 'status',
+    adminNote: 'adminNote',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type WithdrawalRequestScalarFieldEnum = (typeof WithdrawalRequestScalarFieldEnum)[keyof typeof WithdrawalRequestScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -19859,6 +21204,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryListRelationFilter
     storyLikes?: StoryLikeListRelationFilter
     storyNotifications?: StoryNotificationListRelationFilter
+    withdrawals?: WithdrawalRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -19886,6 +21232,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryOrderByRelationAggregateInput
     storyLikes?: StoryLikeOrderByRelationAggregateInput
     storyNotifications?: StoryNotificationOrderByRelationAggregateInput
+    withdrawals?: WithdrawalRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -19916,6 +21263,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryListRelationFilter
     storyLikes?: StoryLikeListRelationFilter
     storyNotifications?: StoryNotificationListRelationFilter
+    withdrawals?: WithdrawalRequestListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -20983,6 +22331,103 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"StoryNotification"> | Date | string
   }
 
+  export type WithdrawalRequestWhereInput = {
+    AND?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    OR?: WithdrawalRequestWhereInput[]
+    NOT?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    id?: StringFilter<"WithdrawalRequest"> | string
+    userId?: StringFilter<"WithdrawalRequest"> | string
+    credits?: IntFilter<"WithdrawalRequest"> | number
+    amountVnd?: IntFilter<"WithdrawalRequest"> | number
+    bankCode?: StringFilter<"WithdrawalRequest"> | string
+    bankName?: StringFilter<"WithdrawalRequest"> | string
+    accountNo?: StringFilter<"WithdrawalRequest"> | string
+    accountName?: StringFilter<"WithdrawalRequest"> | string
+    note?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    status?: StringFilter<"WithdrawalRequest"> | string
+    adminNote?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type WithdrawalRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    credits?: SortOrder
+    amountVnd?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    note?: SortOrderInput | SortOrder
+    status?: SortOrder
+    adminNote?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type WithdrawalRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    OR?: WithdrawalRequestWhereInput[]
+    NOT?: WithdrawalRequestWhereInput | WithdrawalRequestWhereInput[]
+    userId?: StringFilter<"WithdrawalRequest"> | string
+    credits?: IntFilter<"WithdrawalRequest"> | number
+    amountVnd?: IntFilter<"WithdrawalRequest"> | number
+    bankCode?: StringFilter<"WithdrawalRequest"> | string
+    bankName?: StringFilter<"WithdrawalRequest"> | string
+    accountNo?: StringFilter<"WithdrawalRequest"> | string
+    accountName?: StringFilter<"WithdrawalRequest"> | string
+    note?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    status?: StringFilter<"WithdrawalRequest"> | string
+    adminNote?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type WithdrawalRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    credits?: SortOrder
+    amountVnd?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    note?: SortOrderInput | SortOrder
+    status?: SortOrder
+    adminNote?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: WithdrawalRequestCountOrderByAggregateInput
+    _avg?: WithdrawalRequestAvgOrderByAggregateInput
+    _max?: WithdrawalRequestMaxOrderByAggregateInput
+    _min?: WithdrawalRequestMinOrderByAggregateInput
+    _sum?: WithdrawalRequestSumOrderByAggregateInput
+  }
+
+  export type WithdrawalRequestScalarWhereWithAggregatesInput = {
+    AND?: WithdrawalRequestScalarWhereWithAggregatesInput | WithdrawalRequestScalarWhereWithAggregatesInput[]
+    OR?: WithdrawalRequestScalarWhereWithAggregatesInput[]
+    NOT?: WithdrawalRequestScalarWhereWithAggregatesInput | WithdrawalRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    userId?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    credits?: IntWithAggregatesFilter<"WithdrawalRequest"> | number
+    amountVnd?: IntWithAggregatesFilter<"WithdrawalRequest"> | number
+    bankCode?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    bankName?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    accountNo?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    accountName?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    note?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
+    status?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    adminNote?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"WithdrawalRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"WithdrawalRequest"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -21008,6 +22453,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -21035,6 +22481,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -21062,6 +22509,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -21089,6 +22537,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -22238,6 +23687,117 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type WithdrawalRequestCreateInput = {
+    id?: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note?: string | null
+    status?: string
+    adminNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutWithdrawalsInput
+  }
+
+  export type WithdrawalRequestUncheckedCreateInput = {
+    id?: string
+    userId: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note?: string | null
+    status?: string
+    adminNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WithdrawalRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWithdrawalsNestedInput
+  }
+
+  export type WithdrawalRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalRequestCreateManyInput = {
+    id?: string
+    userId: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note?: string | null
+    status?: string
+    adminNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WithdrawalRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -22365,6 +23925,12 @@ export namespace Prisma {
     none?: StoryNotificationWhereInput
   }
 
+  export type WithdrawalRequestListRelationFilter = {
+    every?: WithdrawalRequestWhereInput
+    some?: WithdrawalRequestWhereInput
+    none?: WithdrawalRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -22411,6 +23977,10 @@ export namespace Prisma {
   }
 
   export type StoryNotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WithdrawalRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23113,6 +24683,64 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type WithdrawalRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    credits?: SortOrder
+    amountVnd?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    note?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WithdrawalRequestAvgOrderByAggregateInput = {
+    credits?: SortOrder
+    amountVnd?: SortOrder
+  }
+
+  export type WithdrawalRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    credits?: SortOrder
+    amountVnd?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    note?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WithdrawalRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    credits?: SortOrder
+    amountVnd?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    note?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WithdrawalRequestSumOrderByAggregateInput = {
+    credits?: SortOrder
+    amountVnd?: SortOrder
+  }
+
   export type ConversationCreateNestedManyWithoutUserInput = {
     create?: XOR<ConversationCreateWithoutUserInput, ConversationUncheckedCreateWithoutUserInput> | ConversationCreateWithoutUserInput[] | ConversationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ConversationCreateOrConnectWithoutUserInput | ConversationCreateOrConnectWithoutUserInput[]
@@ -23190,6 +24818,13 @@ export namespace Prisma {
     connect?: StoryNotificationWhereUniqueInput | StoryNotificationWhereUniqueInput[]
   }
 
+  export type WithdrawalRequestCreateNestedManyWithoutUserInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutUserInput, WithdrawalRequestUncheckedCreateWithoutUserInput> | WithdrawalRequestCreateWithoutUserInput[] | WithdrawalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutUserInput | WithdrawalRequestCreateOrConnectWithoutUserInput[]
+    createMany?: WithdrawalRequestCreateManyUserInputEnvelope
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+  }
+
   export type ConversationUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<ConversationCreateWithoutUserInput, ConversationUncheckedCreateWithoutUserInput> | ConversationCreateWithoutUserInput[] | ConversationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ConversationCreateOrConnectWithoutUserInput | ConversationCreateOrConnectWithoutUserInput[]
@@ -23265,6 +24900,13 @@ export namespace Prisma {
     connectOrCreate?: StoryNotificationCreateOrConnectWithoutUserInput | StoryNotificationCreateOrConnectWithoutUserInput[]
     createMany?: StoryNotificationCreateManyUserInputEnvelope
     connect?: StoryNotificationWhereUniqueInput | StoryNotificationWhereUniqueInput[]
+  }
+
+  export type WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutUserInput, WithdrawalRequestUncheckedCreateWithoutUserInput> | WithdrawalRequestCreateWithoutUserInput[] | WithdrawalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutUserInput | WithdrawalRequestCreateOrConnectWithoutUserInput[]
+    createMany?: WithdrawalRequestCreateManyUserInputEnvelope
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -23445,6 +25087,20 @@ export namespace Prisma {
     deleteMany?: StoryNotificationScalarWhereInput | StoryNotificationScalarWhereInput[]
   }
 
+  export type WithdrawalRequestUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutUserInput, WithdrawalRequestUncheckedCreateWithoutUserInput> | WithdrawalRequestCreateWithoutUserInput[] | WithdrawalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutUserInput | WithdrawalRequestCreateOrConnectWithoutUserInput[]
+    upsert?: WithdrawalRequestUpsertWithWhereUniqueWithoutUserInput | WithdrawalRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WithdrawalRequestCreateManyUserInputEnvelope
+    set?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    disconnect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    delete?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    update?: WithdrawalRequestUpdateWithWhereUniqueWithoutUserInput | WithdrawalRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WithdrawalRequestUpdateManyWithWhereWithoutUserInput | WithdrawalRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
+  }
+
   export type ConversationUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<ConversationCreateWithoutUserInput, ConversationUncheckedCreateWithoutUserInput> | ConversationCreateWithoutUserInput[] | ConversationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ConversationCreateOrConnectWithoutUserInput | ConversationCreateOrConnectWithoutUserInput[]
@@ -23597,6 +25253,20 @@ export namespace Prisma {
     update?: StoryNotificationUpdateWithWhereUniqueWithoutUserInput | StoryNotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: StoryNotificationUpdateManyWithWhereWithoutUserInput | StoryNotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: StoryNotificationScalarWhereInput | StoryNotificationScalarWhereInput[]
+  }
+
+  export type WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WithdrawalRequestCreateWithoutUserInput, WithdrawalRequestUncheckedCreateWithoutUserInput> | WithdrawalRequestCreateWithoutUserInput[] | WithdrawalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WithdrawalRequestCreateOrConnectWithoutUserInput | WithdrawalRequestCreateOrConnectWithoutUserInput[]
+    upsert?: WithdrawalRequestUpsertWithWhereUniqueWithoutUserInput | WithdrawalRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WithdrawalRequestCreateManyUserInputEnvelope
+    set?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    disconnect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    delete?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    connect?: WithdrawalRequestWhereUniqueInput | WithdrawalRequestWhereUniqueInput[]
+    update?: WithdrawalRequestUpdateWithWhereUniqueWithoutUserInput | WithdrawalRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WithdrawalRequestUpdateManyWithWhereWithoutUserInput | WithdrawalRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutMemoriesInput = {
@@ -24093,6 +25763,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutStoryNotificationsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStoryNotificationsInput, UserUpdateWithoutStoryNotificationsInput>, UserUncheckedUpdateWithoutStoryNotificationsInput>
+  }
+
+  export type UserCreateNestedOneWithoutWithdrawalsInput = {
+    create?: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWithdrawalsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutWithdrawalsNestedInput = {
+    create?: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWithdrawalsInput
+    upsert?: UserUpsertWithoutWithdrawalsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWithdrawalsInput, UserUpdateWithoutWithdrawalsInput>, UserUncheckedUpdateWithoutWithdrawalsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -24616,6 +26300,45 @@ export namespace Prisma {
     data: StoryNotificationCreateManyUserInput | StoryNotificationCreateManyUserInput[]
   }
 
+  export type WithdrawalRequestCreateWithoutUserInput = {
+    id?: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note?: string | null
+    status?: string
+    adminNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WithdrawalRequestUncheckedCreateWithoutUserInput = {
+    id?: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note?: string | null
+    status?: string
+    adminNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WithdrawalRequestCreateOrConnectWithoutUserInput = {
+    where: WithdrawalRequestWhereUniqueInput
+    create: XOR<WithdrawalRequestCreateWithoutUserInput, WithdrawalRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type WithdrawalRequestCreateManyUserInputEnvelope = {
+    data: WithdrawalRequestCreateManyUserInput | WithdrawalRequestCreateManyUserInput[]
+  }
+
   export type ConversationUpsertWithWhereUniqueWithoutUserInput = {
     where: ConversationWhereUniqueInput
     update: XOR<ConversationUpdateWithoutUserInput, ConversationUncheckedUpdateWithoutUserInput>
@@ -24955,6 +26678,41 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"StoryNotification"> | Date | string
   }
 
+  export type WithdrawalRequestUpsertWithWhereUniqueWithoutUserInput = {
+    where: WithdrawalRequestWhereUniqueInput
+    update: XOR<WithdrawalRequestUpdateWithoutUserInput, WithdrawalRequestUncheckedUpdateWithoutUserInput>
+    create: XOR<WithdrawalRequestCreateWithoutUserInput, WithdrawalRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type WithdrawalRequestUpdateWithWhereUniqueWithoutUserInput = {
+    where: WithdrawalRequestWhereUniqueInput
+    data: XOR<WithdrawalRequestUpdateWithoutUserInput, WithdrawalRequestUncheckedUpdateWithoutUserInput>
+  }
+
+  export type WithdrawalRequestUpdateManyWithWhereWithoutUserInput = {
+    where: WithdrawalRequestScalarWhereInput
+    data: XOR<WithdrawalRequestUpdateManyMutationInput, WithdrawalRequestUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type WithdrawalRequestScalarWhereInput = {
+    AND?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
+    OR?: WithdrawalRequestScalarWhereInput[]
+    NOT?: WithdrawalRequestScalarWhereInput | WithdrawalRequestScalarWhereInput[]
+    id?: StringFilter<"WithdrawalRequest"> | string
+    userId?: StringFilter<"WithdrawalRequest"> | string
+    credits?: IntFilter<"WithdrawalRequest"> | number
+    amountVnd?: IntFilter<"WithdrawalRequest"> | number
+    bankCode?: StringFilter<"WithdrawalRequest"> | string
+    bankName?: StringFilter<"WithdrawalRequest"> | string
+    accountNo?: StringFilter<"WithdrawalRequest"> | string
+    accountName?: StringFilter<"WithdrawalRequest"> | string
+    note?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    status?: StringFilter<"WithdrawalRequest"> | string
+    adminNote?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
+  }
+
   export type UserCreateWithoutMemoriesInput = {
     id?: string
     email: string
@@ -24979,6 +26737,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMemoriesInput = {
@@ -25005,6 +26764,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMemoriesInput = {
@@ -25047,6 +26807,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMemoriesInput = {
@@ -25073,6 +26834,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ConversationCreateWithoutProjectInput = {
@@ -25128,6 +26890,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -25154,6 +26917,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -25212,6 +26976,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -25238,6 +27003,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ConversationCreateWithoutBotInput = {
@@ -25309,6 +27075,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutConversationsInput = {
@@ -25335,6 +27102,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutConversationsInput = {
@@ -25454,6 +27222,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -25480,6 +27249,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BotUpsertWithoutConversationsInput = {
@@ -25655,6 +27425,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -25681,6 +27452,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -25771,6 +27543,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -25797,6 +27570,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CommentUpsertWithWhereUniqueWithoutPostInput = {
@@ -25892,6 +27666,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -25918,6 +27693,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -26003,6 +27779,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -26029,6 +27806,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PostCreateWithoutReactionsInput = {
@@ -26092,6 +27870,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReactionsInput = {
@@ -26118,6 +27897,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReactionsInput = {
@@ -26203,6 +27983,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -26229,6 +28010,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutOrdersInput = {
@@ -26255,6 +28037,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
@@ -26281,6 +28064,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOrdersInput = {
@@ -26323,6 +28107,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -26349,6 +28134,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutGeneratedImagesInput = {
@@ -26375,6 +28161,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGeneratedImagesInput = {
@@ -26401,6 +28188,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGeneratedImagesInput = {
@@ -26443,6 +28231,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGeneratedImagesInput = {
@@ -26469,6 +28258,7 @@ export namespace Prisma {
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPublishedStoriesInput = {
@@ -26495,6 +28285,7 @@ export namespace Prisma {
     memories?: UserMemoryCreateNestedManyWithoutUserInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPublishedStoriesInput = {
@@ -26521,6 +28312,7 @@ export namespace Prisma {
     memories?: UserMemoryUncheckedCreateNestedManyWithoutUserInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPublishedStoriesInput = {
@@ -26584,6 +28376,7 @@ export namespace Prisma {
     memories?: UserMemoryUpdateManyWithoutUserNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPublishedStoriesInput = {
@@ -26610,6 +28403,7 @@ export namespace Prisma {
     memories?: UserMemoryUncheckedUpdateManyWithoutUserNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryLikeUpsertWithWhereUniqueWithoutStoryInput = {
@@ -26695,6 +28489,7 @@ export namespace Prisma {
     memories?: UserMemoryCreateNestedManyWithoutUserInput
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStoryLikesInput = {
@@ -26721,6 +28516,7 @@ export namespace Prisma {
     memories?: UserMemoryUncheckedCreateNestedManyWithoutUserInput
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStoryLikesInput = {
@@ -26812,6 +28608,7 @@ export namespace Prisma {
     memories?: UserMemoryUpdateManyWithoutUserNestedInput
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStoryLikesInput = {
@@ -26838,6 +28635,7 @@ export namespace Prisma {
     memories?: UserMemoryUncheckedUpdateManyWithoutUserNestedInput
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutStoryNotificationsInput = {
@@ -26864,6 +28662,7 @@ export namespace Prisma {
     memories?: UserMemoryCreateNestedManyWithoutUserInput
     publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStoryNotificationsInput = {
@@ -26890,6 +28689,7 @@ export namespace Prisma {
     memories?: UserMemoryUncheckedCreateNestedManyWithoutUserInput
     publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
     storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStoryNotificationsInput = {
@@ -26932,6 +28732,7 @@ export namespace Prisma {
     memories?: UserMemoryUpdateManyWithoutUserNestedInput
     publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStoryNotificationsInput = {
@@ -26958,6 +28759,131 @@ export namespace Prisma {
     memories?: UserMemoryUncheckedUpdateManyWithoutUserNestedInput
     publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
     storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutWithdrawalsInput = {
+    id?: string
+    email: string
+    username?: string | null
+    name?: string | null
+    password?: string | null
+    emailVerified?: Date | string | null
+    avatar?: string | null
+    role?: string
+    status?: string
+    credits?: number
+    lastGiftNotification?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    conversations?: ConversationCreateNestedManyWithoutUserInput
+    projects?: ProjectCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    reactions?: PostReactionCreateNestedManyWithoutUserInput
+    orders?: PaymentOrderCreateNestedManyWithoutUserInput
+    generatedImages?: GeneratedImageCreateNestedManyWithoutUserInput
+    memories?: UserMemoryCreateNestedManyWithoutUserInput
+    publishedStories?: PublishedStoryCreateNestedManyWithoutAuthorInput
+    storyLikes?: StoryLikeCreateNestedManyWithoutUserInput
+    storyNotifications?: StoryNotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutWithdrawalsInput = {
+    id?: string
+    email: string
+    username?: string | null
+    name?: string | null
+    password?: string | null
+    emailVerified?: Date | string | null
+    avatar?: string | null
+    role?: string
+    status?: string
+    credits?: number
+    lastGiftNotification?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    conversations?: ConversationUncheckedCreateNestedManyWithoutUserInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    reactions?: PostReactionUncheckedCreateNestedManyWithoutUserInput
+    orders?: PaymentOrderUncheckedCreateNestedManyWithoutUserInput
+    generatedImages?: GeneratedImageUncheckedCreateNestedManyWithoutUserInput
+    memories?: UserMemoryUncheckedCreateNestedManyWithoutUserInput
+    publishedStories?: PublishedStoryUncheckedCreateNestedManyWithoutAuthorInput
+    storyLikes?: StoryLikeUncheckedCreateNestedManyWithoutUserInput
+    storyNotifications?: StoryNotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutWithdrawalsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+  }
+
+  export type UserUpsertWithoutWithdrawalsInput = {
+    update: XOR<UserUpdateWithoutWithdrawalsInput, UserUncheckedUpdateWithoutWithdrawalsInput>
+    create: XOR<UserCreateWithoutWithdrawalsInput, UserUncheckedCreateWithoutWithdrawalsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutWithdrawalsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutWithdrawalsInput, UserUncheckedUpdateWithoutWithdrawalsInput>
+  }
+
+  export type UserUpdateWithoutWithdrawalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    lastGiftNotification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    conversations?: ConversationUpdateManyWithoutUserNestedInput
+    projects?: ProjectUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    reactions?: PostReactionUpdateManyWithoutUserNestedInput
+    orders?: PaymentOrderUpdateManyWithoutUserNestedInput
+    generatedImages?: GeneratedImageUpdateManyWithoutUserNestedInput
+    memories?: UserMemoryUpdateManyWithoutUserNestedInput
+    publishedStories?: PublishedStoryUpdateManyWithoutAuthorNestedInput
+    storyLikes?: StoryLikeUpdateManyWithoutUserNestedInput
+    storyNotifications?: StoryNotificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutWithdrawalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    lastGiftNotification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    conversations?: ConversationUncheckedUpdateManyWithoutUserNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: PostReactionUncheckedUpdateManyWithoutUserNestedInput
+    orders?: PaymentOrderUncheckedUpdateManyWithoutUserNestedInput
+    generatedImages?: GeneratedImageUncheckedUpdateManyWithoutUserNestedInput
+    memories?: UserMemoryUncheckedUpdateManyWithoutUserNestedInput
+    publishedStories?: PublishedStoryUncheckedUpdateManyWithoutAuthorNestedInput
+    storyLikes?: StoryLikeUncheckedUpdateManyWithoutUserNestedInput
+    storyNotifications?: StoryNotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ConversationCreateManyUserInput = {
@@ -27077,6 +29003,21 @@ export namespace Prisma {
     type: string
     isRead?: boolean
     createdAt?: Date | string
+  }
+
+  export type WithdrawalRequestCreateManyUserInput = {
+    id?: string
+    credits: number
+    amountVnd: number
+    bankCode: string
+    bankName: string
+    accountNo: string
+    accountName: string
+    note?: string | null
+    status?: string
+    adminNote?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ConversationUpdateWithoutUserInput = {
@@ -27444,6 +29385,51 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalRequestUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalRequestUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WithdrawalRequestUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    credits?: IntFieldUpdateOperationsInput | number
+    amountVnd?: IntFieldUpdateOperationsInput | number
+    bankCode?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountName?: StringFieldUpdateOperationsInput | string
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ConversationCreateManyProjectInput = {

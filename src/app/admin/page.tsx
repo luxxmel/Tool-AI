@@ -67,8 +67,13 @@ export default function AdminCmsPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { showAlert, showConfirm, showError } = usePopup();
 
-  // Admin Tab: "users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support"
-  const [adminTab, setAdminTab] = useState<"users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support">("users");
+  // Admin Tab: "users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support" | "withdrawals"
+  const [adminTab, setAdminTab] = useState<"users" | "admins" | "posts" | "credits" | "announcements" | "characters" | "assistants" | "support" | "withdrawals">("users");
+
+  // Withdrawals State
+  const [adminWithdrawals, setAdminWithdrawals] = useState<any[]>([]);
+  const [isWithdrawalLoading, setIsWithdrawalLoading] = useState(false);
+  const [withdrawalFilter, setWithdrawalFilter] = useState<string>("all");
 
 
 
@@ -158,6 +163,52 @@ export default function AdminCmsPage() {
       console.error("Lỗi khi gửi phản hồi hỗ trợ:", err);
     } finally {
       setIsSendingReply(false);
+    }
+  };
+
+  const fetchAdminWithdrawals = useCallback(async () => {
+    if (!user) return;
+    setIsWithdrawalLoading(true);
+    try {
+      const res = await fetch(`/api/withdrawals?userId=${user.id}&admin=true`);
+      if (res.ok) {
+        const data = await res.json();
+        setAdminWithdrawals(data.withdrawals || []);
+      }
+    } catch (err) {
+      console.error("Lỗi khi tải danh sách đơn rút tiền admin:", err);
+    } finally {
+      setIsWithdrawalLoading(false);
+    }
+  }, [user]);
+
+  const handleActionWithdrawal = async (
+    withdrawalId: string,
+    action: "APPROVE" | "REJECT",
+    adminNote?: string
+  ) => {
+    if (!user) return;
+    try {
+      const res = await fetch("/api/withdrawals", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          adminId: user.id || user.email,
+          withdrawalId,
+          action,
+          adminNote: adminNote || (action === "APPROVE" ? "Đã chuyển khoản thành công" : "Từ chối yêu cầu rút tiền"),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showAlert(data.message || "Thao tác thành công!", "Thông báo", "success");
+        fetchAdminWithdrawals();
+      } else {
+        showError(data.error || "Không thể thực hiện thao tác này");
+      }
+    } catch (e) {
+      console.error("Lỗi xử lý rút tiền:", e);
+      showError("Lỗi kết nối máy chủ");
     }
   };
 
@@ -348,7 +399,8 @@ export default function AdminCmsPage() {
     fetchSupportTickets();
     fetchAnnouncements();
     fetchCreditUsers();
-  }, [fetchSupportTickets, fetchAnnouncements, fetchCreditUsers]);
+    fetchAdminWithdrawals();
+  }, [fetchSupportTickets, fetchAnnouncements, fetchCreditUsers, fetchAdminWithdrawals]);
 
   useEffect(() => {
     if (adminTab === "support") {
@@ -360,7 +412,10 @@ export default function AdminCmsPage() {
     if (adminTab === "credits") {
       fetchCreditUsers();
     }
-  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchCreditUsers]);
+    if (adminTab === "withdrawals") {
+      fetchAdminWithdrawals();
+    }
+  }, [adminTab, fetchSupportTickets, fetchAnnouncements, fetchCreditUsers, fetchAdminWithdrawals]);
 
   // ── Credit update ──────────────────────────────────────────────────────────
   const handleCreditUpdate = async (
@@ -796,6 +851,7 @@ export default function AdminCmsPage() {
                 [
                   { key: "users", label: "👥 Người dùng", count: totalMembers, color: "indigo" },
                   { key: "admins", label: "🛡️ Quản trị viên", count: totalAdmins, color: "purple" },
+                  { key: "withdrawals", label: "🏦 Rút tiền Tác giả", count: adminWithdrawals.filter((w) => w.status === "PENDING").length, color: "emerald" },
                   { key: "posts", label: "📝 Bài viết", count: totalPosts, color: "rose" },
                   { key: "credits", label: "💰 Credits", count: null, color: "amber" },
                   { key: "announcements", label: "🔔 Thông báo", count: null, color: "yellow" },
@@ -2028,6 +2084,237 @@ export default function AdminCmsPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            TAB: YÊU CẦU RÚT TIỀN TÁC GIẢ (WITHDRAWALS)
+        ══════════════════════════════════════════════════════════════════════ */}
+        {adminTab === "withdrawals" && (
+          <div className="space-y-6">
+            {/* Thống kê đơn rút */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                  <span>Chờ Duyệt Chuyển Khoản</span>
+                  <span className="text-amber-500 text-lg">⏳</span>
+                </div>
+                <div className="text-3xl font-black text-amber-500 font-mono">
+                  {adminWithdrawals.filter((w) => w.status === "PENDING").length} đơn
+                </div>
+                <div className="text-xs text-slate-400 mt-1">
+                  Tổng tiền chờ chuyển:{" "}
+                  <strong className="text-slate-700 dark:text-slate-300">
+                    {adminWithdrawals
+                      .filter((w) => w.status === "PENDING")
+                      .reduce((sum, w) => sum + (w.amountVnd || 0), 0)
+                      .toLocaleString()}{" "}
+                    đ
+                  </strong>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                  <span>Đã Chuyển Tiền Thành Công</span>
+                  <span className="text-emerald-500 text-lg">✅</span>
+                </div>
+                <div className="text-3xl font-black text-emerald-500 font-mono">
+                  {adminWithdrawals.filter((w) => w.status === "APPROVED").length} đơn
+                </div>
+                <div className="text-xs text-slate-400 mt-1">
+                  Đã thanh toán cho tác giả:{" "}
+                  <strong className="text-slate-700 dark:text-slate-300">
+                    {adminWithdrawals
+                      .filter((w) => w.status === "APPROVED")
+                      .reduce((sum, w) => sum + (w.amountVnd || 0), 0)
+                      .toLocaleString()}{" "}
+                    đ
+                  </strong>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                  <span>Tỷ Giá Quy Đổi Sàn</span>
+                  <span className="text-indigo-500 text-lg">📊</span>
+                </div>
+                <div className="text-2xl font-black text-indigo-500 font-mono">
+                  1 Credit = 600 đ
+                </div>
+                <div className="text-xs text-slate-400 mt-1">
+                  Lợi nhuận sàn giữ lại: <strong>40%</strong> (Người đọc nạp 1.000đ/credit)
+                </div>
+              </div>
+            </div>
+
+            {/* Bảng danh sách đơn rút tiền */}
+            <div className="bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>🏦</span>
+                    <span>Danh Sách Đơn Rút Tiền Từ Tác Giả</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Kiểm tra STK, quét VietQR chuyển tiền thủ công rồi bấm &ldquo;Xác nhận đã chuyển&rdquo;.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <select
+                    value={withdrawalFilter}
+                    onChange={(e) => setWithdrawalFilter(e.target.value)}
+                    className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 font-medium focus:outline-none"
+                  >
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="PENDING">Chờ duyệt (Chưa chuyển)</option>
+                    <option value="APPROVED">Đã chuyển tiền</option>
+                    <option value="REJECTED">Từ chối (Đã hoàn)</option>
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={fetchAdminWithdrawals}
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer"
+                    title="Làm mới danh sách"
+                  >
+                    🔄
+                  </button>
+                </div>
+              </div>
+
+              {isWithdrawalLoading && adminWithdrawals.length === 0 ? (
+                <div className="py-16 text-center text-slate-400 text-xs">
+                  Đang tải danh sách đơn rút tiền...
+                </div>
+              ) : adminWithdrawals.length === 0 ? (
+                <div className="py-16 text-center text-slate-400 text-xs">
+                  Hiện chưa có tác giả nào tạo yêu cầu rút tiền.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-semibold">
+                        <th className="py-3 px-3">Tác giả</th>
+                        <th className="py-3 px-3">Số Credits</th>
+                        <th className="py-3 px-3">Số tiền cần chuyển</th>
+                        <th className="py-3 px-3">Thông tin Ngân hàng</th>
+                        <th className="py-3 px-3">Trạng thái</th>
+                        <th className="py-3 px-3 text-right">Thao tác Admin</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                      {adminWithdrawals
+                        .filter((w) => withdrawalFilter === "all" || w.status === withdrawalFilter)
+                        .map((w) => (
+                          <tr key={w.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                            <td className="py-3 px-3">
+                              <div className="font-bold text-slate-900 dark:text-white">
+                                {w.user?.name || w.user?.email}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-mono">
+                                {w.user?.email} • Số dư ví: {w.user?.credits ?? 0}🪙
+                              </div>
+                            </td>
+
+                            <td className="py-3 px-3 font-bold text-amber-500 font-mono">
+                              🪙 {w.credits.toLocaleString()}
+                            </td>
+
+                            <td className="py-3 px-3 font-bold text-emerald-600 dark:text-emerald-400 font-mono text-sm">
+                              {w.amountVnd.toLocaleString()} đ
+                            </td>
+
+                            <td className="py-3 px-3">
+                              <div className="font-bold text-slate-900 dark:text-white">
+                                {w.bankCode} - {w.accountNo}
+                              </div>
+                              <div className="text-[11px] text-slate-400 uppercase font-semibold">
+                                {w.accountName}
+                              </div>
+                              {w.note && (
+                                <div className="text-[10px] text-slate-400 italic mt-0.5">
+                                  Ghi chú: {w.note}
+                                </div>
+                              )}
+                            </td>
+
+                            <td className="py-3 px-3 whitespace-nowrap">
+                              {w.status === "PENDING" && (
+                                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                  ⏳ Chờ chuyển tiền
+                                </span>
+                              )}
+                              {w.status === "APPROVED" && (
+                                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                  ✓ Đã thanh toán
+                                </span>
+                              )}
+                              {w.status === "REJECTED" && (
+                                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 border border-rose-500/20">
+                                  ✕ Đã từ chối (Hoàn tiền)
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="py-3 px-3 text-right whitespace-nowrap">
+                              {w.status === "PENDING" ? (
+                                <div className="flex items-center justify-end gap-1.5">
+                                  {/* Link mở VietQR nhanh */}
+                                  <a
+                                    href={`https://img.vietqr.io/image/${w.bankCode}-${w.accountNo}-compact2.png?amount=${w.amountVnd}&addInfo=${encodeURIComponent(`Thanh toan truyen ${w.credits}C`)}&accountName=${encodeURIComponent(w.accountName)}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 font-bold text-[11px] flex items-center gap-1"
+                                    title="Mở mã QR ngân hàng để quét chuyển tiền"
+                                  >
+                                    <span>📱</span>
+                                    <span>Quét QR</span>
+                                  </a>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      showConfirm(
+                                        `Bạn đã chuyển thành công ${w.amountVnd.toLocaleString()} đ cho tác giả "${w.accountName}" (${w.bankCode} - ${w.accountNo}) chưa?`,
+                                        () => handleActionWithdrawal(w.id, "APPROVE"),
+                                        "Xác nhận đã chuyển tiền",
+                                        "success"
+                                      );
+                                    }}
+                                    className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] cursor-pointer shadow-xs transition-all"
+                                  >
+                                    ✓ Đã chuyển
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const reason = window.prompt("Nhập lý do từ chối (Credits sẽ được hoàn trả 100% cho tác giả):", "Sai số tài khoản hoặc tên chủ thẻ");
+                                      if (reason !== null) {
+                                        handleActionWithdrawal(w.id, "REJECT", reason);
+                                      }
+                                    }}
+                                    className="px-2 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 font-bold text-[11px] cursor-pointer transition-all"
+                                  >
+                                    Từ chối
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-slate-400">
+                                  {w.adminNote || "Đã xử lý"}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════

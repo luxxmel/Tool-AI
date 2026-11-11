@@ -32,7 +32,21 @@ export interface PublishedStoryItem {
   createdAt: string;
 }
 
-type Tab = "community" | "my_published" | "writer";
+type Tab = "community" | "my_published" | "writer" | "payout";
+
+export interface WithdrawalItem {
+  id: string;
+  credits: number;
+  amountVnd: number;
+  bankCode: string;
+  bankName: string;
+  accountNo: string;
+  accountName: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  note?: string;
+  adminNote?: string;
+  createdAt: string;
+}
 
 const CATEGORIES = [
   { id: "all", label: "Tất cả" },
@@ -129,6 +143,31 @@ export default function MyStoriesView() {
   const inlineImageInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  // Tab Rút tiền tác giả
+  const [withdrawals, setWithdrawals] = useState<WithdrawalItem[]>([]);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [withdrawCredits, setWithdrawCredits] = useState<number>(100);
+  const [withdrawBank, setWithdrawBank] = useState("MB");
+  const [withdrawAccountNo, setWithdrawAccountNo] = useState("");
+  const [withdrawAccountName, setWithdrawAccountName] = useState("");
+  const [withdrawNote, setWithdrawNote] = useState("");
+  const [isSubmittingWithdraw, setIsSubmittingWithdraw] = useState(false);
+  const [withdrawMessage, setWithdrawMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Tải danh sách đơn rút tiền của tác giả
+  const loadWithdrawals = async () => {
+    if (!user) return;
+    try {
+      const res = await fetch(`/api/withdrawals?userId=${user.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setWithdrawals(data.withdrawals || []);
+      }
+    } catch (e) {
+      console.error("Lỗi khi tải lịch sử rút tiền:", e);
+    }
+  };
+
   // Tải danh sách truyện cộng đồng
   const loadCommunityStories = async () => {
     try {
@@ -169,6 +208,8 @@ export default function MyStoriesView() {
       loadCommunityStories();
     } else if (activeTab === "my_published") {
       loadMyStories();
+    } else if (activeTab === "payout") {
+      loadWithdrawals();
     }
   }, [activeTab, selectedCategory, selectedAge, user]);
 
@@ -248,7 +289,77 @@ export default function MyStoriesView() {
     }
   };
 
-  // Thêm chương / phần mới với định dạng tiêu đề sẵn
+  // Xử lý gửi yêu cầu rút tiền
+  const handleSubmitWithdrawal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      showAlert("Vui lòng đăng nhập để thực hiện rút tiền!");
+      return;
+    }
+
+    if (user.role === "ADMIN") {
+      showAlert("Tài khoản Quản trị viên (Admin) sở hữu vô hạn credits nên không áp dụng rút tiền!");
+      return;
+    }
+
+    if (withdrawCredits < 100) {
+      setWithdrawMessage({ type: "error", text: "Số credits rút tối thiểu là 100 Credits (tương đương 60.000 VNĐ)!" });
+      return;
+    }
+
+    if ((user.credits ?? 0) < withdrawCredits) {
+      setWithdrawMessage({ type: "error", text: `Số dư hiện tại (${user.credits ?? 0} Credits) không đủ để rút ${withdrawCredits} Credits!` });
+      return;
+    }
+
+    if (!withdrawAccountNo.trim() || !withdrawAccountName.trim()) {
+      setWithdrawMessage({ type: "error", text: "Vui lòng nhập đầy đủ Số tài khoản và Tên chủ tài khoản ngân hàng!" });
+      return;
+    }
+
+    try {
+      setIsSubmittingWithdraw(true);
+      setWithdrawMessage(null);
+
+      const res = await fetch("/api/withdrawals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          credits: withdrawCredits,
+          bankCode: withdrawBank,
+          bankName: withdrawBank,
+          accountNo: withdrawAccountNo.trim(),
+          accountName: withdrawAccountName.trim(),
+          note: withdrawNote.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setWithdrawMessage({ type: "error", text: data.error || "Không thể tạo đơn rút tiền lúc này!" });
+        return;
+      }
+
+      if (typeof data.remainingCredits === "number") {
+        updateUserCredits(data.remainingCredits);
+      }
+
+      setWithdrawMessage({ type: "success", text: data.message || "Gửi yêu cầu rút tiền thành công!" });
+      loadWithdrawals();
+
+      setTimeout(() => {
+        setIsWithdrawModalOpen(false);
+        setWithdrawNote("");
+        setWithdrawMessage(null);
+      }, 1800);
+    } catch (err: any) {
+      console.error("Lỗi khi gửi yêu cầu rút tiền:", err);
+      setWithdrawMessage({ type: "error", text: "Lỗi kết nối máy chủ. Vui lòng thử lại sau!" });
+    } finally {
+      setIsSubmittingWithdraw(false);
+    }
+  };
   const handleAddChapter = () => {
     const newIdx = chapters.length + 1;
     setChapters((prev) => [
@@ -556,6 +667,19 @@ export default function MyStoriesView() {
             <span>✨</span>
             <span>Xưởng Viết AI</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("payout")}
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === "payout"
+                ? "bg-white dark:bg-emerald-600 text-slate-900 dark:text-white shadow-xs font-bold"
+                : "text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400"
+            }`}
+          >
+            <span>💰</span>
+            <span>Ví Tác Giả & Rút Tiền</span>
+          </button>
         </div>
 
         {activeTab === "community" && (
@@ -676,6 +800,121 @@ export default function MyStoriesView() {
               ))}
             </div>
           )}
+        </div>
+      ) : activeTab === "payout" ? (
+        /* ── QUẢN LÝ VÍ TÁC GIẢ & YÊU CẦU RÚT TIỀN ── */
+        <div className="space-y-6">
+          {/* Card Số dư & Nút Rút tiền */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">💰</span>
+                <span className="text-xs uppercase font-extrabold tracking-wider text-indigo-300">Ví Thu Nhập Tác Giả</span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl sm:text-4xl font-black font-mono text-emerald-400">
+                  {user?.role === "ADMIN" ? "∞ Vô hạn" : `${(user?.credits ?? 0).toLocaleString()} 🪙`}
+                </span>
+                {user?.role !== "ADMIN" && (
+                  <span className="text-xs text-slate-300">
+                    ≈ {((user?.credits ?? 0) * 600).toLocaleString()} VNĐ
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-400 mt-2 max-w-lg leading-relaxed">
+                Tỷ giá quy đổi: <strong>1 Credit = 600 VNĐ</strong> • Tối thiểu rút: <strong>100 Credits</strong> (60.000 VNĐ) • Tiền được chuyển khoản trực tiếp qua ngân hàng nội địa trong 24h.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (user?.role === "ADMIN") {
+                  showAlert("Tài khoản Quản trị viên (Admin) sở hữu vô hạn credits nên không áp dụng rút tiền!");
+                  return;
+                }
+                setIsWithdrawModalOpen(true);
+              }}
+              className="px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/20 cursor-pointer transition-all active:scale-95 shrink-0 flex items-center gap-2"
+            >
+              <span>🏦</span>
+              <span>Yêu Cầu Rút Tiền</span>
+            </button>
+          </div>
+
+          {/* Lịch sử rút tiền */}
+          <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#15171e] border border-slate-200/80 dark:border-slate-800 shadow-xs">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+              <span>📜</span>
+              <span>Lịch Sử Rút Tiền Của Bạn</span>
+            </h3>
+
+            {withdrawals.length === 0 ? (
+              <div className="py-12 text-center text-slate-400 text-xs">
+                Bạn chưa có giao dịch rút tiền nào. Hãy sáng tác truyện và tích lũy credits để rút tiền về ngân hàng!
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-semibold">
+                      <th className="py-2.5 px-3">Thời gian</th>
+                      <th className="py-2.5 px-3">Số Credits</th>
+                      <th className="py-2.5 px-3">Quy đổi (VNĐ)</th>
+                      <th className="py-2.5 px-3">Tài khoản Ngân hàng</th>
+                      <th className="py-2.5 px-3">Trạng thái</th>
+                      <th className="py-2.5 px-3">Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                    {withdrawals.map((w) => (
+                      <tr key={w.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                        <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
+                          {new Date(w.createdAt).toLocaleDateString("vi-VN", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </td>
+                        <td className="py-3 px-3 font-bold text-amber-500 font-mono">
+                          🪙 {w.credits.toLocaleString()}
+                        </td>
+                        <td className="py-3 px-3 font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                          {w.amountVnd.toLocaleString()} đ
+                        </td>
+                        <td className="py-3 px-3">
+                          <div className="font-semibold text-slate-900 dark:text-white">{w.bankCode} • {w.accountNo}</div>
+                          <div className="text-[11px] text-slate-400 uppercase">{w.accountName}</div>
+                        </td>
+                        <td className="py-3 px-3 whitespace-nowrap">
+                          {w.status === "PENDING" && (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                              ⏳ Chờ duyệt chuyển khoản
+                            </span>
+                          )}
+                          {w.status === "APPROVED" && (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                              ✓ Đã chuyển tiền thành công
+                            </span>
+                          )}
+                          {w.status === "REJECTED" && (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 border border-rose-500/20">
+                              ✕ Từ chối (Đã hoàn credits)
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-3 text-[11px] text-slate-400 max-w-[200px] truncate" title={w.adminNote || w.note || "-"}>
+                          {w.adminNote || w.note || "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         /* ── THƯ VIỆN TRUYỆN CỘNG ĐỒNG ── */
@@ -1237,6 +1476,169 @@ export default function MyStoriesView() {
                   className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-indigo-600/20 cursor-pointer transition-all flex items-center gap-1.5"
                 >
                   <span>{isPublishing ? "⏳ Đang kiểm duyệt & đăng..." : "🚀 Gửi duyệt & Đăng (5🪙)"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL YÊU CẦU RÚT TIỀN VỀ NGÂN HÀNG ── */}
+      {isWithdrawModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white dark:bg-[#15171e] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>🏦</span>
+                  <span>Rút Tiền Về Ngân Hàng</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Tỷ giá: 1 Credit = 600 VNĐ • Tối thiểu: 100 Credits
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsWithdrawModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-sm cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitWithdrawal} className="p-4 sm:p-6 space-y-4">
+              {withdrawMessage && (
+                <div
+                  className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                    withdrawMessage.type === "success"
+                      ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                      : "bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400"
+                  }`}
+                >
+                  <span>{withdrawMessage.type === "success" ? "✓" : "⚠️"}</span>
+                  <div className="flex-1">{withdrawMessage.text}</div>
+                </div>
+              )}
+
+              {/* Số credit muốn rút */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Số Credits muốn rút (Số dư hiện tại: {user?.credits ?? 0}🪙)
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={100}
+                    step={10}
+                    max={user?.credits ?? 0}
+                    required
+                    value={withdrawCredits}
+                    onChange={(e) => setWithdrawCredits(Math.max(0, parseInt(e.target.value) || 0))}
+                    className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-[#101217] border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setWithdrawCredits(user?.credits ?? 0)}
+                    className="absolute right-2 top-2 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold"
+                  >
+                    Rút tất cả
+                  </button>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 px-1">
+                  <span>Số tiền thực nhận:</span>
+                  <span className="font-bold text-xs">{(withdrawCredits * 600).toLocaleString()} VNĐ</span>
+                </div>
+              </div>
+
+              {/* Chọn ngân hàng */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Ngân hàng nhận tiền *
+                </label>
+                <select
+                  value={withdrawBank}
+                  onChange={(e) => setWithdrawBank(e.target.value)}
+                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-[#101217] border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                >
+                  <option value="MB">MBBank (Ngân hàng Quân Đội)</option>
+                  <option value="VCB">Vietcombank (Ngoại Thương)</option>
+                  <option value="TCB">Techcombank (Kỹ Thương)</option>
+                  <option value="ICB">VietinBank (Công Thương)</option>
+                  <option value="ACB">ACB (Á Châu)</option>
+                  <option value="VPB">VPBank (Việt Nam Thịnh Vượng)</option>
+                  <option value="TPB">TPBank (Tiên Phong)</option>
+                  <option value="VIB">VIB (Quốc Tế)</option>
+                  <option value="BIDV">BIDV (Đầu Tư & Phát Triển)</option>
+                  <option value="STB">Sacombank (Sài Gòn Thương Tín)</option>
+                  <option value="HDB">HDBank</option>
+                  <option value="MSB">MSB (Hàng Hải)</option>
+                  <option value="MOMO">Ví MoMo (SĐT đăng ký)</option>
+                </select>
+              </div>
+
+              {/* Số tài khoản */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Số tài khoản nhận tiền *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={withdrawAccountNo}
+                  onChange={(e) => setWithdrawAccountNo(e.target.value)}
+                  placeholder="VD: 0987654321..."
+                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-[#101217] border border-slate-200 dark:border-slate-800 text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              {/* Tên chủ thẻ */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Tên chủ tài khoản (Viết in hoa không dấu) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={withdrawAccountName}
+                  onChange={(e) => setWithdrawAccountName(e.target.value.toUpperCase())}
+                  placeholder="VD: NGUYEN VAN A"
+                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-[#101217] border border-slate-200 dark:border-slate-800 text-xs font-bold uppercase text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              {/* Ghi chú */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Ghi chú cho Quản trị viên (Tùy chọn)
+                </label>
+                <input
+                  type="text"
+                  value={withdrawNote}
+                  onChange={(e) => setWithdrawNote(e.target.value)}
+                  placeholder="VD: Rút tiền thu nhập truyện Bí Ẩn Thành Phố"
+                  className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-[#101217] border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 space-y-1">
+                <p>• <strong>Bảo mật & minh bạch:</strong> Số credits tương ứng sẽ tạm giữ ngay khi bạn gửi yêu cầu để bảo đảm giao dịch.</p>
+                <p>• <strong>Hoàn trả nếu có lỗi:</strong> Nếu sai STK hoặc đơn bị từ chối, 100% credits sẽ được hoàn trả về ví của bạn ngay lập tức.</p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsWithdrawModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingWithdraw}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer transition-all flex items-center gap-1.5"
+                >
+                  <span>{isSubmittingWithdraw ? "⏳ Đang gửi đơn..." : "Xác nhận Rút tiền"}</span>
                 </button>
               </div>
             </form>
