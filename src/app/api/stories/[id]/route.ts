@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureUser } from "@/lib/ensureUser";
 
-// GET /api/stories/[id]: Chi tiết truyện & Tăng lượt xem (View Counter) + Kiểm tra thưởng Credits cho tác giả
+// GET /api/stories/[id]: Chi tiết truyện & Tăng lượt xem (View Counter hợp lệ) + Kiểm tra thưởng Credits cho tác giả
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -10,20 +10,39 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Thiếu ID truyện" }, { status: 400 });
     }
 
-    // Tăng view counter
-    const story = await prisma.publishedStory.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
+    const { searchParams } = new URL(req.url);
+    const countView = searchParams.get("view") === "true";
+
+    let story: any;
+    if (countView) {
+      // Tăng view counter khi người đọc thực sự nán lại xem
+      story = await prisma.publishedStory.update({
+        where: { id },
+        data: { views: { increment: 1 } },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
           },
         },
-      },
-    });
+      });
+    } else {
+      story = await prisma.publishedStory.findUnique({
+        where: { id },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+    }
 
     if (!story) {
       return NextResponse.json({ error: "Không tìm thấy truyện" }, { status: 404 });

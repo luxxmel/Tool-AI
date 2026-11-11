@@ -122,6 +122,83 @@ export default function MyStoriesView() {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
 
+  // AI Voice Text-to-Speech đọc truyện
+  const [isPlayingTts, setIsPlayingTts] = useState(false);
+  const [isTtsLoading, setIsTtsLoading] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+
+  // Dừng phát âm thanh khi đổi chương hoặc đóng modal
+  const stopTts = () => {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      setCurrentAudio(null);
+    }
+    setIsPlayingTts(false);
+    setIsTtsLoading(false);
+  };
+
+  const handleTogglePlayChapterAudio = async (text: string) => {
+    if (isPlayingTts) {
+      stopTts();
+      return;
+    }
+
+    if (!text.trim()) {
+      showAlert("Chương này chưa có nội dung văn bản để đọc!");
+      return;
+    }
+
+    try {
+      setIsTtsLoading(true);
+      // Lọc bỏ markdown ảnh ![image](url) để AI chỉ đọc văn bản truyện
+      const cleanSpeechText = text
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+        .replace(/#+\s/g, "")
+        .replace(/\*\*/g, "")
+        .trim();
+
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: cleanSpeechText,
+          voice: "vi-VN-HoaiMyNeural", // Giọng đọc truyền cảm ấm áp
+          rate: 1.0,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Không thể tạo giọng đọc");
+      }
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+
+      audio.onended = () => {
+        setIsPlayingTts(false);
+        setCurrentAudio(null);
+      };
+
+      audio.onerror = () => {
+        setIsPlayingTts(false);
+        setIsTtsLoading(false);
+        setCurrentAudio(null);
+        showAlert("Không thể phát âm thanh!");
+      };
+
+      setCurrentAudio(audio);
+      await audio.play();
+      setIsPlayingTts(true);
+    } catch (e: any) {
+      console.error("Lỗi phát TTS:", e);
+      showAlert("Lỗi khi đọc truyện: " + (e.message || "Vui lòng thử lại"));
+    } finally {
+      setIsTtsLoading(false);
+    }
+  };
+
   // Modal Đăng truyện mới theo từng chương / phần
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [pubTitle, setPubTitle] = useState("");
@@ -213,13 +290,15 @@ export default function MyStoriesView() {
     }
   }, [activeTab, selectedCategory, selectedAge, user]);
 
-  // Xử lý mở đọc truyện & bóc tách từng chương
+  // Xử lý mở đọc truyện & bóc tách từng chương (Có chống spam view)
   const handleOpenReadStory = async (story: PublishedStoryItem) => {
+    stopTts();
     const chaps = parseStoryChapters(story.content);
     setReadingStory(story);
     setReadingChapters(chaps);
     setCurrentChapterIndex(0);
 
+    // Lấy thông tin truyện chi tiết trước (không tăng view ngay lập tức)
     try {
       const res = await fetch(`/api/stories/${story.id}`);
       if (res.ok) {
@@ -231,7 +310,32 @@ export default function MyStoriesView() {
         }
       }
     } catch (e) {
-      console.error("Lỗi cập nhật lượt đọc:", e);
+      console.error("Lỗi tải chi tiết truyện:", e);
+    }
+
+    // 🛡️ Cơ chế chống cày view ảo (Anti-farming):
+    // Chỉ đếm view nếu trong 24h qua người dùng chưa đọc truyện này VÀ nán lại đọc tối thiểu 5 giây
+    const viewKey = `story_view_${story.id}`;
+    const lastViewTime = localStorage.getItem(viewKey);
+    const now = Date.now();
+    const canCountView = !lastViewTime || (now - Number(lastViewTime)) > 24 * 60 * 60 * 1000;
+
+    if (canCountView) {
+      setTimeout(async () => {
+        try {
+          const viewRes = await fetch(`/api/stories/${story.id}?view=true`);
+          if (viewRes.ok) {
+            localStorage.setItem(viewKey, String(now));
+            const viewData = await viewRes.json();
+            if (viewData.story) {
+              setStories((prev) =>
+                prev.map((s) => (s.id === story.id ? { ...s, views: viewData.story.views } : s))
+              );
+              setReadingStory((curr) => curr ? { ...curr, views: viewData.story.views } : curr);
+            }
+          }
+        } catch (err) {}
+      }, 5000); // 5 giây giữ chân người đọc thật sự
     }
   };
 
@@ -1097,9 +1201,28 @@ export default function MyStoriesView() {
                   <span>{readingStory.likes}</span>
                 </button>
 
+                {/* Nút Nghe đọc truyện bằng AI Voice */}
                 <button
                   type="button"
-                  onClick={() => setReadingStory(null)}
+                  disabled={isTtsLoading}
+                  onClick={() => handleTogglePlayChapterAudio(readingChapters[currentChapterIndex]?.content || "")}
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs ${
+                    isPlayingTts
+                      ? "bg-amber-500 text-white border-amber-600 animate-pulse"
+                      : "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100"
+                  }`}
+                  title="Nghe AI đọc chương này bằng giọng truyền cảm"
+                >
+                  <span>{isTtsLoading ? "⏳" : isPlayingTts ? "⏸️" : "🎧"}</span>
+                  <span className="hidden sm:inline">{isTtsLoading ? "Đang chuẩn bị..." : isPlayingTts ? "Tạm dừng đọc" : "Nghe đọc AI"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopTts();
+                    setReadingStory(null);
+                  }}
                   className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-sm cursor-pointer"
                 >
                   ✕
