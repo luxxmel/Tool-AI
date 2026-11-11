@@ -17,11 +17,11 @@ const YESCALE_BASE_URL =
 
 function getActiveModels(): string[] {
   const envModel = process.env.YESCALE_IMAGE_MODEL?.trim();
-  // Nếu envModel là gemini-2.5-flash-image[nano-banana] (đang bị lỗi phía upstream), ưu tiên nano-banana-pro & nano-banana-2
-  if (!envModel || envModel.includes("gemini-2.5-flash-image")) {
-    return ["nano-banana-pro", "nano-banana-2"];
+  // Ưu tiên nano-banana-2-lite (chỉ mất ~8-9 giây) và nano-banana-2 (~18s), loại trừ các model cũ chậm
+  if (!envModel || envModel.includes("gemini-2.5-flash-image") || envModel === "nano-banana-pro") {
+    return ["nano-banana-2-lite", "nano-banana-2", "nano-banana-pro"];
   }
-  return [envModel, "nano-banana-pro", "nano-banana-2"];
+  return [envModel, "nano-banana-2-lite", "nano-banana-2", "nano-banana-pro"];
 }
 
 interface YescaleGenerateParams {
@@ -87,20 +87,20 @@ export async function generateImageViaYescale({
 
       console.log(`[Yescale AI Image] Task ID: ${taskId} (${model}). Bắt đầu theo dõi...`);
 
-      // Polling kết quả (40 lần x 1.5s ~ 60s)
+      // Polling kết quả siêu tốc (kiểm tra mỗi 600ms, tối đa 35 lần ~ 21 giây)
       const pollUrl = `${YESCALE_BASE_URL}/task/${taskId}`;
-      const maxRetries = 40;
+      const maxRetries = 35;
       let modelSuccessUrl: string | null = null;
 
       for (let i = 0; i < maxRetries; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 600));
 
         try {
           const pollRes = await fetch(pollUrl, {
             headers: {
               Authorization: `Bearer ${apiKey}`,
             },
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(5000),
           });
 
           if (pollRes.ok) {

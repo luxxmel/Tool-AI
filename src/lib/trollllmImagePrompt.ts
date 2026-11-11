@@ -24,11 +24,13 @@ export async function generateOptimizedPromptWithFableAndGemini({
   let optimizedPrompt = cleanUserPrompt;
 
   // 1. Thử qua Google Gemini với chuẩn cấu trúc Prompt nhiếp ảnh hiện thực (Photorealistic Architecture)
-  const candidateModels = ["gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-3.7-flash"];
+  // Ưu tiên gemini-2.5-flash và gemini-flash-lite-latest phản hồi siêu tốc dưới 800ms
+  const candidateModels = ["gemini-2.5-flash", "gemini-flash-lite-latest"];
   for (const modelName of candidateModels) {
     try {
       const result = await generateText({
         model: google(modelName),
+        abortSignal: AbortSignal.timeout(2500),
         system: `You are an elite Photorealistic AI Image Prompt Director.
 Task: Convert the user's idea (Vietnamese, slang, or English) into an authentic, ultra-realistic photography prompt following the 9-part Gold Standard structure.
 
