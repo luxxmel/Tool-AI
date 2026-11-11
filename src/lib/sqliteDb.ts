@@ -139,6 +139,65 @@ function initSchema(db: any) {
       "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     CREATE INDEX IF NOT EXISTS "GeneratedImage_userId_idx" ON "GeneratedImage"("userId");
+
+    CREATE TABLE IF NOT EXISTS "PublishedStory" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "authorId" TEXT NOT NULL,
+      "title" TEXT NOT NULL,
+      "authorDisplayName" TEXT NOT NULL,
+      "synopsis" TEXT NOT NULL,
+      "content" TEXT NOT NULL,
+      "coverImage" TEXT,
+      "category" TEXT NOT NULL DEFAULT 'other',
+      "ageRating" TEXT NOT NULL DEFAULT 'ALL',
+      "status" TEXT NOT NULL DEFAULT 'APPROVED',
+      "rejectionReason" TEXT,
+      "views" INTEGER NOT NULL DEFAULT 0,
+      "likes" INTEGER NOT NULL DEFAULT 0,
+      "rewardClaimedLevel" INTEGER NOT NULL DEFAULT 0,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS "PublishedStory_authorId_idx" ON "PublishedStory"("authorId");
+    CREATE INDEX IF NOT EXISTS "PublishedStory_status_idx" ON "PublishedStory"("status");
+
+    CREATE TABLE IF NOT EXISTS "StoryLike" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "storyId" TEXT NOT NULL,
+      "userId" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS "StoryLike_storyId_userId_key" ON "StoryLike"("storyId", "userId");
+    CREATE INDEX IF NOT EXISTS "StoryLike_storyId_idx" ON "StoryLike"("storyId");
+
+    CREATE TABLE IF NOT EXISTS "StoryNotification" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "userId" TEXT NOT NULL,
+      "title" TEXT NOT NULL,
+      "content" TEXT NOT NULL,
+      "type" TEXT NOT NULL,
+      "isRead" INTEGER NOT NULL DEFAULT 0,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS "StoryNotification_userId_idx" ON "StoryNotification"("userId");
+
+    CREATE TABLE IF NOT EXISTS "WithdrawalRequest" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "userId" TEXT NOT NULL,
+      "credits" INTEGER NOT NULL,
+      "amountVnd" INTEGER NOT NULL,
+      "bankCode" TEXT NOT NULL,
+      "bankName" TEXT NOT NULL,
+      "accountNo" TEXT NOT NULL,
+      "accountName" TEXT NOT NULL,
+      "note" TEXT,
+      "status" TEXT NOT NULL DEFAULT 'PENDING',
+      "adminNote" TEXT,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS "WithdrawalRequest_userId_idx" ON "WithdrawalRequest"("userId");
+    CREATE INDEX IF NOT EXISTS "WithdrawalRequest_status_idx" ON "WithdrawalRequest"("status");
   `);
 }
 
@@ -1275,6 +1334,368 @@ export const generatedImage = {
       db.prepare("DELETE FROM GeneratedImage").run();
     }
     return { count: 1 };
+  },
+};
+
+
+// ==================== PUBLISHED STORY ====================
+export const publishedStory = {
+  async findMany({ where, skip, take, orderBy, include }: any = {}) {
+    const db = getDb();
+    let query = "SELECT * FROM PublishedStory WHERE 1=1";
+    const params: any[] = [];
+
+    if (where?.authorId) {
+      query += " AND authorId = ?";
+      params.push(where.authorId);
+    }
+    if (where?.status) {
+      query += " AND status = ?";
+      params.push(where.status);
+    }
+    if (where?.category && where.category !== "all") {
+      query += " AND category = ?";
+      params.push(where.category);
+    }
+    if (where?.ageRating && where.ageRating !== "all") {
+      query += " AND ageRating = ?";
+      params.push(where.ageRating);
+    }
+
+    if (Array.isArray(orderBy)) {
+      const clauses = orderBy.map((o: any) => {
+        const k = Object.keys(o)[0];
+        return `"${k}" ${o[k].toUpperCase()}`;
+      });
+      query += " ORDER BY " + clauses.join(", ");
+    } else if (orderBy && typeof orderBy === "object") {
+      const k = Object.keys(orderBy)[0];
+      query += ` ORDER BY "${k}" ${orderBy[k].toUpperCase()}`;
+    } else {
+      query += " ORDER BY createdAt DESC";
+    }
+
+    if (take !== undefined) {
+      query += " LIMIT ?";
+      params.push(take);
+      if (skip !== undefined) {
+        query += " OFFSET ?";
+        params.push(skip);
+      }
+    }
+
+    const rows = db.prepare(query).all(...params);
+    return rows.map((r: any) => {
+      let author = undefined;
+      if (include?.author) {
+        const aRow = db.prepare("SELECT id, name, avatar FROM User WHERE id = ?").get(r.authorId);
+        author = aRow ? { id: aRow.id, name: aRow.name, avatar: aRow.avatar } : null;
+      }
+      let storyLikes = undefined;
+      if (include?.storyLikes) {
+        const checkWhere = include.storyLikes.where;
+        if (checkWhere?.userId) {
+          const lRow = db.prepare("SELECT id FROM StoryLike WHERE storyId = ? AND userId = ?").get(r.id, checkWhere.userId);
+          storyLikes = lRow ? [lRow] : [];
+        }
+      }
+      return {
+        ...r,
+        createdAt: toDate(r.createdAt),
+        updatedAt: toDate(r.updatedAt),
+        author,
+        storyLikes,
+      };
+    });
+  },
+
+  async count({ where }: any = {}) {
+    const db = getDb();
+    let query = "SELECT COUNT(*) as count FROM PublishedStory WHERE 1=1";
+    const params: any[] = [];
+    if (where?.authorId) {
+      query += " AND authorId = ?";
+      params.push(where.authorId);
+    }
+    if (where?.status) {
+      query += " AND status = ?";
+      params.push(where.status);
+    }
+    if (where?.category && where.category !== "all") {
+      query += " AND category = ?";
+      params.push(where.category);
+    }
+    if (where?.ageRating && where.ageRating !== "all") {
+      query += " AND ageRating = ?";
+      params.push(where.ageRating);
+    }
+    const res = db.prepare(query).get(...params);
+    return res ? Number(res.count) : 0;
+  },
+
+  async findUnique({ where, include }: any = {}) {
+    const db = getDb();
+    if (!where?.id) return null;
+    const r = db.prepare("SELECT * FROM PublishedStory WHERE id = ?").get(where.id);
+    if (!r) return null;
+
+    let author = undefined;
+    if (include?.author) {
+      const aRow = db.prepare("SELECT id, name, avatar FROM User WHERE id = ?").get(r.authorId);
+      author = aRow ? { id: aRow.id, name: aRow.name, avatar: aRow.avatar } : null;
+    }
+    return {
+      ...r,
+      createdAt: toDate(r.createdAt),
+      updatedAt: toDate(r.updatedAt),
+      author,
+    };
+  },
+
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const row = {
+      id,
+      authorId: data.authorId,
+      title: data.title,
+      authorDisplayName: data.authorDisplayName,
+      synopsis: data.synopsis,
+      content: data.content,
+      coverImage: data.coverImage || null,
+      category: data.category || "other",
+      ageRating: data.ageRating || "ALL",
+      status: data.status || "APPROVED",
+      rejectionReason: data.rejectionReason || null,
+      views: data.views || 0,
+      likes: data.likes || 0,
+      rewardClaimedLevel: data.rewardClaimedLevel || 0,
+      createdAt: toTimestamp(data.createdAt || Date.now()),
+      updatedAt: toTimestamp(data.updatedAt || Date.now()),
+    };
+
+    const cols = Object.keys(row);
+    const placeholders = cols.map(() => "?").join(", ");
+    db.prepare(`INSERT INTO PublishedStory (${cols.map(c => `"${c}"`).join(", ")}) VALUES (${placeholders})`)
+      .run(...cols.map(c => (row as any)[c]));
+
+    return {
+      ...row,
+      createdAt: toDate(row.createdAt),
+      updatedAt: toDate(row.updatedAt),
+    };
+  },
+
+  async update({ where, data }: any) {
+    const db = getDb();
+    if (!where?.id) return null;
+    const updates: string[] = [];
+    const values: any[] = [];
+
+    for (const [key, val] of Object.entries(data)) {
+      if (val && typeof val === "object" && "increment" in val) {
+        updates.push(`"${key}" = "${key}" + ?`);
+        values.push((val as any).increment);
+      } else {
+        updates.push(`"${key}" = ?`);
+        values.push(key.endsWith("At") ? toTimestamp(val) : val);
+      }
+    }
+    values.push(where.id);
+    db.prepare(`UPDATE PublishedStory SET ${updates.join(", ")} WHERE id = ?`).run(...values);
+    return this.findUnique({ where });
+  },
+
+  async delete({ where }: any) {
+    const db = getDb();
+    if (where?.id) {
+      db.prepare("DELETE FROM PublishedStory WHERE id = ?").run(where.id);
+    }
+    return { id: where?.id };
+  },
+};
+
+// ==================== STORY LIKE ====================
+export const storyLike = {
+  async findUnique({ where }: any = {}) {
+    const db = getDb();
+    if (where?.storyId_userId) {
+      const row = db.prepare("SELECT * FROM StoryLike WHERE storyId = ? AND userId = ?")
+        .get(where.storyId_userId.storyId, where.storyId_userId.userId);
+      return row ? { ...row, createdAt: toDate(row.createdAt) } : null;
+    }
+    if (where?.id) {
+      const row = db.prepare("SELECT * FROM StoryLike WHERE id = ?").get(where.id);
+      return row ? { ...row, createdAt: toDate(row.createdAt) } : null;
+    }
+    return null;
+  },
+
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const row = {
+      id,
+      storyId: data.storyId,
+      userId: data.userId,
+      createdAt: toTimestamp(data.createdAt || Date.now()),
+    };
+    db.prepare('INSERT INTO StoryLike ("id", "storyId", "userId", "createdAt") VALUES (?, ?, ?, ?)')
+      .run(row.id, row.storyId, row.userId, row.createdAt);
+    return { ...row, createdAt: toDate(row.createdAt) };
+  },
+
+  async delete({ where }: any) {
+    const db = getDb();
+    if (where?.storyId_userId) {
+      db.prepare("DELETE FROM StoryLike WHERE storyId = ? AND userId = ?")
+        .run(where.storyId_userId.storyId, where.storyId_userId.userId);
+    } else if (where?.id) {
+      db.prepare("DELETE FROM StoryLike WHERE id = ?").run(where.id);
+    }
+    return { id: where?.id };
+  },
+};
+
+// ==================== STORY NOTIFICATION ====================
+export const storyNotification = {
+  async findMany({ where, orderBy }: any = {}) {
+    const db = getDb();
+    let query = "SELECT * FROM StoryNotification WHERE 1=1";
+    const params: any[] = [];
+    if (where?.userId) {
+      query += " AND userId = ?";
+      params.push(where.userId);
+    }
+    query += " ORDER BY createdAt DESC";
+    const rows = db.prepare(query).all(...params);
+    return rows.map((r: any) => ({
+      ...r,
+      isRead: Boolean(r.isRead),
+      createdAt: toDate(r.createdAt),
+    }));
+  },
+
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const row = {
+      id,
+      userId: data.userId,
+      title: data.title,
+      content: data.content,
+      type: data.type,
+      isRead: data.isRead ? 1 : 0,
+      createdAt: toTimestamp(data.createdAt || Date.now()),
+    };
+    db.prepare('INSERT INTO StoryNotification ("id", "userId", "title", "content", "type", "isRead", "createdAt") VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .run(row.id, row.userId, row.title, row.content, row.type, row.isRead, row.createdAt);
+    return { ...row, isRead: Boolean(row.isRead), createdAt: toDate(row.createdAt) };
+  },
+
+  async updateMany({ where, data }: any = {}) {
+    const db = getDb();
+    let query = "UPDATE StoryNotification SET isRead = ? WHERE 1=1";
+    const params: any[] = [data.isRead ? 1 : 0];
+    if (where?.userId) {
+      query += " AND userId = ?";
+      params.push(where.userId);
+    }
+    db.prepare(query).run(...params);
+    return { count: 1 };
+  },
+};
+
+// ==================== WITHDRAWAL REQUEST ====================
+export const withdrawalRequest = {
+  async findMany({ where, orderBy, include }: any = {}) {
+    const db = getDb();
+    let query = "SELECT * FROM WithdrawalRequest WHERE 1=1";
+    const params: any[] = [];
+    if (where?.userId) {
+      query += " AND userId = ?";
+      params.push(where.userId);
+    }
+    if (where?.status) {
+      query += " AND status = ?";
+      params.push(where.status);
+    }
+    query += " ORDER BY createdAt DESC";
+    const rows = db.prepare(query).all(...params);
+    return rows.map((r: any) => {
+      let user = undefined;
+      if (include?.user) {
+        const u = db.prepare("SELECT id, name, email, avatar, role, credits FROM User WHERE id = ?").get(r.userId);
+        user = u ? { ...u } : null;
+      }
+      return {
+        ...r,
+        createdAt: toDate(r.createdAt),
+        updatedAt: toDate(r.updatedAt),
+        user,
+      };
+    });
+  },
+
+  async findUnique({ where, include }: any = {}) {
+    const db = getDb();
+    if (!where?.id) return null;
+    const r = db.prepare("SELECT * FROM WithdrawalRequest WHERE id = ?").get(where.id);
+    if (!r) return null;
+    let user = undefined;
+    if (include?.user) {
+      const u = db.prepare("SELECT id, name, email, avatar, role, credits FROM User WHERE id = ?").get(r.userId);
+      user = u ? { ...u } : null;
+    }
+    return {
+      ...r,
+      createdAt: toDate(r.createdAt),
+      updatedAt: toDate(r.updatedAt),
+      user,
+    };
+  },
+
+  async create({ data }: any) {
+    const db = getDb();
+    const id = data.id || createId();
+    const row = {
+      id,
+      userId: data.userId,
+      credits: data.credits,
+      amountVnd: data.amountVnd,
+      bankCode: data.bankCode,
+      bankName: data.bankName,
+      accountNo: data.accountNo,
+      accountName: data.accountName,
+      note: data.note || null,
+      status: data.status || "PENDING",
+      adminNote: data.adminNote || null,
+      createdAt: toTimestamp(data.createdAt || Date.now()),
+      updatedAt: toTimestamp(data.updatedAt || Date.now()),
+    };
+    const cols = Object.keys(row);
+    const placeholders = cols.map(() => "?").join(", ");
+    db.prepare(`INSERT INTO WithdrawalRequest (${cols.map(c => `"${c}"`).join(", ")}) VALUES (${placeholders})`)
+      .run(...cols.map(c => (row as any)[c]));
+    return {
+      ...row,
+      createdAt: toDate(row.createdAt),
+      updatedAt: toDate(row.updatedAt),
+    };
+  },
+
+  async update({ where, data }: any) {
+    const db = getDb();
+    if (!where?.id) return null;
+    const updates: string[] = [];
+    const values: any[] = [];
+    for (const [key, val] of Object.entries(data)) {
+      updates.push(`"${key}" = ?`);
+      values.push(key.endsWith("At") ? toTimestamp(val) : val);
+    }
+    values.push(where.id);
+    db.prepare(`UPDATE WithdrawalRequest SET ${updates.join(", ")} WHERE id = ?`).run(...values);
+    return this.findUnique({ where });
   },
 };
 
