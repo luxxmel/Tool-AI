@@ -413,8 +413,17 @@ export default function AdminCmsPage() {
       });
       if (res.ok) {
         showToast("✅ Cập nhật vai trò thành công!");
+        const isPromotedToAdmin = role.toUpperCase() === "ADMIN";
         setCreditResults((prev) =>
-          prev.map((u) => (u.id === targetUserId ? { ...u, role } : u))
+          prev.map((u) =>
+            u.id === targetUserId
+              ? {
+                  ...u,
+                  role,
+                  ...(isPromotedToAdmin ? { credits: 999999 } : {}),
+                }
+              : u
+          )
         );
       } else {
         const err = await res.json();
@@ -668,7 +677,11 @@ export default function AdminCmsPage() {
   const hiddenPosts = posts.filter((p) => p.status === "hidden").length;
   const totalLikes = posts.reduce((acc, p) => acc + p.likes, 0);
 
-  const totalCredits = creditResults.reduce((acc, u) => acc + (u.credits ?? 0), 0);
+  // Tính tổng credits của người dùng bình thường (loại trừ tài khoản ADMIN khỏi tổng số để thống kê chuẩn xác)
+  const nonAdminCreditResults = creditResults.filter(
+    (u) => u.role?.toUpperCase() !== "ADMIN" && u.email?.toLowerCase().trim() !== "hoanglinhcntti@gmail.com"
+  );
+  const totalCredits = nonAdminCreditResults.reduce((acc, u) => acc + (u.credits ?? 0), 0);
 
   // ── Bots data ────────────────────────────────────────────────────────────────
   const allAssistants = Object.values(CATEGORIZED_ASSISTANTS).flatMap(
@@ -1855,7 +1868,7 @@ export default function AdminCmsPage() {
                   {totalCredits.toLocaleString()}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  {creditResults.length} người dùng trong danh sách
+                  {nonAdminCreditResults.length} người dùng thành viên (không tính Admin)
                 </div>
               </div>
               <div className="p-5 rounded-2xl bg-white dark:bg-[#111218] border border-slate-200/90 dark:border-slate-800/80 shadow-xs sm:col-span-2 flex flex-col justify-center">
@@ -1956,9 +1969,15 @@ export default function AdminCmsPage() {
 
                           {/* Credits badge */}
                           <td className="py-3 px-4">
-                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40">
-                              💰 {(cu.credits ?? 0).toLocaleString()}
-                            </span>
+                            {cu.role?.toUpperCase() === "ADMIN" || cu.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com" ? (
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/40">
+                                👑 ∞ Vô hạn (Admin)
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40">
+                                💰 {(cu.credits ?? 0).toLocaleString()}
+                              </span>
+                            )}
                           </td>
 
                           {/* Role */}
