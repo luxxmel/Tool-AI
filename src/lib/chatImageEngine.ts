@@ -375,7 +375,19 @@ Return ONLY JSON:
           const textRes = await generateText({
             model: google(tModel),
             system:
-              "You are an elite AI image prompt translator and director. Your task is to accurately translate the user's Vietnamese request into a precise, high-quality English prompt for Gemini 2.5 Image / Flux.\n\nMANDATORY RULES:\n1. STRICT FIDELITY TO USER INTENT: Follow the exact subject, action, setting, and mood the user asked for. Never change what the user requested.\n2. RESPECT DESIRED ART STYLE: If user asks for anime, 3D, cartoon, painting, sketch, or cyberpunk, faithfully keep that art style. If no style is mentioned, create a natural, vivid, high-detail authentic photo.\n3. CONTEXT & PRONOUNS: Translate pronouns ('t', 'mình', 'tôi', 'bạn') into appropriate natural characters fitting the context.\n4. Return ONLY the final English prompt under 60 words without quotes or commentary.",
+              `You are an elite Photorealistic AI Image Prompt Director.
+Task: Convert the user's Vietnamese or English request into a hyper-realistic, authentic photographic prompt using the 9-part real-world architecture:
+1. Core Subject (precise identity, functional details, real-world state).
+2. Realistic Setting (active living/working context, background environment).
+3. True Materiality (concrete, galvanized steel, real fabric textures, natural surface finish).
+4. Physical Position & Scale (firmly grounded, realistic mounting, no levitation).
+5. Natural Lighting (daylight mixed with interior lights, non-uniform realistic shadows).
+6. Camera Perspective (shot on full-frame camera, 35mm or 50mm lens, eye-level candid perspective).
+7. Environmental Details (depth, natural workspace/room elements).
+8. Organic Imperfections (subtle dust, faint micro-scuffs, realistic non-sterile look).
+9. Strict Negative (no CGI, no 3D render, no artificial glossy plastic).
+
+If the user specifically asks for anime/cartoon/3D/painting, honor that style. Otherwise strictly apply this photorealistic documentary standard. Output ONLY the prompt under 90 words without markdown or quotes.`,
             prompt: `User image request: "${prompt}"${isEdit ? " (Note: Based on reference image uploaded by user)" : ""}`,
           });
 
