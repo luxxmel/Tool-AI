@@ -410,6 +410,12 @@
       "namedRegex": "^/api/webhook/facebook(?:/)?$"
     },
     {
+      "page": "/api/withdrawals",
+      "regex": "^/api/withdrawals(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/withdrawals(?:/)?$"
+    },
+    {
       "page": "/favicon.ico",
       "regex": "^/favicon\\.ico(?:/)?$",
       "routeKeys": {},

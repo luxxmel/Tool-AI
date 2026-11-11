@@ -54,6 +54,7 @@
   "/api/contributors/route": "/api/contributors",
   "/api/images/generate/route": "/api/images/generate",
   "/api/images/proxy/route": "/api/images/proxy",
+  "/api/withdrawals/route": "/api/withdrawals",
   "/admin/page": "/admin",
   "/chat/[botId]/page": "/chat/[botId]",
   "/page": "/",
