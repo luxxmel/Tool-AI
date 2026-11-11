@@ -43,17 +43,18 @@ export async function GET(request: NextRequest) {
 
     let formattedUsers = users.map((u) => {
       const isHLAdmin = u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
+      const isAdminRole = isHLAdmin || u.role.toUpperCase() === "ADMIN";
       return {
         id: u.id,
         name: u.name || (isHLAdmin ? "Lịnh Hoàng" : "Chưa đặt tên"),
         username: u.email.split("@")[0],
         email: u.email,
-        role: (isHLAdmin ? "admin" : (u.role.toUpperCase() === "USER" ? "member" : u.role.toLowerCase())) as "admin" | "vip" | "member",
+        role: (isAdminRole ? "admin" : (u.role.toUpperCase() === "USER" ? "member" : u.role.toLowerCase())) as "admin" | "vip" | "member",
         status: (u.status || "active") as "active" | "banned",
         avatar:
           u.avatar ||
           `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(u.email)}`,
-        credits: isHLAdmin ? 999999 : u.credits,
+        credits: isAdminRole ? 999999 : u.credits,
         joinedDate: new Date(u.createdAt).toLocaleDateString("vi-VN"),
         promptsCount: u._count.conversations,
         postsCount: u._count.posts,

@@ -1480,64 +1480,10 @@ export default function AdminCmsPage() {
                           </td>
 
                           <td className="py-2.5 px-2 text-center whitespace-nowrap">
-                            {u.email.toLowerCase().trim() === "hoanglinhcntti@gmail.com" ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                                <span>🪙</span>
-                                <span>Vô hạn</span>
-                              </span>
-                            ) : editingCreditUserId === u.id ? (
-                              <div className="inline-flex items-center gap-1">
-                                <input
-                                  type="number"
-                                  min={0}
-                                  value={editingCreditValue}
-                                  onChange={(e) => setEditingCreditValue(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                      handleSaveUserCredits(u.id, Number(editingCreditValue));
-                                    } else if (e.key === "Escape") {
-                                      setEditingCreditUserId(null);
-                                    }
-                                  }}
-                                  autoFocus
-                                  className="w-18 px-2 py-1 rounded-lg text-xs font-mono font-bold bg-white dark:bg-[#1a1c24] border border-purple-500 focus:outline-none text-purple-400 text-center"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => handleSaveUserCredits(u.id, Number(editingCreditValue))}
-                                  className="p-1 rounded bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
-                                  title="Lưu số Credits"
-                                >
-                                  ✓
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditingCreditUserId(null)}
-                                  className="p-1 rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer"
-                                  title="Hủy"
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="inline-flex items-center gap-1 group/token">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                                  <span>🪙</span>
-                                  <span>{typeof u.credits === "number" ? u.credits.toLocaleString() : "999,999"}</span>
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setEditingCreditUserId(u.id);
-                                    setEditingCreditValue(typeof u.credits === "number" ? u.credits : 999999);
-                                  }}
-                                  className="p-1 rounded-md text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors cursor-pointer text-xs"
-                                  title="Đặt lại / chỉnh sửa số credits cho quản trị viên này"
-                                >
-                                  ✏️
-                                </button>
-                              </div>
-                            )}
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                              <span>🪙</span>
+                              <span>Vô hạn</span>
+                            </span>
                           </td>
 
                           <td className="py-2.5 px-2 text-center whitespace-nowrap">
