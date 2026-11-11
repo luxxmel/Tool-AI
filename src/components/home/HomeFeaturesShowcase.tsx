@@ -75,7 +75,7 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
         </div>
 
         {/* Tab switchers */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#131522] border border-slate-200/80 dark:border-indigo-950/70 text-xs font-semibold">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setActiveCategory("all")}
@@ -120,7 +120,7 @@ export default function HomeFeaturesShowcase({ onSelectTab }: HomeFeaturesShowca
           <button
             key={item.id}
             onClick={() => onSelectTab(item.id)}
-            className="p-4 rounded-2xl bg-gradient-to-b from-white/90 to-white/70 dark:from-[#11131c]/90 dark:to-[#0c0e17]/90 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-400 dark:hover:border-cyan-400/50 transition-all duration-300 hover:-translate-y-1.5 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 dark:hover:shadow-cyan-500/10 group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-36"
+            className="p-4 rounded-2xl bg-gradient-to-b from-white/90 to-white/70 dark:from-[#15171e] dark:to-[#12141a] backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/80 hover:border-indigo-400 dark:hover:border-slate-700 transition-all duration-300 hover:-translate-y-1.5 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 shadow-xs group text-left flex flex-col justify-between relative overflow-hidden cursor-pointer h-36"
           >
             {/* Ambient Background Glow */}
             <div className={`absolute -right-6 -bottom-6 w-28 h-28 bg-gradient-to-br ${item.accent} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500 pointer-events-none opacity-60 group-hover:opacity-100`} />

@@ -1217,7 +1217,7 @@ export default function HomeChatView({
                   </div>
                 ) : (
                   <div className="group relative max-w-[85%] sm:max-w-[75%] flex flex-col items-end">
-                    <div className="w-full px-5 py-3.5 rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-600 text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/25 border border-white/20 leading-relaxed">
+                    <div className="w-full px-5 py-3.5 rounded-3xl bg-slate-900 dark:bg-[#1e2029] text-white font-normal text-xs sm:text-sm shadow-sm border border-slate-800 dark:border-slate-700/60 leading-relaxed">
                       {m.images && m.images.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-2.5">
                           {m.images.map((imgSrc, idx) => (
@@ -1267,17 +1267,17 @@ export default function HomeChatView({
               ) : (
                 /* AI Response Container */
                 <div className="w-full flex gap-3.5 sm:gap-4 items-start">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm shadow-indigo-500/30 mt-0.5">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-xs mt-0.5">
                     ✦
                   </div>
 
                   <div
                     className={`flex-1 min-w-0 p-5 rounded-3xl transition-all duration-300 ${
                       glassStyle === "ultra_clear"
-                        ? "bg-white/70 dark:bg-[#0c0e17]/75 backdrop-blur-2xl border border-white/30 dark:border-white/10 shadow-lg"
+                        ? "bg-white dark:bg-[#15171e] border border-slate-200/90 dark:border-slate-800/80 shadow-xs"
                         : glassStyle === "deep_solid"
-                        ? "bg-white dark:bg-[#0c0e17] border border-slate-200 dark:border-slate-800 shadow-sm"
-                        : "bg-white/90 dark:bg-[#0c0e17]/95 border border-slate-200/90 dark:border-indigo-950/70 shadow-sm backdrop-blur-md"
+                        ? "bg-white dark:bg-[#15171e] border border-slate-200/90 dark:border-slate-800/80 shadow-xs"
+                        : "bg-white dark:bg-[#15171e] border border-slate-200/90 dark:border-slate-800/80 shadow-xs"
                     }`}
                   >
                     {/* Header: Assistant Name and Model Badge */}
@@ -1488,7 +1488,7 @@ export default function HomeChatView({
 
         {isTyping && messages[messages.length - 1]?.role === "user" && (
           <div className="w-full flex gap-3.5 items-start">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm shadow-indigo-500/30">
+            <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-xs">
               ✦
             </div>
             <div className="p-4 rounded-3xl bg-white/90 dark:bg-[#0c0e17]/95 border border-slate-200 dark:border-indigo-950/70 shadow-sm flex items-center gap-2">
@@ -1712,7 +1712,7 @@ export default function HomeChatView({
               ? "bg-white/80 dark:bg-[#0c0e17]/85 backdrop-blur-2xl border border-white/40 dark:border-white/20 shadow-indigo-950/25"
               : glassStyle === "deep_solid"
               ? "bg-white dark:bg-[#0c0e17] border border-slate-300 dark:border-slate-800"
-              : "bg-white/95 dark:bg-[#0c0e17]/95 backdrop-blur-2xl border border-slate-300 dark:border-indigo-950/80 shadow-indigo-950/30"
+              : "bg-white/95 dark:bg-[#0c0e17]/95 backdrop-blur-2xl border border-slate-300 dark:border-slate-800 shadow-indigo-950/30"
           }`}
         >
           {/* Nút Dấu Cộng (+) Tinh Gọn mở Menu Đính Kèm & Tính Năng */}

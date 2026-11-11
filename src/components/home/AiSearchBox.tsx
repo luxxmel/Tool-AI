@@ -193,8 +193,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <rect width="10" height="15" x="12" y="4" rx="2" transform="rotate(12 17 11)" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-purple-500/15 to-indigo-500/20 text-purple-600 dark:text-purple-400 border border-purple-300 dark:border-purple-500/40 shadow-xs shadow-purple-500/15",
-              dot: "bg-purple-500 shadow-[0_0_6px_#a855f7]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "tarot",
               prompt: "",
             },
@@ -208,8 +208,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 6h-4" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-violet-500/15 to-fuchsia-500/20 text-violet-600 dark:text-violet-400 border border-violet-300 dark:border-violet-500/40 shadow-xs shadow-violet-500/15",
-              dot: "bg-violet-500 shadow-[0_0_6px_#8b5cf6]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "tuvi",
               prompt: "",
             },
@@ -223,8 +223,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <circle cx="19" cy="5" r="1.5" fill="currentColor" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-sky-500/15 to-blue-500/20 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-xs shadow-sky-500/15",
-              dot: "bg-sky-400 shadow-[0_0_6px_#38bdf8]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "chiemtinh",
               prompt: "",
             },
@@ -239,8 +239,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M16 3v18" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-amber-500/15 to-orange-500/20 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-500/40 shadow-xs shadow-amber-500/15",
-              dot: "bg-amber-500 shadow-[0_0_6px_#f59e0b]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "battu",
               prompt: "",
             },
@@ -261,8 +261,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M8 18h.01" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-cyan-500/15 to-teal-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40 shadow-xs shadow-cyan-500/15",
-              dot: "bg-cyan-500 shadow-[0_0_6px_#06b6d4]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "toan",
               prompt: "",
             },
@@ -274,8 +274,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-emerald-500/15 to-green-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-xs shadow-emerald-500/15",
-              dot: "bg-emerald-500 shadow-[0_0_6px_#10b981]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "english",
               prompt: "",
             },
@@ -287,7 +287,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-pink-500/15 to-rose-500/20 text-pink-600 dark:text-pink-400 border border-pink-300 dark:border-pink-500/40 shadow-xs shadow-pink-500/15",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
               dot: null,
               tab: "home",
               prompt: language === "en" ? "Please help me write an engaging piece about: " : "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
@@ -304,8 +304,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <line x1="8" x2="16" y1="12" y2="12" />
                 </svg>
               ),
-              circleStyle: "bg-gradient-to-tr from-blue-500/15 to-indigo-500/20 text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-500/40 shadow-xs shadow-blue-500/15",
-              dot: "bg-blue-500 shadow-[0_0_6px_#3b82f6]",
+              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
+              dot: "",
               tab: "card_scan",
               prompt: "",
             },
@@ -358,10 +358,10 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
-        className={`w-full bg-gradient-to-b from-white/95 to-slate-50/95 dark:from-[#111320]/95 dark:to-[#0b0c16]/95 backdrop-blur-2xl rounded-3xl border-2 transition-all duration-300 shadow-2xl relative ${
+        className={`w-full bg-white dark:bg-[#16181f] rounded-2xl border transition-all duration-200 shadow-xs relative ${
           isFocused
-            ? "border-cyan-500 shadow-[0_0_40px_rgba(6,182,212,0.35)] ring-4 ring-cyan-500/20 z-30"
-            : "border-slate-300/80 dark:border-white/[0.12] hover:border-cyan-500/60 dark:hover:border-cyan-500/60 shadow-[0_8px_30px_rgba(6,182,212,0.12)] hover:shadow-[0_0_35px_rgba(6,182,212,0.25)] z-20"
+            ? "border-slate-400 dark:border-slate-600 shadow-sm ring-1 ring-slate-400/20 z-30"
+            : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs z-20"
         }`}
       >
         {/* Quick Mode/Task Chips (Gợi ý tác vụ nhanh) */}
@@ -383,7 +383,7 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   textareaRef.current?.focus();
                 }
               }}
-              className="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/80 hover:bg-indigo-50 dark:bg-[#1a1c28]/90 dark:hover:bg-indigo-950/70 text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-300 border border-slate-200/90 dark:border-slate-700/80 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+              className="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50 transition-colors cursor-pointer"
             >
               {chip.label}
             </button>

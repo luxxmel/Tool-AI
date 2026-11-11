@@ -255,7 +255,7 @@ export default function AppSidebar({
 
       {/* Main Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-60 w-64 bg-white/95 dark:bg-[#0d0f17]/95 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/[0.08] flex flex-col justify-between p-3.5 transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 z-60 w-64 bg-white/95 dark:bg-[#15171e] backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/[0.08] flex flex-col justify-between p-3.5 transition-all duration-300 ease-in-out ${
           isMobileOpen
             ? "translate-x-0 shadow-2xl"
             : isCollapsed
@@ -389,12 +389,12 @@ export default function AppSidebar({
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                       isActive || isFlyoutOpen
-                        ? "bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 dark:border-cyan-400/40 shadow-xs shadow-xs font-semibold"
+                        ? "bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-indigo-300 border border-cyan-500/25 dark:border-cyan-400/40 shadow-xs shadow-xs font-semibold"
                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className={isActive || isFlyoutOpen ? "text-indigo-600 dark:text-cyan-400" : "text-slate-400"}>
+                      <span className={isActive || isFlyoutOpen ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}>
                         {item.icon}
                       </span>
                       <span>{item.label}</span>
@@ -418,12 +418,12 @@ export default function AppSidebar({
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                     isActive
-                      ? "bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 dark:border-cyan-400/40 shadow-xs shadow-xs font-semibold"
+                      ? "bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-indigo-300 border border-cyan-500/25 dark:border-cyan-400/40 shadow-xs shadow-xs font-semibold"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className={item.id === "healing" ? "text-rose-500 shrink-0" : isActive ? "text-indigo-600 dark:text-cyan-400 shrink-0" : "text-slate-400 shrink-0"}>
+                    <span className={item.id === "healing" ? "text-rose-500 shrink-0" : isActive ? "text-indigo-600 dark:text-indigo-400 shrink-0" : "text-slate-400 shrink-0"}>
                       {item.icon}
                     </span>
                     <span>{item.label}</span>
@@ -442,7 +442,7 @@ export default function AppSidebar({
             {isAdmin && (
               <Link
                 href="/admin"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/50 transition-all group"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-800/40 border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/50 transition-all group"
               >
                 <div className="flex items-center gap-2.5">
                   <svg className="w-5 h-5 text-indigo-500 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
