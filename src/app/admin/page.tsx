@@ -466,8 +466,17 @@ export default function AdminCmsPage() {
     userId: string,
     newRole: "admin" | "vip" | "member"
   ) => {
+    const isNewAdmin = newRole.toLowerCase() === "admin";
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      prev.map((u) =>
+        u.id === userId
+          ? {
+              ...u,
+              role: newRole,
+              ...(isNewAdmin ? { credits: 999999 } : {}),
+            }
+          : u
+      )
     );
 
     try {
@@ -476,6 +485,11 @@ export default function AdminCmsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: newRole }),
       });
+      if (isNewAdmin) {
+        showToast("👑 Đã cấp quyền ADMIN & kích hoạt Vô Hạn Credits thành công!");
+      } else {
+        showToast("✅ Đã cập nhật vai trò người dùng thành công!");
+      }
     } catch (e) {
       console.error("Lỗi cập nhật vai trò:", e);
     }

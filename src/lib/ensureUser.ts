@@ -105,7 +105,7 @@ export async function ensureUser(
       });
 
       if (user && user.id) {
-        if (user.email.toLowerCase() === "hoanglinhcntti@gmail.com") {
+        if (user.role === "ADMIN" || user.email.toLowerCase() === "hoanglinhcntti@gmail.com") {
           return {
             ...user,
             role: "ADMIN",

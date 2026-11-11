@@ -78,7 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               if (data && data.id) {
                 const isRoot = parsed.email?.toLowerCase().trim() === "hoanglinhcntti@gmail.com";
                 const syncedRole = isRoot ? "ADMIN" : (data.role || "USER");
-                const syncedCredits = isRoot ? 999999 : Number(data.credits ?? 20);
+                const isAdmin = syncedRole === "ADMIN" || isRoot;
+                const syncedCredits = isAdmin ? 999999 : Number(data.credits ?? 20);
                 const syncedStatus = isRoot ? "active" : (data.status || "active");
 
                 if (!isRoot && syncedStatus === "banned") {

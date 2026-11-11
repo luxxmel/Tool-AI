@@ -16,7 +16,12 @@ export async function PATCH(
     }
 
     if (body.role !== undefined) {
-      dataToUpdate.role = String(body.role).toUpperCase();
+      const formattedRole = String(body.role).toUpperCase();
+      dataToUpdate.role = formattedRole;
+      // Khi phân quyền Admin, tự động kích hoạt trạng thái vô hạn credit (999999)
+      if (formattedRole === "ADMIN") {
+        dataToUpdate.credits = 999999;
+      }
     }
 
     if (body.credits !== undefined) {

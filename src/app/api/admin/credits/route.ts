@@ -193,6 +193,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Tính toán số credit mới
+    const targetRole = role ? String(role).toUpperCase() : targetUser.role;
     let newCredits = targetUser.credits;
     if (mode === "set") {
       newCredits = Math.max(0, numAmount);
@@ -201,8 +202,8 @@ export async function POST(request: NextRequest) {
       newCredits = Math.max(0, targetUser.credits + numAmount);
     }
 
-    // Nếu targetUser là ADMIN thì số credits giữ vô hạn
-    if (targetUser.role === "ADMIN" && !role) {
+    // Nếu targetUser được phân quyền hoặc hiện đang là ADMIN -> tự động lên vô hạn credits (999999)
+    if (targetRole === "ADMIN") {
       newCredits = 999999;
     }
 
