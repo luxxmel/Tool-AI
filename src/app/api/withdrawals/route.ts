@@ -55,7 +55,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error("Lỗi khi tải danh sách rút tiền:", error);
-    return NextResponse.json({ error: "Lỗi hệ thống khi tải đơn rút tiền" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Lỗi hệ thống khi tải đơn rút tiền",
+      details: error?.message || String(error)
+    }, { status: 500 });
   }
 }
 
