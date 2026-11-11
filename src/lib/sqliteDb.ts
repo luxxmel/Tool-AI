@@ -1734,6 +1734,10 @@ export const sqliteClient = {
   paymentOrder,
   emailVerification,
   generatedImage,
+  publishedStory,
+  storyLike,
+  storyNotification,
+  withdrawalRequest,
   $transaction,
 };
 
