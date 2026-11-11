@@ -248,14 +248,53 @@ export default function MyStoriesView() {
     }
   };
 
-  // Quản lý Chương / Phần (Thêm, Xóa, Đổi tên)
+  // Thêm chương / phần mới với định dạng tiêu đề sẵn
   const handleAddChapter = () => {
     const newIdx = chapters.length + 1;
     setChapters((prev) => [
       ...prev,
-      { id: `chap-${Date.now()}`, title: `Phần ${newIdx}`, content: "" },
+      { id: `chap-${Date.now()}`, title: `Phần ${newIdx}: Tiếp diễn`, content: "" },
     ]);
     setActiveChapterEditIdx(chapters.length);
+  };
+
+  // Xử lý dán (Paste) trực tiếp ảnh từ clipboard vào đúng vị trí con trỏ trong nội dung chương
+  const handleTextareaPaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.indexOf("image") !== -1) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (!file) continue;
+
+        const target = e.currentTarget;
+        const startPos = target.selectionStart ?? target.value.length;
+        const endPos = target.selectionEnd ?? target.value.length;
+        const currentText = chapters[activeChapterEditIdx]?.content || "";
+
+        try {
+          setIsUploadingImage(true);
+          const base64Data = await compressImage(file, 1000, 0.82);
+          const prefix = startPos > 0 && !currentText.slice(0, startPos).endsWith("\n\n") ? "\n\n" : "";
+          const suffix = !currentText.slice(endPos).startsWith("\n\n") ? "\n\n" : "";
+          const imgMarkdown = `${prefix}![Ảnh minh họa](${base64Data})${suffix}`;
+
+          const newText = currentText.slice(0, startPos) + imgMarkdown + currentText.slice(endPos);
+          setChapters((prev) =>
+            prev.map((chap, idx) => (idx === activeChapterEditIdx ? { ...chap, content: newText } : chap))
+          );
+        } catch (err) {
+          console.error("Lỗi khi dán ảnh:", err);
+          showAlert("Không thể dán ảnh này. Vui lòng thử lại!");
+        } finally {
+          setIsUploadingImage(false);
+        }
+        break;
+      }
+    }
   };
 
   const handleRemoveChapter = (indexToRemove: number) => {
@@ -406,7 +445,7 @@ export default function MyStoriesView() {
     }
   };
 
-  // Render nội dung chương kèm ảnh minh họa
+  // Render nội dung chương với thụt đầu dòng (indent) chuẩn tiểu thuyết & ảnh minh họa inline
   const renderChapterContent = (text: string) => {
     if (!text) return null;
     const parts = text.split(/(!\[.*?\]\(.*?\))/g);
@@ -414,15 +453,28 @@ export default function MyStoriesView() {
       const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
       if (imgMatch) {
         return (
-          <div key={idx} className="my-4 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md max-w-xl mx-auto">
-            <img src={imgMatch[2]} alt={imgMatch[1] || "Ảnh minh họa"} className="w-full h-auto object-cover" />
+          <div key={idx} className="my-5 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md max-w-xl mx-auto">
+            <img src={imgMatch[2]} alt={imgMatch[1] || "Ảnh minh họa"} className="w-full h-auto object-cover max-h-[500px]" />
           </div>
         );
       }
+      // Tách từng đoạn văn theo dòng để thụt đầu dòng chuẩn sách truyện
+      const paragraphs = part.split(/\n+/);
       return (
-        <span key={idx} className="whitespace-pre-line">
-          {part}
-        </span>
+        <div key={idx} className="space-y-3.5">
+          {paragraphs.map((p, pIdx) => {
+            const trimmed = p.trim();
+            if (!trimmed) return null;
+            return (
+              <p
+                key={pIdx}
+                className="indent-6 sm:indent-8 text-justify leading-relaxed sm:leading-loose text-slate-800 dark:text-slate-200 font-serif"
+              >
+                {trimmed}
+              </p>
+            );
+          })}
+        </div>
       );
     });
   };
@@ -1143,19 +1195,26 @@ export default function MyStoriesView() {
                     </div>
                   </div>
 
-                  <textarea
-                    required
-                    rows={9}
-                    value={chapters[activeChapterEditIdx]?.content || ""}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setChapters((prev) =>
-                        prev.map((c, i) => (i === activeChapterEditIdx ? { ...c, content: val } : c))
-                      );
-                    }}
-                    placeholder={`Viết nội dung cho ${chapters[activeChapterEditIdx]?.title || `Phần ${activeChapterEditIdx + 1}`} tại đây...`}
-                    className="w-full p-3 rounded-xl bg-white dark:bg-[#15171e] border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none font-serif leading-relaxed"
-                  />
+                  <div className="relative">
+                    <textarea
+                      required
+                      rows={10}
+                      value={chapters[activeChapterEditIdx]?.content || ""}
+                      onPaste={handleTextareaPaste}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setChapters((prev) =>
+                          prev.map((c, i) => (i === activeChapterEditIdx ? { ...c, content: val } : c))
+                        );
+                      }}
+                      placeholder={`Viết nội dung cho ${chapters[activeChapterEditIdx]?.title || `Phần ${activeChapterEditIdx + 1}`} tại đây...\n\n💡 MẸO: Bạn có thể bấm Ctrl + V (Paste) để dán trực tiếp ảnh chụp màn hình hoặc file ảnh vào bất kỳ đoạn nào bạn muốn!`}
+                      className="w-full p-3.5 rounded-xl bg-white dark:bg-[#15171e] border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 resize-none font-serif leading-relaxed placeholder:font-sans placeholder:text-slate-400"
+                    />
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1 px-1">
+                      <span>📌 Hỗ trợ: Tự động thụt đầu dòng khi đọc • Dán ảnh (Ctrl+V) vào sau đoạn truyện bất kỳ</span>
+                      <span>{chapters[activeChapterEditIdx]?.content?.length || 0} ký tự</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
