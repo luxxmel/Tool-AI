@@ -29,6 +29,9 @@ model User {
   orders        PaymentOrder[]
   generatedImages GeneratedImage[]
   memories      UserMemory[]
+  publishedStories PublishedStory[]
+  storyLikes       StoryLike[]
+  storyNotifications StoryNotification[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -178,3 +181,53 @@ model GeneratedImage {
 
   @@index([userId])
 }
+
+model PublishedStory {
+  id               String              @id @default(cuid())
+  authorId         String
+  author           User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title            String
+  authorDisplayName String              // Tên tác giả do người dùng nhập
+  synopsis         String              // Tóm tắt truyện ngắn gọn
+  content          String              // Toàn bộ nội dung truyện
+  coverImage       String?             // URL ảnh bìa
+  category         String              @default("other") // "tieuthuyet" | "trinhtham" | "tinhcam" | "kiemhiep" | "kinhdi" | "khac"
+  ageRating        String              @default("ALL") // "ALL" | "13+" | "16+" | "18+"
+  status           String              @default("APPROVED") // "APPROVED" | "REJECTED" | "PENDING"
+  rejectionReason  String?             // Lý do AI từ chối nếu có
+  views            Int                 @default(0)
+  likes            Int                 @default(0)
+  rewardClaimedLevel Int               @default(0) // 0: chưa thưởng, 1: đã thưởng 100 views (+2), 2: đã thưởng 500 views (+5)
+  storyLikes       StoryLike[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([authorId])
+  @@index([status])
+}
+
+model StoryLike {
+  id        String         @id @default(cuid())
+  storyId   String
+  story     PublishedStory @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  @@unique([storyId, userId])
+  @@index([storyId])
+}
+
+model StoryNotification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  type      String   // "APPROVED" | "REJECTED" | "REWARD"
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+

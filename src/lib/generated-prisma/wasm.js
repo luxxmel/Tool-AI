@@ -250,6 +250,42 @@ exports.Prisma.GeneratedImageScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PublishedStoryScalarFieldEnum = {
+  id: 'id',
+  authorId: 'authorId',
+  title: 'title',
+  authorDisplayName: 'authorDisplayName',
+  synopsis: 'synopsis',
+  content: 'content',
+  coverImage: 'coverImage',
+  category: 'category',
+  ageRating: 'ageRating',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  views: 'views',
+  likes: 'likes',
+  rewardClaimedLevel: 'rewardClaimedLevel',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StoryLikeScalarFieldEnum = {
+  id: 'id',
+  storyId: 'storyId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StoryNotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  content: 'content',
+  type: 'type',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -273,7 +309,10 @@ exports.Prisma.ModelName = {
   Comment: 'Comment',
   PostReaction: 'PostReaction',
   PaymentOrder: 'PaymentOrder',
-  GeneratedImage: 'GeneratedImage'
+  GeneratedImage: 'GeneratedImage',
+  PublishedStory: 'PublishedStory',
+  StoryLike: 'StoryLike',
+  StoryNotification: 'StoryNotification'
 };
 
 /**

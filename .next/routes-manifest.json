@@ -124,6 +124,14 @@
       "namedRegex": "^/api/projects/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/api/stories/[id]",
+      "regex": "^/api/stories/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/stories/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/api/users/[userId]",
       "regex": "^/api/users/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -328,6 +336,18 @@
       "regex": "^/api/projects(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/projects(?:/)?$"
+    },
+    {
+      "page": "/api/stories",
+      "regex": "^/api/stories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/stories(?:/)?$"
+    },
+    {
+      "page": "/api/stories/notifications",
+      "regex": "^/api/stories/notifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/stories/notifications(?:/)?$"
     },
     {
       "page": "/api/story-analyze",
