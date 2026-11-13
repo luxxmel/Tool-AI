@@ -64,6 +64,26 @@ export default function AppSidebar({
     }
     return true;
   });
+
+  // Tự động kiểm tra thông báo chưa đọc của cá nhân (tiền về ví, duyệt rút, v.v.)
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return;
+    const checkPersonalUnread = async () => {
+      try {
+        const res = await fetch(`/api/stories/notifications?userId=${encodeURIComponent(user.id)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.notifications)) {
+            const hasUnread = data.notifications.some((n: any) => !n.isRead);
+            if (hasUnread) {
+              setHasUnreadNotifications(true);
+            }
+          }
+        }
+      } catch {}
+    };
+    checkPersonalUnread();
+  }, [isAuthenticated, user]);
   const { showAlert } = usePopup();
 
   const handleDailyCheckin = () => {

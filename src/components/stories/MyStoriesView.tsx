@@ -121,6 +121,7 @@ export default function MyStoriesView() {
   const [readingChapters, setReadingChapters] = useState<StoryChapter[]>([]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
+  const [readingTheme, setReadingTheme] = useState<"default" | "sepia" | "night">("default");
 
   // AI Voice Text-to-Speech đọc truyện
   const [isPlayingTts, setIsPlayingTts] = useState(false);
@@ -1161,11 +1162,39 @@ export default function MyStoriesView() {
 
               {/* Tùy chỉnh font size & thả tim */}
               <div className="flex items-center gap-1.5">
+                {/* Chọn Theme Nền Đọc Truyện: Giấy Cổ (Sepia), Đêm Tuyền (Night), Tự Nhiên (Default) */}
+                <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[11px] gap-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setReadingTheme("default")}
+                    className={`w-6 h-6 rounded-md flex items-center justify-center transition-all cursor-pointer ${readingTheme === "default" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs text-indigo-600 dark:text-cyan-400" : "text-slate-400 hover:text-slate-600"}`}
+                    title="Nền mặc định"
+                  >
+                    ☀️
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReadingTheme("sepia")}
+                    className={`w-6 h-6 rounded-md flex items-center justify-center transition-all cursor-pointer ${readingTheme === "sepia" ? "bg-[#f4ecd8] text-[#5f4b32] font-bold shadow-2xs ring-1 ring-[#c8b79b]" : "text-slate-400 hover:text-[#5f4b32]"}`}
+                    title="Nền giấy cổ (Sepia dịu mắt)"
+                  >
+                    📜
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReadingTheme("night")}
+                    className={`w-6 h-6 rounded-md flex items-center justify-center transition-all cursor-pointer ${readingTheme === "night" ? "bg-black text-amber-300 font-bold shadow-2xs ring-1 ring-slate-800" : "text-slate-400 hover:text-white"}`}
+                    title="Nền đen tuyền (Đọc đêm OLED)"
+                  >
+                    🌙
+                  </button>
+                </div>
+
                 <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-[11px]">
                   <button
                     type="button"
                     onClick={() => setFontSize("normal")}
-                    className={`px-2 py-1 rounded-md transition-colors ${fontSize === "normal" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs" : "text-slate-500"}`}
+                    className={`px-2 py-1 rounded-md transition-colors cursor-pointer ${fontSize === "normal" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs" : "text-slate-500"}`}
                     title="Cỡ chữ vừa"
                   >
                     A
@@ -1173,7 +1202,7 @@ export default function MyStoriesView() {
                   <button
                     type="button"
                     onClick={() => setFontSize("large")}
-                    className={`px-2 py-1 rounded-md transition-colors ${fontSize === "large" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs" : "text-slate-500"}`}
+                    className={`px-2 py-1 rounded-md transition-colors cursor-pointer ${fontSize === "large" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs" : "text-slate-500"}`}
                     title="Cỡ chữ to"
                   >
                     A+
@@ -1181,7 +1210,7 @@ export default function MyStoriesView() {
                   <button
                     type="button"
                     onClick={() => setFontSize("xlarge")}
-                    className={`px-2 py-1 rounded-md transition-colors ${fontSize === "xlarge" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs" : "text-slate-500"}`}
+                    className={`px-2 py-1 rounded-md transition-colors cursor-pointer ${fontSize === "xlarge" ? "bg-white dark:bg-[#1a1c24] font-bold shadow-2xs" : "text-slate-500"}`}
                     title="Cỡ chữ rất to"
                   >
                     A++
@@ -1251,9 +1280,15 @@ export default function MyStoriesView() {
               </div>
             )}
 
-            {/* Nội dung truyện (Typography êm mắt) */}
+            {/* Nội dung truyện (Typography êm mắt với Sepia / OLED Night Mode) */}
             <div
-              className={`flex-1 overflow-y-auto p-5 sm:p-8 space-y-4 text-slate-800 dark:text-slate-200 leading-relaxed font-serif ${
+              className={`flex-1 overflow-y-auto p-5 sm:p-8 space-y-4 leading-relaxed font-serif transition-colors duration-200 ${
+                readingTheme === "sepia"
+                  ? "bg-[#fbf0d9] text-[#433422] selection:bg-[#dfcbb3]"
+                  : readingTheme === "night"
+                  ? "bg-[#090a0f] text-[#cfd3dc] selection:bg-indigo-900"
+                  : "bg-white dark:bg-[#15171e] text-slate-800 dark:text-slate-200"
+              } ${
                 fontSize === "xlarge"
                   ? "text-lg sm:text-xl leading-loose"
                   : fontSize === "large"
