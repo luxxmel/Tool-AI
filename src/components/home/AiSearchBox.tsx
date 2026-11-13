@@ -187,68 +187,83 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
             {
               id: "tarot",
               name: language === "en" ? "Tarot" : "Tarot",
+              glow: "group-hover:shadow-[0_0_20px_rgba(168,85,247,0.45)] group-hover:border-purple-400 group-hover:text-purple-400",
+              badgeColor: "bg-purple-500",
+              iconColor: "text-purple-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="10" height="15" x="2" y="5" rx="2" transform="rotate(-12 7 12)" />
                   <rect width="10" height="15" x="12" y="4" rx="2" transform="rotate(12 17 11)" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-purple-500/10 via-slate-900 to-purple-950/20 text-purple-300 border border-purple-500/30",
+              dot: "bg-purple-400 shadow-[0_0_6px_#c084fc]",
               tab: "tarot",
               prompt: "",
             },
             {
               id: "tuvi",
               name: language === "en" ? "Tu Vi" : "Tử Vi",
+              glow: "group-hover:shadow-[0_0_20px_rgba(245,158,11,0.45)] group-hover:border-amber-400 group-hover:text-amber-400",
+              badgeColor: "bg-amber-500",
+              iconColor: "text-amber-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
                   <path d="M19 4v4" />
                   <path d="M21 6h-4" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-amber-500/10 via-slate-900 to-amber-950/20 text-amber-300 border border-amber-500/30",
+              dot: "bg-amber-400 shadow-[0_0_6px_#fbbf24]",
               tab: "tuvi",
               prompt: "",
             },
             {
               id: "chiemtinh",
               name: language === "en" ? "Astrology" : "Chiêm Tinh",
+              glow: "group-hover:shadow-[0_0_20px_rgba(6,182,212,0.45)] group-hover:border-cyan-400 group-hover:text-cyan-400",
+              badgeColor: "bg-cyan-500",
+              iconColor: "text-cyan-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="4.5" />
                   <path d="M3.5 14.5c3-6 14-6 17 0" />
                   <circle cx="19" cy="5" r="1.5" fill="currentColor" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-cyan-500/10 via-slate-900 to-cyan-950/20 text-cyan-300 border border-cyan-500/30",
+              dot: "bg-cyan-400 shadow-[0_0_6px_#22d3ee]",
               tab: "chiemtinh",
               prompt: "",
             },
             {
               id: "battu",
               name: language === "en" ? "Bazi Chart" : "Bát Tự",
+              glow: "group-hover:shadow-[0_0_20px_rgba(239,68,68,0.45)] group-hover:border-rose-400 group-hover:text-rose-400",
+              badgeColor: "bg-rose-500",
+              iconColor: "text-rose-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="18" height="18" x="3" y="3" rx="3" />
                   <path d="M8 3v18" />
                   <path d="M12 3v18" />
                   <path d="M16 3v18" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-rose-500/10 via-slate-900 to-rose-950/20 text-rose-300 border border-rose-500/30",
+              dot: "bg-rose-400 shadow-[0_0_6px_#f87171]",
               tab: "battu",
               prompt: "",
             },
             {
               id: "toan",
               name: language === "en" ? "Math Solver" : "Giải Toán",
+              glow: "group-hover:shadow-[0_0_20px_rgba(59,130,246,0.45)] group-hover:border-blue-400 group-hover:text-blue-400",
+              badgeColor: "bg-blue-500",
+              iconColor: "text-blue-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="16" height="20" x="4" y="2" rx="2" />
                   <line x1="8" x2="16" y1="6" y2="6" />
                   <line x1="16" x2="16" y1="14" />
@@ -261,42 +276,51 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <path d="M8 18h.01" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-blue-500/10 via-slate-900 to-blue-950/20 text-blue-300 border border-blue-500/30",
+              dot: "bg-blue-400 shadow-[0_0_6px_#60a5fa]",
               tab: "toan",
               prompt: "",
             },
             {
               id: "english",
               name: language === "en" ? "Learn English" : "Học tiếng Anh",
+              glow: "group-hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] group-hover:border-emerald-400 group-hover:text-emerald-400",
+              badgeColor: "bg-emerald-500",
+              iconColor: "text-emerald-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-emerald-500/10 via-slate-900 to-emerald-950/20 text-emerald-300 border border-emerald-500/30",
+              dot: "bg-emerald-400 shadow-[0_0_6px_#34d399]",
               tab: "english",
               prompt: "",
             },
             {
               id: "writer",
               name: language === "en" ? "Writer" : "Viết lách",
+              glow: "group-hover:shadow-[0_0_20px_rgba(244,63,94,0.45)] group-hover:border-pink-400 group-hover:text-pink-400",
+              badgeColor: "bg-pink-500",
+              iconColor: "text-pink-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: null,
+              circleStyle: "bg-gradient-to-br from-pink-500/10 via-slate-900 to-pink-950/20 text-pink-300 border border-pink-500/30",
+              dot: "bg-pink-400 shadow-[0_0_6px_#f472b6]",
               tab: "home",
               prompt: language === "en" ? "Please help me write an engaging piece about: " : "Hãy giúp tôi viết một bài viết hấp dẫn về: ",
             },
             {
               id: "card_scan",
               name: language === "en" ? "Card & Doc Scanner" : "Quét Card/Tài liệu",
+              glow: "group-hover:shadow-[0_0_20px_rgba(99,102,241,0.45)] group-hover:border-indigo-400 group-hover:text-indigo-400",
+              badgeColor: "bg-indigo-500",
+              iconColor: "text-indigo-400 group-hover:scale-110",
               icon: (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-5 h-5 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 7V5a2 2 0 0 1 2-2h2" />
                   <path d="M17 3h2a2 2 0 0 1 2 2v2" />
                   <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
@@ -304,8 +328,8 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                   <line x1="8" x2="16" y1="12" y2="12" />
                 </svg>
               ),
-              circleStyle: "bg-slate-100 dark:bg-[#1a1c24] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800",
-              dot: "",
+              circleStyle: "bg-gradient-to-br from-indigo-500/10 via-slate-900 to-indigo-950/20 text-indigo-300 border border-indigo-500/30",
+              dot: "bg-indigo-400 shadow-[0_0_6px_#818cf8]",
               tab: "card_scan",
               prompt: "",
             },
@@ -328,24 +352,29 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
               <Component
                 key={idx}
                 {...(extraProps as any)}
-                className="flex flex-col items-center gap-2 shrink-0 group cursor-pointer transition-transform hover:-translate-y-1 active:translate-y-0"
+                className="flex flex-col items-center gap-2 shrink-0 group cursor-pointer transition-all duration-300 hover:-translate-y-1.5 active:translate-y-0"
               >
-                {/* Sleek Dark Circular Icon Badge */}
+                {/* Sleek Dark Circular Icon Badge with Neon Pulsing Glow */}
                 <div className="relative">
+                  {/* Subtle ambient blur glow behind on hover */}
+                  <div className="absolute inset-0 rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-300 bg-current pointer-events-none" />
+
                   <div
-                    className={`w-12 h-12 rounded-full ${item.circleStyle} flex items-center justify-center transition-all duration-300 group-hover:scale-110`}
+                    className={`w-13 h-13 rounded-2xl ${item.circleStyle} ${(item as any).glow} flex items-center justify-center transition-all duration-300 shadow-sm relative z-10 backdrop-blur-md group-hover:rotate-3 group-hover:scale-110`}
                   >
-                    {item.icon}
+                    <div className={(item as any).iconColor}>
+                      {item.icon}
+                    </div>
                   </div>
                   {item.dot && (
                     <span
-                      className={`absolute top-0 right-0 w-2.5 h-2.5 rounded-full ${item.dot} ring-2 ring-[#0c0e17] dark:ring-black`}
+                      className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${item.dot} ring-2 ring-white dark:ring-[#0c0e17] z-20`}
                     />
                   )}
                 </div>
 
-                {/* Clean minimalist text label */}
-                <span className="text-[12px] font-medium text-slate-700 dark:text-neutral-300 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors whitespace-nowrap">
+                {/* Clean minimalist text label with color transition */}
+                <span className="text-[12px] font-semibold text-slate-700 dark:text-neutral-300 group-hover:text-white transition-colors whitespace-nowrap tracking-tight">
                   {item.name}
                 </span>
               </Component>
