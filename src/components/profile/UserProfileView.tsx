@@ -15,6 +15,8 @@ interface UserPrivacySettings {
   hideBio: boolean;
   hideSocials: boolean;
   hideStats: boolean;
+  hideBirthdate: boolean;
+  hideGender: boolean;
 }
 
 interface UserProfileSocials {
@@ -24,6 +26,8 @@ interface UserProfileSocials {
   facebook: string;
   website: string;
   location: string;
+  birthdate?: string;
+  gender?: string;
   bannerUrl?: string;
   privacy?: UserPrivacySettings;
 }
@@ -55,6 +59,8 @@ export default function UserProfileView({
   // Profile data state
   const [bio, setBio] = useState<string>("Nhà sáng tạo nội dung & Yêu thích công nghệ AI ✨");
   const [location, setLocation] = useState<string>("Việt Nam");
+  const [birthdate, setBirthdate] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
   const [github, setGithub] = useState<string>("");
   const [twitter, setTwitter] = useState<string>("");
   const [facebook, setFacebook] = useState<string>("");
@@ -70,6 +76,8 @@ export default function UserProfileView({
     hideBio: false,
     hideSocials: false,
     hideStats: false,
+    hideBirthdate: false,
+    hideGender: false,
   });
 
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
@@ -136,6 +144,8 @@ export default function UserProfileView({
         const meta: UserProfileSocials = JSON.parse(raw);
         if (meta.bio !== undefined) setBio(meta.bio);
         if (meta.location !== undefined) setLocation(meta.location);
+        if (meta.birthdate !== undefined) setBirthdate(meta.birthdate);
+        if (meta.gender !== undefined) setGender(meta.gender);
         if (meta.github !== undefined) setGithub(meta.github);
         if (meta.twitter !== undefined) setTwitter(meta.twitter);
         if (meta.facebook !== undefined) setFacebook(meta.facebook);
@@ -186,6 +196,8 @@ export default function UserProfileView({
     const meta: UserProfileSocials = {
       bio: bio.trim(),
       location: location.trim(),
+      birthdate: birthdate.trim(),
+      gender: gender.trim(),
       github: github.trim(),
       twitter: twitter.trim(),
       facebook: facebook.trim(),
@@ -328,6 +340,29 @@ export default function UserProfileView({
                     <>
                       <span>•</span>
                       <span className="text-slate-400">{location}</span>
+                    </>
+                  )}
+                  {!privacy.hideGender && gender && (
+                    <>
+                      <span>•</span>
+                      <span className="text-slate-400">
+                        {gender === "male" ? "Nam ♂" : gender === "female" ? "Nữ ♀" : gender}
+                      </span>
+                    </>
+                  )}
+                  {!privacy.hideBirthdate && birthdate && (
+                    <>
+                      <span>•</span>
+                      <span className="text-pink-400 flex items-center gap-1 font-sans">
+                        🎂 {(() => {
+                          try {
+                            const [y, m, d] = birthdate.split("-");
+                            return `${d}/${m}/${y}`;
+                          } catch {
+                            return birthdate;
+                          }
+                        })()}
+                      </span>
                     </>
                   )}
                 </div>
@@ -496,6 +531,34 @@ export default function UserProfileView({
                 placeholder="VD: Hà Nội, Việt Nam"
                 className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-hidden focus:border-indigo-500 font-medium"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-2">
+                🎂 Ngày tháng năm sinh:
+              </label>
+              <input
+                type="date"
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-hidden focus:border-indigo-500 font-medium [color-scheme:dark]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-2">
+                ⚧ Giới tính:
+              </label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-hidden focus:border-indigo-500 font-medium [color-scheme:dark]"
+              >
+                <option value="">-- Chọn giới tính --</option>
+                <option value="male">Nam</option>
+                <option value="female">Nữ</option>
+                <option value="other">Khác</option>
+              </select>
             </div>
 
             <div className="sm:col-span-2">
@@ -716,6 +779,26 @@ export default function UserProfileView({
                 <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-slate-700 transition-colors">
                   <input
                     type="checkbox"
+                    checked={privacy.hideBirthdate}
+                    onChange={(e) => setPrivacy((prev) => ({ ...prev, hideBirthdate: e.target.checked }))}
+                    className="w-4 h-4 rounded text-cyan-500 focus:ring-0 cursor-pointer"
+                  />
+                  <span>🎂 Ẩn Ngày tháng năm sinh</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-slate-700 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={privacy.hideGender}
+                    onChange={(e) => setPrivacy((prev) => ({ ...prev, hideGender: e.target.checked }))}
+                    className="w-4 h-4 rounded text-cyan-500 focus:ring-0 cursor-pointer"
+                  />
+                  <span>⚧ Ẩn Giới tính</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-slate-700 transition-colors">
+                  <input
+                    type="checkbox"
                     checked={privacy.hideBio}
                     onChange={(e) => setPrivacy((prev) => ({ ...prev, hideBio: e.target.checked }))}
                     className="w-4 h-4 rounded text-cyan-500 focus:ring-0 cursor-pointer"
@@ -884,6 +967,35 @@ export default function UserProfileView({
               <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
                 <span className="text-slate-400 block mb-1">Quốc gia</span>
                 <span className="font-bold text-white">{location || "Việt Nam"}</span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-slate-400">Ngày sinh</span>
+                  {privacy.hideBirthdate && (
+                    <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Đang ẩn</span>
+                  )}
+                </div>
+                <span className="font-bold text-white">
+                  {birthdate ? (() => {
+                    try {
+                      const [y, m, d] = birthdate.split("-");
+                      return `${d}/${m}/${y}`;
+                    } catch {
+                      return birthdate;
+                    }
+                  })() : "Chưa cập nhật"}
+                </span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-slate-400">Giới tính</span>
+                  {privacy.hideGender && (
+                    <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Đang ẩn</span>
+                  )}
+                </div>
+                <span className="font-bold text-white">
+                  {gender === "male" ? "Nam ♂" : gender === "female" ? "Nữ ♀" : gender === "other" ? "Khác" : "Chưa cập nhật"}
+                </span>
               </div>
             </div>
           </div>
