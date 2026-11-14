@@ -284,6 +284,12 @@
       "namedRegex": "^/api/diag(?:/)?$"
     },
     {
+      "page": "/api/diag/tts",
+      "regex": "^/api/diag/tts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/diag/tts(?:/)?$"
+    },
+    {
       "page": "/api/images/generate",
       "regex": "^/api/images/generate(?:/)?$",
       "routeKeys": {},
