@@ -2275,13 +2275,14 @@ export default function AdminCmsPage() {
 
                                   <button
                                     type="button"
-                                    onClick={() => {
-                                      showConfirm(
+                                    onClick={async () => {
+                                      const confirmed = await showConfirm(
                                         `Bạn đã chuyển thành công ${w.amountVnd.toLocaleString()} đ cho tác giả "${w.accountName}" (${w.bankCode} - ${w.accountNo}) chưa?`,
-                                        () => handleActionWithdrawal(w.id, "APPROVE"),
-                                        "Xác nhận đã chuyển tiền",
-                                        "success"
+                                        "Xác nhận đã chuyển tiền"
                                       );
+                                      if (confirmed) {
+                                        handleActionWithdrawal(w.id, "APPROVE");
+                                      }
                                     }}
                                     className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] cursor-pointer shadow-xs transition-all"
                                   >
@@ -3095,15 +3096,16 @@ export default function AdminCmsPage() {
             <div className="w-full mt-4 flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   const modalData = activeQrModal;
                   setActiveQrModal(null);
-                  showConfirm(
+                  const confirmed = await showConfirm(
                     `Bạn đã chuyển thành công ${modalData.amountVnd.toLocaleString()} đ cho "${modalData.accountName}" (${modalData.bankCode} - ${modalData.accountNo}) chưa?`,
-                    () => handleActionWithdrawal(modalData.id, "APPROVE"),
-                    "Xác nhận đã chuyển tiền",
-                    "success"
+                    "Xác nhận đã chuyển tiền"
                   );
+                  if (confirmed) {
+                    handleActionWithdrawal(modalData.id, "APPROVE");
+                  }
                 }}
                 className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer shadow-md shadow-emerald-600/20 transition-all text-center"
               >

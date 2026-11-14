@@ -24,7 +24,12 @@ export interface PopupOptions {
 
 interface PopupContextType {
   showAlert: (message: string, title?: string, type?: PopupType) => Promise<void>;
-  showConfirm: (message: string, title?: string) => Promise<boolean>;
+  showConfirm: (
+    message: string,
+    titleOrOnConfirm?: string | (() => void),
+    titleOrType?: string,
+    type?: PopupType
+  ) => Promise<boolean>;
   showSuccess: (message: string, title?: string) => Promise<void>;
   showError: (message: string, title?: string) => Promise<void>;
   showWarning: (message: string, title?: string) => Promise<void>;
@@ -109,15 +114,48 @@ export function PopupProvider({ children }: { children: ReactNode }) {
   );
 
   const showConfirm = useCallback(
-    (message: string, title = "Xác nhận hành động"): Promise<boolean> => {
+    (
+      message: string,
+      titleOrOnConfirm?: string | (() => void),
+      titleOrType?: string,
+      type: PopupType = "warning"
+    ): Promise<boolean> => {
+      // Hỗ trợ cả 2 kiểu gọi:
+      // Kiểu 1: const confirmed = await showConfirm(message, title);
+      // Kiểu 2: showConfirm(message, onConfirmCallback, title, type);
+      let title = "Xác nhận hành động";
+      let onConfirmCallback: (() => void) | undefined = undefined;
+      let popupType: PopupType = type;
+
+      if (typeof titleOrOnConfirm === "function") {
+        onConfirmCallback = titleOrOnConfirm;
+        if (typeof titleOrType === "string") {
+          title = titleOrType;
+        }
+      } else if (typeof titleOrOnConfirm === "string") {
+        title = titleOrOnConfirm;
+        if (titleOrType === "info" || titleOrType === "success" || titleOrType === "warning" || titleOrType === "error") {
+          popupType = titleOrType;
+        }
+      }
+
       return new Promise((resolve) => {
         resolveRef.current = resolve;
         setPopup({
           title,
           message,
-          type: "warning",
+          type: popupType,
           confirmText: "Đồng ý",
           cancelText: "Hủy bỏ",
+          onConfirm: () => {
+            if (onConfirmCallback) {
+              try {
+                onConfirmCallback();
+              } catch (err) {
+                console.error("Error in onConfirmCallback:", err);
+              }
+            }
+          },
         });
       });
     },
