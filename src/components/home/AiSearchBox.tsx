@@ -357,24 +357,24 @@ export default function AiSearchBox({ onSubmitPrompt }: AiSearchBoxProps) {
                 {/* Sleek Dark Circular Icon Badge with Neon Pulsing Glow */}
                 <div className="relative">
                   {/* Subtle ambient blur glow behind on hover */}
-                  <div className="absolute inset-0 rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-300 bg-current pointer-events-none" />
+                  <div className="absolute -inset-1 rounded-2xl blur-md opacity-20 group-hover:opacity-90 transition-opacity duration-300 bg-current pointer-events-none" />
 
                   <div
-                    className={`w-13 h-13 rounded-2xl ${item.circleStyle} ${(item as any).glow} flex items-center justify-center transition-all duration-300 shadow-sm relative z-10 backdrop-blur-md group-hover:rotate-3 group-hover:scale-110`}
+                    className={`w-13 h-13 rounded-2xl ${item.circleStyle} ${(item as any).glow} flex items-center justify-center transition-all duration-300 shadow-sm relative z-10 backdrop-blur-md group-hover:scale-110 group-hover:-translate-y-1`}
                   >
-                    <div className={(item as any).iconColor}>
+                    <div className={`${(item as any).iconColor} transition-transform duration-300 group-hover:scale-110`}>
                       {item.icon}
                     </div>
                   </div>
                   {item.dot && (
                     <span
-                      className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${item.dot} ring-2 ring-white dark:ring-[#0c0e17] z-20`}
+                      className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full ${item.dot} ring-2 ring-white dark:ring-[#0c0e17] z-20 animate-pulse`}
                     />
                   )}
                 </div>
 
                 {/* Clean minimalist text label with color transition */}
-                <span className="text-[12px] font-semibold text-slate-700 dark:text-neutral-300 group-hover:text-white transition-colors whitespace-nowrap tracking-tight">
+                <span className="text-[12px] font-bold text-slate-700 dark:text-neutral-300 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors whitespace-nowrap tracking-tight">
                   {item.name}
                 </span>
               </Component>

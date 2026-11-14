@@ -100,7 +100,7 @@
   "app\\page.tsx -> @/components/profile/UserProfileView": {
     "id": 8368,
     "files": [
-      "static/chunks/8368.f6a410cc374493ab.js"
+      "static/chunks/8368.1d11c2a0d173c56a.js"
     ]
   },
   "app\\page.tsx -> @/components/projects/CreateProjectView": {

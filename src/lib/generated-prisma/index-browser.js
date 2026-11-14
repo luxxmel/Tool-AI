@@ -302,6 +302,20 @@ exports.Prisma.WithdrawalRequestScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ApiKeyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  name: 'name',
+  status: 'status',
+  tokensUsed: 'tokensUsed',
+  creditsUsed: 'creditsUsed',
+  rateLimit: 'rateLimit',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -329,7 +343,8 @@ exports.Prisma.ModelName = {
   PublishedStory: 'PublishedStory',
   StoryLike: 'StoryLike',
   StoryNotification: 'StoryNotification',
-  WithdrawalRequest: 'WithdrawalRequest'
+  WithdrawalRequest: 'WithdrawalRequest',
+  ApiKey: 'ApiKey'
 };
 
 /**

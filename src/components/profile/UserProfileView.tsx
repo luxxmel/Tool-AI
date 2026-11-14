@@ -51,11 +51,96 @@ export default function UserProfileView({
   const { t, language } = useLanguage();
   const { showAlert } = usePopup();
 
-  const [activeTab, setActiveTab] = useState<"posts" | "about">("posts");
+  const [activeTab, setActiveTab] = useState<"posts" | "about" | "api_keys">("posts");
   const [posts, setPosts] = useState<ExplorePost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isRechargeOpen, setIsRechargeOpen] = useState(false);
+
+  // API Keys Management State
+  const [apiKeys, setApiKeys] = useState<any[]>([]);
+  const [isLoadingKeys, setIsLoadingKeys] = useState(false);
+  const [newKeyName, setNewKeyName] = useState("");
+  const [isCreatingKey, setIsCreatingKey] = useState(false);
+  const [copiedKeyId, setCopiedKeyId] = useState<string | null>(null);
+
+  const fetchApiKeys = useCallback(async () => {
+    if (!user) return;
+    setIsLoadingKeys(true);
+    try {
+      const res = await fetch(`/api/user/keys?userId=${user.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setApiKeys(data.keys || []);
+      }
+    } catch (e) {
+      console.error("Lỗi khi tải API Keys:", e);
+    } finally {
+      setIsLoadingKeys(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (activeTab === "api_keys" && isOwnProfile) {
+      fetchApiKeys();
+    }
+  }, [activeTab, isOwnProfile, fetchApiKeys]);
+
+  const handleCreateApiKey = async () => {
+    if (!user) return;
+    setIsCreatingKey(true);
+    try {
+      const res = await fetch("/api/user/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, name: newKeyName.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showAlert("Tạo khóa API thành công! Bạn có thể sao chép để tích hợp vào ứng dụng của bạn.", "Thành công", "success");
+        setNewKeyName("");
+        fetchApiKeys();
+      } else {
+        showAlert(data.error || "Không thể tạo khóa", "Thông báo", "error");
+      }
+    } catch (e) {
+      showAlert("Lỗi kết nối khi tạo khóa API", "Thông báo", "error");
+    } finally {
+      setIsCreatingKey(false);
+    }
+  };
+
+  const handleRevokeApiKey = async (keyId: string) => {
+    if (!user) return;
+    try {
+      const res = await fetch("/api/user/keys", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyId, userId: user.id, action: "REVOKE" }),
+      });
+      if (res.ok) {
+        showAlert("Đã thu hồi khóa API thành công!", "Thành công", "success");
+        fetchApiKeys();
+      }
+    } catch (e) {
+      showAlert("Lỗi khi thu hồi khóa", "Thông báo", "error");
+    }
+  };
+
+  const handleDeleteApiKey = async (keyId: string) => {
+    if (!user) return;
+    try {
+      const res = await fetch(`/api/user/keys?keyId=${keyId}&userId=${user.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        showAlert("Đã xóa khóa API vĩnh viễn!", "Thành công", "success");
+        fetchApiKeys();
+      }
+    } catch (e) {
+      showAlert("Lỗi khi xóa khóa", "Thông báo", "error");
+    }
+  };
 
   // Profile data state
   const [bio, setBio] = useState<string>("Nhà sáng tạo nội dung & Yêu thích công nghệ AI ✨");
@@ -981,6 +1066,22 @@ export default function UserProfileView({
           >
             <span>👤 Giới thiệu & Chi tiết</span>
           </button>
+
+          {isOwnProfile && (
+            <button
+              onClick={() => setActiveTab("api_keys")}
+              className={`pb-3.5 px-4 text-xs sm:text-sm font-extrabold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === "api_keys"
+                  ? "border-cyan-400 text-cyan-300"
+                  : "border-transparent text-slate-400 hover:text-white"
+              }`}
+            >
+              <span>🔑 Khóa API & Nhà phát triển</span>
+              <span className="px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono border border-indigo-500/30">
+                PRO
+              </span>
+            </button>
+          )}
         </div>
 
         <Link
@@ -1105,6 +1206,198 @@ export default function UserProfileView({
                   {gender === "male" ? "Nam ♂" : gender === "female" ? "Nữ ♀" : gender === "other" ? "Khác" : "Chưa cập nhật"}
                 </span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB CONTENT: API KEYS & DEVELOPER PORTAL ── */}
+      {activeTab === "api_keys" && isOwnProfile && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {/* Card giới thiệu API */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-[#0a0c16] border border-indigo-500/30 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
+                    API v1 • OpenAI Compatible
+                  </span>
+                  <span className="text-xs text-slate-400">• Tích hợp ứng dụng ngoài</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white">
+                  Cổng Kết Nối Khóa API Biết Tuốt
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl leading-relaxed">
+                  Tạo khóa API bí mật (<code className="text-cyan-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">btk-...</code>) để nhúng trí tuệ nhân tạo Biết Tuốt AI vào website, chatbot Telegram, Zalo hoặc app riêng của bạn. 
+                  Cơ chế tính phí minh bạch: <strong>1.000 tokens ≈ 1 Credit</strong> (Số dư tự động trừ vào ví Credits của bạn).
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950/80 border border-indigo-500/20 text-center shrink-0 w-full sm:w-auto">
+                <span className="text-[11px] text-slate-400 block mb-1">Số dư hiện tại</span>
+                <span className="text-2xl font-black font-mono text-amber-400">
+                  {user?.role === "ADMIN" ? "∞ Vô hạn" : `${(user?.credits ?? 0).toLocaleString()} 🪙`}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsRechargeOpen(true)}
+                  className="mt-2 w-full px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-[11px] shadow-sm cursor-pointer hover:opacity-95"
+                >
+                  + Nạp thêm Credits
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Form tạo khóa mới */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#0c0e17] border border-slate-800 shadow-md">
+            <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+              <span>➕</span>
+              <span>Tạo Khóa API Mới</span>
+            </h4>
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <input
+                type="text"
+                value={newKeyName}
+                onChange={(e) => setNewKeyName(e.target.value)}
+                placeholder="Đặt tên khóa (VD: Bot Telegram Bán Hàng, App React...)"
+                className="flex-1 w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+              <button
+                type="button"
+                onClick={handleCreateApiKey}
+                disabled={isCreatingKey}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50 shrink-0"
+              >
+                {isCreatingKey ? "Đang tạo..." : "🔑 Tạo Khóa Mới"}
+              </button>
+            </div>
+          </div>
+
+          {/* Danh sách các khóa API đang sở hữu */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#0c0e17] border border-slate-800 shadow-md space-y-4">
+            <h4 className="text-sm font-bold text-white flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span>📋</span>
+                <span>Khóa API Của Bạn</span>
+              </span>
+              <span className="text-xs text-slate-400 font-normal">
+                {apiKeys.length}/5 khóa hoạt động
+              </span>
+            </h4>
+
+            {isLoadingKeys ? (
+              <div className="py-8 text-center text-xs text-slate-400">
+                <span className="animate-spin inline-block mr-2">⏳</span> Đang tải danh sách khóa...
+              </div>
+            ) : apiKeys.length === 0 ? (
+              <div className="py-12 text-center text-xs text-slate-400 border border-dashed border-slate-800 rounded-2xl">
+                Bạn chưa có khóa API nào. Hãy tạo khóa đầu tiên ở trên để bắt đầu lập trình!
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 font-semibold">
+                      <th className="py-2.5 px-3">Tên Khóa</th>
+                      <th className="py-2.5 px-3">Mã API Key</th>
+                      <th className="py-2.5 px-3">Trạng thái</th>
+                      <th className="py-2.5 px-3">Token đã dùng</th>
+                      <th className="py-2.5 px-3">Credits trừ</th>
+                      <th className="py-2.5 px-3 text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                    {apiKeys.map((k) => (
+                      <tr key={k.id} className="hover:bg-slate-900/40">
+                        <td className="py-3 px-3 font-semibold text-white whitespace-nowrap">
+                          {k.name}
+                        </td>
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-2 font-mono">
+                            <span className="bg-slate-950 px-2 py-1 rounded text-cyan-400 border border-slate-800 text-[11px]">
+                              {k.maskedKey}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(k.fullKey);
+                                setCopiedKeyId(k.id);
+                                setTimeout(() => setCopiedKeyId(null), 2000);
+                              }}
+                              className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold cursor-pointer transition-colors"
+                              title="Sao chép toàn bộ khóa API"
+                            >
+                              {copiedKeyId === k.id ? "✓ Đã chép" : "Copy"}
+                            </button>
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 whitespace-nowrap">
+                          {k.status === "ACTIVE" ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              ● Hoạt động
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                              ✕ Đã thu hồi
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-3 font-mono text-slate-300">
+                          {k.tokensUsed?.toLocaleString() || 0}
+                        </td>
+                        <td className="py-3 px-3 font-mono font-bold text-amber-400">
+                          {k.creditsUsed?.toLocaleString() || 0} 🪙
+                        </td>
+                        <td className="py-3 px-3 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {k.status === "ACTIVE" && (
+                              <button
+                                type="button"
+                                onClick={() => handleRevokeApiKey(k.id)}
+                                className="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold text-[10px] border border-amber-500/20 cursor-pointer"
+                              >
+                                Vô hiệu hóa
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteApiKey(k.id)}
+                              className="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold text-[10px] border border-rose-500/20 cursor-pointer"
+                            >
+                              Xóa
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Hướng dẫn tích hợp Code mẫu */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#0c0e17] border border-slate-800 shadow-md">
+            <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <span>💻</span>
+              <span>Hướng Dẫn Tích Hợp (cURL / Python / Node.js)</span>
+            </h4>
+            <p className="text-xs text-slate-400 mb-4">
+              Endpoint tương thích 100% với OpenAI SDK. Bạn chỉ cần đổi <code className="text-cyan-400 font-mono">baseURL</code> sang <code className="text-cyan-400 font-mono">https://biettuot.io.vn/api/v1</code> và dùng API Key <code className="text-cyan-400 font-mono">btk-...</code> vừa tạo.
+            </p>
+
+            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto">
+              <pre>{`curl https://biettuot.io.vn/api/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer btk-YOUR_API_KEY_HERE" \\
+  -d '{
+    "model": "biettuot-omni",
+    "messages": [
+      {"role": "user", "content": "Xin chào Biết Tuốt AI!"}
+    ]
+  }'`}</pre>
             </div>
           </div>
         </div>

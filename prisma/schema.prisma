@@ -33,6 +33,7 @@ model User {
   storyLikes       StoryLike[]
   storyNotifications StoryNotification[]
   withdrawals   WithdrawalRequest[]
+  apiKeys       ApiKey[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -251,5 +252,24 @@ model WithdrawalRequest {
   @@index([userId])
   @@index([status])
 }
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key         String    @unique
+  name        String    @default("Khóa API")
+  status      String    @default("ACTIVE") // "ACTIVE" | "REVOKED"
+  tokensUsed  Int       @default(0)
+  creditsUsed Int       @default(0)
+  rateLimit   Int       @default(60) // Số request tối đa mỗi phút
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([key])
+}
+
 
 

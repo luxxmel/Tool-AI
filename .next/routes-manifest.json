@@ -398,6 +398,12 @@
       "namedRegex": "^/api/user/credits(?:/)?$"
     },
     {
+      "page": "/api/user/keys",
+      "regex": "^/api/user/keys(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/user/keys(?:/)?$"
+    },
+    {
       "page": "/api/user/memories",
       "regex": "^/api/user/memories(?:/)?$",
       "routeKeys": {},
@@ -408,6 +414,18 @@
       "regex": "^/api/users(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/users(?:/)?$"
+    },
+    {
+      "page": "/api/v1/chat/completions",
+      "regex": "^/api/v1/chat/completions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/chat/completions(?:/)?$"
+    },
+    {
+      "page": "/api/v1/models",
+      "regex": "^/api/v1/models(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/models(?:/)?$"
     },
     {
       "page": "/api/webhook/facebook",
