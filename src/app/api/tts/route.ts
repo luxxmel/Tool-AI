@@ -1,3 +1,10 @@
+// Thiết lập tắt bufferutil cho ws module trong môi trường Next.js server bundle
+// Tránh lỗi TypeError: b.mask is not a function khi Next.js mock rỗng optional native dependency bufferutil
+if (typeof process !== "undefined" && process.env) {
+  process.env.WS_NO_BUFFER_UTIL = "true";
+  process.env.WS_NO_UTF_8_VALIDATE = "true";
+}
+
 import { NextRequest, NextResponse } from "next/server";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
 import fs from "fs";
