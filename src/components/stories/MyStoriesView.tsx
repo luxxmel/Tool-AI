@@ -760,32 +760,32 @@ export default function MyStoriesView() {
       </div>
 
       {/* ── TABS ĐIỀU HƯỚNG ── */}
-      <div className="flex items-center justify-between gap-3 mb-6 overflow-x-auto pb-1">
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#15171e] border border-slate-200/80 dark:border-slate-800 text-xs font-semibold">
+      <div className="flex items-center justify-between gap-3 mb-6 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#15171e] border border-slate-200/80 dark:border-slate-800 text-xs font-semibold shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab("community")}
-            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "community"
                 ? "bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-xs font-bold"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <span>🌐</span>
-            <span>Thư Viện Cộng Đồng</span>
+            <span className="whitespace-nowrap">Thư Viện Cộng Đồng</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("my_published")}
-            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "my_published"
                 ? "bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-xs font-bold"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <span>👤</span>
-            <span>Truyện Của Tôi</span>
+            <span className="whitespace-nowrap">Truyện Của Tôi</span>
             {myStories.length > 0 && (
               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-white/20 text-indigo-700 dark:text-white font-mono">
                 {myStories.length}
@@ -796,37 +796,37 @@ export default function MyStoriesView() {
           <button
             type="button"
             onClick={() => setActiveTab("writer")}
-            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "writer"
                 ? "bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-xs font-bold"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <span>✨</span>
-            <span>Xưởng Viết AI</span>
+            <span className="whitespace-nowrap">Xưởng Viết AI</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("payout")}
-            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "payout"
                 ? "bg-white dark:bg-emerald-600 text-slate-900 dark:text-white shadow-xs font-bold"
                 : "text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400"
             }`}
           >
             <span>💰</span>
-            <span>Ví Tác Giả & Rút Tiền</span>
+            <span className="whitespace-nowrap">Ví Tác Giả & Rút Tiền</span>
           </button>
         </div>
 
         {activeTab === "community" && (
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400 hidden sm:inline">Lọc độ tuổi:</span>
+          <div className="flex items-center gap-2 text-xs shrink-0 whitespace-nowrap">
+            <span className="text-slate-400 whitespace-nowrap">Lọc độ tuổi:</span>
             <select
               value={selectedAge}
               onChange={(e) => setSelectedAge(e.target.value)}
-              className="p-1.5 px-2 rounded-lg bg-white dark:bg-[#15171e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium focus:outline-none"
+              className="p-1.5 px-2 rounded-lg bg-white dark:bg-[#15171e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium focus:outline-none whitespace-nowrap shrink-0"
             >
               {AGE_RATINGS.map((a) => (
                 <option key={a.id} value={a.id}>

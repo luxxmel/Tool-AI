@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
+process.env.WS_NO_BUFFER_UTIL = "true";
+process.env.WS_NO_UTF_8_VALIDATE = "true";
+
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["msedge-tts", "ws"],
   typescript: {
     ignoreBuildErrors: true,
   },
