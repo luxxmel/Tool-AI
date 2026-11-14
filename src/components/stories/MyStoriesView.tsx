@@ -34,6 +34,26 @@ export interface PublishedStoryItem {
 
 type Tab = "community" | "my_published" | "writer" | "payout";
 
+export interface StoryVoiceOption {
+  id: string;
+  label: string;
+  gender: "female" | "male";
+  desc: string;
+  icon: string;
+}
+
+export const STORY_VOICES: StoryVoiceOption[] = [
+  { id: "female", label: "Hoài My (Nữ truyền cảm)", gender: "female", desc: "Giọng nữ thanh ấm, diễn cảm chuẩn phim phát thanh", icon: "👩" },
+  { id: "female_sweet", label: "Tiểu Nhã (Nữ ngọt ngào)", gender: "female", desc: "Trong trẻo, dễ thương, nhẹ nhàng", icon: "👧" },
+  { id: "nu_soai_ty", label: "Băng Tuyết (Nữ quý cô)", gender: "female", desc: "Sắc sảo, điềm tĩnh, cuốn hút", icon: "👱‍♀️" },
+  { id: "co_trang", label: "Nguyệt Nhi (Nữ cổ trang)", gender: "female", desc: "Thanh tao, dịu dàng, đượm chất thi ca", icon: "🧝‍♀️" },
+  { id: "male", label: "Nam Minh (Nam trầm ấm)", gender: "male", desc: "Trầm dày, nam tính, giọng đọc truyện đêm", icon: "👨" },
+  { id: "tong_tai", label: "Lục Ngang Thiên (Nam uy quyền)", gender: "male", desc: "Trầm khàn điện ảnh, bá đạo, lôi cuốn", icon: "🤵" },
+  { id: "thu_sinh", label: "Mặc Tử Khiêm (Nam thư sinh)", gender: "male", desc: "Ấm áp, nhẹ nhàng, truyền cảm", icon: "🧑‍🎓" },
+  { id: "nam_tre", label: "Giang Dạ (Nam hào sảng)", gender: "male", desc: "Rõ ràng, dứt khoát, phiêu lưu hành động", icon: "🧑" },
+];
+
+
 export interface WithdrawalItem {
   id: string;
   credits: number;
@@ -121,6 +141,19 @@ export default function MyStoriesView() {
   const [readingChapters, setReadingChapters] = useState<StoryChapter[]>([]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
+  const [storyVoice, setStoryVoice] = useState<string>("female");
+  const [isVoiceMenuOpen, setIsVoiceMenuOpen] = useState<boolean>(false);
+  const voiceMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleVoiceOutside(e: MouseEvent) {
+      if (voiceMenuRef.current && !voiceMenuRef.current.contains(e.target as Node)) {
+        setIsVoiceMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleVoiceOutside);
+    return () => document.removeEventListener("mousedown", handleVoiceOutside);
+  }, []);
   const [readingTheme, setReadingTheme] = useState<"default" | "sepia" | "night">("default");
 
   // AI Voice Text-to-Speech đọc truyện
@@ -164,7 +197,7 @@ export default function MyStoriesView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text: cleanSpeechText,
-          voice: "vi-VN-HoaiMyNeural", // Giọng đọc truyền cảm ấm áp
+          voice: storyVoice,
           rate: 1.0,
         }),
       });
@@ -1230,21 +1263,75 @@ export default function MyStoriesView() {
                   <span>{readingStory.likes}</span>
                 </button>
 
-                {/* Nút Nghe đọc truyện bằng AI Voice */}
-                <button
-                  type="button"
-                  disabled={isTtsLoading}
-                  onClick={() => handleTogglePlayChapterAudio(readingChapters[currentChapterIndex]?.content || "")}
-                  className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs ${
-                    isPlayingTts
-                      ? "bg-amber-500 text-white border-amber-600 animate-pulse"
-                      : "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100"
-                  }`}
-                  title="Nghe AI đọc chương này bằng giọng truyền cảm"
-                >
-                  <span>{isTtsLoading ? "⏳" : isPlayingTts ? "⏸️" : "🎧"}</span>
-                  <span className="hidden sm:inline">{isTtsLoading ? "Đang chuẩn bị..." : isPlayingTts ? "Tạm dừng đọc" : "Nghe đọc AI"}</span>
-                </button>
+                {/* Nút Chọn Giọng Đọc & Nghe AI */}
+                <div className="relative flex items-center" ref={voiceMenuRef}>
+                  <div className="inline-flex rounded-xl shadow-xs border border-indigo-200 dark:border-indigo-800/80 overflow-hidden">
+                    <button
+                      type="button"
+                      disabled={isTtsLoading}
+                      onClick={() => handleTogglePlayChapterAudio(readingChapters[currentChapterIndex]?.content || "")}
+                      className={`px-3 py-1.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
+                        isPlayingTts
+                          ? "bg-amber-500 text-white animate-pulse"
+                          : "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60"
+                      }`}
+                      title="Nghe AI đọc chương này"
+                    >
+                      <span>{isTtsLoading ? "⏳" : isPlayingTts ? "⏸️" : "🎧"}</span>
+                      <span className="hidden sm:inline">
+                        {isTtsLoading ? "Đang tạo..." : isPlayingTts ? "Dừng" : "Nghe đọc"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsVoiceMenuOpen((prev) => !prev)}
+                      className="px-2 py-1.5 bg-indigo-100/80 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800/60 border-l border-indigo-200 dark:border-indigo-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Đổi giọng đọc AI (8 giọng Nam & Nữ)"
+                    >
+                      <span>{STORY_VOICES.find(v => v.id === storyVoice)?.icon || "🎙️"}</span>
+                      <span className="text-[10px]">▼</span>
+                    </button>
+                  </div>
+
+                  {/* Dropdown Menu 8 Giọng Đọc */}
+                  {isVoiceMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-64 p-2 rounded-2xl bg-[#0b0d14] border border-indigo-500/40 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="px-2.5 py-1.5 mb-1.5 border-b border-slate-800 text-[11px] font-bold text-slate-400 flex items-center justify-between">
+                        <span>🎙️ CHỌN GIỌNG ĐỌC AI</span>
+                        <span className="text-[10px] text-cyan-400 font-mono">8 Giọng</span>
+                      </div>
+                      <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
+                        {STORY_VOICES.map((v) => {
+                          const isCur = storyVoice === v.id;
+                          return (
+                            <button
+                              key={v.id}
+                              type="button"
+                              onClick={() => {
+                                if (isPlayingTts) stopTts();
+                                setStoryVoice(v.id);
+                                setIsVoiceMenuOpen(false);
+                              }}
+                              className={`w-full text-left p-2 rounded-xl text-xs flex items-center gap-2.5 cursor-pointer transition-all ${
+                                isCur
+                                  ? "bg-indigo-600/30 text-cyan-300 border border-indigo-500/50 font-bold"
+                                  : "hover:bg-slate-800/80 text-slate-300"
+                              }`}
+                            >
+                              <span className="text-base">{v.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold truncate">{v.label}</div>
+                                <div className="text-[10px] text-slate-400 truncate font-normal">{v.desc}</div>
+                              </div>
+                              {isCur && <span className="text-cyan-400 text-xs font-bold">✓</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <button
                   type="button"
