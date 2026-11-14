@@ -684,7 +684,7 @@ export default function MyStoriesView() {
             return (
               <p
                 key={pIdx}
-                className="indent-6 sm:indent-8 text-justify leading-relaxed sm:leading-loose text-slate-800 dark:text-slate-200 story-reading-content"
+                className="indent-6 sm:indent-8 text-justify leading-relaxed sm:leading-loose story-reading-content"
               >
                 {trimmed}
               </p>
@@ -1284,7 +1284,7 @@ export default function MyStoriesView() {
             <div
               className={`flex-1 overflow-y-auto p-5 sm:p-8 space-y-4 leading-relaxed story-reading-content transition-colors duration-200 ${
                 readingTheme === "sepia"
-                  ? "bg-[#fbf0d9] text-[#433422] selection:bg-[#dfcbb3]"
+                  ? "bg-[#fbf0d9] text-[#3d2714] selection:bg-[#dfcbb3]"
                   : readingTheme === "night"
                   ? "bg-[#090a0f] text-[#cfd3dc] selection:bg-indigo-900"
                   : "bg-white dark:bg-[#15171e] text-slate-800 dark:text-slate-200"
