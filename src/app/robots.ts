@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
+import { ALL_ASSISTANTS_LIST } from "@/data/aiData";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://biettuot.io";
+  const baseUrl = "https://biettuot.io.vn";
 
   return {
     rules: [
@@ -14,8 +15,29 @@ export default function robots(): MetadataRoute.Robots {
           "/profile",
         ],
       },
+      // Ưu tiên đặc biệt cho Googlebot & Google-InspectionTool
       {
-        userAgent: "Googlebot",
+        userAgent: ["Googlebot", "Googlebot-Image", "Google-InspectionTool"],
+        allow: "/",
+        disallow: [
+          "/api/",
+          "/admin",
+          "/profile",
+        ],
+      },
+      // Cấu hình riêng cho các AI crawler để trích xuất AI Overview & Knowledge Graph
+      {
+        userAgent: [
+          "Google-Extended",       // Google Gemini & AI Overview Crawler
+          "GPTBot",                // OpenAI ChatGPT Crawler
+          "ChatGPT-User",          // OpenAI Live Browsing
+          "PerplexityBot",         // Perplexity AI search engine
+          "ClaudeBot",             // Anthropic Claude Crawler
+          "anthropic-ai",          // Anthropic
+          "Bytespider",            // ByteDance / TikTok AI
+          "CCBot",                 // Common Crawl (nguồn huấn luyện AI toàn cầu)
+          "cohere-ai",             // Cohere AI
+        ],
         allow: "/",
         disallow: [
           "/api/",
@@ -25,5 +47,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }

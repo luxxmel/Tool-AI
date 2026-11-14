@@ -5,9 +5,26 @@ Disallow: /admin
 Disallow: /profile
 
 User-Agent: Googlebot
+User-Agent: Googlebot-Image
+User-Agent: Google-InspectionTool
 Allow: /
 Disallow: /api/
 Disallow: /admin
 Disallow: /profile
 
-Sitemap: https://biettuot.io/sitemap.xml
+User-Agent: Google-Extended
+User-Agent: GPTBot
+User-Agent: ChatGPT-User
+User-Agent: PerplexityBot
+User-Agent: ClaudeBot
+User-Agent: anthropic-ai
+User-Agent: Bytespider
+User-Agent: CCBot
+User-Agent: cohere-ai
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /profile
+
+Host: https://biettuot.io.vn
+Sitemap: https://biettuot.io.vn/sitemap.xml
