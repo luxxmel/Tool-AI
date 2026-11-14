@@ -684,7 +684,7 @@ export default function MyStoriesView() {
             return (
               <p
                 key={pIdx}
-                className="indent-6 sm:indent-8 text-justify leading-relaxed sm:leading-loose text-slate-800 dark:text-slate-200 font-serif"
+                className="indent-6 sm:indent-8 text-justify leading-relaxed sm:leading-loose text-slate-800 dark:text-slate-200 story-reading-content"
               >
                 {trimmed}
               </p>
@@ -1282,7 +1282,7 @@ export default function MyStoriesView() {
 
             {/* Nội dung truyện (Typography êm mắt với Sepia / OLED Night Mode) */}
             <div
-              className={`flex-1 overflow-y-auto p-5 sm:p-8 space-y-4 leading-relaxed font-serif transition-colors duration-200 ${
+              className={`flex-1 overflow-y-auto p-5 sm:p-8 space-y-4 leading-relaxed story-reading-content transition-colors duration-200 ${
                 readingTheme === "sepia"
                   ? "bg-[#fbf0d9] text-[#433422] selection:bg-[#dfcbb3]"
                   : readingTheme === "night"

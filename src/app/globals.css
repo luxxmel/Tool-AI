@@ -20,6 +20,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--app-font-family);
+  --font-serif: "Merriweather", "Be Vietnam Pro", Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -147,4 +148,14 @@ button, a, input, select, textarea {
 
 .scroll-snap-item {
   scroll-snap-align: start;
+}
+
+
+/* Typography đọc truyện tiếng Việt chuẩn sắc nét, chống lỗi vỡ dấu và tách ký tự */
+.story-reading-content {
+  font-family: "Merriweather", var(--font-be-vietnam), Georgia, serif !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
