@@ -8,6 +8,7 @@ import { ExplorePost } from "@/data/postData";
 import RechargeModal from "@/components/payment/RechargeModal";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { COUNTRIES_LIST } from "@/data/countriesData";
 
 interface UserPrivacySettings {
   hideEmail: boolean;
@@ -61,6 +62,30 @@ export default function UserProfileView({
   const [location, setLocation] = useState<string>("Việt Nam");
   const [birthdate, setBirthdate] = useState<string>("");
   const [gender, setGender] = useState<string>("");
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState<boolean>(false);
+  const [countrySearch, setCountrySearch] = useState<string>("");
+  const countryDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+        setIsCountryDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredCountries = COUNTRIES_LIST.filter((c) => {
+    const q = countrySearch.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      c.name.toLowerCase().includes(q) ||
+      c.nameEn.toLowerCase().includes(q) ||
+      c.code.toLowerCase().includes(q)
+    );
+  });
   const [github, setGithub] = useState<string>("");
   const [twitter, setTwitter] = useState<string>("");
   const [facebook, setFacebook] = useState<string>("");
@@ -520,17 +545,100 @@ export default function UserProfileView({
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-2">
-                Quốc gia / Thành phố:
+            <div className="relative" ref={countryDropdownRef}>
+              <label className="block text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+                <span>🌍 Quốc gia / Thành phố:</span>
+                <span className="text-[10px] text-cyan-400 font-normal">Bấm để chọn danh sách nước</span>
               </label>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="VD: Hà Nội, Việt Nam"
-                className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-hidden focus:border-indigo-500 font-medium"
-              />
+
+              {/* Ô hiển thị và kích hoạt dropdown */}
+              <div
+                onClick={() => {
+                  setIsCountryDropdownOpen((prev) => !prev);
+                  setCountrySearch("");
+                }}
+                className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-white font-medium flex items-center justify-between cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <span>{(() => {
+                    const found = COUNTRIES_LIST.find((c) => location.includes(c.name) || location.includes(c.nameEn));
+                    return found ? found.flag : "📍";
+                  })()}</span>
+                  <span className={location ? "text-white" : "text-slate-500"}>
+                    {location || "Chọn quốc gia hoặc nhập thành phố..."}
+                  </span>
+                </div>
+                <span className="text-slate-400 text-[10px]">▼</span>
+              </div>
+
+              {/* Dropdown Danh sách quốc gia có thanh tìm kiếm */}
+              {isCountryDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 z-50 p-2.5 rounded-2xl bg-[#090b14] border border-indigo-500/40 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* Ô tìm kiếm quốc gia */}
+                  <div className="relative mb-2">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                    <input
+                      type="text"
+                      autoFocus
+                      value={countrySearch}
+                      onChange={(e) => setCountrySearch(e.target.value)}
+                      placeholder="Tìm kiếm quốc gia (Việt Nam, US, Japan...)"
+                      className="w-full pl-8 pr-3 py-2 text-xs rounded-xl bg-slate-900/90 border border-slate-800 text-white placeholder-slate-500 focus:outline-hidden focus:border-cyan-400"
+                    />
+                  </div>
+
+                  {/* Cho phép người dùng tự gõ thành phố tùy chỉnh */}
+                  <div className="px-2 py-1.5 mb-1 text-[11px] text-slate-400 bg-slate-900/40 rounded-lg flex items-center justify-between">
+                    <span>Tự nhập địa chỉ khác:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (countrySearch.trim()) {
+                          setLocation(countrySearch.trim());
+                          setIsCountryDropdownOpen(false);
+                        }
+                      }}
+                      className="text-cyan-400 hover:underline font-bold"
+                    >
+                      Dùng &quot;{countrySearch.trim() || "..."}&quot;
+                    </button>
+                  </div>
+
+                  {/* Danh sách cuộn các quốc gia */}
+                  <div className="max-h-56 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                    {filteredCountries.length === 0 ? (
+                      <div className="p-3 text-center text-xs text-slate-500">
+                        Không tìm thấy quốc gia phù hợp. Bạn có thể bấm &quot;Dùng...&quot; ở trên để tự đặt.
+                      </div>
+                    ) : (
+                      filteredCountries.map((c) => {
+                        const isSelected = location === c.name || location.includes(c.name);
+                        return (
+                          <div
+                            key={c.code}
+                            onClick={() => {
+                              setLocation(c.name);
+                              setIsCountryDropdownOpen(false);
+                            }}
+                            className={`px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all ${
+                              isSelected
+                                ? "bg-indigo-600/30 text-cyan-300 font-bold border border-indigo-500/40"
+                                : "hover:bg-slate-800/80 text-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">{c.flag}</span>
+                              <span className="font-medium">{c.name}</span>
+                              <span className="text-[10px] text-slate-500">({c.nameEn})</span>
+                            </div>
+                            <span className="text-[10px] font-mono text-slate-500 uppercase">{c.code}</span>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
