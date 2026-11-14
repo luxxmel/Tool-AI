@@ -160,8 +160,19 @@ ${newLogs.map((l) => `${l.role === "ai" ? "Tutor" : "Student"}: ${l.text}`).join
 
       if (!res.ok) throw new Error("Không thể kết nối gia sư AI.");
 
-      const data = await res.json();
-      const reply = data.text || data.response || "Great effort! Keep practicing!";
+      let reply = "";
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        reply = data.text || data.response || "";
+      } else {
+        reply = await res.text();
+      }
+
+      if (!reply) {
+        reply = "Great effort! Keep practicing!";
+      }
+
       setChatLog((prev) => [...prev, { role: "ai", text: reply }]);
     } catch {
       setChatLog((prev) => [

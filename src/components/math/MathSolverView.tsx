@@ -296,12 +296,23 @@ Chủ đề: ${subjectPrefix}
         throw new Error("Không thể kết nối đến máy chủ giải toán.");
       }
 
-      const data = await res.json();
-      const answer =
-        data.text ||
-        data.choices?.[0]?.message?.content ||
-        data.response ||
-        "Đã xảy ra lỗi khi tạo lời giải.";
+      // Đọc an toàn cả 2 định dạng: text stream hoặc json
+      let answer = "";
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        answer =
+          data.text ||
+          data.choices?.[0]?.message?.content ||
+          data.response ||
+          "";
+      } else {
+        answer = await res.text();
+      }
+
+      if (!answer) {
+        answer = "Đã xảy ra lỗi khi tạo lời giải. Vui lòng thử lại.";
+      }
 
       setCurrentSolution(answer);
       saveToHistory(query, answer);
