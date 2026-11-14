@@ -74,6 +74,7 @@ export default function AdminCmsPage() {
   const [adminWithdrawals, setAdminWithdrawals] = useState<any[]>([]);
   const [isWithdrawalLoading, setIsWithdrawalLoading] = useState(false);
   const [withdrawalFilter, setWithdrawalFilter] = useState<string>("all");
+  const [activeQrModal, setActiveQrModal] = useState<any | null>(null);
 
 
 
@@ -2261,17 +2262,16 @@ export default function AdminCmsPage() {
                             <td className="py-3 px-3 text-right whitespace-nowrap">
                               {w.status === "PENDING" ? (
                                 <div className="flex items-center justify-end gap-1.5">
-                                  {/* Link mở VietQR nhanh */}
-                                  <a
-                                    href={`https://img.vietqr.io/image/${w.bankCode}-${w.accountNo}-compact2.png?amount=${w.amountVnd}&addInfo=${encodeURIComponent(`Thanh toan truyen ${w.credits}C`)}&accountName=${encodeURIComponent(w.accountName)}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 font-bold text-[11px] flex items-center gap-1"
-                                    title="Mở mã QR ngân hàng để quét chuyển tiền"
+                                  {/* Nút xem VietQR popup chuẩn giao diện đẹp */}
+                                  <button
+                                    type="button"
+                                    onClick={() => setActiveQrModal(w)}
+                                    className="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 font-bold text-[11px] flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                                    title="Xem mã QR ngân hàng chuẩn đẹp để quét chuyển tiền"
                                   >
                                     <span>📱</span>
                                     <span>Quét QR</span>
-                                  </a>
+                                  </button>
 
                                   <button
                                     type="button"
@@ -3024,6 +3024,99 @@ export default function AdminCmsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL QUÉT VIETQR CHUYỂN TIỀN TÁC GIẢ CHUYÊN NGHIỆP ── */}
+      {activeQrModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setActiveQrModal(null)}
+        >
+          <div
+            className="bg-white dark:bg-[#15171e] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Nút đóng */}
+            <button
+              type="button"
+              onClick={() => setActiveQrModal(null)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer text-sm"
+            >
+              ✕
+            </button>
+
+            {/* Header Modal */}
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-2xl mb-3 shadow-xs">
+              🏦
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white text-center">
+              Chuyển Khoản Rút Tiền
+            </h3>
+            <p className="text-xs text-slate-400 text-center mt-0.5">
+              Mở app ngân hàng quét mã QR bên dưới để thanh toán
+            </p>
+
+            {/* Khung hiển thị ảnh QR bo góc bóng đổ sắc nét */}
+            <div className="mt-4 p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center">
+              <img
+                src={`https://img.vietqr.io/image/${activeQrModal.bankCode}-${activeQrModal.accountNo}-compact2.png?amount=${activeQrModal.amountVnd}&addInfo=${encodeURIComponent(`Thanh toan truyen ${activeQrModal.credits}C`)}&accountName=${encodeURIComponent(activeQrModal.accountName)}`}
+                alt="VietQR Chuyển Tiền"
+                className="w-64 h-auto object-contain rounded-xl"
+              />
+            </div>
+
+            {/* Thông tin chi tiết */}
+            <div className="w-full mt-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-[#0d0e12] border border-slate-100 dark:border-slate-800/80 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Ngân hàng:</span>
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">{activeQrModal.bankCode}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Số tài khoản:</span>
+                <span className="font-mono font-bold text-slate-900 dark:text-white select-all">{activeQrModal.accountNo}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Chủ tài khoản:</span>
+                <span className="font-bold text-slate-900 dark:text-white uppercase">{activeQrModal.accountName}</span>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800">
+                <span className="text-slate-400">Số tiền:</span>
+                <span className="font-mono font-black text-emerald-500 text-sm">{activeQrModal.amountVnd?.toLocaleString()} VNĐ</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Nội dung:</span>
+                <span className="font-mono text-[11px] text-slate-600 dark:text-slate-300">Thanh toan truyen {activeQrModal.credits}C</span>
+              </div>
+            </div>
+
+            {/* Nút hành động trong Modal */}
+            <div className="w-full mt-4 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const modalData = activeQrModal;
+                  setActiveQrModal(null);
+                  showConfirm(
+                    `Bạn đã chuyển thành công ${modalData.amountVnd.toLocaleString()} đ cho "${modalData.accountName}" (${modalData.bankCode} - ${modalData.accountNo}) chưa?`,
+                    () => handleActionWithdrawal(modalData.id, "APPROVE"),
+                    "Xác nhận đã chuyển tiền",
+                    "success"
+                  );
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer shadow-md shadow-emerald-600/20 transition-all text-center"
+              >
+                ✓ Đã chuyển xong
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveQrModal(null)}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs cursor-pointer transition-all"
+              >
+                Đóng
+              </button>
+            </div>
           </div>
         </div>
       )}
