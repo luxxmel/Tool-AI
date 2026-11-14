@@ -34,6 +34,7 @@
   "/api/stories/[id]/route": "app/api/stories/[id]/route.js",
   "/api/stories/notifications/route": "app/api/stories/notifications/route.js",
   "/api/stories/route": "app/api/stories/route.js",
+  "/api/stories/seed-sample/route": "app/api/stories/seed-sample/route.js",
   "/api/story-analyze/route": "app/api/story-analyze/route.js",
   "/api/support/route": "app/api/support/route.js",
   "/api/tools/process/route": "app/api/tools/process/route.js",

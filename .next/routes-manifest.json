@@ -350,6 +350,12 @@
       "namedRegex": "^/api/stories/notifications(?:/)?$"
     },
     {
+      "page": "/api/stories/seed-sample",
+      "regex": "^/api/stories/seed\\-sample(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/stories/seed\\-sample(?:/)?$"
+    },
+    {
       "page": "/api/story-analyze",
       "regex": "^/api/story\\-analyze(?:/)?$",
       "routeKeys": {},
